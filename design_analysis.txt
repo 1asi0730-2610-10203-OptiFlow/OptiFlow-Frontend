@@ -1,0 +1,175 @@
+=== COMPLETE TEXT LABELS FOUND IN DESIGN ===
+
+ Cobrada
+ Exportar
+ Nueva Venta
+ Recuperar Cotización
+- S/ 0.00
+- S/ 126.00
+0.00
+07/32
+1
+126
+1324124124125
+2
+2026-04-19
+2026-04-20
+2026-04-21
+3
+3 venta(s) completada(s)
+3 órdenes abiertas
+453
+5 transacciones
+6
+Acciones
+Adelanto
+Adelanto (0%)
+Adelanto (mín. 30%)
+Adelantos Cobrados
+Administrador
+Anterior
+Aplicar
+Armazón (Montura) *
+Artículos
+Atrás
+Buscar por N° factura o paciente...
+CR
+CVV
+Cancelar
+Carlos Rivera
+Cobrar 
+Cobrar →
+Completada
+Configuración
+Crear Venta + Orden de Lab 
+Código Promocional
+DM
+David Martínez
+Detalle
+Devolución
+ERP / CRM Óptico
+EW
+Efectivo
+Ej. Ray-Ban RB5228 Negro
+Ej: PROMO15
+Emma Wilson
+Estado
+Examen: 15 Abr, 2026 · Dra. Emily Smith
+FAC-2843
+FAC-2844
+FAC-2845
+FAC-2846
+FAC-2847
+Factura
+Fecha
+Fecha de vencimiento
+Gafas de Sol
+Gafas de Sol Polarizadas
+Gestión de Ventas
+Ingresos Cobrados
+Ingresos Totales
+Inventario
+JD
+John Doe
+Kit de Limpieza
+LA
+LC (suministro 6 meses)
+Lisa Anderson
+Lunas Bifocales
+Lunas Filtro Azul
+Lunas Monofocales
+Lunas Polarizadas
+Lunas Progresivas
+Lunas con Filtro Azul
+MC
+Material de Luna
+Menú Principal
+Michael Chen
+Mostrando 5 de 5 ventas
+Mostrando 6 de 6 ventas
+Método de Pago
+Nike 7284
+Nueva Venta / Cotización
+Número de tarjeta
+OD: +1.00, OS: +1.25
+OD: +2.50 Add +2.00, OS: +2.75 Add +2.00
+OD: -1.25, OS: -1.50
+OD: -1.75, OS: -2.00
+OD: -2.50, OS: -2.75
+OD: -3.00, OS: -3.25
+OD: Esf -2.50 / Cil -0.75 / Eje 90°
+OS: Esf -2.75 / Cil -0.50 / Eje 85°
+OptiFlow
+POS · Cotizaciones · Adelantos · Saldos Pendientes
+Paciente
+Paciente y Rx
+Pacientes
+Pagado
+Pagado hasta ahora
+Pago
+Panel
+Paso 1 de 3
+Paso 2 de 3
+Paso 3 de 3
+Pendiente
+Personal
+Policarbonato
+Por favor complete los campos
+Productos
+Progresivas
+Ray-Ban RB5228
+Ray-Ban RB5228 Negro
+Registro de ventas · Punto de Cobro
+Reportes
+S/
+S/ 1185.00 por cobrar
+S/ 125.00
+S/ 1355
+S/ 160.00
+S/ 180.00
+S/ 242.50
+S/ 245.00
+S/ 271
+S/ 289
+S/ 294.00
+S/ 320.00
+S/ 380.00
+S/ 420.00
+S/ 485.00
+S/ 493
+S/ 550.00
+S/ 863
+S/ 90.00
+SJ
+Saldo
+Saldo Pendiente
+Sales
+Sarah Johnson
+Seguro
+Siguiente
+Siguiente 
+Silhouette Titan
+Tarjeta de Crédito
+Tarjeta de Débito
+Ticket Promedio
+Tipo de Luna
+Total
+Total Estimado
+Total Transacciones
+Transferencia
+VISA
+Venta realizada y orden creada exitosamente
+Ventas
+Ventas Pendientes de Cobro
+en el período actual
+por transacción
+por venta
+Órdenes de Lab
+Última Receta (Vinculada automáticamente)
+→ LAB-2842
+→ LAB-2843
+→ LAB-2844
+→ LAB-2845
+→ LAB-2846
+→ LAB-2847
+✓

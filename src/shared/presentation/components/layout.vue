@@ -70,7 +70,7 @@ function isActive(to) {
 .sidebar {
   width: 256px;
   min-width: 256px;
-  background: #ffffff;
+  background: #03070A;
   border-right: 1px solid #e9ecef;
   display: flex;
   flex-direction: column;
@@ -89,7 +89,7 @@ function isActive(to) {
   width: 40px;
   height: 40px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: #00C1B0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -108,14 +108,15 @@ function isActive(to) {
 .brand-name {
   font-size: 1rem;
   font-weight: 700;
-  color: #111827;
+  color: #ffffff;
   line-height: 1.2;
 }
 
 .brand-subtitle {
   font-size: 0.7rem;
-  color: #6b7280;
   line-height: 1.2;
+  color: white;
+
 }
 
 .sidebar-nav {
@@ -138,7 +139,7 @@ function isActive(to) {
   width: 100%;
   text-align: left;
   transition: background 0.15s, color 0.15s;
-  color: #6b7280;
+  color: #93C1CE;
   font-size: 0.875rem;
   font-weight: 500;
 }
@@ -149,12 +150,12 @@ function isActive(to) {
 }
 
 .nav-item--active {
-  background: #eff6ff;
-  color: #2563eb;
+  background: #00C1B0;
+  color: #ffffff;
 }
 
 .nav-item--active .nav-item__icon {
-  color: #2563eb;
+  color: #ffffff;
 }
 
 .nav-item__icon {

@@ -2,14 +2,18 @@ export class Sale {
   constructor({
     id = 0,
     invoiceNumber = '',
+    labOrderNumber = '',
     patientId = 0,
     patientName = '',
+    patientRx = '',
     userId = 0,
     userName = '',
+    articulos = [],
     totalAmount = 0,
+    adelanto = 0,
+    pendingBalance = 0,
     discountCode = '',
     discountAmount = 0,
-    pendingBalance = 0,
     status = 'PENDING',
     paymentMethod = '',
     createdAt = '',
@@ -18,14 +22,18 @@ export class Sale {
   } = {}) {
     this.id = id
     this.invoiceNumber = invoiceNumber
+    this.labOrderNumber = labOrderNumber
     this.patientId = patientId
     this.patientName = patientName
+    this.patientRx = patientRx
     this.userId = userId
     this.userName = userName
+    this.articulos = articulos
     this.totalAmount = totalAmount
+    this.adelanto = adelanto
+    this.pendingBalance = pendingBalance
     this.discountCode = discountCode
     this.discountAmount = discountAmount
-    this.pendingBalance = pendingBalance
     this.status = status
     this.paymentMethod = paymentMethod
     this.createdAt = createdAt
@@ -35,9 +43,9 @@ export class Sale {
 }
 
 export const SaleStatus = Object.freeze({
-  PENDING: 'PENDING',
-  PARTIAL: 'PARTIAL',
-  PAID: 'PAID',
+  PENDING:   'PENDING',
+  PARTIAL:   'PARTIAL',
+  PAID:      'PAID',
   DELIVERED: 'DELIVERED',
-  RETURNED: 'RETURNED'
+  RETURNED:  'RETURNED'
 })

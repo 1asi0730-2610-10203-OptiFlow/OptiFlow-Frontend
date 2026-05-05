@@ -1,0 +1,50 @@
+=== MODAL 'NUEVA VENTA' STRUCTURE ===
+
+STEP INDICATORS:
+  - Paso 1
+  - Paso 2
+  - Paso 3
+
+REQUIRED FIELDS (marked with *):
+  - Armazón (Montura) *
+
+FORM FIELDS AND INPUTS:
+  - Paciente
+  - Rx
+  - Armazón
+  - Material
+  - Luna
+  - Método de Pago
+  - Número de tarjeta
+  - CVV
+  - Fecha de vencimiento
+  - Código Promocional
+  - Adelanto
+  - Total
+  - Detalle
+
+PAYMENT METHODS:
+  - Efectivo
+  - Tarjeta de Crédito
+  - Tarjeta de Débito
+  - Transferencia
+  - VISA
+
+STATUS BADGES:
+  - Pagado
+  - Pendiente
+  - Completada
+  - Cobrada
+  - Devolución
+  - Adelanto
+
+PRODUCT TYPES:
+  - Gafas de Sol
+  - Gafas de Sol Polarizadas
+  - Kit de Limpieza
+  - Lunas Bifocales
+  - Lunas Monofocales
+  - Lunas Progresivas
+  - Lunas Polarizadas
+  - Lunas Filtro Azul
+  - Lunas con Filtro Azul

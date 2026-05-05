@@ -1,0 +1,36 @@
+=== SIDEBAR DIMENSIONS ===
+Width: 256
+Height: 896
+
+=== HEADER DIMENSIONS ===
+Width: 100.75
+Height: 40.5
+
+=== TABLE HEADER STRUCTURE ===
+Number of columns: 20
+First header height: 40.5
+
+Column widths (first 10):
+  Column 0: 100.75
+  Column 1: 153.6875
+  Column 2: 180.21875
+  Column 3: 125.5
+  Column 4: 97.25
+  Column 5: 106.875
+  Column 6: 95.1875
+  Column 7: 148.703125
+  Column 8: 144.03125
+  Column 9: 101.796875
+
+=== TEXT ELEMENT HEIGHTS (Font size indicators) ===
+Height 16.0: 390 elements
+Height 17.0: 24 elements
+Height 20.0: 390 elements
+Height 22.0: 8 elements
+Height 28.0: 39 elements
+Height 32.0: 109 elements
+Height 40.0: 68 elements
+
+=== BUTTON DIMENSIONS ===
+Total buttons: 128
+Sample button size: 209.515625x38

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@600;700&family=Montserrat:wght@400;500;600;700&display=swap');
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -6,10 +8,10 @@
 
 html, body {
   height: 100%;
-  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-  font-size: 16px;
-  color: #111827;
-  background-color: #f8f9fa;
+  font-family: 'Montserrat', system-ui, sans-serif;
+  font-size: 14px;
+  color: #101828;
+  background-color: #f9fafb;
 }
 
 #app {
@@ -21,7 +23,9 @@ html, body {
   border: none;
 }
 
-.w-full { width: 100%; }
-.flex-1 { flex: 1; }
-.mt-3 { margin-top: 12px; }
-.mb-4 { margin-bottom: 16px; }
+.font-josefin { font-family: 'Josefin Sans', sans-serif; }
+.font-mono    { font-family: 'Consolas', 'Courier New', monospace; }
+.w-full       { width: 100%; }
+.flex-1       { flex: 1; }
+.mt-3         { margin-top: 12px; }
+.mb-4         { margin-bottom: 16px; }

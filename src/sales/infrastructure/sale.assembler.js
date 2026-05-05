@@ -2,23 +2,27 @@ import { Sale } from '../domain/model/sale.entity.js'
 import { SaleResource } from './sale.resource.js'
 
 export class SaleAssembler {
-  static toEntityFromResource(resource) {
+  static toEntityFromResource(r) {
     return new Sale({
-      id: resource.id,
-      invoiceNumber: resource.invoiceNumber,
-      patientId: resource.patientId,
-      patientName: resource.patientName,
-      userId: resource.userId,
-      userName: resource.userName,
-      totalAmount: resource.totalAmount,
-      discountCode: resource.discountCode ?? '',
-      discountAmount: resource.discountAmount ?? 0,
-      pendingBalance: resource.pendingBalance ?? 0,
-      status: resource.status,
-      paymentMethod: resource.paymentMethod ?? '',
-      createdAt: resource.createdAt,
-      deliveredAt: resource.deliveredAt ?? '',
-      notes: resource.notes ?? ''
+      id: r.id,
+      invoiceNumber: r.invoiceNumber,
+      labOrderNumber: r.labOrderNumber ?? '',
+      patientId: r.patientId,
+      patientName: r.patientName,
+      patientRx: r.patientRx ?? '',
+      userId: r.userId,
+      userName: r.userName,
+      articulos: r.articulos ?? [],
+      totalAmount: r.totalAmount,
+      adelanto: r.adelanto ?? 0,
+      pendingBalance: r.pendingBalance ?? 0,
+      discountCode: r.discountCode ?? '',
+      discountAmount: r.discountAmount ?? 0,
+      status: r.status,
+      paymentMethod: r.paymentMethod ?? '',
+      createdAt: r.createdAt,
+      deliveredAt: r.deliveredAt ?? '',
+      notes: r.notes ?? ''
     })
   }
 
@@ -26,23 +30,27 @@ export class SaleAssembler {
     return resources.map(r => SaleAssembler.toEntityFromResource(r))
   }
 
-  static toResourceFromEntity(sale) {
+  static toResourceFromEntity(s) {
     return new SaleResource({
-      id: sale.id,
-      invoiceNumber: sale.invoiceNumber,
-      patientId: sale.patientId,
-      patientName: sale.patientName,
-      userId: sale.userId,
-      userName: sale.userName,
-      totalAmount: sale.totalAmount,
-      discountCode: sale.discountCode,
-      discountAmount: sale.discountAmount,
-      pendingBalance: sale.pendingBalance,
-      status: sale.status,
-      paymentMethod: sale.paymentMethod,
-      createdAt: sale.createdAt,
-      deliveredAt: sale.deliveredAt,
-      notes: sale.notes
+      id: s.id,
+      invoiceNumber: s.invoiceNumber,
+      labOrderNumber: s.labOrderNumber,
+      patientId: s.patientId,
+      patientName: s.patientName,
+      patientRx: s.patientRx,
+      userId: s.userId,
+      userName: s.userName,
+      articulos: s.articulos,
+      totalAmount: s.totalAmount,
+      adelanto: s.adelanto,
+      pendingBalance: s.pendingBalance,
+      discountCode: s.discountCode,
+      discountAmount: s.discountAmount,
+      status: s.status,
+      paymentMethod: s.paymentMethod,
+      createdAt: s.createdAt,
+      deliveredAt: s.deliveredAt,
+      notes: s.notes
     })
   }
 }
