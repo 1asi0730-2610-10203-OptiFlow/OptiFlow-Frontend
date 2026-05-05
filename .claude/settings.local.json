@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(Get-ChildItem -Force)",
-      "Bash(Select-Object Name, Mode)"
+      "Bash(Select-Object Name, Mode)",
+      "Bash(powershell -Command \"Get-Content 'mcp-claude_ai_Figma-get_design_context-1778004174167.txt' -TotalCount 50\")"
     ]
   }
 }

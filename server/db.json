@@ -1,0 +1,114 @@
+{
+  "sales": [
+    {
+      "id": 1,
+      "invoiceNumber": "FAC-2843",
+      "patientId": 1,
+      "patientName": "Carlos Rivera",
+      "userId": 1,
+      "userName": "Ana Torres",
+      "totalAmount": 160.00,
+      "discountCode": "",
+      "discountAmount": 0,
+      "pendingBalance": 0,
+      "status": "DELIVERED",
+      "paymentMethod": "CREDIT_CARD",
+      "createdAt": "2026-04-19",
+      "deliveredAt": "2026-04-22",
+      "notes": ""
+    },
+    {
+      "id": 2,
+      "invoiceNumber": "FAC-2844",
+      "patientId": 2,
+      "patientName": "David Martínez",
+      "userId": 1,
+      "userName": "Ana Torres",
+      "totalAmount": 180.00,
+      "discountCode": "",
+      "discountAmount": 0,
+      "pendingBalance": 90.00,
+      "status": "PARTIAL",
+      "paymentMethod": "CASH",
+      "createdAt": "2026-04-20",
+      "deliveredAt": "",
+      "notes": ""
+    },
+    {
+      "id": 3,
+      "invoiceNumber": "FAC-2845",
+      "patientId": 3,
+      "patientName": "Emma Wilson",
+      "userId": 2,
+      "userName": "Luis Gómez",
+      "totalAmount": 245.00,
+      "discountCode": "DESC15",
+      "discountAmount": 36.75,
+      "pendingBalance": 245.00,
+      "status": "PENDING",
+      "paymentMethod": "TRANSFER",
+      "createdAt": "2026-04-21",
+      "deliveredAt": "",
+      "notes": "Cliente VIP"
+    },
+    {
+      "id": 4,
+      "invoiceNumber": "FAC-2846",
+      "patientId": 4,
+      "patientName": "Sarah Johnson",
+      "userId": 1,
+      "userName": "Ana Torres",
+      "totalAmount": 125.00,
+      "discountCode": "",
+      "discountAmount": 0,
+      "pendingBalance": 0,
+      "status": "PAID",
+      "paymentMethod": "DEBIT_CARD",
+      "createdAt": "2026-04-22",
+      "deliveredAt": "",
+      "notes": ""
+    },
+    {
+      "id": 5,
+      "invoiceNumber": "FAC-2847",
+      "patientId": 5,
+      "patientName": "Miguel Flores",
+      "userId": 2,
+      "userName": "Luis Gómez",
+      "totalAmount": 320.00,
+      "discountCode": "",
+      "discountAmount": 0,
+      "pendingBalance": 0,
+      "status": "RETURNED",
+      "paymentMethod": "CREDIT_CARD",
+      "createdAt": "2026-04-18",
+      "deliveredAt": "2026-04-21",
+      "notes": "Devolución por defecto en lente"
+    }
+  ],
+  "sale_details": [
+    { "id": 1, "saleId": 1, "productId": 101, "productName": "Montura Ray-Ban RB5154", "quantity": 1, "unitPrice": 120.00, "subtotal": 120.00 },
+    { "id": 2, "saleId": 1, "productId": 201, "productName": "Luna Progresiva CR-39", "quantity": 1, "unitPrice": 40.00, "subtotal": 40.00 },
+    { "id": 3, "saleId": 2, "productId": 102, "productName": "Montura Oakley OX8046", "quantity": 1, "unitPrice": 180.00, "subtotal": 180.00 },
+    { "id": 4, "saleId": 3, "productId": 103, "productName": "Montura Gucci GG0010O", "quantity": 1, "unitPrice": 245.00, "subtotal": 245.00 },
+    { "id": 5, "saleId": 4, "productId": 202, "productName": "Luna Fotocromática Trivex", "quantity": 1, "unitPrice": 125.00, "subtotal": 125.00 },
+    { "id": 6, "saleId": 5, "productId": 104, "productName": "Montura Prada PR 14WV", "quantity": 1, "unitPrice": 320.00, "subtotal": 320.00 }
+  ],
+  "payments": [
+    { "id": 1, "saleId": 1, "amountPaid": 160.00, "method": "CREDIT_CARD", "paidAt": "2026-04-19T10:30:00Z" },
+    { "id": 2, "saleId": 2, "amountPaid": 90.00, "method": "CASH", "paidAt": "2026-04-20T09:15:00Z" },
+    { "id": 3, "saleId": 4, "amountPaid": 125.00, "method": "DEBIT_CARD", "paidAt": "2026-04-22T11:00:00Z" },
+    { "id": 4, "saleId": 5, "amountPaid": 320.00, "method": "CREDIT_CARD", "paidAt": "2026-04-18T16:45:00Z" }
+  ],
+  "feedbacks": [
+    { "id": 1, "saleId": 1, "patientId": 1, "rating": 5, "recommendService": true, "comment": "Excelente atención", "submittedAt": "2026-04-22T15:00:00Z" },
+    { "id": 2, "saleId": 4, "patientId": 4, "rating": 4, "recommendService": true, "comment": "Muy buena calidad", "submittedAt": "2026-04-22T12:00:00Z" }
+  ],
+  "patients": [
+    { "id": 1, "name": "Carlos Rivera",  "dni": "12345678", "email": "carlos@email.com",  "phone": "987654321" },
+    { "id": 2, "name": "David Martínez", "dni": "23456789", "email": "david@email.com",   "phone": "987654322" },
+    { "id": 3, "name": "Emma Wilson",    "dni": "34567890", "email": "emma@email.com",    "phone": "987654323" },
+    { "id": 4, "name": "Sarah Johnson",  "dni": "45678901", "email": "sarah@email.com",   "phone": "987654324" },
+    { "id": 5, "name": "Miguel Flores",  "dni": "56789012", "email": "miguel@email.com",  "phone": "987654325" }
+  ]
+}
