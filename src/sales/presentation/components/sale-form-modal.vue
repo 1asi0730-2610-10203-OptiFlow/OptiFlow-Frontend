@@ -12,45 +12,42 @@ const emit = defineEmits(['saved', 'close'])
 
 const step = ref(0)
 const TOTAL_STEPS = 3
-
 const stepLabels = ['Paciente y Rx', 'Armaz & Lentes', 'Pago']
 
 // Step 0
 const patients = ref([])
 const selectedPatient = ref(null)
 
-// Step 1
+// Step 1 — descriptive only, feeds articulos
 const frameOption = ref('')
 const lenseMaterial = ref('')
 const lenseType = ref('')
+const extraItems = ref([])
 
 const frameOptions = [
-  { label: 'Ray-Ban RB5228',  value: 'Ray-Ban RB5228' },
-  { label: 'Nike 7284',       value: 'Nike 7284' },
+  { label: 'Ray-Ban RB5228',     value: 'Ray-Ban RB5228' },
+  { label: 'Nike 7284',          value: 'Nike 7284' },
   { label: 'Otro / Sin armazón', value: 'Otro' }
 ]
-
 const lenseMaterialOptions = [
-  { label: 'CR-39 (Plástico)',    value: 'CR-39' },
-  { label: 'Policarbonato',       value: 'Policarbonato' },
-  { label: 'Trivex',              value: 'Trivex' },
+  { label: 'CR-39 (Plástico)',   value: 'CR-39' },
+  { label: 'Policarbonato',      value: 'Policarbonato' },
+  { label: 'Trivex',             value: 'Trivex' },
   { label: 'Alto índice (1.67)', value: '1.67' }
 ]
-
 const lenseTypeOptions = [
-  { label: 'Monofocal',          value: 'Monofocal' },
-  { label: 'Progresivo',         value: 'Progresivo' },
-  { label: 'Con Filtro Azul',    value: 'Filtro Azul' },
-  { label: 'Polarizado',         value: 'Polarizado' }
+  { label: 'Monofocal',       value: 'Monofocal' },
+  { label: 'Progresivo',      value: 'Progresivo' },
+  { label: 'Con Filtro Azul', value: 'Filtro Azul' },
+  { label: 'Polarizado',      value: 'Polarizado' }
 ]
 
-const saleDetails = ref([{ productName: '', quantity: 1, unitPrice: 0 }])
-
-// Step 2
-const paymentMethod = ref(PaymentMethod.CASH)
+// Step 2 — pricing
+const totalAmountInput = ref(0)
 const adelanto = ref(0)
 const discountCode = ref('')
 const discountAmount = ref(0)
+const paymentMethod = ref(PaymentMethod.CASH)
 const notes = ref('')
 
 const paymentMethodOptions = [
@@ -61,61 +58,53 @@ const paymentMethodOptions = [
   { label: 'Seguro',             value: PaymentMethod.INSURANCE }
 ]
 
-const totalAmount = computed(() =>
-  saleDetails.value.reduce((sum, d) => sum + d.quantity * d.unitPrice, 0)
+const finalAmount = computed(() =>
+  Math.max(0, (totalAmountInput.value || 0) - (discountAmount.value || 0))
+)
+const pendingBalance = computed(() =>
+  Math.max(0, finalAmount.value - (adelanto.value || 0))
 )
 
-const finalAmount = computed(() => Math.max(0, totalAmount.value - discountAmount.value))
-
-const pendingBalance = computed(() => Math.max(0, finalAmount.value - adelanto.value))
+const canSave = computed(() =>
+  !!selectedPatient.value && finalAmount.value > 0
+)
 
 onMounted(async () => {
   const res = await axios.get(`${import.meta.env.VITE_OPTIFLOW_API_URL}/patients`)
   patients.value = res.data
 })
 
-function addDetail() {
-  saleDetails.value.push({ productName: '', quantity: 1, unitPrice: 0 })
+function addExtraItem() {
+  extraItems.value.push('')
 }
-
-function removeDetail(index) {
-  saleDetails.value.splice(index, 1)
+function removeExtraItem(i) {
+  extraItems.value.splice(i, 1)
 }
 
 function nextStep() {
   if (step.value < TOTAL_STEPS - 1) step.value++
 }
-
 function prevStep() {
   if (step.value > 0) step.value--
 }
 
-function generateInvoiceNumber() {
-  return `FAC-${Math.floor(1000 + Math.random() * 9000)}`
-}
-
-function generateLabOrderNumber() {
-  return `LAB-${Math.floor(1000 + Math.random() * 9000)}`
-}
-
 function buildArticulos() {
   const arts = []
-  if (frameOption.value) arts.push(frameOption.value)
-  if (lenseType.value) {
-    arts.push(`Lunas ${lenseType.value}`)
-  }
-  saleDetails.value.forEach(d => {
-    if (d.productName && !arts.includes(d.productName)) arts.push(d.productName)
-  })
+  if (frameOption.value && frameOption.value !== 'Otro') arts.push(frameOption.value)
+  if (lenseType.value) arts.push(`Lunas ${lenseType.value}`)
+  extraItems.value.forEach(item => { if (item.trim()) arts.push(item.trim()) })
   return arts
 }
 
+function generateCode(prefix) {
+  return `${prefix}-${Math.floor(1000 + Math.random() * 9000)}`
+}
+
 function save() {
-  if (!selectedPatient.value) return
-  const inv = generateInvoiceNumber()
+  if (!canSave.value) return
   const sale = new Sale({
-    invoiceNumber: inv,
-    labOrderNumber: generateLabOrderNumber(),
+    invoiceNumber: generateCode('FAC'),
+    labOrderNumber: generateCode('LAB'),
     patientId: selectedPatient.value.id,
     patientName: selectedPatient.value.name,
     patientRx: selectedPatient.value.rx ?? '',
@@ -123,9 +112,9 @@ function save() {
     userName: 'John Doe',
     articulos: buildArticulos(),
     totalAmount: finalAmount.value,
-    adelanto: adelanto.value,
+    adelanto: adelanto.value || 0,
     discountCode: discountCode.value,
-    discountAmount: discountAmount.value,
+    discountAmount: discountAmount.value || 0,
     pendingBalance: pendingBalance.value,
     status: pendingBalance.value > 0 ? 'PARTIAL' : 'PENDING',
     paymentMethod: paymentMethod.value,
@@ -141,11 +130,12 @@ function close() {
   frameOption.value = ''
   lenseMaterial.value = ''
   lenseType.value = ''
-  saleDetails.value = [{ productName: '', quantity: 1, unitPrice: 0 }]
-  paymentMethod.value = PaymentMethod.CASH
+  extraItems.value = []
+  totalAmountInput.value = 0
   adelanto.value = 0
   discountCode.value = ''
   discountAmount.value = 0
+  paymentMethod.value = PaymentMethod.CASH
   notes.value = ''
   emit('close')
 }
@@ -173,10 +163,7 @@ function close() {
           v-for="(label, i) in stepLabels"
           :key="i"
           class="step-tab"
-          :class="{
-            'step-tab--active': i === step,
-            'step-tab--done': i < step
-          }"
+          :class="{ 'step-tab--active': i === step, 'step-tab--done': i < step }"
         >
           <span class="step-tab__dot">
             <i v-if="i < step" class="pi pi-check" style="font-size: 0.65rem" />
@@ -253,58 +240,74 @@ function close() {
 
         <div class="divider" />
 
-        <p class="section-label">Ítems adicionales</p>
-        <div v-for="(detail, i) in saleDetails" :key="i" class="product-row">
-          <pv-input-text v-model="detail.productName" placeholder="Accesorio / kit / otro..." class="flex-1" />
-          <input
-            v-model.number="saleDetails[i].quantity"
-            type="number"
-            min="1"
-            step="1"
-            class="qty-input"
-            placeholder="Cant."
-          />
-          <div class="price-input-wrap">
-            <span class="price-prefix">S/</span>
-            <input
-              v-model.number="saleDetails[i].unitPrice"
-              type="number"
-              min="0"
-              step="0.01"
-              class="price-input"
-              placeholder="0.00"
-            />
-          </div>
-          <pv-button icon="pi pi-trash" severity="danger" text @click="removeDetail(i)" :disabled="saleDetails.length === 1" />
+        <div class="section-header">
+          <p class="section-label">Artículos adicionales</p>
+          <button class="add-link" @click="addExtraItem">
+            <i class="pi pi-plus" style="font-size: 0.7rem" /> Agregar
+          </button>
         </div>
-        <pv-button label="Agregar ítem" icon="pi pi-plus" text size="small" @click="addDetail" />
 
-        <div class="total-row">
-          <span>Subtotal estimado</span>
-          <span>S/ {{ totalAmount.toFixed(2) }}</span>
+        <div v-for="(_, i) in extraItems" :key="i" class="extra-item-row">
+          <pv-input-text
+            v-model="extraItems[i]"
+            placeholder="Kit de limpieza, estuche, etc."
+            class="flex-1"
+          />
+          <button class="remove-btn" @click="removeExtraItem(i)">
+            <i class="pi pi-times" />
+          </button>
         </div>
+
+        <p v-if="extraItems.length === 0" class="empty-hint">
+          Sin artículos adicionales. El precio total se ingresa en el siguiente paso.
+        </p>
       </div>
 
       <!-- Step 2: Pago -->
       <div v-else class="step-content">
         <div class="form-field">
-          <label>Método de pago <span class="required">*</span></label>
-          <pv-select v-model="paymentMethod" :options="paymentMethodOptions" option-label="label" option-value="value" class="w-full" />
-        </div>
-
-        <div class="form-field">
-          <label>Adelanto (S/)</label>
-          <div class="price-input-wrap">
+          <label>Total de la venta (S/) <span class="required">*</span></label>
+          <div class="price-input-wrap" :class="{ 'price-input-wrap--error': totalAmountInput <= 0 }">
             <span class="price-prefix">S/</span>
             <input
-              v-model.number="adelanto"
+              v-model.number="totalAmountInput"
               type="number"
-              min="0"
-              :max="finalAmount"
+              min="0.01"
               step="0.01"
               class="price-input"
               placeholder="0.00"
+              autofocus
             />
+          </div>
+          <span v-if="totalAmountInput <= 0" class="field-hint">Ingresa el monto total acordado con el paciente.</span>
+        </div>
+
+        <div class="two-col">
+          <div class="form-field">
+            <label>Método de pago <span class="required">*</span></label>
+            <pv-select
+              v-model="paymentMethod"
+              :options="paymentMethodOptions"
+              option-label="label"
+              option-value="value"
+              class="w-full"
+            />
+          </div>
+
+          <div class="form-field">
+            <label>Adelanto (S/)</label>
+            <div class="price-input-wrap">
+              <span class="price-prefix">S/</span>
+              <input
+                v-model.number="adelanto"
+                type="number"
+                min="0"
+                :max="finalAmount"
+                step="0.01"
+                class="price-input"
+                placeholder="0.00"
+              />
+            </div>
           </div>
         </div>
 
@@ -312,13 +315,13 @@ function close() {
           <label>Código de descuento</label>
           <div class="discount-row">
             <pv-input-text v-model="discountCode" placeholder="ej. DESC15" class="flex-1" />
-            <div class="price-input-wrap" style="width: 130px">
+            <div class="price-input-wrap" style="width: 140px">
               <span class="price-prefix">S/</span>
               <input
                 v-model.number="discountAmount"
                 type="number"
                 min="0"
-                :max="totalAmount"
+                :max="totalAmountInput"
                 step="0.01"
                 class="price-input"
                 placeholder="0.00"
@@ -335,15 +338,19 @@ function close() {
         <div class="summary-box">
           <div class="summary-row">
             <span>Subtotal</span>
-            <span>S/ {{ totalAmount.toFixed(2) }}</span>
+            <span>S/ {{ (totalAmountInput || 0).toFixed(2) }}</span>
           </div>
-          <div v-if="discountAmount > 0" class="summary-row summary-row--discount">
+          <div v-if="(discountAmount || 0) > 0" class="summary-row summary-row--discount">
             <span>Descuento</span>
-            <span>- S/ {{ discountAmount.toFixed(2) }}</span>
+            <span>- S/ {{ (discountAmount || 0).toFixed(2) }}</span>
+          </div>
+          <div class="summary-row">
+            <span>Total</span>
+            <span style="font-weight: 700">S/ {{ finalAmount.toFixed(2) }}</span>
           </div>
           <div class="summary-row">
             <span>Adelanto</span>
-            <span class="adelanto-val">S/ {{ adelanto.toFixed(2) }}</span>
+            <span class="adelanto-val">S/ {{ (adelanto || 0).toFixed(2) }}</span>
           </div>
           <div class="summary-row summary-row--total">
             <span>Saldo pendiente</span>
@@ -370,7 +377,7 @@ function close() {
             v-else
             label="Crear venta + orden de lab"
             icon="pi pi-check"
-            :disabled="finalAmount <= 0"
+            :disabled="!canSave"
             @click="save"
           />
         </div>
@@ -408,10 +415,8 @@ function close() {
   padding: 4px 0;
 }
 
-/* Step Tabs */
 .step-tabs {
   display: flex;
-  gap: 0;
   border-bottom: 1px solid #f3f4f6;
   padding-bottom: 16px;
 }
@@ -446,31 +451,16 @@ function close() {
   color: #9ca3af;
 }
 
-.step-tab--active .step-tab__dot {
-  background: #00c1b0;
-  color: #fff;
-}
+.step-tab--active .step-tab__dot { background: #00c1b0; color: #fff; }
+.step-tab--active .step-tab__label { color: #101828; font-weight: 600; }
+.step-tab--done .step-tab__dot { background: #dcfce7; color: #008236; }
+.step-tab--done .step-tab__label { color: #6a7282; }
 
-.step-tab--active .step-tab__label {
-  color: #101828;
-  font-weight: 600;
-}
-
-.step-tab--done .step-tab__dot {
-  background: #dcfce7;
-  color: #008236;
-}
-
-.step-tab--done .step-tab__label {
-  color: #6a7282;
-}
-
-/* Step Content */
 .step-content {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  min-height: 220px;
+  min-height: 240px;
 }
 
 .form-field {
@@ -486,8 +476,18 @@ function close() {
   color: #374151;
 }
 
-.required {
+.required { color: #e7000b; }
+
+.field-hint {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.72rem;
   color: #e7000b;
+}
+
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
 }
 
 .rx-card {
@@ -524,11 +524,7 @@ function close() {
   color: #374151;
 }
 
-.rx-eye {
-  font-weight: 700;
-  color: #1d4ed8;
-  width: 24px;
-}
+.rx-eye { font-weight: 700; color: #1d4ed8; width: 24px; }
 
 .rx-note {
   font-family: 'Montserrat', sans-serif;
@@ -537,8 +533,12 @@ function close() {
   margin-top: 4px;
 }
 
-.divider {
-  border-top: 1px solid #f3f4f6;
+.divider { border-top: 1px solid #f3f4f6; }
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .section-label {
@@ -549,27 +549,48 @@ function close() {
   margin: 0;
 }
 
-.product-row {
+.add-link {
   display: flex;
-  gap: 8px;
   align-items: center;
-}
-
-.total-row {
-  display: flex;
-  justify-content: space-between;
+  gap: 4px;
+  background: none;
+  border: none;
+  padding: 0;
   font-family: 'Montserrat', sans-serif;
+  font-size: 0.78rem;
   font-weight: 600;
-  padding: 10px 0;
-  border-top: 1px solid #e9ecef;
-  font-size: 0.9rem;
-  color: #101828;
+  color: #00c1b0;
+  cursor: pointer;
 }
 
-.discount-row {
+.extra-item-row {
   display: flex;
+  align-items: center;
   gap: 8px;
 }
+
+.remove-btn {
+  background: none;
+  border: none;
+  padding: 4px 6px;
+  color: #9ca3af;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: color 0.15s;
+}
+
+.remove-btn:hover { color: #e7000b; }
+
+.empty-hint {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.78rem;
+  color: #9ca3af;
+  text-align: center;
+  padding: 12px 0;
+  margin: 0;
+}
+
+.discount-row { display: flex; gap: 8px; }
 
 .summary-box {
   background: #f9fafb;
@@ -590,9 +611,7 @@ function close() {
 }
 
 .summary-row--discount { color: #16a34a; }
-
 .adelanto-val { color: #00a63e; font-weight: 600; }
-
 .summary-row--total {
   font-weight: 700;
   font-size: 0.95rem;
@@ -608,10 +627,7 @@ function close() {
   width: 100%;
 }
 
-.footer-nav {
-  display: flex;
-  gap: 8px;
-}
+.footer-nav { display: flex; gap: 8px; }
 
 .price-input-wrap {
   display: flex;
@@ -623,9 +639,8 @@ function close() {
   transition: border-color 0.15s;
 }
 
-.price-input-wrap:focus-within {
-  border-color: #00c1b0;
-}
+.price-input-wrap:focus-within { border-color: #00c1b0; }
+.price-input-wrap--error { border-color: #fca5a5; background: #fff5f5; }
 
 .price-prefix {
   padding: 0 10px;
@@ -644,38 +659,14 @@ function close() {
   flex: 1;
   border: none;
   outline: none;
-  padding: 8px 10px;
+  padding: 9px 10px;
   font-family: 'Montserrat', sans-serif;
-  font-size: 0.845rem;
+  font-size: 0.875rem;
   color: #101828;
   background: transparent;
   min-width: 0;
 }
 
 .price-input::-webkit-inner-spin-button,
-.price-input::-webkit-outer-spin-button {
-  opacity: 0.5;
-}
-
-.qty-input {
-  width: 72px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  padding: 8px 10px;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.845rem;
-  color: #101828;
-  outline: none;
-  text-align: center;
-  transition: border-color 0.15s;
-}
-
-.qty-input:focus {
-  border-color: #00c1b0;
-}
-
-.qty-input::-webkit-inner-spin-button,
-.qty-input::-webkit-outer-spin-button {
-  opacity: 0.5;
-}
+.price-input::-webkit-outer-spin-button { opacity: 0.5; }
 </style>
