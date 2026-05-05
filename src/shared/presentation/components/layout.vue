@@ -5,12 +5,14 @@ const router = useRouter()
 const route = useRoute()
 
 const navItems = [
-  { label: 'Panel',        icon: 'pi pi-home',        to: '/' },
-  { label: 'Pacientes',    icon: 'pi pi-users',        to: '/patients' },
-  { label: 'Ventas',       icon: 'pi pi-shopping-cart', to: '/sales' },
-  { label: 'Inventario',   icon: 'pi pi-box',          to: '/inventory' },
-  { label: 'Reportes',     icon: 'pi pi-chart-bar',    to: '/reports' },
-  { label: 'Configuración',icon: 'pi pi-cog',          to: '/settings' }
+  { label: 'Panel',          icon: 'pi pi-home',             to: '/panel' },
+  { label: 'Pacientes',      icon: 'pi pi-users',             to: '/patients' },
+  { label: 'Ventas',         icon: 'pi pi-shopping-cart',     to: '/sales' },
+  { label: 'Órdenes de Lab', icon: 'pi pi-flask',             to: '/lab-orders' },
+  { label: 'Inventario',     icon: 'pi pi-box',               to: '/inventory' },
+  { label: 'Personal',       icon: 'pi pi-id-card',           to: '/staff' },
+  { label: 'Reportes',       icon: 'pi pi-chart-bar',         to: '/reports' },
+  { label: 'Configuración',  icon: 'pi pi-cog',               to: '/settings' }
 ]
 
 function navigate(to) {
@@ -18,8 +20,7 @@ function navigate(to) {
 }
 
 function isActive(to) {
-  return route.path.startsWith(to) && to !== '/'
-    || (to === '/' && route.path === '/')
+  return route.path.startsWith(to)
 }
 </script>
 
@@ -36,7 +37,8 @@ function isActive(to) {
         </div>
       </div>
 
-      <nav class="sidebar-nav">
+      <div class="sidebar-nav">
+        <p class="nav-section-label">MENÚ PRINCIPAL</p>
         <button
           v-for="item in navItems"
           :key="item.to"
@@ -47,7 +49,15 @@ function isActive(to) {
           <i :class="item.icon" class="nav-item__icon" />
           <span class="nav-item__label">{{ item.label }}</span>
         </button>
-      </nav>
+      </div>
+
+      <div class="sidebar-user">
+        <div class="user-avatar">JD</div>
+        <div class="user-info">
+          <span class="user-name">John Doe</span>
+          <span class="user-role">Administrador</span>
+        </div>
+      </div>
     </aside>
 
     <main class="main-content">
@@ -64,14 +74,14 @@ function isActive(to) {
   display: flex;
   height: 100vh;
   overflow: hidden;
-  background-color: #f8f9fa;
+  background-color: #f9fafb;
 }
 
 .sidebar {
-  width: 256px;
-  min-width: 256px;
-  background: #03070A;
-  border-right: 1px solid #e9ecef;
+  width: 240px;
+  min-width: 240px;
+  background: #03070a;
+  border-right: 1px solid rgba(147, 193, 206, 0.15);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -81,31 +91,34 @@ function isActive(to) {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 20px 20px 16px;
-  border-bottom: 1px solid #e9ecef;
+  padding: 20px 16px 18px;
+  border-bottom: 1px solid rgba(147, 193, 206, 0.15);
 }
 
 .brand-logo {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: #00C1B0;
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  background: #00c1b0;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .brand-icon {
   color: #fff;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
 }
 
 .brand-text {
   display: flex;
   flex-direction: column;
+  gap: 1px;
 }
 
 .brand-name {
+  font-family: 'Josefin Sans', sans-serif;
   font-size: 1rem;
   font-weight: 700;
   color: #ffffff;
@@ -113,25 +126,36 @@ function isActive(to) {
 }
 
 .brand-subtitle {
-  font-size: 0.7rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.68rem;
+  color: #93c1ce;
   line-height: 1.2;
-  color: white;
-
 }
 
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: 12px 12px;
+  gap: 1px;
+  padding: 16px 10px;
   flex: 1;
+}
+
+.nav-section-label {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #93c1ce;
+  opacity: 0.6;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0 4px 8px;
 }
 
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 14px;
+  gap: 10px;
+  padding: 9px 12px;
   border: none;
   background: transparent;
   border-radius: 8px;
@@ -139,29 +163,71 @@ function isActive(to) {
   width: 100%;
   text-align: left;
   transition: background 0.15s, color 0.15s;
-  color: #93C1CE;
-  font-size: 0.875rem;
+  color: #93c1ce;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.845rem;
   font-weight: 500;
 }
 
 .nav-item:hover {
-  background: #f3f4f6;
-  color: #111827;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
 }
 
 .nav-item--active {
-  background: #00C1B0;
-  color: #ffffff;
-}
-
-.nav-item--active .nav-item__icon {
-  color: #ffffff;
+  background: rgba(0, 193, 176, 0.15);
+  color: #00c1b0;
+  border-left: 3px solid #00c1b0;
+  padding-left: 9px;
 }
 
 .nav-item__icon {
-  font-size: 1rem;
-  width: 18px;
+  font-size: 0.95rem;
+  width: 17px;
   text-align: center;
+  flex-shrink: 0;
+}
+
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-top: 1px solid rgba(147, 193, 206, 0.15);
+}
+
+.user-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(0, 193, 176, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #00c1b0;
+  flex-shrink: 0;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.user-name {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.user-role {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.7rem;
+  color: #93c1ce;
 }
 
 .main-content {
@@ -169,5 +235,6 @@ function isActive(to) {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  background: #f9fafb;
 }
 </style>

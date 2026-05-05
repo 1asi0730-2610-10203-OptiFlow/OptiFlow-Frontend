@@ -1,4 +1,3 @@
-
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { SalesApi } from '../infrastructure/sales-api.js'
@@ -30,6 +29,22 @@ export const useSalesStore = defineStore('sales', () => {
     sales.value.filter(s => s.status === 'DELIVERED' || s.status === 'PAID').length
   )
 
+  const totalIngresos = computed(() =>
+    sales.value.reduce((sum, s) => sum + s.totalAmount, 0)
+  )
+
+  const totalAdelantos = computed(() =>
+    sales.value.reduce((sum, s) => sum + s.adelanto, 0)
+  )
+
+  const totalSaldo = computed(() =>
+    sales.value.reduce((sum, s) => sum + s.pendingBalance, 0)
+  )
+
+  const ticketPromedio = computed(() =>
+    sales.value.length > 0 ? totalIngresos.value / sales.value.length : 0
+  )
+
   async function fetchSales() {
     loading.value = true
     try {
@@ -47,7 +62,7 @@ export const useSalesStore = defineStore('sales', () => {
     try {
       const resource = SaleAssembler.toResourceFromEntity(sale)
       const created = await salesApi.createSale(resource)
-      sales.value.push(SaleAssembler.toEntityFromResource(created))
+      sales.value.unshift(SaleAssembler.toEntityFromResource(created))
     } catch (e) {
       errors.value.push(e.message)
     } finally {
@@ -74,6 +89,12 @@ export const useSalesStore = defineStore('sales', () => {
     const sale = sales.value.find(s => s.id === id)
     if (!sale) return
     await updateSale(id, { ...sale, status: 'RETURNED', pendingBalance: 0 })
+  }
+
+  async function cancelSale(id) {
+    const sale = sales.value.find(s => s.id === id)
+    if (!sale) return
+    await updateSale(id, { ...sale, status: 'RETURNED' })
   }
 
   async function fetchPaymentsBySale(saleId) {
@@ -121,20 +142,11 @@ export const useSalesStore = defineStore('sales', () => {
   }
 
   return {
-    sales,
-    payments,
-    currentSale,
-    loading,
-    errors,
-    salesCount,
-    openSalesCount,
-    completedSalesCount,
-    fetchSales,
-    createSale,
-    updateSale,
-    markAsReturned,
-    fetchPaymentsBySale,
-    registerPayment,
-    submitFeedback
+    sales, payments, currentSale, loading, errors,
+    salesCount, openSalesCount, completedSalesCount,
+    totalIngresos, totalAdelantos, totalSaldo, ticketPromedio,
+    fetchSales, createSale, updateSale,
+    markAsReturned, cancelSale,
+    fetchPaymentsBySale, registerPayment, submitFeedback
   }
 })

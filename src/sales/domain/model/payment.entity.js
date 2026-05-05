@@ -15,8 +15,9 @@ export class Payment {
 }
 
 export const PaymentMethod = Object.freeze({
-  CASH: 'CASH',
+  CASH:        'CASH',
   CREDIT_CARD: 'CREDIT_CARD',
-  DEBIT_CARD: 'DEBIT_CARD',
-  TRANSFER: 'TRANSFER'
+  DEBIT_CARD:  'DEBIT_CARD',
+  TRANSFER:    'TRANSFER',
+  INSURANCE:   'INSURANCE'
 })
