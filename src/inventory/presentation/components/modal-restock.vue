@@ -1,23 +1,26 @@
 <script setup>
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
-  articulo: { type: Object, required: true }
+  product: { type: Object, required: true }
 })
 const emit = defineEmits(['restock', 'close'])
 
-const qty = ref('')
-const nota = ref('')
+const quantity = ref('')
+const notes = ref('')
 
-const nuevoStock = computed(() => {
-  const q = parseInt(qty.value) || 0
-  return q > 0 ? props.articulo.stock + q : null
+const newStock = computed(() => {
+  const qty = parseInt(quantity.value) || 0
+  return qty > 0 ? props.product.stock + qty : null
 })
 
 function onSubmit() {
-  const q = parseInt(qty.value)
-  if (q > 0) {
-    emit('restock', { id: props.articulo.product_id, qty: q, operacion: 'Reabastecimiento' })
+  const qty = parseInt(quantity.value)
+  if (qty > 0) {
+    emit('restock', { id: props.product.id, qty, operation: 'Restock' })
     emit('close')
   }
 }
@@ -28,38 +31,65 @@ function onSubmit() {
     <div class="modal" @click.stop>
       <div class="modal-header">
         <div>
-          <h3 class="modal-title">Reabastecer Artículo</h3>
-          <p class="modal-subtitle truncate">{{ articulo.nombre }}</p>
+          <h3 class="modal-title">{{ $t('inventory.restockModal.title') }}</h3>
+          <p class="modal-subtitle">{{ product.name }}</p>
         </div>
-        <button class="close-btn" @click="emit('close')"><i class="pi pi-times" /></button>
+        <button class="close-btn" @click="emit('close')">
+          <i class="pi pi-times" />
+        </button>
       </div>
+
       <div class="modal-body">
         <div class="stock-summary">
           <div>
-            <p class="summary-label">Stock Actual</p>
-            <p class="summary-value">{{ articulo.stock }} <span class="summary-unit">unid.</span></p>
+            <p class="summary-label">{{ $t('inventory.restockModal.currentStock') }}</p>
+            <p class="summary-value">
+              {{ product.stock }}
+              <span class="summary-unit">{{ $t('inventory.restockModal.units') }}</span>
+            </p>
           </div>
           <div>
-            <p class="summary-label">Nivel de Reorden</p>
-            <p class="summary-reorden">{{ articulo.nivelReorden }} unid.</p>
+            <p class="summary-label">{{ $t('inventory.restockModal.reorderLevel') }}</p>
+            <p class="summary-reorder">
+              {{ product.minimumStockThreshold }} {{ $t('inventory.restockModal.units') }}
+            </p>
           </div>
         </div>
+
         <div class="field">
-          <label>Cantidad a Agregar *</label>
-          <input v-model="qty" type="number" min="1" class="form-input" placeholder="Ej. 50" required />
+          <label>{{ $t('inventory.restockModal.quantityToAdd') }} *</label>
+          <input
+              v-model="quantity"
+              type="number"
+              min="1"
+              class="form-input"
+              :placeholder="$t('inventory.restockModal.quantityPlaceholder')"
+              required
+          />
         </div>
-        <div v-if="nuevoStock !== null" class="nuevo-stock-preview">
-          <span class="preview-label">Nuevo nivel de stock</span>
-          <span class="preview-value">{{ nuevoStock }} unidades</span>
+
+        <div v-if="newStock !== null" class="new-stock-preview">
+          <span class="preview-label">{{ $t('inventory.restockModal.newStockLevel') }}</span>
+          <span class="preview-value">
+            {{ newStock }} {{ $t('inventory.restockModal.units_full') }}
+          </span>
         </div>
+
         <div class="field">
-          <label>Notas (opcional)</label>
-          <input v-model="nota" class="form-input" placeholder="Ej. OC #1234, entrega del proveedor" />
+          <label>{{ $t('inventory.restockModal.notes') }}</label>
+          <input
+              v-model="notes"
+              class="form-input"
+              :placeholder="$t('inventory.restockModal.notesPlaceholder')"
+          />
         </div>
       </div>
+
       <div class="modal-footer">
-        <button class="btn-cancel" @click="emit('close')">Cancelar</button>
-        <button class="btn-restock" @click="onSubmit">Confirmar Restock</button>
+        <button class="btn-cancel" @click="emit('close')">{{ $t('common.cancel') }}</button>
+        <button class="btn-restock" @click="onSubmit">
+          {{ $t('inventory.restockModal.confirmRestock') }}
+        </button>
       </div>
     </div>
   </div>
@@ -79,12 +109,12 @@ function onSubmit() {
 .summary-label { font-family: 'Montserrat', sans-serif; font-size: 0.74rem; color: #6b7280; margin: 0 0 4px; }
 .summary-value { font-family: 'Josefin Sans', sans-serif; font-size: 1.8rem; font-weight: 700; color: #111827; margin: 0; }
 .summary-unit { font-family: 'Montserrat', sans-serif; font-size: 0.82rem; font-weight: 400; color: #6b7280; }
-.summary-reorden { font-family: 'Montserrat', sans-serif; font-size: 1.1rem; font-weight: 700; color: #ea580c; margin: 0; }
+.summary-reorder { font-family: 'Montserrat', sans-serif; font-size: 1.1rem; font-weight: 700; color: #ea580c; margin: 0; }
 .field { display: flex; flex-direction: column; gap: 6px; }
 .field label { font-family: 'Montserrat', sans-serif; font-size: 0.82rem; font-weight: 600; color: #374151; }
 .form-input { padding: 9px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 0.84rem; color: #111827; outline: none; transition: border-color 0.15s; }
 .form-input:focus { border-color: #00c1b0; }
-.nuevo-stock-preview { background: #f0fdf4; border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; }
+.new-stock-preview { background: #f0fdf4; border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; }
 .preview-label { font-family: 'Montserrat', sans-serif; font-size: 0.82rem; color: #6b7280; }
 .preview-value { font-family: 'Montserrat', sans-serif; font-size: 0.88rem; font-weight: 700; color: #16a34a; }
 .btn-cancel { flex: 1; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff; font-family: 'Montserrat', sans-serif; font-size: 0.84rem; font-weight: 600; color: #374151; cursor: pointer; }
