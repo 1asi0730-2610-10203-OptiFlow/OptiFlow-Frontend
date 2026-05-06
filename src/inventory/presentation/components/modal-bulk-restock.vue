@@ -1,27 +1,30 @@
 <script setup>
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
-  articulos: { type: Array, default: () => [] }
+  products: { type: Array, default: () => [] }
 })
 const emit = defineEmits(['restock', 'close'])
 
-const stockBajo = computed(() =>
-    props.articulos.filter(i => i.stock <= i.nivelReorden)
+const lowStockItems = computed(() =>
+    props.products.filter(product => product.stock <= product.minimumStockThreshold)
 )
 
-const cantidades = ref(
+const quantities = ref(
     Object.fromEntries(
-        props.articulos
-            .filter(i => i.stock <= i.nivelReorden)
-            .map(i => [i.product_id, String(i.nivelReorden - i.stock + 10)])
+        props.products
+            .filter(product => product.stock <= product.minimumStockThreshold)
+            .map(product => [product.id, String(product.minimumStockThreshold - product.stock + 10)])
     )
 )
 
 function onSubmit() {
-  Object.entries(cantidades.value).forEach(([id, qty]) => {
-    const q = parseInt(qty)
-    if (q > 0) emit('restock', { id: parseInt(id), qty: q, operacion: 'Reabastecimiento Masivo' })
+  Object.entries(quantities.value).forEach(([id, qty]) => {
+    const quantity = parseInt(qty)
+    if (quantity > 0) emit('restock', { id: parseInt(id), qty: quantity, operation: 'Bulk Restock' })
   })
   emit('close')
 }
@@ -32,28 +35,34 @@ function onSubmit() {
     <div class="modal" @click.stop>
       <div class="modal-header">
         <div>
-          <h3 class="modal-title">Reabastecimiento Masivo</h3>
-          <p class="modal-subtitle">Reponer todos los artículos con stock bajo</p>
+          <h3 class="modal-title">{{ $t('inventory.bulkRestockModal.title') }}</h3>
+          <p class="modal-subtitle">{{ $t('inventory.bulkRestockModal.subtitle') }}</p>
         </div>
-        <button class="close-btn" @click="emit('close')"><i class="pi pi-times" /></button>
+        <button class="close-btn" @click="emit('close')">
+          <i class="pi pi-times" />
+        </button>
       </div>
+
       <div class="modal-body">
-        <div v-if="stockBajo.length === 0" class="empty-state">
-          Todos los artículos tienen stock suficiente.
+        <div v-if="lowStockItems.length === 0" class="empty-state">
+          {{ $t('inventory.bulkRestockModal.allSufficient') }}
         </div>
         <div
-            v-for="item in stockBajo"
-            :key="item.product_id"
+            v-for="product in lowStockItems"
+            :key="product.id"
             class="item-row"
         >
           <div class="item-info">
-            <p class="item-name">{{ item.nombre }}</p>
-            <p class="item-stock">Stock: {{ item.stock }} / Mín: {{ item.nivelReorden }}</p>
+            <p class="item-name">{{ product.name }}</p>
+            <p class="item-stock">
+              {{ $t('inventory.table.stock') }}: {{ product.stock }} /
+              {{ $t('inventory.table.min') }}: {{ product.minimumStockThreshold }}
+            </p>
           </div>
           <div class="item-qty">
-            <span class="qty-label">Agregar:</span>
+            <span class="qty-label">{{ $t('inventory.bulkRestockModal.add') }}:</span>
             <input
-                v-model="cantidades[item.product_id]"
+                v-model="quantities[product.id]"
                 type="number"
                 min="0"
                 class="qty-input"
@@ -61,9 +70,12 @@ function onSubmit() {
           </div>
         </div>
       </div>
+
       <div class="modal-footer">
-        <button class="btn-cancel" @click="emit('close')">Cancelar</button>
-        <button v-if="stockBajo.length > 0" class="btn-restock" @click="onSubmit">Reponer Todo</button>
+        <button class="btn-cancel" @click="emit('close')">{{ $t('common.cancel') }}</button>
+        <button v-if="lowStockItems.length > 0" class="btn-restock" @click="onSubmit">
+          {{ $t('inventory.bulkRestockModal.replenishAll') }}
+        </button>
       </div>
     </div>
   </div>

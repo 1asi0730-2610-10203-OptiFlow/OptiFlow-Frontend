@@ -1,44 +1,47 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
-  skusExistentes: { type: Array, default: () => [] }
+  existingSkus: { type: Array, default: () => [] }
 })
 const emit = defineEmits(['save', 'close'])
 
-const categorias = ['Lunas', 'Armazones', 'Accesorios', 'Lentes de Contacto', 'Lentes de Sol', 'Equipos']
-const proveedores = ['Vision Labs Inc.', 'OpticalPro Lab', 'Premium Optics Lab', 'Eye Care Supplies', 'Fashion Optics Co.', 'Budget Frames Inc.']
+const categories = ['Lunas', 'Armazones', 'Accesorios', 'Lentes de Contacto', 'Lentes de Sol', 'Equipos']
+const suppliers = ['Vision Labs Inc.', 'OpticalPro Lab', 'Premium Optics Lab', 'Eye Care Supplies', 'Fashion Optics Co.', 'Budget Frames Inc.']
 
 const form = ref({
-  nombre: '', categoria: 'Lunas', sku: '',
-  stock: '', nivelReorden: '', precioUnitario: '',
-  proveedor: '', ultimoRestock: new Date().toISOString().split('T')[0]
+  name: '', category: 'Lunas', sku: '',
+  stock: '', minimumStockThreshold: '', price: '',
+  supplierName: '', lastRestockDate: new Date().toISOString().split('T')[0]
 })
-const errorSku = ref('')
+const skuError = ref('')
 
 function onSubmit() {
-  if (!form.value.nombre || !form.value.stock) return
-  const skuFinal = form.value.sku.trim()
+  if (!form.value.name || !form.value.stock) return
+  const finalSku = form.value.sku.trim()
       ? form.value.sku.trim().toUpperCase()
-      : `${form.value.categoria.slice(0,3).toUpperCase()}-${Date.now().toString().slice(-6)}`
-  if (form.value.sku.trim() && props.skusExistentes.includes(form.value.sku.trim().toUpperCase())) {
-    errorSku.value = `SKU duplicado: "${form.value.sku.trim()}" ya está registrado en el catálogo.`
+      : `${form.value.category.slice(0, 3).toUpperCase()}-${Date.now().toString().slice(-6)}`
+  if (form.value.sku.trim() && props.existingSkus.includes(form.value.sku.trim().toUpperCase())) {
+    skuError.value = `${t('inventory.addModal.skuDuplicate')} "${form.value.sku.trim()}"`
     return
   }
   emit('save', {
-    product_id: 0,
-    category_id: 0,
-    supplier_id: 0,
-    brand: '', model: '',
-    nombre: form.value.nombre,
-    categoria: form.value.categoria,
-    sku: skuFinal,
-    stock: parseInt(form.value.stock) || 0,
-    nivelReorden: parseInt(form.value.nivelReorden) || 10,
-    precioUnitario: parseFloat(form.value.precioUnitario) || 0,
-    price: parseFloat(form.value.precioUnitario) || 0,
-    proveedor: form.value.proveedor,
-    ultimoRestock: form.value.ultimoRestock
+    product_id:              0,
+    category_id:             0,
+    supplier_id:             0,
+    brand:                   '',
+    model:                   '',
+    name:                    form.value.name,
+    category:                form.value.category,
+    sku:                     finalSku,
+    stock:                   parseInt(form.value.stock) || 0,
+    minimum_stock_threshold: parseInt(form.value.minimumStockThreshold) || 10,
+    price:                   parseFloat(form.value.price) || 0,
+    supplier_name:           form.value.supplierName,
+    last_restock_date:       form.value.lastRestockDate
   })
 }
 </script>
@@ -48,72 +51,85 @@ function onSubmit() {
     <div class="modal" @click.stop>
       <div class="modal-header">
         <div>
-          <h3 class="modal-title">Agregar Artículo</h3>
-          <p class="modal-subtitle">Registrar un nuevo producto en el inventario</p>
+          <h3 class="modal-title">{{ $t('inventory.addModal.title') }}</h3>
+          <p class="modal-subtitle">{{ $t('inventory.addModal.subtitle') }}</p>
         </div>
-        <button class="close-btn" @click="emit('close')"><i class="pi pi-times" /></button>
+        <button class="close-btn" @click="emit('close')">
+          <i class="pi pi-times" />
+        </button>
       </div>
+
       <div class="modal-body">
         <div class="field">
-          <label>Nombre del Producto *</label>
-          <input v-model="form.nombre" class="form-input" placeholder="Ej. Lunas Progresivas Premium" required />
+          <label>{{ $t('inventory.addModal.productName') }} *</label>
+          <input
+              v-model="form.name"
+              class="form-input"
+              :placeholder="$t('inventory.addModal.productNamePlaceholder')"
+              required
+          />
         </div>
+
         <div class="form-row">
           <div class="field">
-            <label>Categoría</label>
+            <label>{{ $t('inventory.addModal.category') }}</label>
             <div class="select-wrapper">
-              <select v-model="form.categoria" class="form-select">
-                <option v-for="c in categorias" :key="c">{{ c }}</option>
+              <select v-model="form.category" class="form-select">
+                <option v-for="category in categories" :key="category">{{ category }}</option>
               </select>
               <i class="pi pi-chevron-down select-arrow" />
             </div>
           </div>
           <div class="field">
-            <label>SKU (opcional)</label>
+            <label>{{ $t('inventory.addModal.sku') }}</label>
             <input
                 v-model="form.sku"
                 class="form-input"
-                :class="{ 'form-input--error': errorSku }"
-                placeholder="Se genera automáticamente"
-                @input="errorSku = ''"
+                :class="{ 'form-input--error': skuError }"
+                :placeholder="$t('inventory.addModal.skuPlaceholder')"
+                @input="skuError = ''"
             />
-            <p v-if="errorSku" class="field-error">{{ errorSku }}</p>
+            <p v-if="skuError" class="field-error">{{ skuError }}</p>
           </div>
         </div>
+
         <div class="form-row">
           <div class="field">
-            <label>Stock Inicial *</label>
+            <label>{{ $t('inventory.addModal.initialStock') }} *</label>
             <input v-model="form.stock" type="number" min="0" class="form-input" placeholder="0" required />
           </div>
           <div class="field">
-            <label>Nivel de Reorden</label>
-            <input v-model="form.nivelReorden" type="number" min="0" class="form-input" placeholder="10" />
+            <label>{{ $t('inventory.addModal.reorderLevel') }}</label>
+            <input v-model="form.minimumStockThreshold" type="number" min="0" class="form-input" placeholder="10" />
           </div>
         </div>
+
         <div class="form-row">
           <div class="field">
-            <label>Precio Unit. (S/)</label>
-            <input v-model="form.precioUnitario" type="number" min="0" step="0.01" class="form-input" placeholder="0.00" />
+            <label>{{ $t('inventory.addModal.unitPrice') }}</label>
+            <input v-model="form.price" type="number" min="0" step="0.01" class="form-input" placeholder="0.00" />
           </div>
           <div class="field">
-            <label>Fecha de Recepción</label>
-            <input v-model="form.ultimoRestock" type="date" class="form-input" />
+            <label>{{ $t('inventory.addModal.receptionDate') }}</label>
+            <input v-model="form.lastRestockDate" type="date" class="form-input" />
           </div>
         </div>
+
         <div class="field">
-          <label>Proveedor</label>
+          <label>{{ $t('inventory.addModal.supplier') }}</label>
           <div class="select-wrapper">
-            <select v-model="form.proveedor" class="form-select">
-              <option value="">Seleccionar proveedor...</option>
-              <option v-for="p in proveedores" :key="p">{{ p }}</option>
+            <select v-model="form.supplierName" class="form-select">
+              <option value="">{{ $t('inventory.addModal.selectSupplier') }}</option>
+              <option v-for="supplier in suppliers" :key="supplier">{{ supplier }}</option>
             </select>
             <i class="pi pi-chevron-down select-arrow" />
           </div>
         </div>
       </div>
+
       <div class="modal-footer">
-        <button class="btn-cancel" @click="emit('close')">Cancelar</button>
-        <button class="btn-save" @click="onSubmit">Agregar Artículo</button>
+        <button class="btn-cancel" @click="emit('close')">{{ $t('common.cancel') }}</button>
+        <button class="btn-save" @click="onSubmit">{{ $t('inventory.addModal.addItem') }}</button>
       </div>
     </div>
   </div>
