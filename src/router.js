@@ -1,11 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import salesRoutes from './sales/presentation/sales-routes.js'
+import fulfillmentRoutes from './fulfillment/presentation/fulfillment-routes.js'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     { path: '/', redirect: '/sales' },
     ...salesRoutes,
+    ...fulfillmentRoutes,
     {
       path: '/:pathMatch(.*)*',
       name: 'not-found',

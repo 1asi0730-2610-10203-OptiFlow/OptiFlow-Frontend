@@ -8,7 +8,7 @@ const navItems = [
   { label: 'Panel',          icon: 'pi pi-home',             to: '/panel' },
   { label: 'Pacientes',      icon: 'pi pi-users',             to: '/patients' },
   { label: 'Ventas',         icon: 'pi pi-shopping-cart',     to: '/sales' },
-  { label: 'Órdenes de Lab', icon: 'pi pi-flask',             to: '/lab-orders' },
+  { label: 'Órdenes de Lab', icon: 'pi pi-wrench',             to: '/lab-orders' },
   { label: 'Inventario',     icon: 'pi pi-box',               to: '/inventory' },
   { label: 'Personal',       icon: 'pi pi-id-card',           to: '/staff' },
   { label: 'Reportes',       icon: 'pi pi-chart-bar',         to: '/reports' },
