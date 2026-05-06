@@ -1,0 +1,290 @@
+{
+  "app": {
+    "name": "OptiFlow",
+    "subtitle": "ERP / CRM Óptico"
+  },
+  "nav": {
+    "section": "MENÚ PRINCIPAL",
+    "panel": "Panel",
+    "patients": "Pacientes",
+    "sales": "Ventas",
+    "labOrders": "Órdenes de Lab",
+    "inventory": "Inventario",
+    "staff": "Personal",
+    "reports": "Reportes",
+    "settings": "Configuración"
+  },
+  "user": {
+    "role": "Administrador"
+  },
+  "common": {
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "confirm": "Confirmar",
+    "close": "Cerrar",
+    "export": "Exportar",
+    "loading": "Cargando",
+    "noResults": "Sin resultados",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "showing": "Mostrando",
+    "of": "de",
+    "yes": "Sí",
+    "no": "No",
+    "all": "Todos",
+    "add": "Agregar",
+    "new": "Nuevo",
+    "clearFilters": "Limpiar filtros",
+    "actions": "Acciones",
+    "status": "Estado",
+    "date": "Fecha",
+    "name": "Nombre",
+    "total": "Total",
+    "records": "registros"
+  },
+  "sales": {
+    "pageTitle": "Gestión de Ventas",
+    "pageSubtitle": "POS · Cotizaciones · Adelantos · Saldos Pendientes",
+    "newSale": "Nueva Venta",
+    "recoverQuote": "Recuperar Cotización",
+    "searchPlaceholder": "Buscar por N° factura o paciente...",
+    "allStatuses": "Todos los estados",
+    "loading": "Cargando ventas...",
+    "kpi": {
+      "totalRevenue": "Ingresos Totales",
+      "deposits": "Adelantos Cobrados",
+      "pendingBalance": "Saldo Pendiente",
+      "averageTicket": "Ticket Promedio"
+    },
+    "status": {
+      "PENDING": "Pendiente",
+      "PARTIAL": "Saldo Pendiente",
+      "PAID": "Pagada",
+      "DELIVERED": "Completada",
+      "RETURNED": "Devuelta"
+    },
+    "toast": {
+      "saleCreated": "Venta creada",
+      "saleCreatedDetail": "registrada correctamente.",
+      "paymentRegistered": "Pago registrado",
+      "paymentRegisteredDetail": "El saldo fue actualizado correctamente.",
+      "returnRegistered": "Devolución registrada",
+      "returnRegisteredDetail": "La orden fue marcada como devuelta.",
+      "saleCancelled": "Venta cancelada",
+      "saleCancelledDetail": "La venta fue marcada como devuelta.",
+      "feedbackSent": "Encuesta enviada",
+      "feedbackSentDetail": "¡Gracias por tu valoración!"
+    },
+    "confirm": {
+      "returnMessage": "¿Desea registrar la devolución de esta venta?",
+      "returnHeader": "Confirmar devolución",
+      "returnAccept": "Sí, devolver",
+      "cancelMessage": "¿Desea cancelar esta venta?",
+      "cancelHeader": "Confirmar cancelación",
+      "cancelAccept": "Sí, cancelar"
+    },
+    "dialogs": {
+      "paymentHeader": "Registrar pago de saldo",
+      "feedbackHeader": "Encuesta de satisfacción"
+    }
+  },
+  "labOrders": {
+    "pageTitle": "Órdenes de Laboratorio",
+    "pageSubtitle": "Seguimiento de Órdenes de Trabajo enviadas a laboratorios",
+    "newOrder": "Nueva Orden",
+    "viewKanban": "Kanban",
+    "viewTable": "Tabla",
+    "searchPlaceholder": "Buscar por N° orden, paciente o laboratorio...",
+    "allStages": "Todas las Etapas",
+    "summary": {
+      "received": "Recibidas",
+      "inProduction": "En Producción",
+      "qualityControl": "Control de Calidad",
+      "readyForDelivery": "Listas para Entrega"
+    },
+    "status": {
+      "PENDING": "Recibida",
+      "IN_PRODUCTION": "Biselado",
+      "QUALITY_CONTROL": "Control de Calidad",
+      "READY": "Listo para Entrega",
+      "DELIVERED": "Entregado"
+    },
+    "priority": {
+      "urgent": "URGENTE",
+      "high": "ALTA",
+      "normal": "Normal"
+    },
+    "card": {
+      "lab": "Lab",
+      "frame": "Armazón",
+      "delivery": "Entrega",
+      "balance": "Saldo",
+      "paid": "✓ Pagado",
+      "rework": "⚠ RETRABAJO"
+    },
+    "kanban": {
+      "noOrders": "Sin órdenes"
+    },
+    "table": {
+      "orderPatient": "Orden / Paciente",
+      "type": "Tipo",
+      "status": "Estado",
+      "delivery": "Entrega",
+      "balance": "Saldo",
+      "noOrders": "No se encontraron órdenes."
+    },
+    "detail": {
+      "orderProgress": "Progreso de la Orden",
+      "productType": "Tipo de Producto",
+      "frame": "Armazón",
+      "laboratory": "Laboratorio",
+      "expectedDate": "Fecha Esperada",
+      "opticalPrescription": "Receta Óptica",
+      "paymentSummary": "Resumen de Pago",
+      "totalAmount": "Total",
+      "depositPaid": "Adelanto pagado",
+      "pendingBalance": "Saldo pendiente",
+      "moveTo": "Mover a",
+      "goBack": "Retroceder",
+      "completed": "✓ Orden completada"
+    },
+    "newOrderModal": {
+      "title": "Nueva Orden de Lab",
+      "subtitle": "Crear una nueva orden de trabajo",
+      "selectPatient": "Seleccionar paciente...",
+      "patient": "Paciente",
+      "laboratory": "Laboratorio",
+      "lensType": "Tipo de Luna",
+      "priority": "Prioridad",
+      "opticalPrescription": "Receta Óptica",
+      "eye": "Ojo",
+      "sphere": "Esfera",
+      "cylinder": "Cilindro",
+      "axis": "Eje",
+      "rightEye": "OD (Der)",
+      "leftEye": "OS (Izq)",
+      "frame": "Armazón",
+      "orderDate": "Fecha de Orden",
+      "deliveryDate": "Fecha de Entrega",
+      "totalAmount": "Total (S/)",
+      "deposit": "Adelanto (S/)",
+      "pendingAfterDeposit": "Saldo pendiente tras adelanto",
+      "createOrder": "Crear Orden de Lab"
+    },
+    "toast": {
+      "statusUpdated": "Estado actualizado",
+      "reworkRegistered": "Retrabajo registrado",
+      "reworkDetail": "volvió a En Producción.",
+      "orderCreated": "Orden creada",
+      "orderCreatedDetail": "Nueva orden de laboratorio registrada."
+    },
+    "showing": "Mostrando",
+    "orders": "órdenes"
+  },
+  "inventory": {
+    "pageTitle": "Gestión de Inventario",
+    "pageSubtitle": "Control y seguimiento de niveles de stock",
+    "addItem": "Agregar",
+    "restock": "Reabastecer",
+    "viewAudit": "Ver Auditoría",
+    "searchPlaceholder": "Buscar por nombre, SKU o categoría...",
+    "allCategories": "Todas las Categorías",
+    "allLevels": "Todos los Niveles",
+    "activeFilters": "Filtros",
+    "summary": {
+      "totalItems": "Total Artículos",
+      "lowStock": "Stock Bajo",
+      "totalValue": "Valor Total",
+      "articles": "artículos"
+    },
+    "table": {
+      "product": "Producto",
+      "category": "Categoría",
+      "stock": "Stock",
+      "price": "Precio",
+      "supplier": "Proveedor",
+      "actions": "Acciones",
+      "min": "mín",
+      "replenish": "Reponer",
+      "edit": "Editar",
+      "incompatible": "Inventario incompatible",
+      "noResults": "No se encontraron artículos con los filtros seleccionados.",
+      "showing": "Mostrando",
+      "of": "de",
+      "items": "artículos"
+    },
+    "levels": {
+      "critical": "Crítico",
+      "low": "Stock Bajo",
+      "inStock": "En Stock"
+    },
+    "addModal": {
+      "title": "Agregar Artículo",
+      "subtitle": "Registrar un nuevo producto en el inventario",
+      "productName": "Nombre del Producto",
+      "productNamePlaceholder": "Ej. Lunas Progresivas Premium",
+      "category": "Categoría",
+      "sku": "SKU (opcional)",
+      "skuPlaceholder": "Se genera automáticamente",
+      "skuDuplicate": "SKU duplicado ya está registrado en el catálogo.",
+      "initialStock": "Stock Inicial",
+      "reorderLevel": "Nivel de Reorden",
+      "unitPrice": "Precio Unit. (S/)",
+      "supplier": "Proveedor",
+      "selectSupplier": "Seleccionar proveedor...",
+      "receptionDate": "Fecha de Recepción",
+      "addItem": "Agregar Artículo"
+    },
+    "restockModal": {
+      "title": "Reabastecer Artículo",
+      "currentStock": "Stock Actual",
+      "reorderLevel": "Nivel de Reorden",
+      "units": "unid.",
+      "quantityToAdd": "Cantidad a Agregar",
+      "quantityPlaceholder": "Ej. 50",
+      "newStockLevel": "Nuevo nivel de stock",
+      "units_full": "unidades",
+      "notes": "Notas (opcional)",
+      "notesPlaceholder": "Ej. OC #1234, entrega del proveedor",
+      "confirmRestock": "Confirmar Restock"
+    },
+    "bulkRestockModal": {
+      "title": "Reabastecimiento Masivo",
+      "subtitle": "Reponer todos los artículos con stock bajo",
+      "allSufficient": "Todos los artículos tienen stock suficiente.",
+      "add": "Agregar",
+      "replenishAll": "Reponer Todo"
+    },
+    "auditModal": {
+      "title": "Auditoría de Inventario",
+      "subtitle": "Registro histórico de alteraciones de stock",
+      "from": "Desde",
+      "to": "Hasta",
+      "clearFilters": "Limpiar filtros",
+      "recordsFound": "registro(s) encontrado(s)",
+      "noRecords": "Ninguna manipulación humana registrada",
+      "noRecordsDesc": "No se encontraron alteraciones de stock en el período seleccionado.",
+      "columns": {
+        "date": "Fecha",
+        "time": "Hora",
+        "author": "Autor",
+        "item": "Artículo",
+        "sku": "SKU",
+        "operation": "Operación",
+        "previousStock": "Stock Anterior",
+        "quantity": "Cantidad",
+        "newStock": "Stock Nuevo"
+      }
+    },
+    "toast": {
+      "itemAdded": "Artículo agregado",
+      "itemAddedDetail": "registrado en el inventario.",
+      "restockDone": "Restock registrado",
+      "restockDetail": "unidades agregadas."
+    }
+  }
+}

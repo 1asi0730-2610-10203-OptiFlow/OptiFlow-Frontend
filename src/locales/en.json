@@ -1,0 +1,290 @@
+{
+  "app": {
+    "name": "OptiFlow",
+    "subtitle": "Optical ERP / CRM"
+  },
+  "nav": {
+    "section": "MAIN MENU",
+    "panel": "Dashboard",
+    "patients": "Patients",
+    "sales": "Sales",
+    "labOrders": "Lab Orders",
+    "inventory": "Inventory",
+    "staff": "Staff",
+    "reports": "Reports",
+    "settings": "Settings"
+  },
+  "user": {
+    "role": "Administrator"
+  },
+  "common": {
+    "search": "Search",
+    "filter": "Filter",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "close": "Close",
+    "export": "Export",
+    "loading": "Loading",
+    "noResults": "No results",
+    "previous": "Previous",
+    "next": "Next",
+    "showing": "Showing",
+    "of": "of",
+    "all": "All",
+    "add": "Add",
+    "new": "New",
+    "clearFilters": "Clear filters",
+    "actions": "Actions",
+    "status": "Status",
+    "date": "Date",
+    "name": "Name",
+    "total": "Total",
+    "yes": "Yes",
+    "no": "No",
+    "records": "records"
+  },
+  "sales": {
+    "pageTitle": "Sales Management",
+    "pageSubtitle": "POS · Quotes · Deposits · Pending Balances",
+    "newSale": "New Sale",
+    "recoverQuote": "Recover Quote",
+    "searchPlaceholder": "Search by invoice # or patient...",
+    "allStatuses": "All statuses",
+    "loading": "Loading sales...",
+    "kpi": {
+      "totalRevenue": "Total Revenue",
+      "deposits": "Deposits Collected",
+      "pendingBalance": "Pending Balance",
+      "averageTicket": "Average Ticket"
+    },
+    "status": {
+      "PENDING": "Pending",
+      "PARTIAL": "Partial Payment",
+      "PAID": "Paid",
+      "DELIVERED": "Completed",
+      "RETURNED": "Returned"
+    },
+    "toast": {
+      "saleCreated": "Sale created",
+      "saleCreatedDetail": "registered successfully.",
+      "paymentRegistered": "Payment registered",
+      "paymentRegisteredDetail": "Balance updated successfully.",
+      "returnRegistered": "Return registered",
+      "returnRegisteredDetail": "Order marked as returned.",
+      "saleCancelled": "Sale cancelled",
+      "saleCancelledDetail": "Sale marked as returned.",
+      "feedbackSent": "Survey sent",
+      "feedbackSentDetail": "Thank you for your feedback!"
+    },
+    "confirm": {
+      "returnMessage": "Do you want to register the return of this sale?",
+      "returnHeader": "Confirm return",
+      "returnAccept": "Yes, return",
+      "cancelMessage": "Do you want to cancel this sale?",
+      "cancelHeader": "Confirm cancellation",
+      "cancelAccept": "Yes, cancel"
+    },
+    "dialogs": {
+      "paymentHeader": "Register balance payment",
+      "feedbackHeader": "Satisfaction survey"
+    }
+  },
+  "labOrders": {
+    "pageTitle": "Lab Orders",
+    "pageSubtitle": "Work Order tracking sent to laboratories",
+    "newOrder": "New Order",
+    "viewKanban": "Kanban",
+    "viewTable": "Table",
+    "searchPlaceholder": "Search by order #, patient or lab...",
+    "allStages": "All Stages",
+    "summary": {
+      "received": "Received",
+      "inProduction": "In Production",
+      "qualityControl": "Quality Control",
+      "readyForDelivery": "Ready for Delivery"
+    },
+    "status": {
+      "PENDING": "Received",
+      "IN_PRODUCTION": "In Production",
+      "QUALITY_CONTROL": "Quality Control",
+      "READY": "Ready for Delivery",
+      "DELIVERED": "Delivered"
+    },
+    "priority": {
+      "urgent": "URGENT",
+      "high": "HIGH",
+      "normal": "Normal"
+    },
+    "card": {
+      "lab": "Lab",
+      "frame": "Frame",
+      "delivery": "Delivery",
+      "balance": "Balance",
+      "paid": "✓ Paid",
+      "rework": "⚠ REWORK"
+    },
+    "kanban": {
+      "noOrders": "No orders"
+    },
+    "table": {
+      "orderPatient": "Order / Patient",
+      "type": "Type",
+      "status": "Status",
+      "delivery": "Delivery",
+      "balance": "Balance",
+      "noOrders": "No orders found."
+    },
+    "detail": {
+      "orderProgress": "Order Progress",
+      "productType": "Product Type",
+      "frame": "Frame",
+      "laboratory": "Laboratory",
+      "expectedDate": "Expected Date",
+      "opticalPrescription": "Optical Prescription",
+      "paymentSummary": "Payment Summary",
+      "totalAmount": "Total",
+      "depositPaid": "Deposit paid",
+      "pendingBalance": "Pending balance",
+      "moveTo": "Move to",
+      "goBack": "Go back",
+      "completed": "✓ Order completed"
+    },
+    "newOrderModal": {
+      "title": "New Lab Order",
+      "subtitle": "Create a new work order",
+      "selectPatient": "Select patient...",
+      "patient": "Patient",
+      "laboratory": "Laboratory",
+      "lensType": "Lens Type",
+      "priority": "Priority",
+      "opticalPrescription": "Optical Prescription",
+      "eye": "Eye",
+      "sphere": "Sphere",
+      "cylinder": "Cylinder",
+      "axis": "Axis",
+      "rightEye": "OD (Right)",
+      "leftEye": "OS (Left)",
+      "frame": "Frame",
+      "orderDate": "Order Date",
+      "deliveryDate": "Delivery Date",
+      "totalAmount": "Total (S/)",
+      "deposit": "Deposit (S/)",
+      "pendingAfterDeposit": "Balance after deposit",
+      "createOrder": "Create Lab Order"
+    },
+    "toast": {
+      "statusUpdated": "Status updated",
+      "reworkRegistered": "Rework registered",
+      "reworkDetail": "returned to In Production.",
+      "orderCreated": "Order created",
+      "orderCreatedDetail": "New lab order registered."
+    },
+    "showing": "Showing",
+    "orders": "orders"
+  },
+  "inventory": {
+    "pageTitle": "Inventory Management",
+    "pageSubtitle": "Stock level control and tracking",
+    "addItem": "Add",
+    "restock": "Restock",
+    "viewAudit": "View Audit",
+    "searchPlaceholder": "Search by name, SKU or category...",
+    "allCategories": "All Categories",
+    "allLevels": "All Levels",
+    "activeFilters": "Filters",
+    "summary": {
+      "totalItems": "Total Items",
+      "lowStock": "Low Stock",
+      "totalValue": "Total Value",
+      "articles": "items"
+    },
+    "table": {
+      "product": "Product",
+      "category": "Category",
+      "stock": "Stock",
+      "price": "Price",
+      "supplier": "Supplier",
+      "actions": "Actions",
+      "min": "min",
+      "replenish": "Restock",
+      "edit": "Edit",
+      "incompatible": "No matching inventory",
+      "noResults": "No items found with the selected filters.",
+      "showing": "Showing",
+      "of": "of",
+      "items": "items"
+    },
+    "levels": {
+      "critical": "Critical",
+      "low": "Low Stock",
+      "inStock": "In Stock"
+    },
+    "addModal": {
+      "title": "Add Item",
+      "subtitle": "Register a new product in the inventory",
+      "productName": "Product Name",
+      "productNamePlaceholder": "e.g. Premium Progressive Lenses",
+      "category": "Category",
+      "sku": "SKU (optional)",
+      "skuPlaceholder": "Auto-generated",
+      "skuDuplicate": "Duplicate SKU already registered in the catalog.",
+      "initialStock": "Initial Stock",
+      "reorderLevel": "Reorder Level",
+      "unitPrice": "Unit Price (S/)",
+      "supplier": "Supplier",
+      "selectSupplier": "Select supplier...",
+      "receptionDate": "Reception Date",
+      "addItem": "Add Item"
+    },
+    "restockModal": {
+      "title": "Restock Item",
+      "currentStock": "Current Stock",
+      "reorderLevel": "Reorder Level",
+      "units": "units",
+      "quantityToAdd": "Quantity to Add",
+      "quantityPlaceholder": "e.g. 50",
+      "newStockLevel": "New stock level",
+      "units_full": "units",
+      "notes": "Notes (optional)",
+      "notesPlaceholder": "e.g. PO #1234, supplier delivery",
+      "confirmRestock": "Confirm Restock"
+    },
+    "bulkRestockModal": {
+      "title": "Bulk Restock",
+      "subtitle": "Replenish all items with low stock",
+      "allSufficient": "All items have sufficient stock.",
+      "add": "Add",
+      "replenishAll": "Replenish All"
+    },
+    "auditModal": {
+      "title": "Inventory Audit",
+      "subtitle": "Historical record of stock changes",
+      "from": "From",
+      "to": "To",
+      "clearFilters": "Clear filters",
+      "recordsFound": "record(s) found",
+      "noRecords": "No manual changes recorded",
+      "noRecordsDesc": "No stock changes found for the selected period.",
+      "columns": {
+        "date": "Date",
+        "time": "Time",
+        "author": "Author",
+        "item": "Item",
+        "sku": "SKU",
+        "operation": "Operation",
+        "previousStock": "Prev. Stock",
+        "quantity": "Quantity",
+        "newStock": "New Stock"
+      }
+    },
+    "toast": {
+      "itemAdded": "Item added",
+      "itemAddedDetail": "registered in inventory.",
+      "restockDone": "Restock registered",
+      "restockDetail": "units added."
+    }
+  }
+}

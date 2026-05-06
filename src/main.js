@@ -4,11 +4,13 @@ import Aura from '@primevue/themes/aura'
 import ConfirmationService from 'primevue/confirmationservice'
 import ToastService from 'primevue/toastservice'
 import 'primeicons/primeicons.css'
+import SelectButton from 'primevue/selectbutton'
 
 import { pinia } from './pinia.js'
 import router from './router.js'
 import App from './App.vue'
 import './style.css'
+import { i18n } from './i18n.js'
 
 // PrimeVue components
 import Button from 'primevue/button'
@@ -28,7 +30,7 @@ import ConfirmDialog from 'primevue/confirmdialog'
 import ProgressSpinner from 'primevue/progressspinner'
 
 const app = createApp(App)
-
+app.use(i18n)
 app.use(pinia)
 app.use(router)
 app.use(PrimeVue, {
@@ -56,5 +58,6 @@ app.component('pv-message', Message)
 app.component('pv-toast', Toast)
 app.component('pv-confirm-dialog', ConfirmDialog)
 app.component('pv-progress-spinner', ProgressSpinner)
+app.component('pv-select-button', SelectButton)
 
 app.mount('#app')
