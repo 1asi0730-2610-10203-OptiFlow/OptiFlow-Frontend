@@ -1,59 +1,61 @@
 <script setup>
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { WorkOrder } from '../../domain/model/work-order.entity.js'
 
+const { t } = useI18n()
 const emit = defineEmits(['save', 'close'])
 
-const tiposLuna = [
+const lensTypes = [
   'Lunas Progresivas', 'Lunas Monofocales', 'Lunas Bifocales',
   'Lunas con Filtro Azul', 'Lunas Polarizadas', 'Lunas Antireflejantes', 'Lentes de Contacto'
 ]
-const laboratorios = ['Vision Labs Inc.', 'OpticalPro Lab', 'Premium Optics Lab']
-const pacientes = ['Sarah Johnson', 'Michael Chen', 'Emma Wilson', 'David Martínez', 'Lisa Anderson', 'Carlos Rivera']
+const laboratories = ['Vision Labs Inc.', 'OpticalPro Lab', 'Premium Optics Lab']
+const patients = ['Sarah Johnson', 'Michael Chen', 'Emma Wilson', 'David Martínez', 'Lisa Anderson', 'Carlos Rivera']
 
 const form = ref({
-  paciente: '', laboratorio: 'Vision Labs Inc.', tipo: 'Lunas Progresivas',
-  od_esfera: '', od_cilindro: '', od_eje: '',
-  os_esfera: '', os_cilindro: '', os_eje: '',
-  armazon: '', fechaOrden: new Date().toISOString().split('T')[0],
-  fechaEsperada: '', prioridad: 'normal',
-  adelanto: '', total: ''
+  patientName: '', laboratoryName: 'Vision Labs Inc.', lensType: 'Lunas Progresivas',
+  odSphere: '', odCylinder: '', odAxis: '',
+  osSphere: '', osCylinder: '', osAxis: '',
+  frame: '', orderDate: new Date().toISOString().split('T')[0],
+  deliveryDate: '', priority: 'normal',
+  deposit: '', total: ''
 })
 
 const totalNum = computed(() => parseFloat(form.value.total) || 0)
-const adelantoNum = computed(() => parseFloat(form.value.adelanto) || 0)
-const saldoPendiente = computed(() => Math.max(0, totalNum.value - adelantoNum.value))
+const depositNum = computed(() => parseFloat(form.value.deposit) || 0)
+const pendingBalance = computed(() => Math.max(0, totalNum.value - depositNum.value))
 
-function buildReceta() {
-  const od = form.value.od_esfera
-      ? `OD: Esf ${form.value.od_esfera}${form.value.od_cilindro ? `, Cil ${form.value.od_cilindro}` : ''}${form.value.od_eje ? `, Eje ${form.value.od_eje}` : ''}`
+function buildPrescription() {
+  const od = form.value.odSphere
+      ? `OD: Esf ${form.value.odSphere}${form.value.odCylinder ? `, Cil ${form.value.odCylinder}` : ''}${form.value.odAxis ? `, Eje ${form.value.odAxis}` : ''}`
       : ''
-  const os = form.value.os_esfera
-      ? `OS: Esf ${form.value.os_esfera}${form.value.os_cilindro ? `, Cil ${form.value.os_cilindro}` : ''}${form.value.os_eje ? `, Eje ${form.value.os_eje}` : ''}`
+  const os = form.value.osSphere
+      ? `OS: Esf ${form.value.osSphere}${form.value.osCylinder ? `, Cil ${form.value.osCylinder}` : ''}${form.value.osAxis ? `, Eje ${form.value.osAxis}` : ''}`
       : ''
-  return [od, os].filter(Boolean).join(' | ') || 'Sin receta ingresada'
+  return [od, os].filter(Boolean).join(' | ') || t('labOrders.newOrderModal.noPrescription')
 }
 
 function onSubmit() {
-  if (!form.value.paciente || !form.value.fechaEsperada) return
-  const wo = new WorkOrder({
+  if (!form.value.patientName || !form.value.deliveryDate) return
+  const workOrder = new WorkOrder({
     id: 0,
     saleId: 0,
     recipeId: 0,
     labId: 0,
     status: 'PENDING',
-    deliveryDate: form.value.fechaEsperada
+    deliveryDate:   form.value.deliveryDate,
+    patientName:    form.value.patientName,
+    laboratoryName: form.value.laboratoryName,
+    lensType:       form.value.lensType,
+    frame:          form.value.frame || t('labOrders.newOrderModal.noFrame'),
+    prescription:   buildPrescription(),
+    priority:       form.value.priority,
+    deposit:        depositNum.value,
+    total:          totalNum.value,
+    isRework:       false
   })
-  wo.paciente = form.value.paciente
-  wo.laboratorio = form.value.laboratorio
-  wo.tipo = form.value.tipo
-  wo.armazon = form.value.armazon || 'Sin Montura'
-  wo.receta = buildReceta()
-  wo.prioridad = form.value.prioridad
-  wo.adelanto = adelantoNum.value
-  wo.total = totalNum.value
-  wo.patientName = form.value.paciente
-  emit('save', wo)
+  emit('save', workOrder)
 }
 </script>
 
@@ -62,8 +64,8 @@ function onSubmit() {
     <div class="modal" @click.stop>
       <div class="modal-header">
         <div>
-          <h3 class="modal-title">Nueva Orden de Lab</h3>
-          <p class="modal-subtitle">Crear una nueva orden de trabajo</p>
+          <h3 class="modal-title">{{ $t('labOrders.newOrderModal.title') }}</h3>
+          <p class="modal-subtitle">{{ $t('labOrders.newOrderModal.subtitle') }}</p>
         </div>
         <button class="close-btn" @click="emit('close')">
           <i class="pi pi-times" />
@@ -71,108 +73,109 @@ function onSubmit() {
       </div>
 
       <div class="modal-body">
-        <!-- Paciente y Laboratorio -->
+        <!-- Patient and Laboratory -->
         <div class="form-row">
           <div class="field">
-            <label>Paciente *</label>
-            <select v-model="form.paciente" class="form-select" required>
-              <option value="">Seleccionar paciente...</option>
-              <option v-for="p in pacientes" :key="p" :value="p">{{ p }}</option>
+            <label>{{ $t('labOrders.newOrderModal.patient') }} *</label>
+            <select v-model="form.patientName" class="form-select" required>
+              <option value="">{{ $t('labOrders.newOrderModal.selectPatient') }}</option>
+              <option v-for="patient in patients" :key="patient" :value="patient">{{ patient }}</option>
             </select>
           </div>
           <div class="field">
-            <label>Laboratorio</label>
-            <select v-model="form.laboratorio" class="form-select">
-              <option v-for="l in laboratorios" :key="l" :value="l">{{ l }}</option>
+            <label>{{ $t('labOrders.newOrderModal.laboratory') }}</label>
+            <select v-model="form.laboratoryName" class="form-select">
+              <option v-for="laboratory in laboratories" :key="laboratory" :value="laboratory">{{ laboratory }}</option>
             </select>
           </div>
         </div>
 
-        <!-- Tipo y Prioridad -->
+        <!-- Lens type and Priority -->
         <div class="form-row">
           <div class="field">
-            <label>Tipo de Luna</label>
-            <select v-model="form.tipo" class="form-select">
-              <option v-for="t in tiposLuna" :key="t" :value="t">{{ t }}</option>
+            <label>{{ $t('labOrders.newOrderModal.lensType') }}</label>
+            <select v-model="form.lensType" class="form-select">
+              <option v-for="lensType in lensTypes" :key="lensType" :value="lensType">{{ lensType }}</option>
             </select>
           </div>
           <div class="field">
-            <label>Prioridad</label>
-            <select v-model="form.prioridad" class="form-select">
-              <option value="normal">Normal</option>
-              <option value="alta">Alta</option>
-              <option value="urgente">Urgente</option>
+            <label>{{ $t('labOrders.newOrderModal.priority') }}</label>
+            <select v-model="form.priority" class="form-select">
+              <option value="normal">{{ $t('labOrders.priority.normal') }}</option>
+              <option value="high">{{ $t('labOrders.priority.high') }}</option>
+              <option value="urgent">{{ $t('labOrders.priority.urgent') }}</option>
             </select>
           </div>
         </div>
 
-        <!-- Receta -->
+        <!-- Prescription -->
         <div class="recipe-section">
           <label class="recipe-label">
-            <i class="pi pi-eye" style="color: #00c1b0" /> Receta Óptica
+            <i class="pi pi-eye" style="color: #00c1b0" />
+            {{ $t('labOrders.newOrderModal.opticalPrescription') }}
           </label>
           <div class="recipe-grid-wrapper">
             <div class="recipe-header-row">
-              <span class="recipe-col-label">Ojo</span>
-              <span class="recipe-col-label">Esfera</span>
-              <span class="recipe-col-label">Cilindro</span>
-              <span class="recipe-col-label">Eje</span>
+              <span class="recipe-col-label">{{ $t('labOrders.newOrderModal.eye') }}</span>
+              <span class="recipe-col-label">{{ $t('labOrders.newOrderModal.sphere') }}</span>
+              <span class="recipe-col-label">{{ $t('labOrders.newOrderModal.cylinder') }}</span>
+              <span class="recipe-col-label">{{ $t('labOrders.newOrderModal.axis') }}</span>
             </div>
             <div class="recipe-data-row">
-              <span class="eye-label">OD (Der)</span>
-              <input v-model="form.od_esfera"   class="recipe-input" placeholder="-2.50" />
-              <input v-model="form.od_cilindro" class="recipe-input" placeholder="-0.75" />
-              <input v-model="form.od_eje"      class="recipe-input" placeholder="90" />
+              <span class="eye-label">{{ $t('labOrders.newOrderModal.rightEye') }}</span>
+              <input v-model="form.odSphere"   class="recipe-input" placeholder="-2.50" />
+              <input v-model="form.odCylinder" class="recipe-input" placeholder="-0.75" />
+              <input v-model="form.odAxis"     class="recipe-input" placeholder="90" />
             </div>
             <div class="recipe-data-row">
-              <span class="eye-label">OS (Izq)</span>
-              <input v-model="form.os_esfera"   class="recipe-input" placeholder="-2.75" />
-              <input v-model="form.os_cilindro" class="recipe-input" placeholder="-0.50" />
-              <input v-model="form.os_eje"      class="recipe-input" placeholder="85" />
+              <span class="eye-label">{{ $t('labOrders.newOrderModal.leftEye') }}</span>
+              <input v-model="form.osSphere"   class="recipe-input" placeholder="-2.75" />
+              <input v-model="form.osCylinder" class="recipe-input" placeholder="-0.50" />
+              <input v-model="form.osAxis"     class="recipe-input" placeholder="85" />
             </div>
           </div>
         </div>
 
-        <!-- Armazón y Fechas -->
+        <!-- Frame and Dates -->
         <div class="form-row form-row--3">
           <div class="field">
-            <label>Armazón</label>
-            <input v-model="form.armazon" class="form-input" placeholder="Ej. Ray-Ban RB5228" />
+            <label>{{ $t('labOrders.newOrderModal.frame') }}</label>
+            <input v-model="form.frame" class="form-input" placeholder="Ej. Ray-Ban RB5228" />
           </div>
           <div class="field">
-            <label>Fecha de Orden</label>
-            <input v-model="form.fechaOrden" type="date" class="form-input" />
+            <label>{{ $t('labOrders.newOrderModal.orderDate') }}</label>
+            <input v-model="form.orderDate" type="date" class="form-input" />
           </div>
           <div class="field">
-            <label>Fecha de Entrega *</label>
-            <input v-model="form.fechaEsperada" type="date" class="form-input" required />
+            <label>{{ $t('labOrders.newOrderModal.deliveryDate') }} *</label>
+            <input v-model="form.deliveryDate" type="date" class="form-input" required />
           </div>
         </div>
 
-        <!-- Totales -->
+        <!-- Totals -->
         <div class="form-row">
           <div class="field">
-            <label>Total (S/)</label>
+            <label>{{ $t('labOrders.newOrderModal.totalAmount') }}</label>
             <input v-model="form.total" type="number" min="0" step="0.01" class="form-input" placeholder="0.00" />
           </div>
           <div class="field">
-            <label>Adelanto (S/)</label>
-            <input v-model="form.adelanto" type="number" min="0" step="0.01" class="form-input" placeholder="0.00" />
+            <label>{{ $t('labOrders.newOrderModal.deposit') }}</label>
+            <input v-model="form.deposit" type="number" min="0" step="0.01" class="form-input" placeholder="0.00" />
           </div>
         </div>
 
-        <!-- Saldo -->
+        <!-- Pending balance preview -->
         <div v-if="totalNum > 0" class="saldo-preview">
-          <span class="saldo-preview-label">Saldo pendiente tras adelanto</span>
-          <span class="saldo-preview-value" :class="saldoPendiente > 0 ? 'saldo--orange' : 'saldo--green'">
-            S/ {{ saldoPendiente.toFixed(2) }}
+          <span class="saldo-preview-label">{{ $t('labOrders.newOrderModal.pendingAfterDeposit') }}</span>
+          <span class="saldo-preview-value" :class="pendingBalance > 0 ? 'saldo--orange' : 'saldo--green'">
+            S/ {{ pendingBalance.toFixed(2) }}
           </span>
         </div>
       </div>
 
       <div class="modal-footer">
-        <button class="btn-cancel" @click="emit('close')">Cancelar</button>
-        <button class="btn-save" @click="onSubmit">Crear Orden de Lab</button>
+        <button class="btn-cancel" @click="emit('close')">{{ $t('common.cancel') }}</button>
+        <button class="btn-save" @click="onSubmit">{{ $t('labOrders.newOrderModal.createOrder') }}</button>
       </div>
     </div>
   </div>
@@ -191,11 +194,7 @@ function onSubmit() {
 .form-row--3 { grid-template-columns: 1fr 1fr 1fr; }
 .field { display: flex; flex-direction: column; gap: 6px; }
 .field label { font-family: 'Montserrat', sans-serif; font-size: 0.82rem; font-weight: 600; color: #374151; }
-.form-select, .form-input {
-  padding: 9px 12px; border: 1px solid #e5e7eb; border-radius: 8px;
-  font-family: 'Montserrat', sans-serif; font-size: 0.84rem; color: #111827;
-  outline: none; background: #fff; transition: border-color 0.15s;
-}
+.form-select, .form-input { padding: 9px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 0.84rem; color: #111827; outline: none; background: #fff; transition: border-color 0.15s; }
 .form-select:focus, .form-input:focus { border-color: #00c1b0; }
 .recipe-section { display: flex; flex-direction: column; gap: 8px; }
 .recipe-label { display: flex; align-items: center; gap: 6px; font-family: 'Montserrat', sans-serif; font-size: 0.82rem; font-weight: 700; color: #374151; }
@@ -204,11 +203,7 @@ function onSubmit() {
 .recipe-col-label { font-family: 'Montserrat', sans-serif; font-size: 0.72rem; font-weight: 700; color: #00c1b0; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; }
 .recipe-col-label:first-child { text-align: left; }
 .eye-label { font-family: 'Montserrat', sans-serif; font-size: 0.82rem; font-weight: 600; color: #374151; }
-.recipe-input {
-  padding: 6px 8px; border: 1px solid #fff; border-radius: 8px;
-  font-family: 'Courier New', monospace; font-size: 0.82rem; text-align: center;
-  background: #fff; outline: none; transition: border-color 0.15s;
-}
+.recipe-input { padding: 6px 8px; border: 1px solid #fff; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.82rem; text-align: center; background: #fff; outline: none; transition: border-color 0.15s; }
 .recipe-input:focus { border-color: #00c1b0; }
 .saldo-preview { background: #f9fafb; border-radius: 10px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
 .saldo-preview-label { font-family: 'Montserrat', sans-serif; font-size: 0.82rem; color: #6b7280; }
