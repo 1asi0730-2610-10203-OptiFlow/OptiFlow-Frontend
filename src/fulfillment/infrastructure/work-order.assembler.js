@@ -2,48 +2,47 @@ import { WorkOrder } from '../domain/model/work-order.entity.js'
 import { WorkOrderResource } from './work-order.resource.js'
 
 export class WorkOrderAssembler {
-    static toEntityFromResource(r) {
-        const workOrder = new WorkOrder({
-            id: r.order_id,
-            saleId: r.sale_id,
-            recipeId: r.recipe_id,
-            labId: r.lab_id,
-            status: r.status,
-            deliveryDate: r.delivery_date ?? ''
+    static toEntityFromResource(resource) {
+        return new WorkOrder({
+            id:              resource.order_id,
+            saleId:          resource.sale_id,
+            recipeId:        resource.recipe_id,
+            labId:           resource.lab_id,
+            status:          resource.status,
+            deliveryDate:    resource.delivery_date    ?? '',
+            patientName:     resource.patient_name     ?? '',
+            laboratoryName:  resource.laboratory_name  ?? '',
+            lensType:        resource.lens_type        ?? '',
+            frame:           resource.frame            ?? '',
+            prescription:    resource.prescription     ?? '',
+            priority:        resource.priority         ?? 'normal',
+            deposit:         resource.deposit          ?? 0,
+            total:           resource.total            ?? 0,
+            isRework:        resource.is_rework        ?? false
         })
-        workOrder.paciente    = r.paciente    ?? ''
-        workOrder.laboratorio = r.laboratorio ?? ''
-        workOrder.tipo        = r.tipo        ?? ''
-        workOrder.armazon     = r.armazon     ?? ''
-        workOrder.receta      = r.receta      ?? ''
-        workOrder.prioridad   = r.prioridad   ?? 'normal'
-        workOrder.adelanto    = r.adelanto    ?? 0
-        workOrder.toworkOrdertal       = r.total       ?? 0
-        workOrder.retrabajo   = r.retrabajo   ?? false
-        return workOrder
     }
 
     static toEntitiesFromResponse(resources) {
-        return resources.map(r => WorkOrderAssembler.toEntityFromResource(r))
+        return resources.map(resource => WorkOrderAssembler.toEntityFromResource(resource))
     }
 
     static toResourceFromEntity(workOrder) {
         return new WorkOrderResource({
-            order_id:      workOrder.id,
-            sale_id:       workOrder.saleId,
-            recipe_id:     workOrder.recipeId,
-            lab_id:        workOrder.labId,
-            status:        workOrder.status,
-            delivery_date: workOrder.deliveryDate,
-            paciente:      workOrder.paciente,
-            laboratorio:   workOrder.laboratorio,
-            tipo:          workOrder.tipo,
-            armazon:       workOrder.armazon,
-            receta:        workOrder.receta,
-            prioridad:     workOrder.prioridad,
-            adelanto:      workOrder.adelanto,
-            total:         workOrder.total,
-            retrabajo:     workOrder.retrabajo
+            order_id:        workOrder.id,
+            sale_id:         workOrder.saleId,
+            recipe_id:       workOrder.recipeId,
+            lab_id:          workOrder.labId,
+            status:          workOrder.status,
+            delivery_date:   workOrder.deliveryDate,
+            patient_name:    workOrder.patientName,
+            laboratory_name: workOrder.laboratoryName,
+            lens_type:       workOrder.lensType,
+            frame:           workOrder.frame,
+            prescription:    workOrder.prescription,
+            priority:        workOrder.priority,
+            deposit:         workOrder.deposit,
+            total:           workOrder.total,
+            is_rework:       workOrder.isRework
         })
     }
 }

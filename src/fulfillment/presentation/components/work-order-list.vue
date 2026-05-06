@@ -1,4 +1,9 @@
 <script setup>
+import { useI18n } from 'vue-i18n'
+import WorkOrderItem from './work-order-item.vue'
+
+const { t } = useI18n()
+
 const props = defineProps({
   workOrders: { type: Array, default: () => [] }
 })
@@ -12,15 +17,15 @@ function emitOrderSelected(workOrder) {
 
 <template>
   <div class="order-list">
-    <work-order-item
-        v-for="wo in workOrders"
-        :key="wo.id"
-        :work-order="wo"
-        @status-changed="emitOrderSelected(wo)"
+    <WorkOrderItem
+        v-for="workOrder in workOrders"
+        :key="workOrder.id"
+        :work-order="workOrder"
+        @status-changed="emitOrderSelected(workOrder)"
     />
     <div v-if="workOrders.length === 0" class="empty">
       <i class="pi pi-inbox" />
-      <span>Sin órdenes</span>
+      <span>{{ $t('labOrders.kanban.noOrders') }}</span>
     </div>
   </div>
 </template>

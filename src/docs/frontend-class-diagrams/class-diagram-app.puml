@@ -2,79 +2,84 @@
 
 package "app" {
   class App <<component>> {
-    + title: string
+    + renders: Layout
+  }
+}
+
+package "router" {
+  class Router <<configuration>> {
+    + history: WebHistory
+    + routes: Route[]
+    + beforeEach(guard): void
   }
 }
 
 package "shared.infrastructure" {
-  class AuthInterceptor {
-    + intercept(req: Request): Request
+  class BaseApi {
+    - http: AxiosInstance
+    + constructor()
+    + get http(): AxiosInstance
   }
-  class I18nService {
-    - translateService: TranslateService
-    + setLanguage(lang: string): void
-    + getAvailableLanguages(): string[]
-  }
-}
-
-package "shared.application" {
-  class LanguageStore {
-    - currentLangRef: Ref<string>
-    - i18nService: I18nService
-    + currentLang: ComputedRef<string>
-    + availableLanguages: string[]
-    + changeLanguage(lang: string): void
+  class BaseEndpoint {
+    - http: AxiosInstance
+    - resourcePath: string
+    + constructor(http: AxiosInstance, resourcePath: string)
+    + getAll(): Promise<any[]>
+    + getById(id): Promise<any>
+    + create(resource): Promise<any>
+    + update(id, resource): Promise<any>
+    + patch(id, resource): Promise<any>
+    + delete(id): Promise<void>
+    + getAllByParam(paramKey, paramValue): Promise<any[]>
   }
 }
 
 package "shared.presentation.components" {
   class Layout <<component>> {
-    + authStore: AuthStore
-    + clinicalStore: ClinicalStore
-    + salesStore: SalesStore
-    + fulfillmentStore: FulfillmentStore
-    + inventoryStore: InventoryStore
-    + appointmentStore: AppointmentStore
-    + patients: ComputedRef<Patient[]>
-    + prescriptions: ComputedRef<Prescription[]>
-    + sales: ComputedRef<Sale[]>
-    + workOrders: ComputedRef<WorkOrder[]>
-    + products: ComputedRef<Product[]>
-    + appointments: ComputedRef<Appointment[]>
-    + ngOnInit(): void
-    + onLogin(username: string, password: string): void
-    + onLogout(): void
-    + updatePrescriptionsByPatient(p: Patient): void
-    + onRegisterPayment(p: Payment): void
-    + onUpdateOrderStatus(id: number, status: OrderStatus): void
-    + onCreateProduct(p: Product): void
-    + onCancelAppointment(id: number): void
+    - navItems: NavItem[]
+    + navigate(to: string): void
+    + isActive(to: string): boolean
   }
-  class LanguageSwitcher <<component>> {
-    + languageStore: LanguageStore
-    + currentLang: ComputedRef<string>
-    + onChangeLanguage(lang: string): void
-  }
-  class Footer <<component>> {
-  }
-  class Sidebar <<component>> {
-    + navItems: string[]
-    + activeRoute: string
-  }
-  class Header <<component>> {
-    + authStore: AuthStore
-    + currentUser: ComputedRef<User | null>
-    + onLogout(): void
+}
+
+package "shared.presentation.views" {
+  class PageNotFound <<view>> {
+    + navigateToSales(): void
   }
 }
 
 App *-- Layout : composes
-Layout *-- Sidebar : composes
-Layout *-- Header : composes
-Layout *-- LanguageSwitcher : composes
-Layout *-- Footer : composes
-LanguageStore --> I18nService : uses
-LanguageSwitcher --> LanguageStore : uses
-AuthInterceptor --> AuthStore : reads token
+Layout --> Router : uses (router-view + push)
+PageNotFound --> Router : uses (push)
+
+note right of BaseApi
+  Extended by every bounded-context
+  API class (SalesApi, PaymentApi, etc.)
+  to obtain a configured AxiosInstance
+  pointed at VITE_OPTIFLOW_API_URL.
+end note
+
+note right of BaseEndpoint
+  Instantiated inside each API class
+  using the AxiosInstance from BaseApi.
+  Wraps CRUD + getAllByParam for a
+  single REST resource path.
+end note
+
+note right of Layout
+  App shell: sidebar with nav items
+  and <router-view> main content area.
+  Also mounts pv-toast and pv-confirm-dialog
+  for global PrimeVue services.
+end note
+
+note bottom of Router
+  Routes registered:
+    /          → redirect /sales
+    /sales     → SaleListView
+    /lab-orders → LabOrderListView
+    /inventory  → InventoryListView
+    /:pathMatch → PageNotFound
+end note
 
 @enduml

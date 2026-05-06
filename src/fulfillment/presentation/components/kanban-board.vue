@@ -1,5 +1,8 @@
 <script setup>
+import { useI18n } from 'vue-i18n'
 import WorkOrderItem from './work-order-item.vue'
+
+const { t } = useI18n()
 
 const props = defineProps({
   workOrders: { type: Array, default: () => [] }
@@ -7,19 +10,19 @@ const props = defineProps({
 const emit = defineEmits(['statusChanged', 'orderClick'])
 
 const columns = [
-  { key: 'PENDING',         label: 'Recibida',        colorClass: 'col--gray',   bgClass: 'colbg--gray' },
-  { key: 'IN_PRODUCTION',   label: 'Biselado',         colorClass: 'col--teal',   bgClass: 'colbg--teal' },
-  { key: 'QUALITY_CONTROL', label: 'Control Calidad',  colorClass: 'col--purple', bgClass: 'colbg--purple' },
-  { key: 'READY',           label: 'Listo p/ Entrega', colorClass: 'col--green',  bgClass: 'colbg--green' },
-  { key: 'DELIVERED',       label: 'Entregado',        colorClass: 'col--light',  bgClass: 'colbg--light' }
+  { key: 'PENDING',         colorClass: 'col--gray',   bgClass: 'colbg--gray' },
+  { key: 'IN_PRODUCTION',   colorClass: 'col--teal',   bgClass: 'colbg--teal' },
+  { key: 'QUALITY_CONTROL', colorClass: 'col--purple', bgClass: 'colbg--purple' },
+  { key: 'READY',           colorClass: 'col--green',  bgClass: 'colbg--green' },
+  { key: 'DELIVERED',       colorClass: 'col--light',  bgClass: 'colbg--light' }
 ]
 
 function ordersForColumn(key) {
-  return props.workOrders.filter(wo => wo.status === key)
+  return props.workOrders.filter(workOrder => workOrder.status === key)
 }
 
-function onStatusChanged(wo, status) {
-  emit('statusChanged', { wo, status })
+function onStatusChanged(workOrder, status) {
+  emit('statusChanged', { workOrder, status })
 }
 </script>
 
@@ -27,19 +30,23 @@ function onStatusChanged(wo, status) {
   <div class="kanban">
     <div v-for="col in columns" :key="col.key" class="kanban-col">
       <div class="col-header" :class="col.bgClass">
-        <span class="col-title" :class="col.colorClass">{{ col.label }}</span>
-        <span class="col-count" :class="col.colorClass">{{ ordersForColumn(col.key).length }}</span>
+        <span class="col-title" :class="col.colorClass">
+          {{ $t(`labOrders.status.${col.key}`) }}
+        </span>
+        <span class="col-count" :class="col.colorClass">
+          {{ ordersForColumn(col.key).length }}
+        </span>
       </div>
       <div class="col-body">
         <WorkOrderItem
-            v-for="wo in ordersForColumn(col.key)"
-            :key="wo.id"
-            :work-order="wo"
-            @status-changed="(status) => onStatusChanged(wo, status)"
-            @click="emit('orderClick', wo)"
+            v-for="workOrder in ordersForColumn(col.key)"
+            :key="workOrder.id"
+            :work-order="workOrder"
+            @status-changed="(status) => onStatusChanged(workOrder, status)"
+            @click="emit('orderClick', workOrder)"
         />
         <div v-if="ordersForColumn(col.key).length === 0" class="col-empty">
-          Sin órdenes
+          {{ $t('labOrders.kanban.noOrders') }}
         </div>
       </div>
     </div>

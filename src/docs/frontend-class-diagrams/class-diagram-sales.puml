@@ -16,6 +16,7 @@ package "shared.infrastructure" {
     + update(id, resource): Promise<any>
     + patch(id, resource): Promise<any>
     + delete(id): Promise<void>
+    + getAllByParam(paramKey, paramValue): Promise<any[]>
   }
 }
 
@@ -23,11 +24,15 @@ package "sales.domain.model" {
   class Sale {
     + id: number
     + invoiceNumber: string
+    + labOrderNumber: string
     + patientId: number
     + patientName: string
+    + patientRx: string
     + userId: number
     + userName: string
+    + articulos: string[]
     + totalAmount: number
+    + adelanto: number
     + discountCode: string
     + discountAmount: number
     + pendingBalance: number
@@ -73,17 +78,28 @@ package "sales.domain.model" {
     DELIVERED
     RETURNED
   }
+  enum PaymentMethod {
+    CASH
+    CREDIT_CARD
+    DEBIT_CARD
+    TRANSFER
+    INSURANCE
+  }
 }
 
 package "sales.infrastructure" {
-  interface SaleResource {
+  class SaleResource {
     + id: number
     + invoiceNumber: string
+    + labOrderNumber: string
     + patientId: number
     + patientName: string
+    + patientRx: string
     + userId: number
     + userName: string
+    + articulos: string[]
     + totalAmount: number
+    + adelanto: number
     + discountCode: string
     + discountAmount: number
     + pendingBalance: number
@@ -93,7 +109,7 @@ package "sales.infrastructure" {
     + deliveredAt: string
     + notes: string
   }
-  interface SaleDetailResource {
+  class SaleDetailResource {
     + id: number
     + saleId: number
     + productId: number
@@ -102,14 +118,14 @@ package "sales.infrastructure" {
     + unitPrice: number
     + subtotal: number
   }
-  interface PaymentResource {
+  class PaymentResource {
     + id: number
     + saleId: number
     + amountPaid: number
     + method: string
     + paidAt: string
   }
-  interface FeedbackResource {
+  class FeedbackResource {
     + id: number
     + saleId: number
     + patientId: number
@@ -129,6 +145,7 @@ package "sales.infrastructure" {
   }
   class PaymentAssembler {
     + {static} toEntityFromResource(r: PaymentResource): Payment
+    + {static} toEntitiesFromResponse(r: PaymentResource[]): Payment[]
     + {static} toResourceFromEntity(p: Payment): PaymentResource
   }
   class FeedbackAssembler {
@@ -168,12 +185,17 @@ package "sales.application" {
     + salesCount: ComputedRef<number>
     + openSalesCount: ComputedRef<number>
     + completedSalesCount: ComputedRef<number>
+    + totalIngresos: ComputedRef<number>
+    + totalAdelantos: ComputedRef<number>
+    + totalSaldo: ComputedRef<number>
+    + ticketPromedio: ComputedRef<number>
     + fetchSales(): Promise<void>
     + createSale(s: Sale): Promise<void>
     + updateSale(id: number, s: Sale): Promise<void>
     + markAsReturned(id: number): Promise<void>
-    + registerPayment(p: Payment): Promise<void>
+    + cancelSale(id: number): Promise<void>
     + fetchPaymentsBySale(saleId: number): Promise<void>
+    + registerPayment(p: Payment): Promise<void>
     + submitFeedback(f: Feedback): Promise<void>
   }
 }
@@ -181,9 +203,19 @@ package "sales.application" {
 package "sales.presentation.views" {
   class SaleListView <<view>> {
     - search: Ref<string>
+    - statusFilter: Ref<string | null>
     - showNewSaleModal: Ref<boolean>
+    - showPaymentDialog: Ref<boolean>
+    - showFeedbackDialog: Ref<boolean>
     - selectedSale: Ref<Sale | null>
     - filteredSales: ComputedRef<Sale[]>
+    + onSaleCreated(sale: Sale): void
+    + onCollectPayment(sale: Sale): void
+    + onPaymentRegistered(payment: Payment): void
+    + onReturnSale(saleId: number): void
+    + onCancelSale(saleId: number): void
+    + onFeedbackSubmitted(feedback: Feedback): void
+    + formatCurrency(value: number): string
   }
 }
 
@@ -191,24 +223,63 @@ package "sales.presentation.components" {
   class SaleTable <<component>> {
     + sales: Sale[] (prop)
     + emit return-sale: (saleId: number)
+    + emit cancel-sale: (saleId: number)
     + emit collect-payment: (sale: Sale)
+    + formatCurrency(value: number): string
+    + adelantoPercent(sale: Sale): number
+    + isOpen(sale: Sale): boolean
+    + isDelivered(sale: Sale): boolean
   }
   class SaleStatusBadge <<component>> {
-    + status: SaleStatus (prop)
+    + status: string (prop)
   }
   class SaleFormModal <<component>> {
     + visible: boolean (prop)
+    - step: Ref<number>
+    - patients: Ref<any[]>
+    - selectedPatient: Ref<any | null>
+    - frameOption: Ref<string>
+    - lenseMaterial: Ref<string>
+    - lenseType: Ref<string>
+    - extraItems: Ref<string[]>
+    - totalAmountInput: Ref<number>
+    - adelanto: Ref<number>
+    - discountCode: Ref<string>
+    - discountAmount: Ref<number>
+    - paymentMethod: Ref<string>
+    - notes: Ref<string>
+    - finalAmount: ComputedRef<number>
+    - pendingBalance: ComputedRef<number>
+    - canSave: ComputedRef<boolean>
     + emit saved: (sale: Sale)
     + emit close: void
+    + nextStep(): void
+    + prevStep(): void
+    + addExtraItem(): void
+    + removeExtraItem(i: number): void
+    + buildArticulos(): string[]
+    + generateCode(prefix: string): string
+    + save(): void
+    + close(): void
   }
   class PaymentForm <<component>> {
     + sale: Sale (prop)
     + payments: Payment[] (prop)
+    - method: Ref<string>
+    - amountPaid: Ref<number>
+    - isValid: ComputedRef<boolean>
     + emit payment-registered: (payment: Payment)
+    + submit(): void
   }
   class FeedbackForm <<component>> {
     + saleId: number (prop)
+    + patientId: number (prop)
+    - rating: Ref<number>
+    - recommendService: Ref<boolean>
+    - comment: Ref<string>
     + emit feedback-submitted: (feedback: Feedback)
+    + emit skip: void
+    + submit(): void
   }
 }
 
@@ -239,10 +310,11 @@ SalesStore --> FeedbackAssembler : uses
 SaleListView --> SalesStore : uses
 SaleListView *-- SaleTable : contains
 SaleListView *-- SaleFormModal : contains
+SaleListView *-- PaymentForm : dialog
+SaleListView *-- FeedbackForm : dialog
 SaleTable *-- SaleStatusBadge : contains
-SaleFormModal *-- PaymentForm : step 3
-SaleFormModal *-- FeedbackForm : post-sale
 
 Sale --> SaleStatus : uses
+Payment --> PaymentMethod : uses
 
 @enduml

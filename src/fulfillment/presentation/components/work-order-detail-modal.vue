@@ -1,17 +1,23 @@
 <script setup>
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+
 const props = defineProps({
   workOrder: { type: Object, required: true }
 })
 const emit = defineEmits(['close', 'statusChanged'])
 
-const COLUMNAS = [
-  { key: 'PENDING',         label: 'Recibida' },
-  { key: 'IN_PRODUCTION',   label: 'Biselado' },
-  { key: 'QUALITY_CONTROL', label: 'Control QC' },
-  { key: 'READY',           label: 'Listo' }
+const ORDER_FLOW = ['PENDING', 'IN_PRODUCTION', 'QUALITY_CONTROL', 'READY', 'DELIVERED']
+
+const progressColumns = [
+  { key: 'PENDING' },
+  { key: 'IN_PRODUCTION' },
+  { key: 'QUALITY_CONTROL' },
+  { key: 'READY' }
 ]
 
-const SIGUIENTE = {
+const nextStatus = {
   PENDING:         'IN_PRODUCTION',
   IN_PRODUCTION:   'QUALITY_CONTROL',
   QUALITY_CONTROL: 'READY',
@@ -19,7 +25,7 @@ const SIGUIENTE = {
   DELIVERED:       null
 }
 
-const ANTERIOR = {
+const previousStatus = {
   PENDING:         null,
   IN_PRODUCTION:   'PENDING',
   QUALITY_CONTROL: 'IN_PRODUCTION',
@@ -27,34 +33,25 @@ const ANTERIOR = {
   DELIVERED:       'READY'
 }
 
-const SIGUIENTE_LABEL = {
-  IN_PRODUCTION:   'Biselado',
-  QUALITY_CONTROL: 'Control de Calidad',
-  READY:           'Listo para Entrega',
-  DELIVERED:       'Entregado'
-}
-
-const ANTERIOR_LABEL = {
-  PENDING:         'Recibida',
-  IN_PRODUCTION:   'Biselado',
-  QUALITY_CONTROL: 'Control QC',
-  READY:           'Listo'
-}
-
-const ORDER_FLOW = ['PENDING', 'IN_PRODUCTION', 'QUALITY_CONTROL', 'READY', 'DELIVERED']
-
-function idxActual() {
+function currentIndex() {
   return ORDER_FLOW.indexOf(props.workOrder.status)
 }
 
 function onAdvance() {
-  const next = SIGUIENTE[props.workOrder.status]
+  const next = nextStatus[props.workOrder.status]
   if (next) { emit('statusChanged', next); emit('close') }
 }
 
 function onGoBack() {
-  const prev = ANTERIOR[props.workOrder.status]
-  if (prev) { emit('statusChanged', prev); emit('close') }
+  const previous = previousStatus[props.workOrder.status]
+  if (previous) { emit('statusChanged', previous); emit('close') }
+}
+
+function priorityChipClass() {
+  const priority = props.workOrder.priority
+  if (priority === 'urgent') return 'priority-chip--urgent'
+  if (priority === 'high')   return 'priority-chip--high'
+  return 'priority-chip--normal'
 }
 </script>
 
@@ -65,7 +62,7 @@ function onGoBack() {
       <div class="modal-header">
         <div>
           <p class="order-id-small">{{ workOrder.id }}</p>
-          <h3 class="order-patient">{{ workOrder.patientName || workOrder.paciente }}</h3>
+          <h3 class="order-patient">{{ workOrder.patientName }}</h3>
         </div>
         <button class="close-btn" @click="emit('close')">
           <i class="pi pi-times" />
@@ -73,90 +70,97 @@ function onGoBack() {
       </div>
 
       <div class="modal-body">
-        <!-- Progreso -->
+
+        <!-- Progress -->
         <div class="progress-section">
-          <p class="section-label">Progreso de la Orden</p>
+          <p class="section-label">{{ $t('labOrders.detail.orderProgress') }}</p>
           <div class="progress-bar">
-            <template v-for="(col, i) in COLUMNAS" :key="col.key">
-              <div class="progress-step" :class="{ 'progress-step--done': i <= idxActual() }" />
-              <i v-if="i < COLUMNAS.length - 1" class="pi pi-chevron-right progress-arrow" />
+            <template v-for="(col, i) in progressColumns" :key="col.key">
+              <div class="progress-step" :class="{ 'progress-step--done': i <= currentIndex() }" />
+              <i v-if="i < progressColumns.length - 1" class="pi pi-chevron-right progress-arrow" />
             </template>
           </div>
           <div class="progress-labels">
             <span
-                v-for="col in COLUMNAS"
+                v-for="col in progressColumns"
                 :key="col.key"
                 class="progress-label"
                 :class="{ 'progress-label--active': workOrder.status === col.key }"
-            >{{ col.label }}</span>
+            >
+              {{ $t(`labOrders.status.${col.key}`) }}
+            </span>
           </div>
         </div>
 
         <!-- Info grid -->
         <div class="info-grid">
           <div class="info-card">
-            <p class="info-card-label">Tipo de Producto</p>
-            <p class="info-card-value">{{ workOrder.tipo || '—' }}</p>
+            <p class="info-card-label">{{ $t('labOrders.detail.productType') }}</p>
+            <p class="info-card-value">{{ workOrder.lensType || '—' }}</p>
           </div>
           <div class="info-card">
-            <p class="info-card-label">Armazón</p>
-            <p class="info-card-value">{{ workOrder.armazon || '—' }}</p>
+            <p class="info-card-label">{{ $t('labOrders.detail.frame') }}</p>
+            <p class="info-card-value">{{ workOrder.frame || '—' }}</p>
           </div>
           <div class="info-card">
-            <p class="info-card-label">Laboratorio</p>
-            <p class="info-card-value">{{ workOrder.laboratorio || workOrder.laboratoryName || '—' }}</p>
+            <p class="info-card-label">{{ $t('labOrders.detail.laboratory') }}</p>
+            <p class="info-card-value">{{ workOrder.laboratoryName || '—' }}</p>
           </div>
           <div class="info-card">
-            <p class="info-card-label">Fecha Esperada</p>
-            <p class="info-card-value">{{ workOrder.deliveryDate || workOrder.fechaEsperada }}</p>
+            <p class="info-card-label">{{ $t('labOrders.detail.expectedDate') }}</p>
+            <p class="info-card-value">{{ workOrder.deliveryDate }}</p>
           </div>
         </div>
 
-        <!-- Receta -->
+        <!-- Prescription -->
         <div class="recipe-box">
           <div class="recipe-header">
             <i class="pi pi-eye" style="color: #00c1b0" />
-            <span class="recipe-title">Receta Óptica</span>
+            <span class="recipe-title">{{ $t('labOrders.detail.opticalPrescription') }}</span>
           </div>
-          <p class="recipe-text">{{ workOrder.receta || `Receta ID: ${workOrder.recipeId}` }}</p>
+          <p class="recipe-text">{{ workOrder.prescription || `Prescription ID: ${workOrder.recipeId}` }}</p>
         </div>
 
-        <!-- Pagos -->
+        <!-- Payment summary -->
         <div class="payment-box">
-          <p class="section-label">Resumen de Pago</p>
+          <p class="section-label">{{ $t('labOrders.detail.paymentSummary') }}</p>
           <div class="payment-row">
-            <span class="payment-label">Total</span>
+            <span class="payment-label">{{ $t('labOrders.detail.totalAmount') }}</span>
             <span class="payment-value">S/ {{ (workOrder.total || 0).toFixed(2) }}</span>
           </div>
           <div class="payment-row">
-            <span class="payment-label">Adelanto pagado</span>
-            <span class="payment-value payment-value--green">- S/ {{ (workOrder.adelanto || 0).toFixed(2) }}</span>
+            <span class="payment-label">{{ $t('labOrders.detail.depositPaid') }}</span>
+            <span class="payment-value payment-value--green">
+              - S/ {{ (workOrder.deposit || 0).toFixed(2) }}
+            </span>
           </div>
           <div class="payment-row payment-row--total">
-            <span class="payment-label">Saldo pendiente</span>
+            <span class="payment-label">{{ $t('labOrders.detail.pendingBalance') }}</span>
             <span
                 class="payment-value"
-                :class="(workOrder.total - workOrder.adelanto) > 0 ? 'payment-value--orange' : 'payment-value--green'"
+                :class="(workOrder.total - workOrder.deposit) > 0 ? 'payment-value--orange' : 'payment-value--green'"
             >
-              S/ {{ Math.max(0, (workOrder.total || 0) - (workOrder.adelanto || 0)).toFixed(2) }}
+              S/ {{ Math.max(0, (workOrder.total || 0) - (workOrder.deposit || 0)).toFixed(2) }}
             </span>
           </div>
         </div>
+
       </div>
 
       <div class="modal-footer">
-        <span class="priority-chip" :class="`priority-chip--${workOrder.prioridad || 'normal'}`">
-          {{ workOrder.prioridad === 'urgente' ? 'URGENTE' : workOrder.prioridad === 'alta' ? 'ALTA' : 'Normal' }} prioridad
+        <span class="priority-chip" :class="priorityChipClass()">
+          {{ $t(`labOrders.priority.${workOrder.priority || 'normal'}`) }}
         </span>
         <div class="footer-actions">
-          <button v-if="ANTERIOR[workOrder.status]" class="back-btn" @click="onGoBack">
-            <i class="pi pi-chevron-left" /> {{ ANTERIOR_LABEL[ANTERIOR[workOrder.status]] }}
+          <button v-if="previousStatus[workOrder.status]" class="back-btn" @click="onGoBack">
+            <i class="pi pi-chevron-left" />
+            {{ $t(`labOrders.status.${previousStatus[workOrder.status]}`) }}
           </button>
-          <button v-if="SIGUIENTE[workOrder.status]" class="advance-btn-modal" @click="onAdvance">
-            Mover a "{{ SIGUIENTE_LABEL[SIGUIENTE[workOrder.status]] }}"
+          <button v-if="nextStatus[workOrder.status]" class="advance-btn-modal" @click="onAdvance">
+            {{ $t('labOrders.detail.moveTo') }} "{{ $t(`labOrders.status.${nextStatus[workOrder.status]}`) }}"
             <i class="pi pi-chevron-right" />
           </button>
-          <span v-else class="completed-label">✓ Orden completada</span>
+          <span v-else class="completed-label">{{ $t('labOrders.detail.completed') }}</span>
         </div>
       </div>
 
@@ -198,9 +202,9 @@ function onGoBack() {
 .payment-value--orange { color: #ea580c; }
 .modal-footer { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-top: 1px solid #f3f4f6; flex-shrink: 0; gap: 10px; }
 .priority-chip { font-family: 'Montserrat', sans-serif; font-size: 0.72rem; font-weight: 600; padding: 4px 10px; border-radius: 20px; flex-shrink: 0; }
-.priority-chip--urgente { background: #fee2e2; color: #b91c1c; }
-.priority-chip--alta    { background: #ffedd5; color: #c2410c; }
-.priority-chip--normal  { background: #f3f4f6; color: #6b7280; }
+.priority-chip--urgent { background: #fee2e2; color: #b91c1c; }
+.priority-chip--high   { background: #ffedd5; color: #c2410c; }
+.priority-chip--normal { background: #f3f4f6; color: #6b7280; }
 .footer-actions { display: flex; align-items: center; gap: 8px; }
 .back-btn { display: flex; align-items: center; gap: 6px; padding: 8px 14px; background: #f3f4f6; color: #374151; border: none; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: background 0.15s; }
 .back-btn:hover { background: #e5e7eb; }
