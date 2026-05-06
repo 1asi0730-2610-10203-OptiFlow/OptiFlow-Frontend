@@ -254,5 +254,222 @@
       "email": "miguel@email.com",
       "phone": "987654325"
     }
+  ],
+  "work_orders": [
+    {
+      "order_id": "LAB-2847",
+      "sale_id": 1,
+      "recipe_id": 1,
+      "lab_id": 1,
+      "status": "IN_PRODUCTION",
+      "delivery_date": "2026-04-25",
+      "paciente": "Sarah Johnson",
+      "laboratorio": "Vision Labs Inc.",
+      "tipo": "Lunas Progresivas",
+      "armazon": "Ray-Ban RB5228 Negro",
+      "receta": "OD: Esf -2.50, Cil -0.75, Eje 90 | OS: Esf -2.75, Cil -0.50, Eje 85",
+      "prioridad": "urgente",
+      "adelanto": 242.5,
+      "total": 485,
+      "retrabajo": false
+    },
+    {
+      "order_id": "LAB-2846",
+      "sale_id": 2,
+      "recipe_id": 2,
+      "lab_id": 2,
+      "status": "QUALITY_CONTROL",
+      "delivery_date": "2026-04-22",
+      "paciente": "Michael Chen",
+      "laboratorio": "OpticalPro Lab",
+      "tipo": "Lentes de Contacto",
+      "armazon": "Sin Montura",
+      "receta": "OD: Esf -1.25 | OS: Esf -1.50",
+      "prioridad": "alta",
+      "adelanto": 90,
+      "total": 180,
+      "retrabajo": false
+    },
+    {
+      "order_id": "LAB-2845",
+      "sale_id": 3,
+      "recipe_id": 3,
+      "lab_id": 1,
+      "status": "READY",
+      "delivery_date": "2026-04-21",
+      "paciente": "Emma Wilson",
+      "laboratorio": "Vision Labs Inc.",
+      "tipo": "Lunas Monofocales",
+      "armazon": "Oakley Holbrook Carey",
+      "receta": "OD: Esf +1.00, Cil +0.25 | OS: Esf +1.25, Cil +0.50",
+      "prioridad": "normal",
+      "adelanto": 62.5,
+      "total": 125,
+      "retrabajo": false
+    },
+    {
+      "order_id": "LAB-2844",
+      "sale_id": 4,
+      "recipe_id": 4,
+      "lab_id": 2,
+      "status": "PENDING",
+      "delivery_date": "2026-04-20",
+      "paciente": "David Martínez",
+      "laboratorio": "Premium Optics Lab",
+      "tipo": "Lunas con Filtro Azul",
+      "armazon": "Nike 7284 Grafito",
+      "receta": "OD: Esf -3.00, Cil -0.50, Eje 175 | OS: Esf -3.25",
+      "prioridad": "urgente",
+      "adelanto": 160,
+      "total": 320,
+      "retrabajo": false
+    },
+    {
+      "order_id": "LAB-2843",
+      "sale_id": 5,
+      "recipe_id": 5,
+      "lab_id": 2,
+      "status": "DELIVERED",
+      "delivery_date": "2026-04-18",
+      "paciente": "Lisa Anderson",
+      "laboratorio": "OpticalPro Lab",
+      "tipo": "Lunas Polarizadas",
+      "armazon": "Maui Jim Peahi Negro",
+      "receta": "OD: Esf -1.75 | OS: Esf -2.00, Cil -0.25",
+      "prioridad": "normal",
+      "adelanto": 245,
+      "total": 245,
+      "retrabajo": false
+    },
+    {
+      "order_id": "LAB-2842",
+      "sale_id": 6,
+      "recipe_id": 6,
+      "lab_id": 1,
+      "status": "PENDING",
+      "delivery_date": "2026-04-26",
+      "paciente": "Carlos Rivera",
+      "laboratorio": "Vision Labs Inc.",
+      "tipo": "Lunas Bifocales",
+      "armazon": "Silhouette Titan Marrón",
+      "receta": "OD: Esf +2.50, Add +2.00 | OS: Esf +2.75, Add +2.00",
+      "prioridad": "normal",
+      "adelanto": 150,
+      "total": 380,
+      "retrabajo": false
+    },
+    {
+      "order_id": "LAB-2841",
+      "sale_id": 7,
+      "recipe_id": 7,
+      "lab_id": 2,
+      "status": "IN_PRODUCTION",
+      "delivery_date": "2026-04-23",
+      "paciente": "Ana Torres",
+      "laboratorio": "Premium Optics Lab",
+      "tipo": "Lunas Antireflejantes",
+      "armazon": "Prada PR 05WS Plata",
+      "receta": "OD: Esf -0.75 | OS: Esf -1.00, Cil -0.25",
+      "prioridad": "alta",
+      "adelanto": 175,
+      "total": 290,
+      "retrabajo": false
+    }
+  ],
+  "laboratories": [
+    {
+      "lab_id": 1,
+      "name": "Vision Labs Inc.",
+      "contact_info": "visionlabs@email.com"
+    },
+    {
+      "lab_id": 2,
+      "name": "OpticalPro Lab",
+      "contact_info": "opticalpro@email.com"
+    }
+  ],
+  "products": [
+    {
+      "product_id": 1,
+      "category_id": 1,
+      "supplier_id": 1,
+      "brand": "Ray-Ban",
+      "model": "RB5154",
+      "price": 120,
+      "stock": 8
+    },
+    {
+      "product_id": 2,
+      "category_id": 1,
+      "supplier_id": 1,
+      "brand": "Oakley",
+      "model": "OX8046",
+      "price": 180,
+      "stock": 2
+    },
+    {
+      "product_id": 3,
+      "category_id": 2,
+      "supplier_id": 2,
+      "brand": "Essilor",
+      "model": "CR-39 PRO",
+      "price": 40,
+      "stock": 15
+    },
+    {
+      "product_id": 4,
+      "category_id": 2,
+      "supplier_id": 2,
+      "brand": "Transitions",
+      "model": "Trivex",
+      "price": 125,
+      "stock": 4
+    },
+    {
+      "product_id": 5,
+      "category_id": 3,
+      "supplier_id": 3,
+      "brand": "Acuvue",
+      "model": "Moist 30",
+      "price": 85,
+      "stock": 10
+    }
+  ],
+  "categories": [
+    {
+      "category_id": 1,
+      "name": "Monturas"
+    },
+    {
+      "category_id": 2,
+      "name": "Lunas"
+    },
+    {
+      "category_id": 3,
+      "name": "Lentes de Contacto"
+    }
+  ],
+  "suppliers": [
+    {
+      "supplier_id": 1,
+      "name": "OpticaDistrib SAC",
+      "contact_person": "Juan Pérez",
+      "phone": "999111222",
+      "email": "juan@opticadistrib.com"
+    },
+    {
+      "supplier_id": 2,
+      "name": "LensProPeru",
+      "contact_person": "María López",
+      "phone": "999333444",
+      "email": "maria@lensproperu.com"
+    },
+    {
+      "supplier_id": 3,
+      "name": "MedVision Peru",
+      "contact_person": "Carlos Ruiz",
+      "phone": "999555666",
+      "email": "carlos@medvision.com"
+    }
   ]
 }
