@@ -393,83 +393,163 @@
       "product_id": 1,
       "category_id": 1,
       "supplier_id": 1,
-      "brand": "Ray-Ban",
-      "model": "RB5154",
-      "price": 120,
-      "stock": 8
+      "brand": "Vision Labs",
+      "model": "Lunas Progresivas",
+      "nombre": "Lunas Progresivas",
+      "categoria": "Lunas",
+      "sku": "LUN-PRG-001",
+      "stock": 45,
+      "nivelReorden": 20,
+      "precioUnitario": 125.00,
+      "proveedor": "Vision Labs Inc.",
+      "ultimoRestock": "2026-04-10"
     },
     {
       "product_id": 2,
-      "category_id": 1,
-      "supplier_id": 1,
-      "brand": "Oakley",
-      "model": "OX8046",
-      "price": 180,
-      "stock": 2
+      "category_id": 3,
+      "supplier_id": 4,
+      "brand": "Eye Care",
+      "model": "Solución LC",
+      "nombre": "Solución para Lentes de Contacto",
+      "categoria": "Accesorios",
+      "sku": "ACC-SLC-002",
+      "stock": 5,
+      "nivelReorden": 20,
+      "precioUnitario": 8.99,
+      "proveedor": "Eye Care Supplies",
+      "ultimoRestock": "2026-03-28"
     },
     {
       "product_id": 3,
-      "category_id": 2,
+      "category_id": 1,
       "supplier_id": 2,
-      "brand": "Essilor",
-      "model": "CR-39 PRO",
-      "price": 40,
-      "stock": 15
+      "brand": "OpticalPro",
+      "model": "Filtro Azul",
+      "nombre": "Lunas con Filtro de Luz Azul",
+      "categoria": "Lunas",
+      "sku": "LUN-FLA-003",
+      "stock": 8,
+      "nivelReorden": 30,
+      "precioUnitario": 89.00,
+      "proveedor": "OpticalPro Lab",
+      "ultimoRestock": "2026-04-05"
     },
     {
       "product_id": 4,
       "category_id": 2,
-      "supplier_id": 2,
-      "brand": "Transitions",
-      "model": "Trivex",
-      "price": 125,
-      "stock": 4
+      "supplier_id": 5,
+      "brand": "Fashion Optics",
+      "model": "Premium",
+      "nombre": "Armazones Diseñador Premium",
+      "categoria": "Armazones",
+      "sku": "ARM-DSG-004",
+      "stock": 28,
+      "nivelReorden": 15,
+      "precioUnitario": 245.00,
+      "proveedor": "Fashion Optics Co.",
+      "ultimoRestock": "2026-04-15"
     },
     {
       "product_id": 5,
+      "category_id": 2,
+      "supplier_id": 6,
+      "brand": "Budget Frames",
+      "model": "Lectura",
+      "nombre": "Armazones de Lectura",
+      "categoria": "Armazones",
+      "sku": "ARM-LEC-005",
+      "stock": 12,
+      "nivelReorden": 25,
+      "precioUnitario": 35.00,
+      "proveedor": "Budget Frames Inc.",
+      "ultimoRestock": "2026-04-01"
+    },
+    {
+      "product_id": 6,
       "category_id": 3,
-      "supplier_id": 3,
-      "brand": "Acuvue",
-      "model": "Moist 30",
-      "price": 85,
-      "stock": 10
+      "supplier_id": 4,
+      "brand": "Eye Care",
+      "model": "Kit Limpieza",
+      "nombre": "Kits de Limpieza",
+      "categoria": "Accesorios",
+      "sku": "ACC-LMP-006",
+      "stock": 67,
+      "nivelReorden": 30,
+      "precioUnitario": 12.50,
+      "proveedor": "Eye Care Supplies",
+      "ultimoRestock": "2026-04-18"
     }
   ],
+
   "categories": [
     {
       "category_id": 1,
-      "name": "Monturas"
-    },
-    {
-      "category_id": 2,
       "name": "Lunas"
     },
     {
+      "category_id": 2,
+      "name": "Armazones"
+    },
+    {
       "category_id": 3,
+      "name": "Accesorios"
+    },
+    {
+      "category_id": 4,
       "name": "Lentes de Contacto"
+    },
+    {
+      "category_id": 5,
+      "name": "Lentes de Sol"
+    },
+    {
+      "category_id": 6,
+      "name": "Equipos"
     }
   ],
+
   "suppliers": [
     {
       "supplier_id": 1,
-      "name": "OpticaDistrib SAC",
-      "contact_person": "Juan Pérez",
-      "phone": "999111222",
-      "email": "juan@opticadistrib.com"
+      "name": "Vision Labs Inc.",
+      "contact_person": "",
+      "phone": "",
+      "email": ""
     },
     {
       "supplier_id": 2,
-      "name": "LensProPeru",
-      "contact_person": "María López",
-      "phone": "999333444",
-      "email": "maria@lensproperu.com"
+      "name": "OpticalPro Lab",
+      "contact_person": "",
+      "phone": "",
+      "email": ""
     },
     {
       "supplier_id": 3,
-      "name": "MedVision Peru",
-      "contact_person": "Carlos Ruiz",
-      "phone": "999555666",
-      "email": "carlos@medvision.com"
+      "name": "Premium Optics Lab",
+      "contact_person": "",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "supplier_id": 4,
+      "name": "Eye Care Supplies",
+      "contact_person": "",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "supplier_id": 5,
+      "name": "Fashion Optics Co.",
+      "contact_person": "",
+      "phone": "",
+      "email": ""
+    },
+    {
+      "supplier_id": 6,
+      "name": "Budget Frames Inc.",
+      "contact_person": "",
+      "phone": "",
+      "email": ""
     }
   ]
 }
