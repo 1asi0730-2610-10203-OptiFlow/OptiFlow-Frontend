@@ -12,7 +12,8 @@
     "inventory": "Inventario",
     "staff": "Personal",
     "reports": "Reportes",
-    "settings": "Configuración"
+    "settings": "Configuración",
+    "subscription": "Subscription"
   },
   "user": {
     "role": "Administrador"
@@ -285,6 +286,53 @@
       "itemAddedDetail": "registrado en el inventario.",
       "restockDone": "Restock registrado",
       "restockDetail": "unidades agregadas."
+    }
+  },
+  "nav": {
+    "subscription": "Suscripción"
+  },
+  "subscription": {
+    "meta": {
+      "success": "Pago exitoso",
+      "myPlan": "Mi suscripción"
+    },
+    "success": {
+      "activating":     "Activando tu suscripción...",
+      "title":          "¡Pago exitoso!",
+      "subtitle":       "Tu suscripción {plan} ya está activa.",
+      "perMonth":       "/mes",
+      "viewPlan":       "Ver mi plan",
+      "goToDashboard":  "Ir al dashboard",
+      "alreadyTitle":   "Suscripción activa",
+      "alreadySubtitle":"Esta sesión ya fue procesada anteriormente.",
+      "errorTitle":     "Algo salió mal",
+      "errorSubtitle":  "No pudimos registrar tu suscripción. Por favor, contáctanos."
+    },
+    "myPlan": {
+      "pageTitle":       "Mi suscripción",
+      "pageSubtitle":    "Gestiona tu plan actual",
+      "noSubscription":  "Sin suscripción activa",
+      "noSubscriptionHint": "Visita nuestra landing page para elegir un plan.",
+      "perMonth":        "/mes",
+      "startDate":       "Inicio",
+      "nextBilling":     "Próximo cobro",
+      "planId":          "Plan ID",
+      "stripeSession":   "Sesión Stripe",
+      "cancelSubscription": "Cancelar suscripción",
+      "history":         "Historial",
+      "status": {
+        "active":    "Activo",
+        "cancelled": "Cancelado"
+      },
+      "confirm": {
+        "cancelMessage": "¿Deseas cancelar tu suscripción? Permanecerá activa hasta el final del período.",
+        "cancelHeader":  "Cancelar suscripción",
+        "cancelAccept":  "Sí, cancelar"
+      },
+      "toast": {
+        "cancelledSummary": "Suscripción cancelada",
+        "cancelledDetail":  "Permanecerá activa hasta el fin del período."
+      }
     }
   }
 }
