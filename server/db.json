@@ -508,5 +508,19 @@
       "phone": "",
       "email": ""
     }
+  ],
+  "subscriptions": [
+    {
+      "id": 1,
+      "userId": "current-user",
+      "planId": "pro",
+      "planName": "Pro",
+      "price": 29.99,
+      "currency": "USD",
+      "status": "active",
+      "stripeSessionId": "cs_test_abc123xyz",
+      "startDate": "2026-05-10T00:00:00.000Z",
+      "endDate": "2026-06-10T00:00:00.000Z"
+    }
   ]
 }
