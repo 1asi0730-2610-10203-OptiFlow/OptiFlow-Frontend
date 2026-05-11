@@ -12,8 +12,7 @@
     "inventory": "Inventory",
     "staff": "Staff",
     "reports": "Reports",
-    "settings": "Settings",
-    "subscription": "Suscripción"
+    "settings": "Settings"
   },
   "user": {
     "role": "Administrator"
@@ -292,44 +291,6 @@
     "meta": {
       "success": "Payment successful",
       "myPlan": "My subscription"
-    },
-    "success": {
-      "activating":     "Activating your subscription...",
-      "title":          "Payment successful!",
-      "subtitle":       "Your {plan} subscription is now active.",
-      "perMonth":       "/mo",
-      "viewPlan":       "View my plan",
-      "goToDashboard":  "Go to dashboard",
-      "alreadyTitle":   "Subscription active",
-      "alreadySubtitle":"This session has already been processed.",
-      "errorTitle":     "Something went wrong",
-      "errorSubtitle":  "We could not register your subscription. Please contact us."
-    },
-    "myPlan": {
-      "pageTitle":       "My subscription",
-      "pageSubtitle":    "Manage your current plan",
-      "noSubscription":  "No active subscription",
-      "noSubscriptionHint": "Visit our landing page to choose a plan.",
-      "perMonth":        "/mo",
-      "startDate":       "Start date",
-      "nextBilling":     "Next billing",
-      "planId":          "Plan ID",
-      "stripeSession":   "Stripe session",
-      "cancelSubscription": "Cancel subscription",
-      "history":         "History",
-      "status": {
-        "active":    "Active",
-        "cancelled": "Cancelled"
-      },
-      "confirm": {
-        "cancelMessage": "Do you want to cancel your subscription? It will remain active until the end of the billing period.",
-        "cancelHeader":  "Cancel subscription",
-        "cancelAccept":  "Yes, cancel"
-      },
-      "toast": {
-        "cancelledSummary": "Subscription cancelled",
-        "cancelledDetail":  "It will remain active until the end of the billing period."
-      }
     }
   }
 }

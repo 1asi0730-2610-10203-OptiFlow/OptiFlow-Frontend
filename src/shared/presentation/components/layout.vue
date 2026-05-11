@@ -30,7 +30,6 @@ const navItems = [
   { key: 'sales',        icon: 'pi pi-shopping-cart', to: '/sales' },
   { key: 'labOrders',    icon: 'pi pi-wrench',        to: '/lab-orders' },
   { key: 'inventory',    icon: 'pi pi-box',           to: '/inventory' },
-  { key: 'subscription', icon: 'pi pi-credit-card',   to: '/subscription/my-plan' },
   { key: 'staff',        icon: 'pi pi-id-card',       to: '/staff' },
   { key: 'reports',      icon: 'pi pi-chart-bar',     to: '/reports' },
   { key: 'settings',     icon: 'pi pi-cog',           to: '/settings' }
