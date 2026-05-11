@@ -17,7 +17,6 @@ import clinicalRoutes from "./clinical/presentation/clinical-routes.js";
 import salesRoutes        from './sales/presentation/sales-routes.js'
 import fulfillmentRoutes  from './fulfillment/presentation/fulfillment-routes.js'
 import inventoryRoutes    from './inventory/presentation/inventory-routes.js'
-import subscriptionRoutes from './subscription/presentation/subscription-routes.js'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,7 +26,6 @@ const router = createRouter({
     ...fulfillmentRoutes,
     ...inventoryRoutes,
     ...clinicalRoutes,
-    ...subscriptionRoutes,
     {
       path:      '/:pathMatch(.*)*',
       name:      'not-found',
