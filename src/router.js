@@ -13,6 +13,10 @@
  */
 
 import { createRouter, createWebHistory } from 'vue-router'
+import salesRoutes from './sales/presentation/sales-routes.js'
+import fulfillmentRoutes from './fulfillment/presentation/fulfillment-routes.js'
+import inventoryRoutes from "./inventory/presentation/inventory-routes.js";
+import clinicalRoutes from "./clinical/presentation/clinical-routes.js";
 import salesRoutes        from './sales/presentation/sales-routes.js'
 import fulfillmentRoutes  from './fulfillment/presentation/fulfillment-routes.js'
 import inventoryRoutes    from './inventory/presentation/inventory-routes.js'
@@ -25,6 +29,7 @@ const router = createRouter({
     ...salesRoutes,
     ...fulfillmentRoutes,
     ...inventoryRoutes,
+    ...clinicalRoutes,
     ...subscriptionRoutes,
     {
       path:      '/:pathMatch(.*)*',
