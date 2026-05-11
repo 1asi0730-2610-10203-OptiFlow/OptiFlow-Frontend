@@ -96,6 +96,29 @@
       "createdAt": "2026-04-18",
       "deliveredAt": "2026-04-21",
       "notes": "Devolución por defecto en lente"
+    },
+    {
+      "id": 6,
+      "invoiceNumber": "FAC-2810",
+      "labOrderNumber": "LAB-1821",
+      "patientId": 2,
+      "patientName": "David Martínez",
+      "patientRx": "",
+      "userId": 1,
+      "userName": "John Doe",
+      "articulos": [
+        "Lunas Progresivo"
+      ],
+      "totalAmount": 108,
+      "adelanto": 100,
+      "pendingBalance": 8,
+      "discountCode": "desc15",
+      "discountAmount": 15,
+      "status": "PARTIAL",
+      "paymentMethod": "CASH",
+      "createdAt": "2026-05-10",
+      "deliveredAt": "",
+      "notes": ""
     }
   ],
   "sale_details": [
@@ -400,7 +423,7 @@
       "sku": "LUN-PRG-001",
       "stock": 45,
       "nivelReorden": 20,
-      "precioUnitario": 125.00,
+      "precioUnitario": 125,
       "proveedor": "Vision Labs Inc.",
       "ultimoRestock": "2026-04-10"
     },
@@ -430,7 +453,7 @@
       "sku": "LUN-FLA-003",
       "stock": 8,
       "nivelReorden": 30,
-      "precioUnitario": 89.00,
+      "precioUnitario": 89,
       "proveedor": "OpticalPro Lab",
       "ultimoRestock": "2026-04-05"
     },
@@ -445,7 +468,7 @@
       "sku": "ARM-DSG-004",
       "stock": 28,
       "nivelReorden": 15,
-      "precioUnitario": 245.00,
+      "precioUnitario": 245,
       "proveedor": "Fashion Optics Co.",
       "ultimoRestock": "2026-04-15"
     },
@@ -460,7 +483,7 @@
       "sku": "ARM-LEC-005",
       "stock": 12,
       "nivelReorden": 25,
-      "precioUnitario": 35.00,
+      "precioUnitario": 35,
       "proveedor": "Budget Frames Inc.",
       "ultimoRestock": "2026-04-01"
     },
@@ -475,12 +498,11 @@
       "sku": "ACC-LMP-006",
       "stock": 67,
       "nivelReorden": 30,
-      "precioUnitario": 12.50,
+      "precioUnitario": 12.5,
       "proveedor": "Eye Care Supplies",
       "ultimoRestock": "2026-04-18"
     }
   ],
-
   "categories": [
     {
       "category_id": 1,
@@ -507,7 +529,6 @@
       "name": "Equipos"
     }
   ],
-
   "suppliers": [
     {
       "supplier_id": 1,
