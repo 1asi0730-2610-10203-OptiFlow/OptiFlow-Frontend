@@ -7,7 +7,11 @@
       "mcp__claude_ai_Figma__get_design_context",
       "Bash(python3 *)",
       "mcp__claude_ai_Figma__get_screenshot",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\DELL\\\\Desktop\\\\Mierda2\\\\Estudio\\\\UPC\\\\CICLO 2026 - 1\\\\WEB APPLICATIONS\\\\optiflow-frontend\" -Force)",
+      "Bash(Select-Object -Property Name, PSIsContainer)",
+      "Bash(Format-Table -AutoSize)",
+      "Bash(python -u -c ' *)"
     ]
   }
 }

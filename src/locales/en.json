@@ -185,6 +185,44 @@
     "showing": "Showing",
     "orders": "orders"
   },
+  "dashboard": {
+    "title": "Control Panel",
+    "subtitle": "Welcome! Here's your business summary ·",
+    "liveIndicator": "Live",
+    "stats": {
+      "totalPatients": "Total Patients",
+      "patientsToday": "Patients attended today",
+      "monthlyRevenue": "Monthly Revenue",
+      "pendingLabOrders": "Pending Lab Orders"
+    },
+    "charts": {
+      "conversionTitle": "Prescription → Sale Conversion",
+      "conversionSubtitle": "Prescriptions issued vs. closed sales per month",
+      "last6Months": "Last 6 months",
+      "legendPrescriptions": "Prescriptions",
+      "legendSales": "Closed Sales",
+      "weeklyRevenueTitle": "Weekly Revenue",
+      "weeklyRevenueSubtitle": "Current week · S/ 52,300 total",
+      "months": ["Nov", "Dec", "Jan", "Feb", "Mar", "Apr"],
+      "weekDays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    },
+    "appointments": {
+      "title": "Today's Attended Patients",
+      "attended": "{attended} of {total}",
+      "statusConfirmed": "Confirmed",
+      "statusPending": "Pending"
+    },
+    "labOrders": {
+      "title": "Active Lab Orders",
+      "deliveryLabel": "Delivery: {date}"
+    },
+    "stockAlerts": {
+      "title": "Low Stock Alerts",
+      "itemCount": "{count} items",
+      "remaining": "{count} remaining",
+      "reorderMin": "Min. reorder: {min} units"
+    }
+  },
   "inventory": {
     "pageTitle": "Inventory Management",
     "pageSubtitle": "Stock level control and tracking",

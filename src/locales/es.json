@@ -185,6 +185,44 @@
     "showing": "Mostrando",
     "orders": "órdenes"
   },
+  "dashboard": {
+    "title": "Panel de Control",
+    "subtitle": "¡Bienvenido/a! Aquí está el resumen de tu negocio ·",
+    "liveIndicator": "En vivo",
+    "stats": {
+      "totalPatients": "Total Pacientes",
+      "patientsToday": "Clientes atendidos hoy",
+      "monthlyRevenue": "Ingresos del Mes",
+      "pendingLabOrders": "Órdenes Lab Pendientes"
+    },
+    "charts": {
+      "conversionTitle": "Conversión Receta → Venta",
+      "conversionSubtitle": "Recetas emitidas vs. ventas cerradas por mes",
+      "last6Months": "Últ. 6 meses",
+      "legendPrescriptions": "Recetas",
+      "legendSales": "Ventas Cerradas",
+      "weeklyRevenueTitle": "Ingresos Semanales",
+      "weeklyRevenueSubtitle": "Semana actual · S/ 52,300 total",
+      "months": ["Nov", "Dic", "Ene", "Feb", "Mar", "Abr"],
+      "weekDays": ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"]
+    },
+    "appointments": {
+      "title": "Clientes Atendidos de Hoy",
+      "attended": "{attended} de {total}",
+      "statusConfirmed": "Confirmada",
+      "statusPending": "Pendiente"
+    },
+    "labOrders": {
+      "title": "Órdenes de Lab Activas",
+      "deliveryLabel": "Entrega: {date}"
+    },
+    "stockAlerts": {
+      "title": "Alertas de Stock Bajo",
+      "itemCount": "{count} artículos",
+      "remaining": "{count} restantes",
+      "reorderMin": "Reorden mínimo: {min} unidades"
+    }
+  },
   "inventory": {
     "pageTitle": "Gestión de Inventario",
     "pageSubtitle": "Control y seguimiento de niveles de stock",
