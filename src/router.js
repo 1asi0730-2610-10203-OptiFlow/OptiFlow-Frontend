@@ -10,6 +10,7 @@ const router = createRouter({
     ...salesRoutes,
     ...fulfillmentRoutes,
     ...inventoryRoutes,
+    ...clinicalRoutes,
     {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
