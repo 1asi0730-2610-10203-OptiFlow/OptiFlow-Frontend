@@ -13,7 +13,8 @@
  */
 
 import { createRouter, createWebHistory } from 'vue-router'
-import clinicalRoutes from "./clinical/presentation/clinical-routes.js";
+import dashboardRoutes    from './dashboard/presentation/dashboard-routes.js'
+import clinicalRoutes     from "./clinical/presentation/clinical-routes.js";
 import salesRoutes        from './sales/presentation/sales-routes.js'
 import fulfillmentRoutes  from './fulfillment/presentation/fulfillment-routes.js'
 import inventoryRoutes    from './inventory/presentation/inventory-routes.js'
@@ -21,7 +22,8 @@ import inventoryRoutes    from './inventory/presentation/inventory-routes.js'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', redirect: '/sales' },
+    { path: '/', redirect: '/panel' },
+    ...dashboardRoutes,
     ...salesRoutes,
     ...fulfillmentRoutes,
     ...inventoryRoutes,
