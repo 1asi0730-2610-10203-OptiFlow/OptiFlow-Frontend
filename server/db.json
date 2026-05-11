@@ -96,6 +96,29 @@
       "createdAt": "2026-04-18",
       "deliveredAt": "2026-04-21",
       "notes": "Devolución por defecto en lente"
+    },
+    {
+      "id": 6,
+      "invoiceNumber": "FAC-2810",
+      "labOrderNumber": "LAB-1821",
+      "patientId": 2,
+      "patientName": "David Martínez",
+      "patientRx": "",
+      "userId": 1,
+      "userName": "John Doe",
+      "articulos": [
+        "Lunas Progresivo"
+      ],
+      "totalAmount": 108,
+      "adelanto": 100,
+      "pendingBalance": 8,
+      "discountCode": "desc15",
+      "discountAmount": 15,
+      "status": "PARTIAL",
+      "paymentMethod": "CASH",
+      "createdAt": "2026-05-10",
+      "deliveredAt": "",
+      "notes": ""
     }
   ],
   "sale_details": [
@@ -464,7 +487,6 @@
       "name": "Equipos"
     }
   ],
-
   "suppliers": [
     {
       "supplier_id": 1,
