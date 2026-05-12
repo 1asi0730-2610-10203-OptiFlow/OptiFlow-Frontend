@@ -324,5 +324,13 @@
       "restockDone": "Restock registrado",
       "restockDetail": "unidades agregadas."
     }
-  }
+  },
+  "nav": {
+    "panel": "Panel",
+    "patients": "Pacientes",
+    "myLenses": "Mis Lentes",
+    "tryOn": "Probador Virtual",
+    "calculator": "Calculadora",
+    "notifications": "Notificaciones"
+}
 }
