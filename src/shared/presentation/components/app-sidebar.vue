@@ -1,10 +1,14 @@
 <script setup>
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n }             from 'vue-i18n'
+import {ref} from "vue";
 
 const router = useRouter()
 const route  = useRoute()
 const { t }  = useI18n()
+
+  const isMobileOpen = ref(false)
+  isMobileOpen.value = false
 
 const navItems = [
   { key: 'panel',        icon: 'pi pi-home',         to: '/panel' },
@@ -23,51 +27,92 @@ const navItems = [
 
 function navigate(to) { router.push(to) }
 function isActive(to)  { return route.path.startsWith(to) }
+
+
 </script>
 
 <template>
-  <aside class="sidebar">
 
-    <div class="sidebar-brand">
+  <div class="sidebar-wrapper">
+    <button class="hamburger-btn" @click="isMobileOpen = true" aria-label="Open menu">
+      <i class="pi pi-bars"></i>
+    </button>
+
+    <transition name="fade">
+      <div
+          v-if="isMobileOpen"
+          class="sidebar-backdrop"
+          @click="isMobileOpen = false"
+      ></div>
+    </transition>
+
+    <aside class="sidebar" :class="{ 'sidebar--mobile-open': isMobileOpen }">
+
+      <div class="sidebar-brand">
       <span class="brand-logo">
         <i class="pi pi-eye brand-icon" aria-hidden="true" />
       </span>
-      <div class="brand-text">
-        <span class="brand-name">{{ $t('app.name') }}</span>
-        <span class="brand-subtitle">{{ $t('app.subtitle') }}</span>
+        <div class="brand-text">
+          <span class="brand-name">{{ $t('app.name') }}</span>
+          <span class="brand-subtitle">{{ $t('app.subtitle') }}</span>
+        </div>
       </div>
-    </div>
 
-    <nav class="sidebar-nav" :aria-label="$t('nav.section')">
-      <p class="nav-section-label">{{ $t('nav.section') }}</p>
-      <button
-          v-for="item in navItems"
-          :key="item.to"
-          class="nav-item"
-          :class="{ 'nav-item--active': isActive(item.to) }"
-          @click="navigate(item.to)"
-      >
-        <i :class="item.icon" class="nav-item__icon" aria-hidden="true" />
-        <span class="nav-item__label">{{ $t(`nav.${item.key}`) }}</span>
-      </button>
-    </nav>
+      <nav class="sidebar-nav" :aria-label="$t('nav.section')">
+        <p class="nav-section-label">{{ $t('nav.section') }}</p>
+        <button
+            v-for="item in navItems"
+            :key="item.to"
+            class="nav-item"
+            :class="{ 'nav-item--active': isActive(item.to) }"
+            @click="navigate(item.to)"
+        >
+          <i :class="item.icon" class="nav-item__icon" aria-hidden="true" />
+          <span class="nav-item__label">{{ $t(`nav.${item.key}`) }}</span>
+        </button>
+      </nav>
 
-    <div class="sidebar-user">
-      <div class="user-avatar" aria-hidden="true">JD</div>
-      <div class="user-info">
-        <span class="user-name">John Doe</span>
-        <span class="user-role">{{ $t('user.role') }}</span>
+      <div class="sidebar-user">
+        <div class="user-avatar" aria-hidden="true">JD</div>
+        <div class="user-info">
+          <span class="user-name">John Doe</span>
+          <span class="user-role">{{ $t('user.role') }}</span>
+        </div>
       </div>
-    </div>
 
-  </aside>
+    </aside>
+  </div>
+
 </template>
 
 <style scoped>
+.sidebar-wrapper {
+  display: flex;
+}
+.hamburger-btn {
+  display: none;
+}
+.sidebar-backdrop {
+  display: none;
+}
+
+/* Backdrop Fade Animation */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
 .sidebar {
-  width: 240px; min-width: 240px; background: #03070a;
+  display: flex;
+  width: 240px;
+  min-width: 240px;
+  background: #03070a;
   border-right: 1px solid rgba(147,193,206,0.15);
-  display: flex; flex-direction: column; overflow-y: auto;
+  flex-direction: column;
 }
 
 .sidebar-brand {
@@ -144,6 +189,50 @@ function isActive(to)  { return route.path.startsWith(to) }
 .user-role { font-family: 'Montserrat', sans-serif; font-size: 0.7rem; color: #93c1ce; }
 
 @media (max-width: 1023px) {
-  .sidebar { display: none; }
+  .sidebar {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1000;
+    transform: translateX(-100%);
+    /* The engine that makes the movement smooth */
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .hamburger-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: #03070a;
+    color: #00c1b0;
+    border: 1px solid rgba(147,193,206,0.15);
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 16px;
+    z-index: 900;
+  }
+
+  /* 2. The Pull: Bring it back to coordinates 0,0 */
+  .sidebar--mobile-open {
+    transform: translateX(0);
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.5);
+  }
+
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px);
+    z-index: 999;
+  }
+
 }
 </style>
