@@ -1,10 +1,12 @@
 {
   "app": {
     "name": "OptiFlow",
-    "subtitle": "ERP / CRM Óptico"
+    "subtitle": "ERP / CRM Óptico",
+    "patientSubtitle": "Portal del Paciente"
   },
   "nav": {
     "section": "MENÚ PRINCIPAL",
+    "patientSection": "PORTAL PACIENTE",
     "panel": "Panel",
     "patients": "Pacientes",
     "sales": "Ventas",
@@ -12,10 +14,24 @@
     "inventory": "Inventario",
     "staff": "Personal",
     "reports": "Reportes",
-    "settings": "Configuración"
+    "settings": "Configuración",
+    "myLenses": "Mis Lentes",
+    "tryOn": "Probador Virtual",
+    "calculator": "Calculadora",
+    "notifications": "Notificaciones"
   },
   "user": {
-    "role": "Administrador"
+    "role": "Administrador",
+    "patientRole": "Paciente"
+  },
+  "login": {
+    "chooseRole": "Selecciona cómo deseas acceder al sistema",
+    "adminTitle": "Administrador",
+    "adminDesc": "Gestión de ventas, inventario, órdenes de lab y registros de pacientes",
+    "adminBtn": "Acceso Admin",
+    "patientTitle": "Portal del Paciente",
+    "patientDesc": "Consulta tus pedidos, recetas y usa nuestras herramientas ópticas",
+    "patientBtn": "Acceso Paciente"
   },
   "common": {
     "search": "Buscar",
@@ -229,14 +245,12 @@
     "addPatient": "Agregar Paciente",
     "searchPlaceholder": "Buscar por nombre, correo, teléfono o DNI...",
     "loading": "Cargando pacientes…",
-
     "stats": {
       "total": "Total Pacientes",
       "activeThisMonth": "Activos Este Mes",
       "withPendingOrders": "Con Órdenes Pendientes",
       "pendingReview": "Pendientes de Revisión"
     },
-
     "table": {
       "patient": "Paciente",
       "contact": "Contacto",
@@ -250,17 +264,14 @@
       "noResultsHint": "Intenta con otro término de búsqueda",
       "patients": "pacientes"
     },
-
     "rx": {
       "sph": "Esf",
       "cyl": "Cil",
       "noPrescription": "Sin receta"
     },
-
     "toast": {
       "patientRegistered": "Paciente registrado satisfactoriamente"
     },
-
     "addModal": {
       "title": "Agregar Paciente",
       "subtitle": "Registrar un nuevo paciente en el sistema",
@@ -276,7 +287,6 @@
       "requiredError": "Por favor rellene los campos obligatorios",
       "register": "Registrar"
     },
-
     "hce": {
       "dniLabel": "DNI",
       "yearsOld": "años",
@@ -307,7 +317,6 @@
         "axisShort": "Eje"
       }
     },
-
     "newExam": {
       "title": "Nuevo Examen Clínico",
       "patientLabel": "Paciente",
@@ -328,7 +337,6 @@
       "demoFilesLabel": "Expedientes de Demostración",
       "saveExam": "Guardar Examen"
     },
-
     "success": {
       "next": "Siguiente"
     }
@@ -434,13 +442,5 @@
       "restockDone": "Restock registrado",
       "restockDetail": "unidades agregadas."
     }
-  },
-  "nav": {
-    "panel": "Panel",
-    "patients": "Pacientes",
-    "myLenses": "Mis Lentes",
-    "tryOn": "Probador Virtual",
-    "calculator": "Calculadora",
-    "notifications": "Notificaciones"
-}
+  }
 }

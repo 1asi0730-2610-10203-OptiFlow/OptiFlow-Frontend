@@ -144,7 +144,7 @@ function close() {
 <template>
   <pv-dialog
     :visible="visible"
-    :style="{ width: '580px' }"
+    :style="{ width: 'min(580px, 95vw)' }"
     modal
     :closable="false"
     @update:visible="close"
@@ -669,4 +669,14 @@ function close() {
 
 .price-input::-webkit-inner-spin-button,
 .price-input::-webkit-outer-spin-button { opacity: 0.5; }
+
+@media (max-width: 500px) {
+  .two-col {
+    grid-template-columns: 1fr;
+  }
+
+  .step-tab__label {
+    display: none;
+  }
+}
 </style>

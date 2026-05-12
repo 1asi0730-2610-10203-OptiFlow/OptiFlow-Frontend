@@ -231,7 +231,7 @@ function formatCurrency(value) {
     <pv-dialog
       v-model:visible="showPaymentDialog"
       header="Registrar pago de saldo"
-      :style="{ width: '420px' }"
+      :style="{ width: 'min(420px, 95vw)' }"
       modal
     >
       <payment-form
@@ -246,7 +246,7 @@ function formatCurrency(value) {
     <pv-dialog
       v-model:visible="showFeedbackDialog"
       header="Encuesta de satisfacción"
-      :style="{ width: '460px' }"
+      :style="{ width: 'min(460px, 95vw)' }"
       modal
     >
       <feedback-form
@@ -501,6 +501,37 @@ function formatCurrency(value) {
 @media (max-width: 1100px) {
   .kpi-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .sale-list-page {
+    padding: 16px 14px 20px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .page-header__right {
+    flex-wrap: wrap;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .status-select {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .kpi-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>

@@ -11,18 +11,14 @@ const { t }  = useI18n()
   isMobileOpen.value = false
 
 const navItems = [
-  { key: 'panel',        icon: 'pi pi-home',         to: '/panel' },
-  { key: 'patients',     icon: 'pi pi-users',         to: '/patients' },
-  { key: 'sales',        icon: 'pi pi-shopping-cart', to: '/sales' },
-  { key: 'labOrders',    icon: 'pi pi-wrench',        to: '/lab-orders' },
-  { key: 'inventory',    icon: 'pi pi-box',           to: '/inventory' },
-  { key: 'staff',        icon: 'pi pi-id-card',       to: '/staff' },
-  { key: 'reports',      icon: 'pi pi-chart-bar',     to: '/reports' },
-  { key: 'settings',     icon: 'pi pi-cog',           to: '/settings' },
-  { key: 'myLenses',     icon: 'pi pi-search',        to: '/patient/my-lenses' },
-  { key: 'tryOn',        icon: 'pi pi-camera',        to: '/patient/virtual-try-on' },
-  { key: 'calculator',   icon: 'pi pi-percentage',    to: '/patient/calculator' },
-  { key: 'notifications',icon: 'pi pi-bell',          to: '/patient/notifications' }
+  { key: 'panel',     icon: 'pi pi-home',         to: '/panel' },
+  { key: 'patients',  icon: 'pi pi-users',         to: '/patients' },
+  { key: 'sales',     icon: 'pi pi-shopping-cart', to: '/sales' },
+  { key: 'labOrders', icon: 'pi pi-wrench',        to: '/lab-orders' },
+  { key: 'inventory', icon: 'pi pi-box',           to: '/inventory' },
+  { key: 'staff',     icon: 'pi pi-id-card',       to: '/staff' },
+  { key: 'reports',   icon: 'pi pi-chart-bar',     to: '/reports' },
+  { key: 'settings',  icon: 'pi pi-cog',           to: '/settings' },
 ]
 
 function navigate(to) { router.push(to) }
