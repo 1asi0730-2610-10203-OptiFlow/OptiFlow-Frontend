@@ -1,10 +1,12 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useClinicalStore } from '../../application/clinical.store.js'
 import ModalAddPatient from '../components/modal-add-patient.vue'
 import ModalSuccess    from '../components/modal-success.vue'
 import ModalHce        from '../components/modal-hce.vue'
 
+const { t } = useI18n()
 const store = useClinicalStore()
 
 const searchQuery     = ref('')
@@ -45,26 +47,22 @@ const stats = computed(() => [
     {
         icon: 'pi pi-users',
         value: store.patients.length,
-        label: 'Total Pacientes'
+        labelKey: 'patients.stats.total'
     },
     {
         icon: 'pi pi-calendar',
-        value: store.patients.filter(p => {
-            if (!p.birthDate) return false
-            const d = new Date(p.birthDate)
-            return true // placeholder: count all with birth_date
-        }).length,
-        label: 'Activos Este Mes'
+        value: store.patients.filter(p => !!p.birthDate).length,
+        labelKey: 'patients.stats.activeThisMonth'
     },
     {
         icon: 'pi pi-clock',
         value: store.prescriptions.length,
-        label: 'Con Órdenes Pendientes'
+        labelKey: 'patients.stats.withPendingOrders'
     },
     {
         icon: 'pi pi-bell',
         value: Math.floor(store.patients.length * 0.03),
-        label: 'Pendientes de Revisión'
+        labelKey: 'patients.stats.pendingReview'
     }
 ])
 
@@ -88,7 +86,7 @@ onMounted(async () => {
 async function onAddPatient(data) {
     showAddPatient.value = false
     await store.createPatient(data)
-    successMsg.value = 'Paciente registrado satisfactoriamente'
+    successMsg.value = t('patients.toast.patientRegistered')
     showSuccess.value = true
 }
 
@@ -127,11 +125,11 @@ function openHce(patient) {
         <!-- Header -->
         <div class="page-header">
             <div>
-                <h1 class="page-title">Gestión de Pacientes</h1>
-                <p class="page-subtitle">Historias clínicas y registros de salud (HCE)</p>
+                <h1 class="page-title">{{ $t('patients.pageTitle') }}</h1>
+                <p class="page-subtitle">{{ $t('patients.pageSubtitle') }}</p>
             </div>
             <button class="btn-primary" @click="showAddPatient = true">
-                <i class="pi pi-plus" /> Agregar Paciente
+                <i class="pi pi-plus" /> {{ $t('patients.addPatient') }}
             </button>
         </div>
 
@@ -140,7 +138,7 @@ function openHce(patient) {
             <div v-for="(stat, i) in stats" :key="i" class="stat-card">
                 <i :class="stat.icon" class="stat-icon" />
                 <div class="stat-value">{{ stat.value }}</div>
-                <div class="stat-label">{{ stat.label }}</div>
+                <div class="stat-label">{{ $t(stat.labelKey) }}</div>
             </div>
         </div>
 
@@ -152,36 +150,36 @@ function openHce(patient) {
                     v-model="searchQuery"
                     type="text"
                     class="search-input"
-                    placeholder="Buscar por nombre, correo, teléfono o DNI..."
+                    :placeholder="$t('patients.searchPlaceholder')"
                     @input="currentPage = 1"
                 />
             </div>
             <button class="btn-export">
-                <i class="pi pi-download" /> Exportar
+                <i class="pi pi-download" /> {{ $t('common.export') }}
             </button>
         </div>
 
         <!-- Table -->
         <div class="table-wrapper">
             <div class="table-header-row">
-                <span>PACIENTE</span>
-                <span>CONTACTO</span>
-                <span>DNI</span>
-                <span>ÚLTIMA RECETA</span>
-                <span>ÚLTIMA VISITA</span>
-                <span>PRÓXIMA CITA</span>
-                <span>ACCIONES</span>
+                <span>{{ $t('patients.table.patient') }}</span>
+                <span>{{ $t('patients.table.contact') }}</span>
+                <span>{{ $t('patients.table.dni') }}</span>
+                <span>{{ $t('patients.table.lastPrescription') }}</span>
+                <span>{{ $t('patients.table.lastVisit') }}</span>
+                <span>{{ $t('patients.table.nextAppointment') }}</span>
+                <span>{{ $t('common.actions') }}</span>
             </div>
 
             <div v-if="store.loading" class="table-empty">
                 <i class="pi pi-spin pi-spinner empty-icon" />
-                <p>Cargando pacientes…</p>
+                <p>{{ $t('patients.loading') }}</p>
             </div>
 
             <div v-else-if="pagedPatients.length === 0" class="table-empty">
                 <i class="pi pi-users empty-icon" />
-                <p class="empty-title">No se encontraron pacientes</p>
-                <p class="empty-desc">Intenta con otro término de búsqueda</p>
+                <p class="empty-title">{{ $t('patients.table.noResults') }}</p>
+                <p class="empty-desc">{{ $t('patients.table.noResultsHint') }}</p>
             </div>
 
             <div
@@ -212,15 +210,15 @@ function openHce(patient) {
                     <template v-if="latestPrescriptionFor(patient)">
                         <span class="rx-line">
                             <i class="pi pi-eye rx-icon" />
-                            OD: Esf {{ formatVal(latestPrescriptionFor(patient)?.odSphere) }}
-                            Cil {{ formatVal(latestPrescriptionFor(patient)?.odCylinder) }}
+                            OD: {{ $t('patients.rx.sph') }} {{ formatVal(latestPrescriptionFor(patient)?.odSphere) }}
+                            {{ $t('patients.rx.cyl') }} {{ formatVal(latestPrescriptionFor(patient)?.odCylinder) }}
                         </span>
                         <span class="rx-line">
-                            OS: Esf {{ formatVal(latestPrescriptionFor(patient)?.oiSphere) }}
-                            Cil {{ formatVal(latestPrescriptionFor(patient)?.oiCylinder) }}
+                            OS: {{ $t('patients.rx.sph') }} {{ formatVal(latestPrescriptionFor(patient)?.oiSphere) }}
+                            {{ $t('patients.rx.cyl') }} {{ formatVal(latestPrescriptionFor(patient)?.oiCylinder) }}
                         </span>
                     </template>
-                    <span v-else class="rx-none">Sin receta</span>
+                    <span v-else class="rx-none">{{ $t('patients.rx.noPrescription') }}</span>
                 </div>
 
                 <!-- Last visit -->
@@ -230,26 +228,30 @@ function openHce(patient) {
 
                 <!-- Next appointment (placeholder) -->
                 <span class="row-appt">
-                    <span class="appt-none">Sin programar</span>
+                    <span class="appt-none">{{ $t('patients.table.notScheduled') }}</span>
                 </span>
 
                 <!-- Actions -->
                 <div class="row-actions">
                     <button class="btn-hce" @click="openHce(patient)">
-                        Ver HCE <i class="pi pi-chevron-right" />
+                        {{ $t('patients.table.viewHce') }} <i class="pi pi-chevron-right" />
                     </button>
                 </div>
             </div>
 
             <!-- Footer -->
             <div class="table-footer">
-                <span>Mostrando {{ pagedPatients.length }} de {{ filteredPatients.length }} pacientes</span>
+                <span>
+                    {{ $t('common.showing') }} {{ pagedPatients.length }}
+                    {{ $t('common.of') }} {{ filteredPatients.length }}
+                    {{ $t('patients.table.patients') }}
+                </span>
                 <div class="pagination">
                     <button
                         class="page-btn"
                         :disabled="currentPage <= 1"
                         @click="currentPage--"
-                    >Anterior</button>
+                    >{{ $t('common.previous') }}</button>
                     <button
                         v-for="page in totalPages"
                         :key="page"
@@ -261,7 +263,7 @@ function openHce(patient) {
                         class="page-btn"
                         :disabled="currentPage >= totalPages"
                         @click="currentPage++"
-                    >Siguiente</button>
+                    >{{ $t('common.next') }}</button>
                 </div>
             </div>
         </div>

@@ -1,5 +1,8 @@
 <script setup>
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
     patient:    { type: Object, required: true },
@@ -52,7 +55,7 @@ function onFileSelected(event) {
     const file = event.target.files[0]
     if (!file) return
     if (file.size > 30 * 1024 * 1024) {
-        uploadError.value = 'El archivo ingresado sobrepasa los 30mb'
+        uploadError.value = t('patients.newExam.fileTooLarge')
         return
     }
     uploadError.value = ''
@@ -76,8 +79,8 @@ function triggerFileInput() {
             <!-- Header -->
             <div class="modal-header">
                 <div>
-                    <h3 class="modal-title">Nuevo Examen Clínico</h3>
-                    <p class="modal-subtitle">Paciente: {{ patient.fullName }}</p>
+                    <h3 class="modal-title">{{ $t('patients.newExam.title') }}</h3>
+                    <p class="modal-subtitle">{{ $t('patients.newExam.patientLabel') }}: {{ patient.fullName }}</p>
                 </div>
                 <button class="close-btn" @click="emit('close')"><i class="pi pi-times" /></button>
             </div>
@@ -89,14 +92,14 @@ function triggerFileInput() {
                     :class="{ 'tab-btn--active': activeTab === 'manual' }"
                     @click="activeTab = 'manual'"
                 >
-                    <i class="pi pi-file-edit" /> Examen Manual
+                    <i class="pi pi-file-edit" /> {{ $t('patients.newExam.tabs.manual') }}
                 </button>
                 <button
                     class="tab-btn"
                     :class="{ 'tab-btn--active': activeTab === 'upload' }"
                     @click="activeTab = 'upload'"
                 >
-                    <i class="pi pi-upload" /> Cargar Expediente
+                    <i class="pi pi-upload" /> {{ $t('patients.newExam.tabs.upload') }}
                 </button>
             </div>
 
@@ -104,44 +107,44 @@ function triggerFileInput() {
             <div v-if="activeTab === 'manual'" class="modal-body">
                 <div class="form-row-2">
                     <div class="field">
-                        <label>Fecha del Examen *</label>
+                        <label>{{ $t('patients.newExam.examDate') }} *</label>
                         <input v-model="form.examDate" type="date" class="form-input" />
                     </div>
                     <div class="field">
-                        <label>Doctor / Optometrista</label>
+                        <label>{{ $t('patients.newExam.doctor') }}</label>
                         <input :value="doctorName" class="form-input" disabled />
                     </div>
                 </div>
 
                 <!-- Refraction table -->
                 <div class="refraction-section">
-                    <p class="section-label"><i class="pi pi-eye" style="color:#00c1b0" /> Refracción</p>
+                    <p class="section-label"><i class="pi pi-eye" style="color:#00c1b0" /> {{ $t('patients.newExam.refraction') }}</p>
                     <div class="refraction-table">
                         <div class="refraction-header">
-                            <span>OJO</span>
-                            <span>ESFERA</span>
-                            <span>CILINDRO</span>
-                            <span>EJE</span>
+                            <span>{{ $t('patients.hce.rx.eye') }}</span>
+                            <span>{{ $t('patients.hce.rx.sphere') }}</span>
+                            <span>{{ $t('patients.hce.rx.cylinder') }}</span>
+                            <span>{{ $t('patients.hce.rx.axis') }}</span>
                         </div>
                         <!-- OD -->
                         <div class="refraction-row">
-                            <span class="eye-label">OD (Der)</span>
+                            <span class="eye-label">{{ $t('patients.hce.rx.od') }}</span>
                             <input v-model="form.odSphere"   type="number" step="0.25" class="refr-input" />
                             <input v-model="form.odCylinder" type="number" step="0.25" class="refr-input" />
                             <input v-model="form.odAxis"     type="number" min="0" max="180" class="refr-input" />
                         </div>
                         <!-- OS -->
                         <div class="refraction-row">
-                            <span class="eye-label">OS (Izq)</span>
+                            <span class="eye-label">{{ $t('patients.hce.rx.os') }}</span>
                             <input v-model="form.oiSphere"   type="number" step="0.25" class="refr-input" />
                             <input v-model="form.oiCylinder" type="number" step="0.25" class="refr-input" />
                             <input v-model="form.oiAxis"     type="number" min="0" max="180" class="refr-input" />
                         </div>
                         <!-- Addition -->
                         <div class="refraction-row">
-                            <span class="eye-label">Adición</span>
+                            <span class="eye-label">{{ $t('patients.newExam.addition') }}</span>
                             <input v-model="form.addition" type="number" step="0.25" class="refr-input" placeholder="+2.00" />
-                            <span class="refr-input refr-optional">Opcional</span>
+                            <span class="refr-input refr-optional">{{ $t('patients.newExam.optional') }}</span>
                             <span></span>
                         </div>
                     </div>
@@ -149,11 +152,11 @@ function triggerFileInput() {
 
                 <!-- Clinical notes -->
                 <div class="field">
-                    <label>Notas Clínicas</label>
+                    <label>{{ $t('patients.hce.clinicalNotes') }}</label>
                     <textarea
                         v-model="form.notes"
                         class="form-textarea"
-                        placeholder="Observaciones del examen, recomendaciones, seguimiento..."
+                        :placeholder="$t('patients.newExam.notesPlaceholder')"
                         rows="3"
                     />
                 </div>
@@ -161,7 +164,6 @@ function triggerFileInput() {
 
             <!-- ── UPLOAD TAB ── -->
             <div v-else class="modal-body">
-                <!-- Drop zone -->
                 <div class="drop-zone" @click="triggerFileInput">
                     <input
                         id="file-input-exam"
@@ -171,16 +173,16 @@ function triggerFileInput() {
                         @change="onFileSelected"
                     />
                     <i class="pi pi-upload drop-icon" />
-                    <p class="drop-text">Arrastra tu expediente aquí</p>
-                    <p class="drop-hint">Soporta: PDF, TXT, CSV de sistemas ópticos</p>
-                    <button class="btn-select-file" @click.stop="triggerFileInput">Seleccionar Archivo</button>
+                    <p class="drop-text">{{ $t('patients.newExam.dropZoneText') }}</p>
+                    <p class="drop-hint">{{ $t('patients.newExam.dropZoneHint') }}</p>
+                    <button class="btn-select-file" @click.stop="triggerFileInput">{{ $t('patients.newExam.selectFile') }}</button>
                 </div>
 
                 <p v-if="uploadError" class="upload-error">{{ uploadError }}</p>
 
                 <!-- Demo files -->
                 <div>
-                    <p class="demo-label">EXPEDIENTES DE DEMOSTRACIÓN</p>
+                    <p class="demo-label">{{ $t('patients.newExam.demoFilesLabel') }}</p>
                     <div class="demo-list">
                         <div
                             v-for="demo in demoFiles"
@@ -201,8 +203,8 @@ function triggerFileInput() {
 
             <!-- Footer -->
             <div class="modal-footer">
-                <button class="btn-cancel" @click="emit('close')">Cancelar</button>
-                <button v-if="activeTab === 'manual'" class="btn-save" @click="onSaveManual">Guardar Examen</button>
+                <button class="btn-cancel" @click="emit('close')">{{ $t('common.cancel') }}</button>
+                <button v-if="activeTab === 'manual'" class="btn-save" @click="onSaveManual">{{ $t('patients.newExam.saveExam') }}</button>
             </div>
         </div>
     </div>
@@ -245,7 +247,6 @@ function triggerFileInput() {
 .refr-input:focus { border-color: #00c1b0; }
 .refr-optional { color: #9ca3af; font-size: 0.76rem; background: transparent; border: none; text-align: left; }
 
-/* Upload tab */
 .drop-zone { border: 2px dashed #00c1b0; border-radius: 12px; padding: 32px 20px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: background 0.15s; }
 .drop-zone:hover { background: rgba(0,193,176,0.04); }
 .drop-icon { font-size: 1.8rem; color: #00c1b0; }

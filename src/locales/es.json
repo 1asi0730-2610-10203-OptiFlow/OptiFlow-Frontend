@@ -223,6 +223,116 @@
       "reorderMin": "Reorden mínimo: {min} unidades"
     }
   },
+  "patients": {
+    "pageTitle": "Gestión de Pacientes",
+    "pageSubtitle": "Historias clínicas y registros de salud (HCE)",
+    "addPatient": "Agregar Paciente",
+    "searchPlaceholder": "Buscar por nombre, correo, teléfono o DNI...",
+    "loading": "Cargando pacientes…",
+
+    "stats": {
+      "total": "Total Pacientes",
+      "activeThisMonth": "Activos Este Mes",
+      "withPendingOrders": "Con Órdenes Pendientes",
+      "pendingReview": "Pendientes de Revisión"
+    },
+
+    "table": {
+      "patient": "Paciente",
+      "contact": "Contacto",
+      "dni": "DNI",
+      "lastPrescription": "Última Receta",
+      "lastVisit": "Última Visita",
+      "nextAppointment": "Próxima Cita",
+      "notScheduled": "Sin programar",
+      "viewHce": "Ver HCE",
+      "noResults": "No se encontraron pacientes",
+      "noResultsHint": "Intenta con otro término de búsqueda",
+      "patients": "pacientes"
+    },
+
+    "rx": {
+      "sph": "Esf",
+      "cyl": "Cil",
+      "noPrescription": "Sin receta"
+    },
+
+    "toast": {
+      "patientRegistered": "Paciente registrado satisfactoriamente"
+    },
+
+    "addModal": {
+      "title": "Agregar Paciente",
+      "subtitle": "Registrar un nuevo paciente en el sistema",
+      "fullName": "Nombre Completo",
+      "fullNamePlaceholder": "ej. Sarah Johnson",
+      "dni": "DNI / Doc. Identidad",
+      "dniPlaceholder": "ej. 12345678",
+      "birthDate": "Fecha de Nacimiento",
+      "email": "Correo Electrónico",
+      "emailPlaceholder": "ej. paciente@correo.com",
+      "phone": "Teléfono",
+      "phonePlaceholder": "ej. 903 897 123",
+      "requiredError": "Por favor rellene los campos obligatorios",
+      "register": "Registrar"
+    },
+
+    "hce": {
+      "dniLabel": "DNI",
+      "yearsOld": "años",
+      "age": "Edad",
+      "tabs": {
+        "hce": "Historia Clínica (HCE)",
+        "profile": "Perfil",
+        "orders": "Órdenes"
+      },
+      "latestPrescription": "Última Receta Óptica",
+      "prescriptionHistory": "Historial de Recetas",
+      "clinicalNotes": "Notas Clínicas",
+      "lastVisit": "Última Visita",
+      "noRecords": "Sin registros clínicos aún",
+      "noOrders": "No hay órdenes registradas para este paciente",
+      "registerExam": "+ Registrar Nuevo Examen",
+      "examSaved": "Examen guardado satisfactoriamente",
+      "fileLoaded": "Expediente cargado satisfactoriamente",
+      "rx": {
+        "eye": "Ojo",
+        "sphere": "Esfera",
+        "cylinder": "Cilindro",
+        "axis": "Eje",
+        "od": "OD (Der)",
+        "os": "OS (Izq)",
+        "sphShort": "Esf",
+        "cylShort": "Cil",
+        "axisShort": "Eje"
+      }
+    },
+
+    "newExam": {
+      "title": "Nuevo Examen Clínico",
+      "patientLabel": "Paciente",
+      "tabs": {
+        "manual": "Examen Manual",
+        "upload": "Cargar Expediente"
+      },
+      "examDate": "Fecha del Examen",
+      "doctor": "Doctor / Optometrista",
+      "refraction": "Refracción",
+      "addition": "Adición",
+      "optional": "Opcional",
+      "notesPlaceholder": "Observaciones del examen, recomendaciones, seguimiento...",
+      "dropZoneText": "Arrastra tu expediente aquí",
+      "dropZoneHint": "Soporta: PDF, TXT, CSV de sistemas ópticos",
+      "selectFile": "Seleccionar Archivo",
+      "fileTooLarge": "El archivo ingresado sobrepasa los 30mb",
+      "demoFilesLabel": "Expedientes de Demostración",
+      "saveExam": "Guardar Examen"
+    },
+
+    "success": {
+      "next": "Siguiente"
+    }
+  },
   "inventory": {
     "pageTitle": "Gestión de Inventario",
     "pageSubtitle": "Control y seguimiento de niveles de stock",

@@ -1,4 +1,8 @@
 <script setup>
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+
 defineProps({
     message: { type: String, required: true }
 })
@@ -13,7 +17,7 @@ const emit = defineEmits(['next'])
                 <p class="success-text">{{ message }}</p>
             </div>
             <button class="btn-next" @click="emit('next')">
-                Siguiente <i class="pi pi-arrow-right" />
+                {{ $t('patients.success.next') }} <i class="pi pi-arrow-right" />
             </button>
         </div>
     </div>
