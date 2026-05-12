@@ -1,8 +1,11 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useClinicalStore } from '../../application/clinical.store.js'
 import ModalNewExam from './modal-new-exam.vue'
 import ModalSuccess from './modal-success.vue'
+
+const { t } = useI18n()
 
 const props = defineProps({
     patient: { type: Object, required: true }
@@ -16,7 +19,6 @@ const showNewExam  = ref(false)
 const showSuccess  = ref(false)
 const successMsg   = ref('')
 
-// Load record + prescriptions for this patient
 const record = computed(() => store.getRecordForPatient(props.patient.id))
 const prescriptions = computed(() =>
     record.value ? store.getPrescriptionsForRecord(record.value.record_id ?? record.value.id) : []
@@ -39,10 +41,10 @@ function formatVal(val) {
 async function onSaveExam(data) {
     showNewExam.value = false
     if (data.fromFile) {
-        successMsg.value = 'Expediente cargado satisfactoriamente'
+        successMsg.value = t('patients.hce.fileLoaded')
     } else {
         await store.createPrescription(data)
-        successMsg.value = 'Examen guardado satisfactoriamente'
+        successMsg.value = t('patients.hce.examSaved')
     }
     showSuccess.value = true
 }
@@ -79,8 +81,8 @@ function onSuccessNext() {
                     <div>
                         <h3 class="patient-name">{{ patient.fullName }}</h3>
                         <p class="patient-meta">
-                            DNI: {{ patient.dni }}
-                            <span v-if="patient.age"> · {{ patient.age }} años</span>
+                            {{ $t('patients.hce.dniLabel') }}: {{ patient.dni }}
+                            <span v-if="patient.age"> · {{ patient.age }} {{ $t('patients.hce.yearsOld') }}</span>
                         </p>
                     </div>
                 </div>
@@ -90,22 +92,21 @@ function onSuccessNext() {
             <!-- Tabs -->
             <div class="tabs">
                 <button class="tab-btn" :class="{ 'tab-btn--active': activeTab === 'hce' }" @click="activeTab = 'hce'">
-                    <i class="pi pi-heart" /> Historia Clínica (HCE)
+                    <i class="pi pi-heart" /> {{ $t('patients.hce.tabs.hce') }}
                 </button>
                 <button class="tab-btn" :class="{ 'tab-btn--active': activeTab === 'profile' }" @click="activeTab = 'profile'">
-                    <i class="pi pi-user" /> Perfil
+                    <i class="pi pi-user" /> {{ $t('patients.hce.tabs.profile') }}
                 </button>
                 <button class="tab-btn" :class="{ 'tab-btn--active': activeTab === 'orders' }" @click="activeTab = 'orders'">
-                    <i class="pi pi-list" /> Órdenes
+                    <i class="pi pi-list" /> {{ $t('patients.hce.tabs.orders') }}
                 </button>
             </div>
 
             <!-- ── HCE TAB ── -->
             <div v-if="activeTab === 'hce'" class="modal-body">
-                <!-- Latest prescription -->
                 <div v-if="latestPrescription">
                     <div class="section-header">
-                        <span class="section-title">Última Receta Óptica</span>
+                        <span class="section-title">{{ $t('patients.hce.latestPrescription') }}</span>
                         <span class="section-meta">
                             {{ latestPrescription.formattedDate }}
                             <span v-if="latestPrescription.doctorName"> · {{ latestPrescription.doctorName }}</span>
@@ -113,16 +114,19 @@ function onSuccessNext() {
                     </div>
                     <div class="prescription-table">
                         <div class="presc-header">
-                            <span>OJO</span><span>ESFERA</span><span>CILINDRO</span><span>EJE</span>
+                            <span>{{ $t('patients.hce.rx.eye') }}</span>
+                            <span>{{ $t('patients.hce.rx.sphere') }}</span>
+                            <span>{{ $t('patients.hce.rx.cylinder') }}</span>
+                            <span>{{ $t('patients.hce.rx.axis') }}</span>
                         </div>
                         <div class="presc-row">
-                            <span>OD (Der)</span>
+                            <span>{{ $t('patients.hce.rx.od') }}</span>
                             <span>{{ formatVal(latestPrescription.odSphere) }}</span>
                             <span>{{ formatVal(latestPrescription.odCylinder) }}</span>
                             <span>{{ latestPrescription.odAxis }}°</span>
                         </div>
                         <div class="presc-row">
-                            <span>OS (Izq)</span>
+                            <span>{{ $t('patients.hce.rx.os') }}</span>
                             <span>{{ formatVal(latestPrescription.oiSphere) }}</span>
                             <span>{{ formatVal(latestPrescription.oiCylinder) }}</span>
                             <span>{{ latestPrescription.oiAxis }}°</span>
@@ -130,19 +134,19 @@ function onSuccessNext() {
                     </div>
 
                     <div v-if="latestPrescription.notes" class="notes-block">
-                        <p class="notes-label">Notas Clínicas</p>
+                        <p class="notes-label">{{ $t('patients.hce.clinicalNotes') }}</p>
                         <p class="notes-text">{{ latestPrescription.notes }}</p>
                     </div>
                 </div>
 
                 <div v-else class="empty-hce">
                     <i class="pi pi-file-edit empty-icon" />
-                    <p>Sin registros clínicos aún</p>
+                    <p>{{ $t('patients.hce.noRecords') }}</p>
                 </div>
 
-                <!-- History of prescriptions -->
+                <!-- History -->
                 <div v-if="prescriptions.length > 1">
-                    <p class="section-title" style="margin-bottom: 8px">Historial de Recetas</p>
+                    <p class="section-title" style="margin-bottom: 8px">{{ $t('patients.hce.prescriptionHistory') }}</p>
                     <div class="history-list">
                         <div v-for="presc in prescriptions.slice(1)" :key="presc.id" class="history-item">
                             <div class="history-top">
@@ -150,8 +154,8 @@ function onSuccessNext() {
                                 <span class="history-doctor">{{ presc.doctorName }}</span>
                             </div>
                             <p class="history-summary">
-                                OD: Esf {{ formatVal(presc.odSphere) }} Cil {{ formatVal(presc.odCylinder) }} Eje {{ presc.odAxis }}°
-                                &nbsp;OS: Esf {{ formatVal(presc.oiSphere) }} Cil {{ formatVal(presc.oiCylinder) }} Eje {{ presc.oiAxis }}°
+                                OD: {{ $t('patients.hce.rx.sphShort') }} {{ formatVal(presc.odSphere) }} {{ $t('patients.hce.rx.cylShort') }} {{ formatVal(presc.odCylinder) }} {{ $t('patients.hce.rx.axisShort') }} {{ presc.odAxis }}°
+                                &nbsp;OS: {{ $t('patients.hce.rx.sphShort') }} {{ formatVal(presc.oiSphere) }} {{ $t('patients.hce.rx.cylShort') }} {{ formatVal(presc.oiCylinder) }} {{ $t('patients.hce.rx.axisShort') }} {{ presc.oiAxis }}°
                             </p>
                         </div>
                     </div>
@@ -159,7 +163,7 @@ function onSuccessNext() {
 
                 <!-- Last visit -->
                 <div v-if="latestPrescription" class="last-visit">
-                    <p class="last-visit-label">ÚLTIMA VISITA</p>
+                    <p class="last-visit-label">{{ $t('patients.hce.lastVisit') }}</p>
                     <p class="last-visit-date">{{ latestPrescription.formattedDate }}</p>
                 </div>
             </div>
@@ -168,27 +172,27 @@ function onSuccessNext() {
             <div v-else-if="activeTab === 'profile'" class="modal-body">
                 <div class="profile-grid">
                     <div class="profile-field">
-                        <span class="pf-label">Nombre Completo</span>
+                        <span class="pf-label">{{ $t('patients.addModal.fullName') }}</span>
                         <span class="pf-value">{{ patient.fullName }}</span>
                     </div>
                     <div class="profile-field">
-                        <span class="pf-label">DNI</span>
+                        <span class="pf-label">{{ $t('patients.addModal.dni') }}</span>
                         <span class="pf-value">{{ patient.dni }}</span>
                     </div>
                     <div class="profile-field">
-                        <span class="pf-label">Fecha de Nacimiento</span>
+                        <span class="pf-label">{{ $t('patients.addModal.birthDate') }}</span>
                         <span class="pf-value">{{ patient.birthDate || '—' }}</span>
                     </div>
                     <div class="profile-field">
-                        <span class="pf-label">Edad</span>
-                        <span class="pf-value">{{ patient.age ?? '—' }} años</span>
+                        <span class="pf-label">{{ $t('patients.hce.age') }}</span>
+                        <span class="pf-value">{{ patient.age ?? '—' }} {{ $t('patients.hce.yearsOld') }}</span>
                     </div>
                     <div class="profile-field">
-                        <span class="pf-label">Correo Electrónico</span>
+                        <span class="pf-label">{{ $t('patients.addModal.email') }}</span>
                         <span class="pf-value">{{ patient.email || '—' }}</span>
                     </div>
                     <div class="profile-field">
-                        <span class="pf-label">Teléfono</span>
+                        <span class="pf-label">{{ $t('patients.addModal.phone') }}</span>
                         <span class="pf-value">{{ patient.phone || '—' }}</span>
                     </div>
                 </div>
@@ -198,14 +202,14 @@ function onSuccessNext() {
             <div v-else-if="activeTab === 'orders'" class="modal-body">
                 <div class="empty-hce">
                     <i class="pi pi-list empty-icon" />
-                    <p>No hay órdenes registradas para este paciente</p>
+                    <p>{{ $t('patients.hce.noOrders') }}</p>
                 </div>
             </div>
 
             <!-- Register new exam button -->
             <div class="modal-footer-exam">
                 <button class="btn-register-exam" @click="showNewExam = true">
-                    + Registrar Nuevo Examen
+                    {{ $t('patients.hce.registerExam') }}
                 </button>
             </div>
         </div>
