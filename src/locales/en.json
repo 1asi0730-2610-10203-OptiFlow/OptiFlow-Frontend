@@ -1,10 +1,12 @@
 {
   "app": {
     "name": "OptiFlow",
-    "subtitle": "Optical ERP / CRM"
+    "subtitle": "Optical ERP / CRM",
+    "patientSubtitle": "Patient Portal"
   },
   "nav": {
     "section": "MAIN MENU",
+    "patientSection": "PATIENT PORTAL",
     "panel": "Dashboard",
     "patients": "Patients",
     "sales": "Sales",
@@ -12,10 +14,24 @@
     "inventory": "Inventory",
     "staff": "Staff",
     "reports": "Reports",
-    "settings": "Settings"
+    "settings": "Settings",
+    "myLenses": "My Lenses",
+    "tryOn": "Virtual Try-On",
+    "calculator": "Calculator",
+    "notifications": "Notifications"
   },
   "user": {
-    "role": "Administrator"
+    "role": "Administrator",
+    "patientRole": "Patient"
+  },
+  "login": {
+    "chooseRole": "Select how you want to access the system",
+    "adminTitle": "Administrator",
+    "adminDesc": "Sales management, inventory, lab orders and patient records",
+    "adminBtn": "Admin Access",
+    "patientTitle": "Patient Portal",
+    "patientDesc": "Track your orders, prescriptions and use our optical tools",
+    "patientBtn": "Patient Access"
   },
   "common": {
     "search": "Search",
@@ -229,14 +245,12 @@
     "addPatient": "Add Patient",
     "searchPlaceholder": "Search by name, email, phone, or ID...",
     "loading": "Loading patients…",
-
     "stats": {
       "total": "Total Patients",
       "activeThisMonth": "Active This Month",
       "withPendingOrders": "With Pending Orders",
       "pendingReview": "Pending Review"
     },
-
     "table": {
       "patient": "Patient",
       "contact": "Contact",
@@ -250,17 +264,14 @@
       "noResultsHint": "Try another search term",
       "patients": "patients"
     },
-
     "rx": {
       "sph": "Sph",
       "cyl": "Cyl",
       "noPrescription": "No prescription"
     },
-
     "toast": {
       "patientRegistered": "Patient successfully registered"
     },
-
     "addModal": {
       "title": "Add Patient",
       "subtitle": "Register a new patient in the system",
@@ -276,7 +287,6 @@
       "requiredError": "Please fill in the required fields",
       "register": "Register"
     },
-
     "hce": {
       "dniLabel": "ID",
       "yearsOld": "years old",
@@ -307,7 +317,6 @@
         "axisShort": "Axis"
       }
     },
-
     "newExam": {
       "title": "New Clinical Exam",
       "patientLabel": "Patient",
@@ -328,7 +337,6 @@
       "demoFilesLabel": "Demo Records",
       "saveExam": "Save Exam"
     },
-
     "success": {
       "next": "Next"
     }
