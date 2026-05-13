@@ -14,4 +14,9 @@ export class RolesApi extends BaseApi {
         const response = await this.http.get('/employees');
         return response.data;
     }
+
+    async create(role) {
+        const response = await this.http.post('/roles', role);
+        return response.data;
+    }
 }

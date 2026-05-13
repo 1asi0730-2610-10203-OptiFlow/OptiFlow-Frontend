@@ -4,6 +4,7 @@ import Aura from '@primevue/themes/aura'
 import ConfirmationService from 'primevue/confirmationservice'
 import ToastService from 'primevue/toastservice'
 import 'primeicons/primeicons.css'
+import 'primeflex/primeflex.css'
 import SelectButton from 'primevue/selectbutton'
 
 import { pinia } from './pinia.js'
@@ -14,6 +15,7 @@ import { i18n } from './i18n.js'
 
 // PrimeVue components
 import Button from 'primevue/button'
+import Checkbox from 'primevue/checkbox'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import Select from 'primevue/select'
@@ -46,6 +48,7 @@ app.use(ConfirmationService)
 app.use(ToastService)
 
 app.component('pv-button', Button)
+app.component('pv-checkbox', Checkbox)
 app.component('pv-input-text', InputText)
 app.component('pv-input-number', InputNumber)
 app.component('pv-select', Select)

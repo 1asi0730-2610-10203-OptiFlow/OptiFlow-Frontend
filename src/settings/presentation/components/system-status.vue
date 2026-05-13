@@ -10,7 +10,7 @@ const statusItems = [
 <template>
   <pv-card class="system-status-card shadow-1 border-none">
     <template #title>
-      <h3 class="text-900 font-bold text-xl m-0">Estado del Sistema</h3>
+      <h3 class="text-900 font-bold text-xl m-0 font-josefin">Estado del Sistema</h3>
     </template>
     <template #content>
       <div v-for="item in statusItems" :key="item.label" class="flex align-items-center justify-content-between mb-3 last:mb-0">

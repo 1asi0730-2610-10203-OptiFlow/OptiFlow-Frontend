@@ -16,7 +16,7 @@ defineProps({
       </div>
       <div class="flex flex-column">
         <div class="flex align-items-center gap-2">
-          <span class="text-900 font-bold">{{ role.name }}</span>
+          <span class="text-900 font-bold font-josefin text-lg">{{ role.name }}</span>
         </div>
         <span class="text-500 text-xs mt-1">{{ role.userCount }} usuario(s) asignado(s)</span>
         <span class="text-600 text-sm mt-2">{{ role.description }}</span>

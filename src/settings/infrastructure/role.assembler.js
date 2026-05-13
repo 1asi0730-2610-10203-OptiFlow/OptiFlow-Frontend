@@ -25,18 +25,19 @@ const ROLE_MAP = {
 
 export class RoleAssembler {
     static toEntity(data, userCount = 0) {
+        // Prioritize data from DB, fallback to map
         const metadata = ROLE_MAP[data.name] || {
-            displayName: data.name,
-            description: 'Rol del sistema',
-            color: '#64748b'
+            displayName: data.displayName || data.name,
+            description: data.description || 'Rol del sistema',
+            color: data.color || '#64748b'
         };
 
         return new Role(
             data.role_id,
-            metadata.displayName,
-            metadata.description,
+            data.displayName || metadata.displayName,
+            data.description || metadata.description,
             userCount,
-            metadata.color
+            data.color || metadata.color
         );
     }
 
