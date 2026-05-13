@@ -628,9 +628,11 @@
       "singleVision": "Single Vision",
       "contactLenses": "Contact Lenses",
       "accessories": "Accessories",
-      "others": "Others",
-      "patientCenter": {
-        "profile": {
+      "others": "Others"
+    }
+  },
+  "patientCenter": {
+    "profile": {
           "title": "My Profile",
           "subtitle": "Welcome to your OptiFlow portal",
           "patientRole": "Patient",
@@ -737,7 +739,5 @@
             "Avoid sudden movements for better detection"
           ]
         }
-      }
-    }
   }
 }
