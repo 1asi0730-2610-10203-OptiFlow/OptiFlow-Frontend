@@ -1,5 +1,5 @@
-import { BaseApi } from '../../../../../promt/files/OptiFlow-Frontend/src/shared/infrastructure/base-api.js'
-import { BaseEndpoint } from '../../../../../promt/files/OptiFlow-Frontend/src/shared/infrastructure/base-endpoint.js'
+import { BaseApi } from '../../shared/infrastructure/base-api.js'
+import { BaseEndpoint } from '../../shared/infrastructure/base-endpoint.js'
 
 export class DashboardApi extends BaseApi {
   #analyticsReports
