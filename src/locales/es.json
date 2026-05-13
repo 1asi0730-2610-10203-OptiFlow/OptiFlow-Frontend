@@ -351,7 +351,7 @@
       "dniPlaceholder": "ej. 12345678",
       "birthDate": "Fecha de Nacimiento",
       "email": "Correo Electrónico",
-      "emailPlaceholder": "ej. paciente@correo.com",
+      "emailPlaceholder": "ej. paciente{'@'}correo.com",
       "phone": "Teléfono",
       "phonePlaceholder": "ej. 903 897 123",
       "requiredError": "Por favor rellene los campos obligatorios",
@@ -566,7 +566,7 @@
       },
       "placeholders": {
         "fullName": "Ej. Dra. Emily Smith",
-        "email": "nombre@opticspro.com",
+        "email": "nombre{'@'}opticspro.com",
         "phone": "(555) 000-0000"
       }
     }
