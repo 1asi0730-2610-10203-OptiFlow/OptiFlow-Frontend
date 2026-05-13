@@ -1,7 +1,11 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 
-const showSuccess = ref(true)
+const showSuccess = ref(false)
+const submitted = ref(false)
+const errors = ref({})
+
+const hasErrors = computed(() => Object.keys(errors.value).length > 0)
 
 const profile = ref({
   firstName: 'John',
@@ -13,6 +17,19 @@ const profile = ref({
   birthDate: ''
 })
 
+onMounted(() => {
+  const saved = localStorage.getItem('optiflow_patient_profile')
+  if (saved) {
+    profile.value = JSON.parse(saved)
+  }
+})
+
+const initials = computed(() => {
+  const f = profile.value.firstName ? profile.value.firstName.charAt(0).toUpperCase() : ''
+  const l = profile.value.lastName ? profile.value.lastName.charAt(0).toUpperCase() : ''
+  return f + l || 'JD'
+})
+
 const medicalInfo = ref({
   recordNumber: 'HC-2850',
   lastVisit: '15 Mar 2026',
@@ -20,7 +37,23 @@ const medicalInfo = ref({
   nextAppointment: '15 Sep 2026'
 })
 
+function validate() {
+  const e = {}
+  if (!profile.value.firstName) e.firstName = true
+  if (!profile.value.lastName) e.lastName = true
+  if (!profile.value.email) e.email = true
+  if (!profile.value.phone) e.phone = true
+  if (!profile.value.address) e.address = true
+  errors.value = e
+  return Object.keys(e).length === 0
+}
+
 function saveChanges() {
+  submitted.value = true
+  if (!validate()) return
+
+  localStorage.setItem('optiflow_patient_profile', JSON.stringify(profile.value))
+
   showSuccess.value = true
   setTimeout(() => showSuccess.value = false, 3000)
 }
@@ -41,7 +74,7 @@ function saveChanges() {
           <strong>{{ profile.firstName }} {{ profile.lastName }}</strong>
           <span>{{ $t('patientCenter.profile.patientRole') }}</span>
         </div>
-        <div class="avatar-lg">JD</div>
+        <div class="avatar-lg">{{ initials }}</div>
       </div>
     </div>
 
@@ -61,7 +94,7 @@ function saveChanges() {
       <div class="card">
         <div class="card-body form-grid">
           <div class="avatar-header">
-            <div class="avatar-xl">JD</div>
+            <div class="avatar-xl">{{ initials }}</div>
             <div class="avatar-info">
               <h2>{{ profile.firstName }} {{ profile.lastName }}</h2>
               <p>{{ $t('patientCenter.profile.patientRole') }}</p>
@@ -73,14 +106,14 @@ function saveChanges() {
               <label>{{ $t('patientCenter.profile.firstName') }} <span class="required">*</span></label>
               <div class="input-icon-wrapper">
                 <i class="pi pi-user input-icon"></i>
-                <input v-model="profile.firstName" type="text" class="form-input with-icon" />
+                <input v-model="profile.firstName" type="text" class="form-input with-icon" :class="{ 'form-input--error': errors.firstName }" @input="errors.firstName = false" />
               </div>
             </div>
             <div class="field">
               <label>{{ $t('patientCenter.profile.lastName') }} <span class="required">*</span></label>
               <div class="input-icon-wrapper">
                 <i class="pi pi-user input-icon"></i>
-                <input v-model="profile.lastName" type="text" class="form-input with-icon" />
+                <input v-model="profile.lastName" type="text" class="form-input with-icon" :class="{ 'form-input--error': errors.lastName }" @input="errors.lastName = false" />
               </div>
             </div>
           </div>
@@ -90,14 +123,14 @@ function saveChanges() {
               <label>{{ $t('patientCenter.profile.email') }} <span class="required">*</span></label>
               <div class="input-icon-wrapper">
                 <i class="pi pi-envelope input-icon"></i>
-                <input v-model="profile.email" type="email" class="form-input with-icon" />
+                <input v-model="profile.email" type="email" class="form-input with-icon" :class="{ 'form-input--error': errors.email }" @input="errors.email = false" />
               </div>
             </div>
             <div class="field">
               <label>{{ $t('patientCenter.profile.phone') }} <span class="required">*</span></label>
               <div class="input-icon-wrapper">
                 <i class="pi pi-phone input-icon"></i>
-                <input v-model="profile.phone" type="text" class="form-input with-icon" />
+                <input v-model="profile.phone" type="text" class="form-input with-icon" :class="{ 'form-input--error': errors.phone }" @input="errors.phone = false" />
               </div>
             </div>
           </div>
@@ -107,7 +140,7 @@ function saveChanges() {
               <label>{{ $t('patientCenter.profile.address') }} <span class="required">*</span></label>
               <div class="input-icon-wrapper">
                 <i class="pi pi-map-marker input-icon"></i>
-                <input v-model="profile.address" type="text" class="form-input with-icon" />
+                <input v-model="profile.address" type="text" class="form-input with-icon" :class="{ 'form-input--error': errors.address }" @input="errors.address = false" />
               </div>
             </div>
             <div class="field">
@@ -126,6 +159,10 @@ function saveChanges() {
               <input v-model="profile.birthDate" type="date" class="form-input with-icon" />
             </div>
           </div>
+
+          <p v-if="submitted && hasErrors" style="color: #dc2626; font-size: 0.85rem; font-family: Montserrat; margin: 10px 0 0 0; text-align: center;">
+            {{ $t('common.requiredError') }}
+          </p>
 
           <div class="form-actions">
             <button class="btn-cancel" @click="showSuccess = false">{{ $t('common.cancel') }}</button>
@@ -215,6 +252,7 @@ function saveChanges() {
 .input-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #9ca3af; }
 .form-input.with-icon { padding-left: 40px; width: 100%; border: 1px solid #d1d5db; border-radius: 8px; height: 42px; font-family: 'Montserrat', sans-serif; font-size: 0.9rem; color: #1f2937; outline: none; transition: border-color 0.2s; }
 .form-input.with-icon:focus { border-color: #00c1b0; }
+.form-input--error { border-color: #f87171 !important; background-color: #fff5f5 !important; }
 
 .form-actions { display: flex; gap: 16px; margin-top: 10px; padding-top: 24px; border-top: 1px solid #f3f4f6; }
 .btn-cancel, .btn-save { flex: 1; height: 44px; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; }

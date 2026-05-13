@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import LanguageSwitcher from './language-switcher.vue'
@@ -8,6 +8,31 @@ const router = useRouter()
 const route  = useRoute()
 const { t }  = useI18n()
 const isMobileOpen = ref(false)
+
+const userProfile = ref({ firstName: 'John', lastName: 'Doe' })
+
+function loadProfile() {
+  const saved = localStorage.getItem('optiflow_patient_profile')
+  if (saved) {
+    userProfile.value = JSON.parse(saved)
+  }
+}
+
+onMounted(() => {
+  loadProfile()
+  window.addEventListener('profileUpdated', loadProfile)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('profileUpdated', loadProfile)
+})
+
+const fullName = computed(() => `${userProfile.value.firstName} ${userProfile.value.lastName}`)
+const initials = computed(() => {
+  const f = userProfile.value.firstName ? userProfile.value.firstName.charAt(0).toUpperCase() : ''
+  const l = userProfile.value.lastName ? userProfile.value.lastName.charAt(0).toUpperCase() : ''
+  return f + l || 'JD'
+})
 
 const navItems = [
   { key: 'profile',       icon: 'pi pi-user',       to: '/patient/profile' },
@@ -78,9 +103,9 @@ function logout()      { router.push('/login') }
 
         <div class="sidebar-bottom">
           <div class="sidebar-user">
-            <div class="user-avatar" aria-hidden="true">JD</div>
+            <div class="user-avatar" aria-hidden="true">{{ initials }}</div>
             <div class="user-info">
-              <span class="user-name">John Doe</span>
+              <span class="user-name">{{ fullName }}</span>
               <span class="user-role">{{ $t('user.patientRole') }}</span>
             </div>
           </div>
@@ -98,10 +123,10 @@ function logout()      { router.push('/login') }
           <LanguageSwitcher />
           <div class="topbar-user">
             <div class="topbar-user-info">
-              <span class="user-name">John Doe</span>
+              <span class="user-name">{{ fullName }}</span>
               <span class="user-role">{{ $t('user.patientRole') }}</span>
             </div>
-            <div class="avatar-sm">JD</div>
+            <div class="avatar-sm">{{ initials }}</div>
           </div>
         </div>
       </div>
