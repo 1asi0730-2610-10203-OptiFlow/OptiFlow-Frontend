@@ -111,12 +111,37 @@
       ],
       "totalAmount": 108,
       "adelanto": 100,
-      "pendingBalance": 8,
+      "pendingBalance": 0,
       "discountCode": "desc15",
       "discountAmount": 15,
-      "status": "PARTIAL",
+      "status": "PAID",
       "paymentMethod": "CASH",
       "createdAt": "2026-05-10",
+      "deliveredAt": "",
+      "notes": ""
+    },
+    {
+      "id": 7,
+      "invoiceNumber": "FAC-9278",
+      "labOrderNumber": "LAB-3164",
+      "patientId": 2,
+      "patientName": "David Martínez",
+      "patientRx": "",
+      "userId": 1,
+      "userName": "John Doe",
+      "articulos": [
+        "Armazón: Lunas con Filtro de Luz Azul",
+        "Tipo de Luna: Monofocales",
+        "Material de Luna: Alto Índice 1.60"
+      ],
+      "totalAmount": 75.65,
+      "adelanto": 140,
+      "pendingBalance": 0,
+      "discountCode": "PROMO15",
+      "discountAmount": 13.35,
+      "status": "RETURNED",
+      "paymentMethod": "DEBIT_CARD",
+      "createdAt": "2026-05-13",
       "deliveredAt": "",
       "notes": ""
     }
@@ -219,6 +244,13 @@
       "amountPaid": 245,
       "method": "CREDIT_CARD",
       "paidAt": "2026-05-05T22:46:26.149Z"
+    },
+    {
+      "id": 7,
+      "saleId": 6,
+      "amountPaid": 8,
+      "method": "DEBIT_CARD",
+      "paidAt": "2026-05-13T04:02:09.309Z"
     }
   ],
   "feedbacks": [
@@ -276,6 +308,17 @@
       "dni": "56789012",
       "email": "miguel@email.com",
       "phone": "987654325"
+    },
+    {
+      "patient_id": 0,
+      "customer_uuid": "",
+      "first_name": "Nicolas",
+      "last_name": "",
+      "dni": "1234 5674",
+      "phone": "123 132 123",
+      "email": "patient@gmail.com",
+      "birth_date": "2006-09-12",
+      "id": 6
     }
   ],
   "work_orders": [

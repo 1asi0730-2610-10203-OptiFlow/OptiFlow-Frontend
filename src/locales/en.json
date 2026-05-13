@@ -1,10 +1,12 @@
 {
   "app": {
     "name": "OptiFlow",
-    "subtitle": "Optical ERP / CRM"
+    "subtitle": "Optical ERP / CRM",
+    "patientSubtitle": "Patient Portal"
   },
   "nav": {
     "section": "MAIN MENU",
+    "patientSection": "PATIENT PORTAL",
     "panel": "Dashboard",
     "patients": "Patients",
     "sales": "Sales",
@@ -12,10 +14,24 @@
     "inventory": "Inventory",
     "staff": "Staff",
     "reports": "Reports",
-    "settings": "Settings"
+    "settings": "Settings",
+    "myLenses": "My Lenses",
+    "tryOn": "Virtual Try-On",
+    "calculator": "Calculator",
+    "notifications": "Notifications"
   },
   "user": {
-    "role": "Administrator"
+    "role": "Administrator",
+    "patientRole": "Patient"
+  },
+  "login": {
+    "chooseRole": "Select how you want to access the system",
+    "adminTitle": "Administrator",
+    "adminDesc": "Sales management, inventory, lab orders and patient records",
+    "adminBtn": "Admin Access",
+    "patientTitle": "Patient Portal",
+    "patientDesc": "Track your orders, prescriptions and use our optical tools",
+    "patientBtn": "Patient Access"
   },
   "common": {
     "search": "Search",
@@ -54,6 +70,60 @@
     "searchPlaceholder": "Search by invoice # or patient...",
     "allStatuses": "All statuses",
     "loading": "Loading sales...",
+    "form": {
+      "title": "New Sale / Quote",
+      "step": "Step",
+      "of": "of",
+      "steps": {
+        "patient": "Patient & Rx",
+        "products": "Products",
+        "payment": "Payment"
+      },
+      "patientLabel": "Patient",
+      "selectPatient": "Select a patient...",
+      "lastRx": "Latest Linked Prescription",
+      "rxPending": "Prescription pending to be linked with clinical module",
+      "frame": "Frame",
+      "framePlaceholder": "e.g. Ray-Ban RB5228 Black",
+      "lensType": "Lens Type",
+      "lensMaterial": "Lens Material",
+      "select": "Select...",
+      "estimatedTotal": "Estimated Total",
+      "paymentMethod": "Payment Method",
+      "discountCode": "Discount Code (optional)",
+      "discountPlaceholder": "e.g. PROMO15",
+      "apply": "Apply",
+      "deposit": "Deposit (min. 30%)",
+      "subtotal": "Subtotal",
+      "discount": "Discount",
+      "total": "Total",
+      "depositPercent": "Deposit ({percent}%)",
+      "pendingBalance": "Pending Balance",
+      "back": "Back",
+      "cancel": "Cancel",
+      "next": "Next",
+      "create": "Create Sale + Lab Order",
+      "lensTypes": {
+        "monofocal": "Single Vision",
+        "bifocal": "Bifocal",
+        "progressive": "Progressive",
+        "occupational": "Occupational"
+      },
+      "materials": {
+        "cr39": "CR-39 (1.50)",
+        "poly": "Polycarbonate",
+        "hi160": "High Index 1.60",
+        "hi167": "High Index 1.67",
+        "glass": "Glass"
+      },
+      "paymentMethods": {
+        "cash": "Cash",
+        "credit": "Credit Card",
+        "debit": "Debit Card",
+        "transfer": "Transfer",
+        "insurance": "Insurance"
+      }
+    },
     "kpi": {
       "totalRevenue": "Total Revenue",
       "deposits": "Deposits Collected",
@@ -90,6 +160,22 @@
     "dialogs": {
       "paymentHeader": "Register balance payment",
       "feedbackHeader": "Satisfaction survey"
+    },
+    "table": {
+      "invoice": "Invoice",
+      "patient": "Patient",
+      "products": "Products",
+      "date": "Date",
+      "total": "Total",
+      "deposit": "Deposit",
+      "balance": "Balance",
+      "payment": "Payment",
+      "status": "Status",
+      "actions": "Actions",
+      "collect": "Collect →",
+      "paid": "Paid",
+      "cancel": "Cancel",
+      "return": "Return"
     }
   },
   "labOrders": {
@@ -221,6 +307,108 @@
       "itemCount": "{count} items",
       "remaining": "{count} remaining",
       "reorderMin": "Min. reorder: {min} units"
+    }
+  },
+  "patients": {
+    "pageTitle": "Patient Management",
+    "pageSubtitle": "Medical records and electronic health records (EHR)",
+    "addPatient": "Add Patient",
+    "searchPlaceholder": "Search by name, email, phone, or ID...",
+    "loading": "Loading patients…",
+    "stats": {
+      "total": "Total Patients",
+      "activeThisMonth": "Active This Month",
+      "withPendingOrders": "With Pending Orders",
+      "pendingReview": "Pending Review"
+    },
+    "table": {
+      "patient": "Patient",
+      "contact": "Contact",
+      "dni": "ID",
+      "lastPrescription": "Last Prescription",
+      "lastVisit": "Last Visit",
+      "nextAppointment": "Next Appointment",
+      "notScheduled": "Not Scheduled",
+      "viewHce": "View EHR",
+      "noResults": "No patients found",
+      "noResultsHint": "Try another search term",
+      "patients": "patients"
+    },
+    "rx": {
+      "sph": "Sph",
+      "cyl": "Cyl",
+      "noPrescription": "No prescription"
+    },
+    "toast": {
+      "patientRegistered": "Patient successfully registered"
+    },
+    "addModal": {
+      "title": "Add Patient",
+      "subtitle": "Register a new patient in the system",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "e.g. Sarah Johnson",
+      "dni": "ID / Identity Document",
+      "dniPlaceholder": "e.g. 12345678",
+      "birthDate": "Date of Birth",
+      "email": "Email Address",
+      "emailPlaceholder": "e.g. patient@email.com",
+      "phone": "Phone Number",
+      "phonePlaceholder": "e.g. 903 897 123",
+      "requiredError": "Please fill in the required fields",
+      "register": "Register"
+    },
+    "hce": {
+      "dniLabel": "ID",
+      "yearsOld": "years old",
+      "age": "Age",
+      "tabs": {
+        "hce": "Medical Record (EHR)",
+        "profile": "Profile",
+        "orders": "Orders"
+      },
+      "latestPrescription": "Latest Optical Prescription",
+      "prescriptionHistory": "Prescription History",
+      "clinicalNotes": "Clinical Notes",
+      "lastVisit": "Last Visit",
+      "noRecords": "No clinical records yet",
+      "noOrders": "There are no orders registered for this patient",
+      "registerExam": "+ Register New Exam",
+      "examSaved": "Exam successfully saved",
+      "fileLoaded": "File successfully uploaded",
+      "rx": {
+        "eye": "Eye",
+        "sphere": "Sphere",
+        "cylinder": "Cylinder",
+        "axis": "Axis",
+        "od": "OD (Right)",
+        "os": "OS (Left)",
+        "sphShort": "Sph",
+        "cylShort": "Cyl",
+        "axisShort": "Axis"
+      }
+    },
+    "newExam": {
+      "title": "New Clinical Exam",
+      "patientLabel": "Patient",
+      "tabs": {
+        "manual": "Manual Exam",
+        "upload": "Upload Record"
+      },
+      "examDate": "Exam Date",
+      "doctor": "Doctor / Optometrist",
+      "refraction": "Refraction",
+      "addition": "Addition",
+      "optional": "Optional",
+      "notesPlaceholder": "Exam observations, recommendations, follow-up...",
+      "dropZoneText": "Drag your record here",
+      "dropZoneHint": "Supports: PDF, TXT, CSV from optical systems",
+      "selectFile": "Select File",
+      "fileTooLarge": "The uploaded file exceeds 30MB",
+      "demoFilesLabel": "Demo Records",
+      "saveExam": "Save Exam"
+    },
+    "success": {
+      "next": "Next"
     }
   },
   "inventory": {

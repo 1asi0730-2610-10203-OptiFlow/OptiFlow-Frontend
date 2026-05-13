@@ -11,7 +11,10 @@
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\DELL\\\\Desktop\\\\Mierda2\\\\Estudio\\\\UPC\\\\CICLO 2026 - 1\\\\WEB APPLICATIONS\\\\optiflow-frontend\" -Force)",
       "Bash(Select-Object -Property Name, PSIsContainer)",
       "Bash(Format-Table -AutoSize)",
-      "Bash(python -u -c ' *)"
+      "Bash(python -u -c ' *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\DELL\\\\Desktop\\\\Mierda2\\\\Estudio\\\\UPC\\\\CICLO 2026 - 1\\\\WEB APPLICATIONS\\\\optiflow-frontend\\\\src\" -Directory)",
+      "Bash(Select-Object Name)",
+      "Bash(npx vite *)"
     ]
   }
 }

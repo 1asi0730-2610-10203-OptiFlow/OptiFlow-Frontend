@@ -1,10 +1,14 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { useDashboardStore } from '../../application/dashboard.store.js'
 
 const router = useRouter()
 const { t, tm, locale } = useI18n()
+const store = useDashboardStore()
+
+onMounted(() => store.fetchAll())
 
 // Reactive date formatted in the active locale
 const today = computed(() =>
@@ -14,94 +18,187 @@ const today = computed(() =>
   )
 )
 
-// Stat card label keys — values are fixed, labels are translated
-const stats = [
-  { icon: 'pi-users',      iconBg: 'rgba(0,193,176,0.1)',   iconColor: '#00c1b0', value: '2,847',    labelKey: 'dashboard.stats.totalPatients',    trend: '+12%', up: true  },
-  { icon: 'pi-calendar',   iconBg: 'rgba(147,193,206,0.2)', iconColor: '#93c1ce', value: '24',        labelKey: 'dashboard.stats.patientsToday',    trend: '+8%',  up: true  },
-  { icon: 'pi-chart-line', iconBg: '#f0fdf4',               iconColor: '#22c55e', value: 'S/ 48,293', labelKey: 'dashboard.stats.monthlyRevenue',   trend: '+23%', up: true  },
-  { icon: 'pi-wrench',     iconBg: '#fef2f2',               iconColor: '#e7000b', value: '15',        labelKey: 'dashboard.stats.pendingLabOrders', trend: '-5%',  up: false },
-]
+// ── Stat Cards (live data) ────────────────────────────────────────────────
+const stats = computed(() => [
+  {
+    icon: 'pi-users',
+    iconBg: 'rgba(0,193,176,0.1)', iconColor: '#00c1b0',
+    value: store.totalPatients,
+    labelKey: 'dashboard.stats.totalPatients',
+  },
+  {
+    icon: 'pi-calendar',
+    iconBg: 'rgba(147,193,206,0.2)', iconColor: '#93c1ce',
+    value: store.salesToday,
+    labelKey: 'dashboard.stats.patientsToday',
+  },
+  {
+    icon: 'pi-chart-line',
+    iconBg: '#f0fdf4', iconColor: '#22c55e',
+    value: store.monthlyRevenue > 0
+      ? `S/ ${store.monthlyRevenue.toLocaleString('es-PE', { minimumFractionDigits: 2 })}`
+      : 'S/ 0.00',
+    labelKey: 'dashboard.stats.monthlyRevenue',
+  },
+  {
+    icon: 'pi-wrench',
+    iconBg: '#fef2f2', iconColor: '#e7000b',
+    value: store.pendingLabOrders,
+    labelKey: 'dashboard.stats.pendingLabOrders',
+  },
+])
 
-// Sample appointment data — statuses translated in template via `confirmed` flag
-const appointments = [
-  { time: '09:00 AM', name: 'Sarah Johnson',  service: 'Examen Visual · Dr. Smith',    confirmed: true  },
-  { time: '10:30 AM', name: 'Michael Chen',   service: 'Adaptación de LC · Dr. Brown', confirmed: true  },
-  { time: '02:00 PM', name: 'Emma Wilson',    service: 'Seguimiento · Dr. Smith',       confirmed: false },
-  { time: '03:30 PM', name: 'David Martínez', service: 'Examen Visual · Dr. Lee',       confirmed: true  },
-]
+// ── Lab Orders Section ─────────────────────────────────────────────────────
+const labOrders = computed(() =>
+  store.recentWorkOrders.map(o => ({
+    name:     o.laboratory_name ?? '',
+    order:    `WO-${String(o.order_id).padStart(4, '0')} · ${o.status}`,
+    urgent:   o.priority === 'URGENT',
+    quality:  o.status   === 'QUALITY_CONTROL',
+    received: o.status   === 'RECEIVED',
+    delivery: o.estimated_date
+      ? new Date(o.estimated_date).toLocaleDateString(
+          locale.value === 'es' ? 'es-PE' : 'en-US',
+          { day: 'numeric', month: 'short' }
+        )
+      : '—',
+  }))
+)
 
-// Sample lab order data — stage translated via boolean flags that map to existing labOrders.* keys
-const labOrders = [
-  { name: 'Sarah Johnson',  order: 'LAB-2847 · Progresivos', urgent: true,  quality: false, received: false, delivery: '25 Abr' },
-  { name: 'Michael Chen',   order: 'LAB-2846 · Contacto',    urgent: false, quality: true,  received: false, delivery: '22 Abr' },
-  { name: 'David Martínez', order: 'LAB-2844 · Filtro Azul', urgent: false, quality: false, received: true,  delivery: '20 Abr' },
-]
+// ── Stock Alerts Section ───────────────────────────────────────────────────
+const stockAlerts = computed(() => store.stockAlerts)
 
-// Sample stock alert data — labels translated in template
-const stockAlerts = [
-  { name: 'Solución para LC',     remaining: 5,  min: 20, pct: 25 },
-  { name: 'Lunas Filtro Azul',    remaining: 8,  min: 30, pct: 27 },
-  { name: 'Armazones de Lectura', remaining: 12, min: 25, pct: 48 },
-]
+// ── Line Chart Geometry ───────────────────────────────────────────────────
+const recetasData = computed(() =>
+  store.recetasChartData.length ? store.recetasChartData : [0]
+)
+const ventasData = computed(() =>
+  store.ventasChartData.length ? store.ventasChartData : [0]
+)
 
-// ── Line chart geometry ──────────────────────────────────────────────────────
-// Axis labels are reactive; geometry constants are locale-independent.
-const recetasData = [65, 82, 108, 130, 200, 185]
-const ventasData  = [35, 60,  75, 105, 155, 145]
-const yTicks      = [0, 55, 110, 165, 220]
+const chartMax = computed(() => {
+  const all = [...recetasData.value, ...ventasData.value]
+  const max = Math.max(...all)
+  return max > 0 ? Math.ceil(max / 4) * 4 : 4
+})
+
+const yTicks = computed(() => {
+  const m = chartMax.value
+  return [0, Math.round(m * 0.25), Math.round(m * 0.5), Math.round(m * 0.75), m]
+})
 
 const LC = { left: 42, right: 740, top: 10, bottom: 185 }
 const lcW = LC.right - LC.left
 const lcH = LC.bottom - LC.top
 
-function lx(i) { return LC.left + i * (lcW / 5) }
-function ly(v) { return LC.bottom - (v / 220) * lcH }
-function polyPts(data) {
-  return data.map((v, i) => `${lx(i).toFixed(1)},${ly(v).toFixed(1)}`).join(' ')
+function lx(i, total) {
+  return total <= 1 ? LC.left + lcW / 2 : LC.left + i * (lcW / (total - 1))
+}
+function ly(v, max) {
+  return max === 0 ? LC.bottom : LC.bottom - (v / max) * lcH
 }
 
-const recPts     = polyPts(recetasData)
-const venPts     = polyPts(ventasData)
-const recAreaPts = `${recPts} ${LC.right},${LC.bottom} ${LC.left},${LC.bottom}`
-const venAreaPts = `${venPts} ${LC.right},${LC.bottom} ${LC.left},${LC.bottom}`
-const gridLines  = yTicks.map(v => ({ y: ly(v).toFixed(1), label: v }))
-const recDots    = recetasData.map((v, i) => ({ cx: lx(i).toFixed(1), cy: ly(v).toFixed(1) }))
-const venDots    = ventasData.map((v, i) => ({ cx: lx(i).toFixed(1), cy: ly(v).toFixed(1) }))
+const recPts = computed(() => {
+  const data = recetasData.value
+  const max  = chartMax.value
+  return data.map((v, i) => `${lx(i, data.length).toFixed(1)},${ly(v, max).toFixed(1)}`).join(' ')
+})
+const venPts = computed(() => {
+  const data = ventasData.value
+  const max  = chartMax.value
+  return data.map((v, i) => `${lx(i, data.length).toFixed(1)},${ly(v, max).toFixed(1)}`).join(' ')
+})
+const recAreaPts = computed(() => `${recPts.value} ${LC.right},${LC.bottom} ${LC.left},${LC.bottom}`)
+const venAreaPts = computed(() => `${venPts.value} ${LC.right},${LC.bottom} ${LC.left},${LC.bottom}`)
 
-// X-axis labels react to locale changes via tm()
+const gridLines = computed(() =>
+  yTicks.value.map(v => ({ y: ly(v, chartMax.value).toFixed(1), label: v }))
+)
+const recDots = computed(() => {
+  const data = recetasData.value
+  const max  = chartMax.value
+  return data.map((v, i) => ({ cx: lx(i, data.length).toFixed(1), cy: ly(v, max).toFixed(1) }))
+})
+const venDots = computed(() => {
+  const data = ventasData.value
+  const max  = chartMax.value
+  return data.map((v, i) => ({ cx: lx(i, data.length).toFixed(1), cy: ly(v, max).toFixed(1) }))
+})
+
+// X-axis labels: use period labels from API or fall back to i18n month names
 const months  = computed(() => tm('dashboard.charts.months'))
-const xLabels = computed(() =>
-  months.value.map((m, i) => ({ x: lx(i).toFixed(1), label: m }))
+const xLabels = computed(() => {
+  const periods = store.chartPeriodLabels
+  const data    = recetasData.value
+  if (periods.length) {
+    return periods.map((p, i) => ({
+      x:     lx(i, periods.length).toFixed(1),
+      label: new Date(p + '-01').toLocaleDateString(
+        locale.value === 'es' ? 'es-PE' : 'en-US',
+        { month: 'short' }
+      ),
+    }))
+  }
+  return months.value.map((m, i) => ({ x: lx(i, data.length).toFixed(1), label: m }))
+})
+
+// ── Bar Chart Geometry ───────────────────────────────────────────────────
+const weekRevenue = computed(() =>
+  store.weekRevenueData.length ? store.weekRevenueData : [0]
 )
 
-// ── Bar chart geometry ───────────────────────────────────────────────────────
-const weekRevenue = [8200, 6100, 9800, 10500, 12000, 7200, 4500]
-const BC          = { left: 40, bottom: 165, top: 10 }
-const barChartW   = 310
-const barSlot     = barChartW / 7
-const barW        = Math.round(barSlot * 0.6)
-const barMaxV     = 12000
-const barHArea    = BC.bottom - BC.top
+const BC        = { left: 40, bottom: 165, top: 10 }
+const barChartW = 310
+const barMaxV   = computed(() => {
+  const m = Math.max(...weekRevenue.value)
+  return m > 0 ? m : 1
+})
+const barHArea = BC.bottom - BC.top
 
-function bx(i) { return BC.left + i * barSlot + (barSlot - barW) / 2 }
-function bh(v) { return (v / barMaxV) * barHArea }
-function by(v) { return BC.bottom - bh(v) }
+function bSlot(total) { return barChartW / Math.max(total, 1) }
+function bx(i, total) {
+  const slot = bSlot(total)
+  const w    = Math.round(slot * 0.6)
+  return BC.left + i * slot + (slot - w) / 2
+}
+function bw(total)   { return Math.round(bSlot(total) * 0.6) }
+function bh(v, maxV) { return (v / maxV) * barHArea }
+function by(v, maxV) { return BC.bottom - bh(v, maxV) }
 
-const barYTicks = [0, 3000, 6000, 9000, 12000].map(v => ({
-  y: by(v).toFixed(1),
-  label: v >= 1000 ? `${v / 1000}k` : '0',
-}))
-
-// Day labels react to locale changes via tm()
-const weekDays = computed(() => tm('dashboard.charts.weekDays'))
-const bars     = computed(() =>
-  weekRevenue.map((v, i) => ({
-    x: bx(i).toFixed(1), y: by(v).toFixed(1),
-    h: bh(v).toFixed(1), w: barW,
-    cx: (bx(i) + barW / 2).toFixed(1),
-    label: weekDays.value[i],
+const barYTicks = computed(() => {
+  const m = barMaxV.value
+  return [0, Math.round(m * 0.25), Math.round(m * 0.5), Math.round(m * 0.75), m].map(v => ({
+    y:     by(v, m).toFixed(1),
+    label: v >= 1000 ? `${(v / 1000).toFixed(1)}k` : String(v),
   }))
-)
+})
+
+const barLabels = computed(() => {
+  const periods = store.chartPeriodLabels
+  if (periods.length) {
+    return periods.map(p =>
+      new Date(p + '-01').toLocaleDateString(
+        locale.value === 'es' ? 'es-PE' : 'en-US',
+        { month: 'short' }
+      )
+    )
+  }
+  return tm('dashboard.charts.weekDays')
+})
+
+const bars = computed(() => {
+  const rev   = weekRevenue.value
+  const maxV  = barMaxV.value
+  const total = rev.length
+  return rev.map((v, i) => ({
+    x:     bx(i, total).toFixed(1),
+    y:     by(v, maxV).toFixed(1),
+    h:     bh(v, maxV).toFixed(1),
+    w:     bw(total),
+    cx:    (bx(i, total) + bw(total) / 2).toFixed(1),
+    label: barLabels.value[i] ?? '',
+  }))
+})
 </script>
 
 <template>
@@ -119,16 +216,15 @@ const bars     = computed(() =>
       </div>
     </div>
 
+    <!-- Loading bar -->
+    <div v-if="store.loading" class="loading-bar" />
+
     <!-- Stat Cards -->
     <div class="stat-grid">
       <div v-for="s in stats" :key="s.labelKey" class="stat-card">
         <div class="stat-card__top">
           <div class="stat-icon" :style="{ background: s.iconBg }">
             <i :class="['pi', s.icon]" :style="{ color: s.iconColor }" />
-          </div>
-          <div class="trend" :class="s.up ? 'trend--up' : 'trend--down'">
-            <i :class="['pi', s.up ? 'pi-arrow-up-right' : 'pi-arrow-down-right']" class="trend-arrow" />
-            {{ s.trend }}
           </div>
         </div>
         <div class="stat-value">{{ s.value }}</div>
@@ -149,37 +245,30 @@ const bars     = computed(() =>
           <span class="period-badge">{{ $t('dashboard.charts.last6Months') }}</span>
         </div>
         <svg class="line-svg" viewBox="0 0 780 215" preserveAspectRatio="xMidYMid meet">
-          <!-- Grid lines -->
           <line
             v-for="g in gridLines" :key="g.label"
             :x1="LC.left" :y1="g.y" :x2="LC.right" :y2="g.y"
             stroke="#f3f4f6" stroke-width="1"
           />
-          <!-- Y-axis labels -->
           <text
             v-for="g in gridLines" :key="'y' + g.label"
             :x="LC.left - 6" :y="+g.y + 4"
             fill="#6b7280" font-size="11" text-anchor="end" font-family="Montserrat, sans-serif"
           >{{ g.label }}</text>
-          <!-- X-axis labels (locale-reactive) -->
           <text
             v-for="xl in xLabels" :key="xl.label"
             :x="xl.x" :y="LC.bottom + 22"
             fill="#6b7280" font-size="11" text-anchor="middle" font-family="Montserrat, sans-serif"
           >{{ xl.label }}</text>
-          <!-- Area fills -->
           <polygon :points="recAreaPts" fill="#6ee7b7" opacity="0.18" />
           <polygon :points="venAreaPts" fill="#00c1b0" opacity="0.12" />
-          <!-- Lines -->
           <polyline :points="recPts" fill="none" stroke="#6ee7b7" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" />
           <polyline :points="venPts" fill="none" stroke="#00c1b0" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" />
-          <!-- Dots — Recetas -->
           <circle
             v-for="(d, i) in recDots" :key="'rd' + i"
             :cx="d.cx" :cy="d.cy" r="4"
             fill="white" stroke="#6ee7b7" stroke-width="2"
           />
-          <!-- Dots — Ventas -->
           <circle
             v-for="(d, i) in venDots" :key="'vd' + i"
             :cx="d.cx" :cy="d.cy" r="4"
@@ -198,7 +287,7 @@ const bars     = computed(() =>
         </div>
       </div>
 
-      <!-- Bar Chart: Ingresos Semanales -->
+      <!-- Bar Chart: Ingresos por Periodo -->
       <div class="card chart-side">
         <div class="card-header">
           <div>
@@ -207,25 +296,21 @@ const bars     = computed(() =>
           </div>
         </div>
         <svg class="bar-svg" viewBox="0 0 370 200" preserveAspectRatio="xMidYMid meet">
-          <!-- Grid lines -->
           <line
             v-for="t in barYTicks" :key="'bg' + t.label"
             :x1="BC.left" :y1="t.y" x2="355" :y2="t.y"
             stroke="#f3f4f6" stroke-width="1"
           />
-          <!-- Y-axis labels -->
           <text
             v-for="t in barYTicks" :key="'by' + t.label"
             :x="BC.left - 5" :y="+t.y + 4"
             fill="#6b7280" font-size="10" text-anchor="end" font-family="Montserrat, sans-serif"
           >{{ t.label }}</text>
-          <!-- Bars -->
           <rect
             v-for="b in bars" :key="b.label"
             :x="b.x" :y="b.y" :width="b.w" :height="b.h"
             fill="#00c1b0" rx="4" opacity="0.85"
           />
-          <!-- X-axis labels (locale-reactive) -->
           <text
             v-for="b in bars" :key="'bl' + b.label"
             :x="b.cx" :y="BC.bottom + 18"
@@ -239,26 +324,15 @@ const bars     = computed(() =>
     <!-- Bottom Row -->
     <div class="bottom-row">
 
-      <!-- Appointments -->
+      <!-- Appointments placeholder -->
       <div class="card">
         <div class="card-header card-header--border">
           <h3 class="card-title">{{ $t('dashboard.appointments.title') }}</h3>
-          <span class="meta-text">{{ $t('dashboard.appointments.attended', { attended: 4, total: 24 }) }}</span>
+          <span class="meta-text">{{ $t('dashboard.appointments.attended', { attended: 0, total: 0 }) }}</span>
         </div>
-        <div class="appt-list">
-          <div v-for="a in appointments" :key="a.name" class="appt-row">
-            <div class="appt-info">
-              <span class="appt-time">{{ a.time }}</span>
-              <span class="appt-name">{{ a.name }}</span>
-              <span class="appt-service">{{ a.service }}</span>
-            </div>
-            <span
-              class="appt-status"
-              :class="a.confirmed ? 'appt-status--confirmed' : 'appt-status--pending'"
-            >
-              {{ a.confirmed ? $t('dashboard.appointments.statusConfirmed') : $t('dashboard.appointments.statusPending') }}
-            </span>
-          </div>
+        <div class="empty-state">
+          <i class="pi pi-calendar empty-icon" />
+          <span>{{ $t('dashboard.appointments.statusPending') }}</span>
         </div>
       </div>
 
@@ -268,24 +342,31 @@ const bars     = computed(() =>
           <h3 class="card-title">{{ $t('dashboard.labOrders.title') }}</h3>
         </div>
         <div class="lab-list">
-          <div v-for="o in labOrders" :key="o.order" class="lab-row">
-            <div class="lab-info">
-              <span class="lab-name">{{ o.name }}</span>
-              <span class="lab-order">{{ o.order }}</span>
+          <template v-if="labOrders.length">
+            <div v-for="o in labOrders" :key="o.order" class="lab-row">
+              <div class="lab-info">
+                <span class="lab-name">{{ o.name }}</span>
+                <span class="lab-order">{{ o.order }}</span>
+              </div>
+              <div class="lab-right">
+                <span
+                  class="lab-stage"
+                  :class="{ 'stage--urgent': o.urgent, 'stage--quality': o.quality, 'stage--received': o.received }"
+                >
+                  <template v-if="o.urgent">{{ $t('labOrders.priority.urgent') }}</template>
+                  <template v-else-if="o.quality">{{ $t('labOrders.status.QUALITY_CONTROL') }}</template>
+                  <template v-else-if="o.received">{{ $t('labOrders.status.RECEIVED') }}</template>
+                  <template v-else>{{ $t('labOrders.status.PENDING') }}</template>
+                </span>
+                <span class="lab-delivery">
+                  {{ $t('dashboard.labOrders.deliveryLabel', { date: o.delivery }) }}
+                </span>
+              </div>
             </div>
-            <div class="lab-right">
-              <span
-                class="lab-stage"
-                :class="{ 'stage--urgent': o.urgent, 'stage--quality': o.quality, 'stage--received': o.received }"
-              >
-                <template v-if="o.urgent">{{ $t('labOrders.priority.urgent') }}</template>
-                <template v-else-if="o.quality">{{ $t('labOrders.status.QUALITY_CONTROL') }}</template>
-                <template v-else>{{ $t('labOrders.status.PENDING') }}</template>
-              </span>
-              <span class="lab-delivery">
-                {{ $t('dashboard.labOrders.deliveryLabel', { date: o.delivery }) }}
-              </span>
-            </div>
+          </template>
+          <div v-else class="empty-state">
+            <i class="pi pi-inbox empty-icon" />
+            <span>0</span>
           </div>
         </div>
         <div class="card-footer">
@@ -302,15 +383,21 @@ const bars     = computed(() =>
           <span class="alert-badge">{{ $t('dashboard.stockAlerts.itemCount', { count: stockAlerts.length }) }}</span>
         </div>
         <div class="stock-list">
-          <div v-for="s in stockAlerts" :key="s.name" class="stock-row">
-            <div class="stock-top">
-              <span class="stock-name">{{ s.name }}</span>
-              <span class="stock-rem">{{ $t('dashboard.stockAlerts.remaining', { count: s.remaining }) }}</span>
+          <template v-if="stockAlerts.length">
+            <div v-for="s in stockAlerts" :key="s.name" class="stock-row">
+              <div class="stock-top">
+                <span class="stock-name">{{ s.name }}</span>
+                <span class="stock-rem">{{ $t('dashboard.stockAlerts.remaining', { count: s.remaining }) }}</span>
+              </div>
+              <div class="stock-track">
+                <div class="stock-fill" :style="{ width: s.pct + '%' }" />
+              </div>
+              <span class="stock-min">{{ $t('dashboard.stockAlerts.reorderMin', { min: s.min }) }}</span>
             </div>
-            <div class="stock-track">
-              <div class="stock-fill" :style="{ width: s.pct + '%' }" />
-            </div>
-            <span class="stock-min">{{ $t('dashboard.stockAlerts.reorderMin', { min: s.min }) }}</span>
+          </template>
+          <div v-else class="empty-state">
+            <i class="pi pi-box empty-icon" />
+            <span>0</span>
           </div>
         </div>
       </div>
@@ -321,7 +408,6 @@ const bars     = computed(() =>
 </template>
 
 <style scoped>
-/* ── Layout ─────────────────────────────────────────────────────────────── */
 .dashboard {
   padding: 24px;
   display: flex;
@@ -329,7 +415,34 @@ const bars     = computed(() =>
   gap: 24px;
 }
 
-/* ── Header ─────────────────────────────────────────────────────────────── */
+.loading-bar {
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #00c1b0 0%, #6ee7b7 50%, #00c1b0 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 32px 16px;
+  color: #9ca3af;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  flex: 1;
+}
+
+.empty-icon { font-size: 28px; opacity: 0.4; }
+
 .dash-header {
   display: flex;
   align-items: center;
@@ -363,7 +476,6 @@ const bars     = computed(() =>
 
 .live-dot { color: #00c1b0; font-size: 9px; }
 
-/* ── Stat Cards ─────────────────────────────────────────────────────────── */
 .stat-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -397,19 +509,6 @@ const bars     = computed(() =>
 
 .stat-icon .pi { font-size: 18px; }
 
-.trend {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.trend--up   { color: #96f6ee; }
-.trend--down { color: #e7000b; }
-.trend-arrow { font-size: 10px; }
-
 .stat-value {
   font-family: 'Montserrat', sans-serif;
   font-size: 24px;
@@ -425,7 +524,6 @@ const bars     = computed(() =>
   color: #6a7282;
 }
 
-/* ── Shared Card ────────────────────────────────────────────────────────── */
 .card {
   background: white;
   border: 1px solid #f3f4f6;
@@ -502,7 +600,6 @@ const bars     = computed(() =>
 
 .link-btn:hover { opacity: 0.75; }
 
-/* ── Charts Row ─────────────────────────────────────────────────────────── */
 .charts-row {
   display: grid;
   grid-template-columns: 1fr 390px;
@@ -550,64 +647,12 @@ const bars     = computed(() =>
   flex: 1;
 }
 
-/* ── Bottom Row ─────────────────────────────────────────────────────────── */
 .bottom-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
 }
 
-/* ── Appointments ───────────────────────────────────────────────────────── */
-.appt-list { display: flex; flex-direction: column; }
-
-.appt-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 14px 16px;
-  border-bottom: 1px solid #f9fafb;
-  gap: 8px;
-}
-
-.appt-row:last-child { border-bottom: none; }
-
-.appt-info { display: flex; flex-direction: column; gap: 3px; }
-
-.appt-time {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  color: #00c1b0;
-}
-
-.appt-name {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  color: #101828;
-}
-
-.appt-service {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 12px;
-  color: #6a7282;
-}
-
-.appt-status {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 12px;
-  font-weight: 500;
-  padding: 2px 8px;
-  border-radius: 999px;
-  white-space: nowrap;
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-.appt-status--confirmed { background: #fef9c2; color: #008236; }
-.appt-status--pending   { background: #a65f00; color: #ffe2e2; }
-
-/* ── Lab Orders ─────────────────────────────────────────────────────────── */
 .lab-list { display: flex; flex-direction: column; flex: 1; }
 
 .lab-row {
@@ -651,6 +696,8 @@ const bars     = computed(() =>
   padding: 2px 6px;
   border-radius: 4px;
   white-space: nowrap;
+  background: #f3f4f6;
+  color: #4a5565;
 }
 
 .stage--urgent   { background: #c10007; color: #f3e8ff; }
@@ -663,7 +710,6 @@ const bars     = computed(() =>
   color: #99a1af;
 }
 
-/* ── Stock Alerts ───────────────────────────────────────────────────────── */
 .alert-badge {
   background: #c10007;
   color: #f3e8ff;

@@ -1,6 +1,8 @@
 <script setup>
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const emit = defineEmits(['save', 'close'])
 
 const form = ref({
@@ -50,8 +52,8 @@ function onSubmit() {
         <div class="modal" @click.stop>
             <div class="modal-header">
                 <div>
-                    <h3 class="modal-title">Agregar Paciente</h3>
-                    <p class="modal-subtitle">Registrar un nuevo paciente en el sistema</p>
+                    <h3 class="modal-title">{{ $t('patients.addModal.title') }}</h3>
+                    <p class="modal-subtitle">{{ $t('patients.addModal.subtitle') }}</p>
                 </div>
                 <button class="close-btn" @click="emit('close')"><i class="pi pi-times" /></button>
             </div>
@@ -59,12 +61,12 @@ function onSubmit() {
             <div class="modal-body">
                 <!-- Full name -->
                 <div class="field">
-                    <label>Nombre Completo *</label>
+                    <label>{{ $t('patients.addModal.fullName') }} *</label>
                     <input
                         v-model="form.fullName"
                         class="form-input"
                         :class="{ 'form-input--error': errors.fullName }"
-                        placeholder="ej. Sarah Johnson"
+                        :placeholder="$t('patients.addModal.fullNamePlaceholder')"
                         @input="errors.fullName = false"
                     />
                 </div>
@@ -72,18 +74,18 @@ function onSubmit() {
                 <div class="form-row">
                     <!-- DNI -->
                     <div class="field">
-                        <label>DNI / Doc. Identidad *</label>
+                        <label>{{ $t('patients.addModal.dni') }} *</label>
                         <input
                             v-model="form.dni"
                             class="form-input"
                             :class="{ 'form-input--error': errors.dni }"
-                            placeholder="ej. 12345678"
+                            :placeholder="$t('patients.addModal.dniPlaceholder')"
                             @input="errors.dni = false"
                         />
                     </div>
                     <!-- Birth date -->
                     <div class="field">
-                        <label>Fecha de Nacimiento</label>
+                        <label>{{ $t('patients.addModal.birthDate') }}</label>
                         <input
                             v-model="form.birthDate"
                             type="date"
@@ -95,33 +97,33 @@ function onSubmit() {
                 <div class="form-row">
                     <!-- Email -->
                     <div class="field">
-                        <label>Correo Electrónico</label>
+                        <label>{{ $t('patients.addModal.email') }}</label>
                         <input
                             v-model="form.email"
                             type="email"
                             class="form-input"
-                            placeholder="ej. paciente@correo.com"
+                            :placeholder="$t('patients.addModal.emailPlaceholder')"
                         />
                     </div>
                     <!-- Phone -->
                     <div class="field">
-                        <label>Teléfono</label>
+                        <label>{{ $t('patients.addModal.phone') }}</label>
                         <input
                             v-model="form.phone"
                             class="form-input"
-                            placeholder="ej. 903 897 123"
+                            :placeholder="$t('patients.addModal.phonePlaceholder')"
                         />
                     </div>
                 </div>
 
                 <p v-if="submitted && hasErrors" class="global-error">
-                    Por favor rellene los campos obligatorios
+                    {{ $t('patients.addModal.requiredError') }}
                 </p>
             </div>
 
             <div class="modal-footer">
-                <button class="btn-cancel" @click="emit('close')">Cancelar</button>
-                <button class="btn-save" @click="onSubmit">Registrar</button>
+                <button class="btn-cancel" @click="emit('close')">{{ $t('common.cancel') }}</button>
+                <button class="btn-save" @click="onSubmit">{{ $t('patients.addModal.register') }}</button>
             </div>
         </div>
     </div>
