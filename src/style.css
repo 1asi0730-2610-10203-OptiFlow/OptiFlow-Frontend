@@ -1,14 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@600;700&family=Montserrat:wght@400;500;600;700&display=swap');
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-html, body {
+html,
+body {
   height: 100%;
-  font-family: 'Montserrat', system-ui, sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 14px;
   color: #101828;
   background-color: #f9fafb;
@@ -23,9 +26,26 @@ html, body {
   border: none;
 }
 
-.font-josefin { font-family: 'Josefin Sans', sans-serif; }
-.font-mono    { font-family: 'Consolas', 'Courier New', monospace; }
-.w-full       { width: 100%; }
-.flex-1       { flex: 1; }
-.mt-3         { margin-top: 12px; }
-.mb-4         { margin-bottom: 16px; }
+.font-josefin {
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+.font-mono {
+  font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.mt-3 {
+  margin-top: 12px;
+}
+
+.mb-4 {
+  margin-bottom: 16px;
+}

@@ -1,16 +1,51 @@
 {
   "roles": [
     {
+      "id": 1,
       "role_id": 1,
-      "name": "ADMIN"
+      "color": "#ef4444",
+      "description": "Acceso total al sistema",
+      "userCount": 1,
+      "name": "ADMIN",
+      "displayName": "Administrador"
     },
     {
+      "id": 2,
       "role_id": 2,
-      "name": "SALES_ADVISOR"
+      "color": "#8b5cf6",
+      "description": "Historias cl�nicas, recetas, datos cl�nicos",
+      "userCount": 3,
+      "name": "OPTOMETRIST",
+      "displayName": "Optometrista"
     },
     {
+      "id": 3,
       "role_id": 3,
-      "name": "OPTOMETRIST"
+      "color": "#3b82f6",
+      "description": "Ventas, inventario, registros de pacientes",
+      "userCount": 1,
+      "name": "SALES_ADVISOR",
+      "displayName": "�ptico"
+    },
+    {
+      "id": 4,
+      "role_id": 4,
+      "color": "#10b981",
+      "description": "Citas, registros de pacientes (solo lectura)",
+      "userCount": 1,
+      "name": "RECEPTIONIST",
+      "displayName": "Recepcionista"
+    },
+    {
+      "name": "VENTAS",
+      "displayName": "Ventas",
+      "description": "Nuevo rol personalizado",
+      "color": "#8b5cf6",
+      "permissions": [
+        "clinical",
+        "dashboard"
+      ],
+      "id": 5
     }
   ],
   "employees": [
@@ -49,6 +84,24 @@
       "department": "Optometry",
       "status": "ACTIVE",
       "hire_date": "2024-05-20"
+    },
+    {
+      "role_id": 3,
+      "employee_id": 4,
+      "status": "ACTIVE",
+      "name": "Elena Vasquez"
+    },
+    {
+      "role_id": 3,
+      "employee_id": 5,
+      "status": "ACTIVE",
+      "name": "Roberto Sanchez"
+    },
+    {
+      "role_id": 4,
+      "employee_id": 6,
+      "status": "ACTIVE",
+      "name": "Maria Torres"
     }
   ],
   "sessions": [
