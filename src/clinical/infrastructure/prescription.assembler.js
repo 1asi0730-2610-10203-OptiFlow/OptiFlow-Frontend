@@ -4,7 +4,7 @@ import { PrescriptionResource } from './prescription.resource.js'
 export class PrescriptionAssembler {
     static toEntityFromResource(resource) {
         return new Prescription({
-            id:               resource.prescription_id    ?? 0,
+            id:               resource.id ?? resource.prescription_id ?? 0,
             prescriptionUuid: resource.prescription_uuid  ?? '',
             clinicalRecordId: resource.clinical_record_id ?? 0,
             odSphere:         resource.od_sphere          ?? 0,
