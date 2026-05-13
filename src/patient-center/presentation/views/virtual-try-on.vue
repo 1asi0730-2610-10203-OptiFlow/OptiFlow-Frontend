@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onBeforeUnmount } from 'vue'
 
 const frames = ref([
   { id: 1, name: 'Aviator Classic', material: 'Metal · Dorado', price: '299', selected: true },
@@ -9,10 +9,41 @@ const frames = ref([
 ])
 
 const selectedFrameId = ref(1)
+const isCameraActive = ref(false)
+const videoRef = ref(null)
+const streamRef = ref(null)
 
 function selectFrame(id) {
   selectedFrameId.value = id
 }
+
+async function startCamera() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true })
+    streamRef.value = stream
+    isCameraActive.value = true
+    setTimeout(() => {
+        if (videoRef.value) {
+            videoRef.value.srcObject = stream
+        }
+    }, 100)
+  } catch (err) {
+    console.error("Camera error:", err)
+    alert("No se pudo acceder a la cámara. Verifica los permisos.")
+  }
+}
+
+function stopCamera() {
+    if (streamRef.value) {
+        streamRef.value.getTracks().forEach(track => track.stop())
+    }
+    isCameraActive.value = false
+    streamRef.value = null
+}
+
+onBeforeUnmount(() => {
+    stopCamera()
+})
 </script>
 
 <template>
@@ -20,8 +51,8 @@ function selectFrame(id) {
     <!-- Header -->
     <div class="page-header">
       <div>
-        <h1 class="page-title">Probador Virtual</h1>
-        <p class="page-subtitle">Bienvenido/a a tu portal OptiFlow</p>
+        <h1 class="page-title">{{ $t('patientCenter.virtualTryOn.title') }}</h1>
+        <p class="page-subtitle">{{ $t('patientCenter.virtualTryOn.subtitle') }}</p>
       </div>
     </div>
 
@@ -34,25 +65,31 @@ function selectFrame(id) {
           <div class="camera-title-wrapper">
              <div class="avatar" style="background: rgba(0,193,176,0.1);"><i class="pi pi-eye" /></div>
              <div>
-               <h3 class="card-title">Probador Virtual 3D</h3>
-               <p class="card-subtitle">Pruébate monturas en tiempo real</p>
+               <h3 class="card-title">{{ $t('patientCenter.virtualTryOn.cardTitle') }}</h3>
+               <p class="card-subtitle">{{ $t('patientCenter.virtualTryOn.cardSubtitle') }}</p>
              </div>
           </div>
+          <button v-if="isCameraActive" class="btn-activate btn-stop" @click="stopCamera">
+            <i class="pi pi-times" /> {{ $t('patientCenter.virtualTryOn.turnOffBtn') }}
+          </button>
         </div>
         
-        <div class="camera-placeholder">
-          <i class="pi pi-camera camera-large-icon" />
-          <h2 class="activate-text">Activa tu cámara</h2>
-          <p class="activate-subtext">Para comenzar a probar monturas, necesitamos acceso a tu cámara</p>
-          <button class="btn-activate">
-            <i class="pi pi-camera" /> Activar Cámara
-          </button>
+        <div class="camera-placeholder" :class="{ 'has-camera': isCameraActive }">
+          <template v-if="!isCameraActive">
+            <i class="pi pi-camera camera-large-icon" />
+            <h2 class="activate-text">{{ $t('patientCenter.virtualTryOn.activateCamera') }}</h2>
+            <p class="activate-subtext">{{ $t('patientCenter.virtualTryOn.cameraInstruction') }}</p>
+            <button class="btn-activate" @click="startCamera">
+              <i class="pi pi-camera" /> {{ $t('patientCenter.virtualTryOn.turnOnBtn') }}
+            </button>
+          </template>
+          <video v-else ref="videoRef" autoplay playsinline class="video-stream"></video>
         </div>
       </div>
 
       <!-- Lado Derecho: Selección de Montura -->
       <div class="frames-selection">
-        <p class="selection-label">Selecciona una montura</p>
+        <p class="selection-label">{{ $t('patientCenter.virtualTryOn.selectFrame') }}</p>
         <div 
           v-for="frame in frames" 
           :key="frame.id" 
@@ -75,11 +112,9 @@ function selectFrame(id) {
     <div class="tips-card">
        <i class="pi pi-info-circle tips-icon" />
        <div>
-         <p class="tips-title">Consejos para mejor experiencia</p>
+         <p class="tips-title">{{ $t('patientCenter.virtualTryOn.tipsTitle') }}</p>
          <ul class="tips-list">
-           <li>Mantén tu rostro centrado en la cámara</li>
-           <li>Asegúrate de tener buena iluminación frontal</li>
-           <li>Evita movimientos bruscos para mejor detección</li>
+           <li v-for="(tip, idx) in $tm('patientCenter.virtualTryOn.tips')" :key="idx">{{ tip }}</li>
          </ul>
        </div>
     </div>
@@ -93,8 +128,10 @@ function selectFrame(id) {
 .camera-placeholder { 
   background: #111827; margin: 20px; border-radius: 12px; height: 350px;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  color: white; text-align: center; padding: 20px;
+  color: white; text-align: center; padding: 20px; overflow: hidden; position: relative;
 }
+.camera-placeholder.has-camera { padding: 0; background: #000; }
+.video-stream { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
 .camera-large-icon { font-size: 3rem; opacity: 0.5; margin-bottom: 15px; }
 .activate-text { font-family: 'Josefin Sans', sans-serif; margin: 0; }
 .activate-subtext { font-family: 'Montserrat', sans-serif; font-size: 0.85rem; opacity: 0.7; max-width: 250px; margin: 10px 0 20px; }
@@ -102,6 +139,7 @@ function selectFrame(id) {
   background: #00c1b0; color: white; border: none; padding: 12px 24px; 
   border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; gap: 8px; align-items: center;
 }
+.btn-stop { background: #ef4444; padding: 8px 16px; font-size: 0.85rem; }
 
 /* Selección de Monturas */
 .selection-label { font-family: 'Montserrat', sans-serif; font-size: 0.85rem; font-weight: 600; margin-bottom: 12px; }

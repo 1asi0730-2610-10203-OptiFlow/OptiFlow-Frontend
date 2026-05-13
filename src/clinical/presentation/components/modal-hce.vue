@@ -13,7 +13,6 @@ const props = defineProps({
 const emit = defineEmits(['close'])
 
 const store = useClinicalStore()
-const activeTab = ref('hce') // 'hce' | 'profile' | 'orders'
 
 const showNewExam  = ref(false)
 const showSuccess  = ref(false)
@@ -91,19 +90,13 @@ function onSuccessNext() {
 
             <!-- Tabs -->
             <div class="tabs">
-                <button class="tab-btn" :class="{ 'tab-btn--active': activeTab === 'hce' }" @click="activeTab = 'hce'">
+                <button class="tab-btn tab-btn--active">
                     <i class="pi pi-heart" /> {{ $t('patients.hce.tabs.hce') }}
-                </button>
-                <button class="tab-btn" :class="{ 'tab-btn--active': activeTab === 'profile' }" @click="activeTab = 'profile'">
-                    <i class="pi pi-user" /> {{ $t('patients.hce.tabs.profile') }}
-                </button>
-                <button class="tab-btn" :class="{ 'tab-btn--active': activeTab === 'orders' }" @click="activeTab = 'orders'">
-                    <i class="pi pi-list" /> {{ $t('patients.hce.tabs.orders') }}
                 </button>
             </div>
 
             <!-- ── HCE TAB ── -->
-            <div v-if="activeTab === 'hce'" class="modal-body">
+            <div class="modal-body">
                 <div v-if="latestPrescription">
                     <div class="section-header">
                         <span class="section-title">{{ $t('patients.hce.latestPrescription') }}</span>
@@ -168,43 +161,6 @@ function onSuccessNext() {
                 </div>
             </div>
 
-            <!-- ── PROFILE TAB ── -->
-            <div v-else-if="activeTab === 'profile'" class="modal-body">
-                <div class="profile-grid">
-                    <div class="profile-field">
-                        <span class="pf-label">{{ $t('patients.addModal.fullName') }}</span>
-                        <span class="pf-value">{{ patient.fullName }}</span>
-                    </div>
-                    <div class="profile-field">
-                        <span class="pf-label">{{ $t('patients.addModal.dni') }}</span>
-                        <span class="pf-value">{{ patient.dni }}</span>
-                    </div>
-                    <div class="profile-field">
-                        <span class="pf-label">{{ $t('patients.addModal.birthDate') }}</span>
-                        <span class="pf-value">{{ patient.birthDate || '—' }}</span>
-                    </div>
-                    <div class="profile-field">
-                        <span class="pf-label">{{ $t('patients.hce.age') }}</span>
-                        <span class="pf-value">{{ patient.age ?? '—' }} {{ $t('patients.hce.yearsOld') }}</span>
-                    </div>
-                    <div class="profile-field">
-                        <span class="pf-label">{{ $t('patients.addModal.email') }}</span>
-                        <span class="pf-value">{{ patient.email || '—' }}</span>
-                    </div>
-                    <div class="profile-field">
-                        <span class="pf-label">{{ $t('patients.addModal.phone') }}</span>
-                        <span class="pf-value">{{ patient.phone || '—' }}</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ── ORDERS TAB ── -->
-            <div v-else-if="activeTab === 'orders'" class="modal-body">
-                <div class="empty-hce">
-                    <i class="pi pi-list empty-icon" />
-                    <p>{{ $t('patients.hce.noOrders') }}</p>
-                </div>
-            </div>
 
             <!-- Register new exam button -->
             <div class="modal-footer-exam">
@@ -264,10 +220,6 @@ function onSuccessNext() {
 .last-visit-label { font-family: 'Montserrat', sans-serif; font-size: 0.68rem; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 4px; }
 .last-visit-date { font-family: 'Josefin Sans', sans-serif; font-size: 0.92rem; font-weight: 700; color: #111827; margin: 0; }
 
-.profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.profile-field { display: flex; flex-direction: column; gap: 4px; }
-.pf-label { font-family: 'Montserrat', sans-serif; font-size: 0.72rem; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; }
-.pf-value { font-family: 'Montserrat', sans-serif; font-size: 0.84rem; color: #111827; }
 
 .modal-footer-exam { padding: 12px 20px; border-top: 2px dashed #00c1b0; flex-shrink: 0; }
 .btn-register-exam { width: 100%; padding: 10px; border: none; background: transparent; color: #00c1b0; font-family: 'Montserrat', sans-serif; font-size: 0.88rem; font-weight: 600; cursor: pointer; text-align: center; }
