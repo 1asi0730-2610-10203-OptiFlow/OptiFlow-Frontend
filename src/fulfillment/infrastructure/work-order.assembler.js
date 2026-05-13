@@ -4,7 +4,7 @@ import { WorkOrderResource } from './work-order.resource.js'
 export class WorkOrderAssembler {
     static toEntityFromResource(resource) {
         return new WorkOrder({
-            id:              resource.order_id,
+            id:              resource.id ?? resource.order_id,
             saleId:          resource.sale_id,
             recipeId:        resource.recipe_id,
             labId:           resource.lab_id,

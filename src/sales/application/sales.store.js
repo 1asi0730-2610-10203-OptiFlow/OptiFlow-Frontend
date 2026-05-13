@@ -7,10 +7,12 @@ import { SaleAssembler } from '../infrastructure/sale.assembler.js'
 import { SaleDetailAssembler } from '../infrastructure/sale-detail.assembler.js'
 import { PaymentAssembler } from '../infrastructure/payment.assembler.js'
 import { FeedbackAssembler } from '../infrastructure/feedback.assembler.js'
+import { WorkOrderApi } from '../../fulfillment/infrastructure/work-order-api.js'
 
 const salesApi = new SalesApi()
 const paymentApi = new PaymentApi()
 const feedbackApi = new FeedbackApi()
+const workOrderApi = new WorkOrderApi()
 
 export const useSalesStore = defineStore('sales', () => {
   const sales = ref([])
@@ -62,7 +64,18 @@ export const useSalesStore = defineStore('sales', () => {
     try {
       const resource = SaleAssembler.toResourceFromEntity(sale)
       const created = await salesApi.createSale(resource)
-      sales.value.unshift(SaleAssembler.toEntityFromResource(created))
+      const saleEntity = SaleAssembler.toEntityFromResource(created)
+      sales.value.unshift(saleEntity)
+
+      // Automatically create a Work Order (Lab Order)
+      await workOrderApi.createWorkOrder({
+        sale_id: saleEntity.id,
+        patient_name: saleEntity.patientName,
+        status: 'PENDING',
+        total: saleEntity.totalAmount,
+        deposit: saleEntity.adelanto,
+        created_at: new Date().toISOString().split('T')[0]
+      })
     } catch (e) {
       errors.value.push(e.message)
     } finally {

@@ -4,7 +4,7 @@ import { PatientResource } from './patient.resource.js'
 export class PatientAssembler {
     static toEntityFromResource(resource) {
         return new Patient({
-            id:           resource.patient_id    ?? 0,
+            id:           resource.id ?? resource.patient_id ?? 0,
             customerUuid: resource.customer_uuid ?? '',
             firstName:    resource.first_name    ?? '',
             lastName:     resource.last_name     ?? '',
