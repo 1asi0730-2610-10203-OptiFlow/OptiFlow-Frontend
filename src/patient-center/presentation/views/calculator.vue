@@ -6,10 +6,28 @@ import { useI18n } from 'vue-i18n'
 const store = useCalculatorStore()
 const { t } = useI18n()
 
-const esfera = ref(-2.50)
-const cilindro = ref(-0.75)
+const esfera = ref('')
+const cilindro = ref('')
 const selectedMaterialId = ref(1)
-const showResults = ref(true)
+const showResults = ref(false)
+const errors = ref({})
+const submitted = ref(false)
+
+const hasErrors = computed(() => Object.keys(errors.value).length > 0)
+
+function handleCalculate() {
+  submitted.value = true
+  const e = {}
+  if (!esfera.value) e.esfera = true
+  if (!cilindro.value) e.cilindro = true
+  errors.value = e
+  
+  if (Object.keys(e).length === 0) {
+    showResults.value = true
+  } else {
+    showResults.value = false
+  }
+}
 
 const backupMaterials = [
   { id: 1, name: 'Estándar (CR-39)', info: 'Índice 1.5', price: '120' },
@@ -89,12 +107,12 @@ const infoIndices = [
         <div class="card-body">
           <div class="form-section">
             <div class="field">
-              <label>{{ $t('patientCenter.calculator.sphere') }}</label>
-              <input v-model="esfera" type="text" class="form-input" placeholder="-2.50">
+              <label>{{ $t('patientCenter.calculator.sphere') }} <span class="required" style="color: #ef4444;">*</span></label>
+              <input v-model="esfera" type="text" class="form-input" :class="{ 'form-input--error': errors.esfera }" @input="errors.esfera = false" placeholder="-2.50">
             </div>
             <div class="field">
-              <label>{{ $t('patientCenter.calculator.cylinder') }}</label>
-              <input v-model="cilindro" type="text" class="form-input" placeholder="-0.75">
+              <label>{{ $t('patientCenter.calculator.cylinder') }} <span class="required" style="color: #ef4444;">*</span></label>
+              <input v-model="cilindro" type="text" class="form-input" :class="{ 'form-input--error': errors.cilindro }" @input="errors.cilindro = false" placeholder="-0.75">
             </div>
           </div>
 
@@ -123,6 +141,10 @@ const infoIndices = [
           <button class="btn-calculate" @click="handleCalculate">
             {{ $t('patientCenter.calculator.calculateBtn') }}
           </button>
+          
+          <p v-if="submitted && hasErrors" style="color: #dc2626; font-size: 0.8rem; font-family: Montserrat; margin: 10px 0 0; text-align: center;">
+            {{ $t('common.requiredError') }}
+          </p>
         </div>
       </div>
 
@@ -210,6 +232,7 @@ const infoIndices = [
   font-family: 'Montserrat', sans-serif; font-size: 0.9rem; outline: none;
 }
 .form-input:focus { border-color: #00c1b0; }
+.form-input--error { border-color: #f87171 !important; background-color: #fff5f5 !important; }
 
 /* Opciones de Material */
 .section-label { display: block; font-family: 'Montserrat', sans-serif; font-size: 0.85rem; font-weight: 600; margin-bottom: 12px; }
