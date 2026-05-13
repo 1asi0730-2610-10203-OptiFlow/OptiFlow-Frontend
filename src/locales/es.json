@@ -290,8 +290,23 @@
       "legendSales": "Ventas Cerradas",
       "weeklyRevenueTitle": "Ingresos Semanales",
       "weeklyRevenueSubtitle": "Semana actual · S/ 52,300 total",
-      "months": ["Nov", "Dic", "Ene", "Feb", "Mar", "Abr"],
-      "weekDays": ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"]
+      "months": [
+        "Nov",
+        "Dic",
+        "Ene",
+        "Feb",
+        "Mar",
+        "Abr"
+      ],
+      "weekDays": [
+        "Lun",
+        "Mar",
+        "Mié",
+        "Jue",
+        "Vie",
+        "Sáb",
+        "Dom"
+      ]
     },
     "appointments": {
       "title": "Clientes Atendidos de Hoy",
@@ -513,8 +528,7 @@
       "restockDone": "Restock registrado",
       "restockDetail": "unidades agregadas."
     }
-  }
-,
+  },
   "staff": {
     "pageTitle": "Gestión de Personal",
     "pageSubtitle": "Administra al personal y sus permisos de acceso",
@@ -607,102 +621,116 @@
       "singleVision": "Visión Simple",
       "contactLenses": "Lentes de Contacto",
       "accessories": "Accesorios",
-      "others": "Otros"
-  "patientCenter": {
-    "profile": {
-      "title": "Mi Perfil",
-      "subtitle": "Bienvenido/a a tu portal OptiFlow",
-      "patientRole": "Paciente",
-      "successTitle": "Perfil actualizado correctamente",
-      "successMsg": "Tus cambios han sido guardados exitosamente",
-      "firstName": "Nombre",
-      "lastName": "Apellido",
-      "email": "Correo Electrónico",
-      "phone": "Teléfono",
-      "address": "Dirección",
-      "city": "Ciudad",
-      "birthDate": "Fecha de Nacimiento",
-      "medicalInfo": "Información Médica",
-      "recordNumber": "Número de Historia Clínica",
-      "lastVisit": "Última Consulta",
-      "optometrist": "Optometrista Asignado",
-      "nextAppt": "Próxima Cita Sugerida",
-      "privacyTitle": "Sobre tus datos",
-      "privacyText": "Tu información personal está protegida y solo se usa para brindarte una mejor atención. Puedes actualizarla en cualquier momento."
-    },
-    "myLenses": {
-      "title": "Mis Lentes",
-      "subtitle": "Portal del Paciente · {date}",
-      "searchTitle": "Mis Órdenes",
-      "searchPlaceholder": "Ej. LAB-2850",
-      "searchBtn": "Buscar",
-      "orderNumber": "Número de Orden",
-      "creationDate": "Fecha de Creación",
-      "status": {
-        "lab": "En Laboratorio",
-        "labDesc": "Lentes en fabricación",
-        "qc": "Control de Calidad",
-        "qcDesc": "Verificación final",
-        "ready": "Listo para Retirar",
-        "readyDesc": "Disponible en tienda"
-      },
-      "lensType": "Tipo de Lente",
-      "estimatedDelivery": "Entrega estimada",
-      "paymentTitle": "Estado de Pago",
-      "paymentSubtitle": "Resumen financiero de tu orden",
-      "totalAmount": "Monto Total",
-      "paidAmount": "Monto Pagado",
-      "pendingBalance": "Saldo Pendiente",
-      "paymentProgress": "Progreso de Pago",
-      "percentPaid": "{percent}% pagado"
-    },
-    "calculator": {
-      "title": "Calculador",
-      "subtitle": "Bienvenido/a a tu portal OptiFlow",
-      "cardTitle": "Calculador de Grosor de Cristales",
-      "cardSubtitle": "Simula el grosor según tu graduación",
-      "sphere": "Esfera (Dioptrías) *",
-      "cylinder": "Cilindro (Dioptrías)",
-      "materials": "Material del Lente (Desde API)",
-      "calculateBtn": "Calcular Grosor",
-      "loading": "Cargando precios...",
-      "thickness": "Grosor Estimado (centro)",
-      "with": "con",
-      "comparison": "Comparación de Materiales",
-      "recommendationTitle": "Recomendación",
-      "recommendationDesc": "Tu graduación permite usar cualquier material. El estándar ofrece buena relación calidad-precio.",
-      "guideTitle": "¿Qué significan los índices?",
-      "guides": {
-        "std": { "title": "Índice 1.50 (Estándar)", "text": "Material básico, ideal para graduaciones bajas (-2.00 a +2.00)" },
-        "thin": { "title": "Índice 1.60 (Delgado)", "text": "30% más delgado, recomendado para graduaciones medias" },
-        "extraThin": { "title": "Índice 1.67 (Extra Delgado)", "text": "40% más delgado, ideal para graduaciones altas" },
-        "ultraThin": { "title": "Índice 1.74 (Ultra Delgado)", "text": "Máxima reducción de grosor para graduaciones muy altas" }
+      "others": "Otros",
+      "patientCenter": {
+        "profile": {
+          "title": "Mi Perfil",
+          "subtitle": "Bienvenido/a a tu portal OptiFlow",
+          "patientRole": "Paciente",
+          "successTitle": "Perfil actualizado correctamente",
+          "successMsg": "Tus cambios han sido guardados exitosamente",
+          "firstName": "Nombre",
+          "lastName": "Apellido",
+          "email": "Correo Electrónico",
+          "phone": "Teléfono",
+          "address": "Dirección",
+          "city": "Ciudad",
+          "birthDate": "Fecha de Nacimiento",
+          "medicalInfo": "Información Médica",
+          "recordNumber": "Número de Historia Clínica",
+          "lastVisit": "Última Consulta",
+          "optometrist": "Optometrista Asignado",
+          "nextAppt": "Próxima Cita Sugerida",
+          "privacyTitle": "Sobre tus datos",
+          "privacyText": "Tu información personal está protegida y solo se usa para brindarte una mejor atención. Puedes actualizarla en cualquier momento."
+        },
+        "myLenses": {
+          "title": "Mis Lentes",
+          "subtitle": "Portal del Paciente · {date}",
+          "searchTitle": "Mis Órdenes",
+          "searchPlaceholder": "Ej. LAB-2850",
+          "searchBtn": "Buscar",
+          "orderNumber": "Número de Orden",
+          "creationDate": "Fecha de Creación",
+          "status": {
+            "lab": "En Laboratorio",
+            "labDesc": "Lentes en fabricación",
+            "qc": "Control de Calidad",
+            "qcDesc": "Verificación final",
+            "ready": "Listo para Retirar",
+            "readyDesc": "Disponible en tienda"
+          },
+          "lensType": "Tipo de Lente",
+          "estimatedDelivery": "Entrega estimada",
+          "paymentTitle": "Estado de Pago",
+          "paymentSubtitle": "Resumen financiero de tu orden",
+          "totalAmount": "Monto Total",
+          "paidAmount": "Monto Pagado",
+          "pendingBalance": "Saldo Pendiente",
+          "paymentProgress": "Progreso de Pago",
+          "percentPaid": "{percent}% pagado"
+        },
+        "calculator": {
+          "title": "Calculador",
+          "subtitle": "Bienvenido/a a tu portal OptiFlow",
+          "cardTitle": "Calculador de Grosor de Cristales",
+          "cardSubtitle": "Simula el grosor según tu graduación",
+          "sphere": "Esfera (Dioptrías) *",
+          "cylinder": "Cilindro (Dioptrías)",
+          "materials": "Material del Lente (Desde API)",
+          "calculateBtn": "Calcular Grosor",
+          "loading": "Cargando precios...",
+          "thickness": "Grosor Estimado (centro)",
+          "with": "con",
+          "comparison": "Comparación de Materiales",
+          "recommendationTitle": "Recomendación",
+          "recommendationDesc": "Tu graduación permite usar cualquier material. El estándar ofrece buena relación calidad-precio.",
+          "guideTitle": "¿Qué significan los índices?",
+          "guides": {
+            "std": {
+              "title": "Índice 1.50 (Estándar)",
+              "text": "Material básico, ideal para graduaciones bajas (-2.00 a +2.00)"
+            },
+            "thin": {
+              "title": "Índice 1.60 (Delgado)",
+              "text": "30% más delgado, recomendado para graduaciones medias"
+            },
+            "extraThin": {
+              "title": "Índice 1.67 (Extra Delgado)",
+              "text": "40% más delgado, ideal para graduaciones altas"
+            },
+            "ultraThin": {
+              "title": "Índice 1.74 (Ultra Delgado)",
+              "text": "Máxima reducción de grosor para graduaciones muy altas"
+            }
+          }
+        },
+        "notifications": {
+          "title": "Notificaciones",
+          "subtitle": "Bienvenido/a a tu portal OptiFlow",
+          "unread": "{count} sin leer",
+          "details": "Ver detalles",
+          "bannerTitle": "Mantente informado",
+          "bannerText": "Te notificaremos cuando tu pedido esté listo para recoger, cuando haya cambios en el estado de tu orden y cuando tengamos promociones especiales para ti."
+        },
+        "virtualTryOn": {
+          "title": "Probador Virtual",
+          "subtitle": "Bienvenido/a a tu portal OptiFlow",
+          "cardTitle": "Probador Virtual 3D",
+          "cardSubtitle": "Pruébate monturas en tiempo real",
+          "activateCamera": "Activa tu cámara",
+          "cameraInstruction": "Para comenzar a probar monturas, necesitamos acceso a tu cámara",
+          "turnOnBtn": "Activar Cámara",
+          "turnOffBtn": "Apagar Cámara",
+          "selectFrame": "Selecciona una montura",
+          "tipsTitle": "Consejos para mejor experiencia",
+          "tips": [
+            "Mantén tu rostro centrado en la cámara",
+            "Asegúrate de tener buena iluminación frontal",
+            "Evita movimientos bruscos para mejor detección"
+          ]
+        }
       }
-    },
-    "notifications": {
-      "title": "Notificaciones",
-      "subtitle": "Bienvenido/a a tu portal OptiFlow",
-      "unread": "{count} sin leer",
-      "details": "Ver detalles",
-      "bannerTitle": "Mantente informado",
-      "bannerText": "Te notificaremos cuando tu pedido esté listo para recoger, cuando haya cambios en el estado de tu orden y cuando tengamos promociones especiales para ti."
-    },
-    "virtualTryOn": {
-      "title": "Probador Virtual",
-      "subtitle": "Bienvenido/a a tu portal OptiFlow",
-      "cardTitle": "Probador Virtual 3D",
-      "cardSubtitle": "Pruébate monturas en tiempo real",
-      "activateCamera": "Activa tu cámara",
-      "cameraInstruction": "Para comenzar a probar monturas, necesitamos acceso a tu cámara",
-      "turnOnBtn": "Activar Cámara",
-      "turnOffBtn": "Apagar Cámara",
-      "selectFrame": "Selecciona una montura",
-      "tipsTitle": "Consejos para mejor experiencia",
-      "tips": [
-        "Mantén tu rostro centrado en la cámara",
-        "Asegúrate de tener buena iluminación frontal",
-        "Evita movimientos bruscos para mejor detección"
-      ]
     }
   }
 }
