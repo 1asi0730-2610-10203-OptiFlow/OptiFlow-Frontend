@@ -17,12 +17,24 @@ const newStock = computed(() => {
   return qty > 0 ? props.product.stock + qty : null
 })
 
+const errors = ref({})
+const submitted = ref(false)
+
+function validate() {
+  const e = {}
+  if (!quantity.value || parseInt(quantity.value) <= 0) e.quantity = true
+  errors.value = e
+  return Object.keys(e).length === 0
+}
+
+const hasErrors = computed(() => Object.keys(errors.value).length > 0)
+
 function onSubmit() {
+  submitted.value = true
+  if (!validate()) return
   const qty = parseInt(quantity.value)
-  if (qty > 0) {
-    emit('restock', { id: props.product.id, qty, operation: 'Restock' })
-    emit('close')
-  }
+  emit('restock', { id: props.product.id, qty, operation: 'Restock' })
+  emit('close')
 }
 </script>
 
@@ -63,8 +75,9 @@ function onSubmit() {
               type="number"
               min="1"
               class="form-input"
+              :class="{ 'form-input--error': errors.quantity }"
               :placeholder="$t('inventory.restockModal.quantityPlaceholder')"
-              required
+              @input="errors.quantity = false"
           />
         </div>
 
@@ -83,6 +96,10 @@ function onSubmit() {
               :placeholder="$t('inventory.restockModal.notesPlaceholder')"
           />
         </div>
+
+        <p v-if="submitted && hasErrors" style="color: #dc2626; font-size: 0.8rem; font-family: Montserrat; margin: 10px 0 0;">
+          {{ $t('common.requiredError') }}
+        </p>
       </div>
 
       <div class="modal-footer">
@@ -114,6 +131,7 @@ function onSubmit() {
 .field label { font-family: 'Montserrat', sans-serif; font-size: 0.82rem; font-weight: 600; color: #374151; }
 .form-input { padding: 9px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 0.84rem; color: #111827; outline: none; transition: border-color 0.15s; }
 .form-input:focus { border-color: #00c1b0; }
+.form-input--error { border-color: #f87171 !important; background-color: #fff5f5 !important; }
 .new-stock-preview { background: #f0fdf4; border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; }
 .preview-label { font-family: 'Montserrat', sans-serif; font-size: 0.82rem; color: #6b7280; }
 .preview-value { font-family: 'Montserrat', sans-serif; font-size: 0.88rem; font-weight: 700; color: #16a34a; }

@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -18,9 +18,22 @@ const form = ref({
   supplierName: '', lastRestockDate: new Date().toISOString().split('T')[0]
 })
 const skuError = ref('')
+const errors = ref({})
+const submitted = ref(false)
+
+function validate() {
+  const e = {}
+  if (!form.value.name.trim()) e.name = true
+  if (!form.value.stock) e.stock = true
+  errors.value = e
+  return Object.keys(e).length === 0
+}
+
+const hasErrors = computed(() => Object.keys(errors.value).length > 0)
 
 function onSubmit() {
-  if (!form.value.name || !form.value.stock) return
+  submitted.value = true
+  if (!validate()) return
   const finalSku = form.value.sku.trim()
       ? form.value.sku.trim().toUpperCase()
       : `${form.value.category.slice(0, 3).toUpperCase()}-${Date.now().toString().slice(-6)}`
@@ -64,8 +77,9 @@ function onSubmit() {
           <input
               v-model="form.name"
               class="form-input"
+              :class="{ 'form-input--error': errors.name }"
               :placeholder="$t('inventory.addModal.productNamePlaceholder')"
-              required
+              @input="errors.name = false"
           />
         </div>
 
@@ -95,7 +109,15 @@ function onSubmit() {
         <div class="form-row">
           <div class="field">
             <label>{{ $t('inventory.addModal.initialStock') }} *</label>
-            <input v-model="form.stock" type="number" min="0" class="form-input" placeholder="0" required />
+            <input 
+              v-model="form.stock" 
+              type="number" 
+              min="0" 
+              class="form-input" 
+              :class="{ 'form-input--error': errors.stock }"
+              placeholder="0" 
+              @input="errors.stock = false"
+            />
           </div>
           <div class="field">
             <label>{{ $t('inventory.addModal.reorderLevel') }}</label>
@@ -124,6 +146,10 @@ function onSubmit() {
             <i class="pi pi-chevron-down select-arrow" />
           </div>
         </div>
+
+        <p v-if="submitted && hasErrors" style="color: #dc2626; font-size: 0.8rem; font-family: Montserrat; margin: 0;">
+          {{ $t('common.requiredError') }}
+        </p>
       </div>
 
       <div class="modal-footer">

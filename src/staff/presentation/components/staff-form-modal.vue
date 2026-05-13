@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, computed } from 'vue'
+import { reactive, computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -43,7 +43,23 @@ const permissions = computed(() => {
   return [{ label: t('staff.addModal.permissions.fullAccess'), icon: 'pi pi-shield' }]
 })
 
+const errors = ref({})
+const submitted = ref(false)
+
+function validate() {
+  const e = {}
+  if (!form.fullName.trim()) e.fullName = true
+  if (!form.email.trim()) e.email = true
+  errors.value = e
+  return Object.keys(e).length === 0
+}
+
+const hasErrors = computed(() => Object.keys(errors.value).length > 0)
+
 function onSave() {
+  submitted.value = true
+  if (!validate()) return
+
   const names = (form.fullName || '').split(' ')
   const firstName = names[0] || ''
   const lastName = names.slice(1).join(' ') || ''
@@ -93,6 +109,8 @@ function onSave() {
           v-model="form.fullName" 
           :placeholder="t('staff.addModal.placeholders.fullName')" 
           class="w-full"
+          :class="{ 'p-invalid': errors.fullName }"
+          @input="errors.fullName = false"
         />
       </div>
 
@@ -103,6 +121,8 @@ function onSave() {
             v-model="form.email" 
             :placeholder="t('staff.addModal.placeholders.email')" 
             class="w-full"
+            :class="{ 'p-invalid': errors.email }"
+            @input="errors.email = false"
           />
         </div>
         <div class="form-field">
@@ -153,6 +173,10 @@ function onSave() {
         </div>
         <p class="permissions-note">{{ t('staff.addModal.permissionsNote') }}</p>
       </div>
+
+      <p v-if="submitted && hasErrors" style="color: #dc2626; font-size: 0.8rem; font-family: Montserrat; margin: 0;">
+        {{ $t('common.requiredError') }}
+      </p>
     </div>
 
     <template #footer>

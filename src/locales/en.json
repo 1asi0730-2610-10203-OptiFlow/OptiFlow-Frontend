@@ -62,7 +62,8 @@
     "total": "Total",
     "yes": "Yes",
     "no": "No",
-    "records": "records"
+    "records": "records",
+    "requiredError": "Please fill in the required fields"
   },
   "sales": {
     "pageTitle": "Sales Management",
@@ -82,6 +83,7 @@
         "payment": "Payment"
       },
       "patientLabel": "Patient",
+      "requiredError": "Please fill in the required fields",
       "selectPatient": "Select a patient...",
       "lastRx": "Latest Linked Prescription",
       "rxPending": "Prescription pending to be linked with clinical module",
