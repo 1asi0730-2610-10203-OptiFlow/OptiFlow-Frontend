@@ -325,4 +325,62 @@
       "restockDetail": "unidades agregadas."
     }
   }
+,
+  "staff": {
+    "pageTitle": "Gestión de Personal",
+    "pageSubtitle": "Administra al personal y sus permisos de acceso",
+    "addEmployee": "Agregar Empleado",
+    "searchPlaceholder": "Buscar por nombre, correo o cargo...",
+    "allDepartments": "Todos los Departamentos",
+    "allRoles": "Todos los Cargos",
+    "kpi": {
+      "totalEmployees": "Total Empleados",
+      "optometrists": "Optometristas",
+      "supportStaff": "Personal de Apoyo",
+      "activeToday": "Activos Hoy"
+    },
+    "table": {
+      "employee": "EMPLEADO",
+      "role": "CARGO",
+      "department": "DEPARTAMENTO",
+      "status": "ESTADO"
+    },
+    "status": {
+      "active": "Activo",
+      "inactive": "Inactivo"
+    },
+    "roles": {
+      "optometrist": "Optometrista",
+      "optician": "Óptico",
+      "admin": "Administrador",
+      "support": "Personal de Apoyo"
+    },
+    "departments": {
+      "clinic": "Clínica",
+      "sales": "Ventas",
+      "admin": "Administración"
+    },
+    "addModal": {
+      "title": "Agregar Empleado",
+      "subtitle": "Registrar un nuevo miembro del personal",
+      "fullName": "Nombre Completo",
+      "email": "Correo Electrónico",
+      "phone": "Teléfono",
+      "role": "Cargo",
+      "department": "Departamento",
+      "entryDate": "Fecha de Ingreso",
+      "defaultPermissions": "Permisos por defecto (según cargo)",
+      "permissionsNote": "Los permisos se asignan según el cargo. Puedes editarlos después.",
+      "permissions": {
+        "fullAccess": "Acceso Total",
+        "clinicalRecords": "Historias Clínicas",
+        "prescriptions": "Recetas"
+      },
+      "placeholders": {
+        "fullName": "Ej. Dra. Emily Smith",
+        "email": "nombre@opticspro.com",
+        "phone": "(555) 000-0000"
+      }
+    }
+  }
 }
