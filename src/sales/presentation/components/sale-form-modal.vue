@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { Sale } from '../../../sales/domain/model/sale.entity.js'
 import { PaymentMethod } from '../../../sales/domain/model/payment.entity.js'
 import axios from 'axios'
@@ -10,9 +11,15 @@ defineProps({
 
 const emit = defineEmits(['saved', 'close'])
 
+const { t } = useI18n()
+
 const step = ref(0)
 const TOTAL_STEPS = 3
-const stepLabels = ['Paciente y Rx', 'Productos', 'Pago']
+const stepLabels = computed(() => [
+  t('sales.form.steps.patient'),
+  t('sales.form.steps.products'),
+  t('sales.form.steps.payment')
+])
 
 // Step 0
 const patients = ref([])
@@ -24,20 +31,20 @@ const selectedArmazon = ref(null)
 const tipoLuna = ref(null)
 const materialLuna = ref(null)
 
-const tipoLunaOptions = [
-  { label: 'Monofocales', value: 'Monofocales' },
-  { label: 'Bifocales', value: 'Bifocales' },
-  { label: 'Progresivas', value: 'Progresivas' },
-  { label: 'Ocupacionales', value: 'Ocupacionales' }
-]
+const tipoLunaOptions = computed(() => [
+  { label: t('sales.form.lensTypes.monofocal'), value: 'Monofocales' },
+  { label: t('sales.form.lensTypes.bifocal'), value: 'Bifocales' },
+  { label: t('sales.form.lensTypes.progressive'), value: 'Progresivas' },
+  { label: t('sales.form.lensTypes.occupational'), value: 'Ocupacionales' }
+])
 
-const materialLunaOptions = [
-  { label: 'Resina 1.50', value: 'Resina 1.50' },
-  { label: 'Policarbonato', value: 'Policarbonato' },
-  { label: 'Alto Índice 1.60', value: 'Alto Índice 1.60' },
-  { label: 'Alto Índice 1.67', value: 'Alto Índice 1.67' },
-  { label: 'Cristal', value: 'Cristal' }
-]
+const materialLunaOptions = computed(() => [
+  { label: t('sales.form.materials.cr39'), value: 'Resina 1.50' },
+  { label: t('sales.form.materials.poly'), value: 'Policarbonato' },
+  { label: t('sales.form.materials.hi160'), value: 'Alto Índice 1.60' },
+  { label: t('sales.form.materials.hi167'), value: 'Alto Índice 1.67' },
+  { label: t('sales.form.materials.glass'), value: 'Cristal' }
+])
 
 // Step 2 — pricing
 const totalAmountInput = ref(0)
@@ -47,13 +54,13 @@ const discountAmount = ref(0)
 const paymentMethod = ref(PaymentMethod.CASH)
 const notes = ref('')
 
-const paymentMethodOptions = [
-  { label: 'Efectivo',           value: PaymentMethod.CASH },
-  { label: 'Tarjeta de Crédito', value: PaymentMethod.CREDIT_CARD },
-  { label: 'Tarjeta de Débito',  value: PaymentMethod.DEBIT_CARD },
-  { label: 'Transferencia',      value: PaymentMethod.TRANSFER },
-  { label: 'Seguro',             value: PaymentMethod.INSURANCE }
-]
+const paymentMethodOptions = computed(() => [
+  { label: t('sales.form.paymentMethods.cash'),           value: PaymentMethod.CASH },
+  { label: t('sales.form.paymentMethods.credit'), value: PaymentMethod.CREDIT_CARD },
+  { label: t('sales.form.paymentMethods.debit'),  value: PaymentMethod.DEBIT_CARD },
+  { label: t('sales.form.paymentMethods.transfer'),      value: PaymentMethod.TRANSFER },
+  { label: t('sales.form.paymentMethods.insurance'),             value: PaymentMethod.INSURANCE }
+])
 
 const estimatedTotal = computed(() => {
   let total = 0
@@ -179,8 +186,8 @@ function close() {
   >
     <template #header>
       <div class="modal-header">
-        <span class="modal-title">Nueva Venta / Cotización</span>
-        <span class="step-indicator">Paso {{ step + 1 }} de {{ TOTAL_STEPS }}</span>
+        <span class="modal-title">{{ $t('sales.form.title') }}</span>
+        <span class="step-indicator">{{ $t('sales.form.step') }} {{ step + 1 }} {{ $t('sales.form.of') }} {{ TOTAL_STEPS }}</span>
       </div>
     </template>
 
@@ -204,12 +211,12 @@ function close() {
       <!-- Step 0: Paciente y Rx -->
       <div v-if="step === 0" class="step-content">
         <div class="form-field">
-          <label>Paciente <span class="required">*</span></label>
+          <label>{{ $t('sales.form.patientLabel') }} <span class="required">*</span></label>
           <pv-select
             v-model="selectedPatient"
             :options="patients"
             option-label="name"
-            placeholder="Selecciona un paciente..."
+            :placeholder="$t('sales.form.selectPatient')"
             class="w-full"
             filter
           />
@@ -218,12 +225,12 @@ function close() {
         <div v-if="selectedPatient" class="rx-card">
           <div class="rx-card__header">
             <i class="pi pi-file-edit"/>
-            <span>Última Receta Vinculada</span>
+            <span>{{ $t('sales.form.lastRx') }}</span>
           </div>
           <div class="rx-card__body">
             <div class="rx-row"><span class="rx-eye">OD:</span><span>Esf — / Cil — / Eje —°</span></div>
             <div class="rx-row"><span class="rx-eye">OS:</span><span>Esf — / Cil — / Eje —°</span></div>
-            <span class="rx-note">Receta pendiente de vincular con módulo clínico</span>
+            <span class="rx-note">{{ $t('sales.form.rxPending') }}</span>
           </div>
         </div>
       </div>
@@ -231,44 +238,44 @@ function close() {
       <!-- Step 1: Productos -->
       <div v-else-if="step === 1" class="step-content">
         <div class="form-field">
-          <label>Armazón (Montura) <span class="required">*</span></label>
+          <label>{{ $t('sales.form.frame') }} <span class="required">*</span></label>
           <pv-select
             v-model="selectedArmazon"
             :options="products"
             option-label="name"
             editable
-            placeholder="Ej. Ray-Ban RB5228 Negro"
+            :placeholder="$t('sales.form.framePlaceholder')"
             class="w-full"
             filter
           />
         </div>
 
         <div class="form-field">
-          <label>Tipo de Luna</label>
+          <label>{{ $t('sales.form.lensType') }}</label>
           <pv-select
             v-model="tipoLuna"
             :options="tipoLunaOptions"
             option-label="label"
             option-value="value"
-            placeholder="Seleccionar..."
+            :placeholder="$t('sales.form.select')"
             class="w-full"
           />
         </div>
 
         <div class="form-field">
-          <label>Material de Luna</label>
+          <label>{{ $t('sales.form.lensMaterial') }}</label>
           <pv-select
             v-model="materialLuna"
             :options="materialLunaOptions"
             option-label="label"
             option-value="value"
-            placeholder="Seleccionar..."
+            :placeholder="$t('sales.form.select')"
             class="w-full"
           />
         </div>
 
         <div class="estimated-total-box">
-          <span class="estimated-label">Total Estimado</span>
+          <span class="estimated-label">{{ $t('sales.form.estimatedTotal') }}</span>
           <span class="estimated-value">S/ {{ estimatedTotal.toFixed(2) }}</span>
         </div>
       </div>
@@ -276,7 +283,7 @@ function close() {
       <!-- Step 2: Pago -->
       <div v-else class="step-content">
         <div class="form-field">
-          <label>Método de Pago</label>
+          <label>{{ $t('sales.form.paymentMethod') }}</label>
           <pv-select
             v-model="paymentMethod"
             :options="paymentMethodOptions"
@@ -287,15 +294,15 @@ function close() {
         </div>
 
         <div class="form-field">
-          <label><i class="pi pi-tag" style="font-size: 0.8rem; margin-right: 4px;" /> Código de Descuento (opcional)</label>
+          <label><i class="pi pi-tag" style="font-size: 0.8rem; margin-right: 4px;" /> {{ $t('sales.form.discountCode') }}</label>
           <div class="discount-row">
-            <pv-input-text v-model="discountCode" placeholder="Ej. PROMO15" class="flex-1" />
-            <pv-button label="Aplicar" outlined @click="applyDiscount" />
+            <pv-input-text v-model="discountCode" :placeholder="$t('sales.form.discountPlaceholder')" class="flex-1" />
+            <pv-button :label="$t('sales.form.apply')" outlined @click="applyDiscount" />
           </div>
         </div>
 
         <div class="form-field">
-          <label>Adelanto (mín. 30%) <span class="required">*</span></label>
+          <label>{{ $t('sales.form.deposit') }} <span class="required">*</span></label>
           <div class="price-input-wrap">
             <span class="price-prefix">S/</span>
             <input
@@ -312,23 +319,23 @@ function close() {
 
         <div class="summary-box">
           <div class="summary-row">
-            <span>Subtotal</span>
+            <span>{{ $t('sales.form.subtotal') }}</span>
             <span style="font-weight: 600">S/ {{ estimatedTotal.toFixed(2) }}</span>
           </div>
           <div v-if="(discountAmount || 0) > 0" class="summary-row summary-row--discount">
-            <span>Descuento</span>
+            <span>{{ $t('sales.form.discount') }}</span>
             <span>- S/ {{ (discountAmount || 0).toFixed(2) }}</span>
           </div>
           <div class="summary-row">
-            <span>Total</span>
+            <span>{{ $t('sales.form.total') }}</span>
             <span style="font-weight: 700">S/ {{ finalAmount.toFixed(2) }}</span>
           </div>
           <div class="summary-row summary-row--discount">
-            <span>Adelanto ({{ adelantoPercent }}%)</span>
+            <span>{{ $t('sales.form.depositPercent', { percent: adelantoPercent }) }}</span>
             <span>- S/ {{ (adelanto || 0).toFixed(2) }}</span>
           </div>
           <div class="summary-row summary-row--total">
-            <span>Saldo Pendiente</span>
+            <span>{{ $t('sales.form.pendingBalance') }}</span>
             <span>S/ {{ pendingBalance.toFixed(2) }}</span>
           </div>
         </div>
@@ -339,14 +346,14 @@ function close() {
       <div class="modal-footer">
         <pv-button
           v-if="step > 0"
-          label="Atrás"
+          :label="$t('sales.form.back')"
           outlined
           severity="secondary"
           @click="prevStep"
         />
         <pv-button
           v-else
-          label="Cancelar"
+          :label="$t('sales.form.cancel')"
           outlined
           severity="secondary"
           @click="close"
@@ -355,7 +362,7 @@ function close() {
         <div class="footer-nav">
           <pv-button
             v-if="step < TOTAL_STEPS - 1"
-            label="Siguiente"
+            :label="$t('sales.form.next')"
             icon="pi pi-chevron-right"
             icon-pos="right"
             :disabled="step === 0 && !selectedPatient"
@@ -363,7 +370,7 @@ function close() {
           />
           <pv-button
             v-else
-            label="Crear Venta + Orden de Lab"
+            :label="$t('sales.form.create')"
             icon="pi pi-chevron-right"
             icon-pos="right"
             :disabled="!canSave"

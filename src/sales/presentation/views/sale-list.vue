@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 import { useSalesStore } from '../../application/sales.store.js'
@@ -8,6 +9,7 @@ import SaleFormModal from '../components/sale-form-modal.vue'
 import PaymentForm from '../components/payment-form.vue'
 import FeedbackForm from '../components/feedback-form.vue'
 
+const { t } = useI18n()
 const store = useSalesStore()
 const confirm = useConfirm()
 const toast = useToast()
@@ -19,14 +21,14 @@ const showPaymentDialog = ref(false)
 const showFeedbackDialog = ref(false)
 const selectedSale = ref(null)
 
-const statusOptions = [
-  { label: 'Todos los estados', value: null },
-  { label: 'Pendiente',        value: 'PENDING' },
-  { label: 'Saldo Pendiente',  value: 'PARTIAL' },
-  { label: 'Pagada',           value: 'PAID' },
-  { label: 'Completada',       value: 'DELIVERED' },
-  { label: 'Devuelta',         value: 'RETURNED' }
-]
+const statusOptions = computed(() => [
+  { label: t('sales.allStatuses'), value: null },
+  { label: t('sales.status.PENDING'),        value: 'PENDING' },
+  { label: t('sales.status.PARTIAL'),  value: 'PARTIAL' },
+  { label: t('sales.status.PAID'),           value: 'PAID' },
+  { label: t('sales.status.DELIVERED'),       value: 'DELIVERED' },
+  { label: t('sales.status.RETURNED'),         value: 'RETURNED' }
+])
 
 const filteredSales = computed(() => {
   let list = store.sales
@@ -50,7 +52,7 @@ onMounted(() => {
 async function onSaleCreated(sale) {
   await store.createSale(sale)
   showNewSaleModal.value = false
-  toast.add({ severity: 'success', summary: 'Venta creada', detail: `${sale.invoiceNumber} registrada correctamente.`, life: 3000 })
+  toast.add({ severity: 'success', summary: t('sales.toast.saleCreated'), detail: `${sale.invoiceNumber} ${t('sales.toast.saleCreatedDetail')}`, life: 3000 })
 }
 
 function onCollectPayment(sale) {
@@ -63,35 +65,35 @@ async function onPaymentRegistered(payment) {
   await store.registerPayment(payment)
   showPaymentDialog.value = false
   selectedSale.value = null
-  toast.add({ severity: 'success', summary: 'Pago registrado', detail: 'El saldo fue actualizado correctamente.', life: 3000 })
+  toast.add({ severity: 'success', summary: t('sales.toast.paymentRegistered'), detail: t('sales.toast.paymentRegisteredDetail'), life: 3000 })
 }
 
 function onReturnSale(saleId) {
   confirm.require({
-    message: '¿Desea registrar la devolución de esta venta?',
-    header: 'Confirmar devolución',
+    message: t('sales.confirm.returnMessage'),
+    header: t('sales.confirm.returnHeader'),
     icon: 'pi pi-exclamation-triangle',
-    acceptLabel: 'Sí, devolver',
-    rejectLabel: 'Cancelar',
+    acceptLabel: t('sales.confirm.returnAccept'),
+    rejectLabel: t('common.cancel'),
     acceptClass: 'p-button-danger',
     accept: async () => {
       await store.markAsReturned(saleId)
-      toast.add({ severity: 'info', summary: 'Devolución registrada', detail: 'La orden fue marcada como devuelta.', life: 3000 })
+      toast.add({ severity: 'info', summary: t('sales.toast.returnRegistered'), detail: t('sales.toast.returnRegisteredDetail'), life: 3000 })
     }
   })
 }
 
 function onCancelSale(saleId) {
   confirm.require({
-    message: '¿Desea cancelar esta venta?',
-    header: 'Confirmar cancelación',
+    message: t('sales.confirm.cancelMessage'),
+    header: t('sales.confirm.cancelHeader'),
     icon: 'pi pi-exclamation-triangle',
-    acceptLabel: 'Sí, cancelar',
-    rejectLabel: 'No',
+    acceptLabel: t('sales.confirm.cancelAccept'),
+    rejectLabel: t('common.no'),
     acceptClass: 'p-button-danger',
     accept: async () => {
       await store.cancelSale(saleId)
-      toast.add({ severity: 'warn', summary: 'Venta cancelada', detail: 'La venta fue marcada como devuelta.', life: 3000 })
+      toast.add({ severity: 'warn', summary: t('sales.toast.saleCancelled'), detail: t('sales.toast.saleCancelledDetail'), life: 3000 })
     }
   })
 }
@@ -99,7 +101,7 @@ function onCancelSale(saleId) {
 function onFeedbackSubmitted(feedback) {
   store.submitFeedback(feedback)
   showFeedbackDialog.value = false
-  toast.add({ severity: 'success', summary: 'Encuesta enviada', detail: '¡Gracias por tu valoración!', life: 3000 })
+  toast.add({ severity: 'success', summary: t('sales.toast.feedbackSent'), detail: t('sales.toast.feedbackSentDetail'), life: 3000 })
 }
 
 function formatCurrency(value) {
@@ -113,17 +115,14 @@ function formatCurrency(value) {
     <!-- Page Header -->
     <div class="page-header">
       <div class="page-header__left">
-        <h1 class="page-title">Gestión de Ventas</h1>
-        <p class="page-subtitle">POS · Cotizaciones · Adelantos · Saldos Pendientes</p>
+        <h1 class="page-title">{{ $t('sales.pageTitle') }}</h1>
+        <p class="page-subtitle">{{ $t('sales.pageSubtitle') }}</p>
       </div>
       <div class="page-header__right">
-        <button class="btn-secondary">
-          <i class="pi pi-refresh" />
-          Recuperar Cotización
-        </button>
+
         <button class="btn-primary" @click="showNewSaleModal = true">
           <i class="pi pi-plus" />
-          Nueva Venta
+          {{ $t('sales.newSale') }}
         </button>
       </div>
     </div>
@@ -135,7 +134,7 @@ function formatCurrency(value) {
           <i class="pi pi-dollar" />
         </div>
         <div class="kpi-body">
-          <span class="kpi-label">Ingresos Totales</span>
+          <span class="kpi-label">{{ $t('sales.kpi.totalRevenue') }}</span>
           <span class="kpi-value">{{ formatCurrency(store.totalIngresos) }}</span>
         </div>
       </div>
@@ -145,7 +144,7 @@ function formatCurrency(value) {
           <i class="pi pi-wallet" />
         </div>
         <div class="kpi-body">
-          <span class="kpi-label">Adelantos Cobrados</span>
+          <span class="kpi-label">{{ $t('sales.kpi.deposits') }}</span>
           <span class="kpi-value">{{ formatCurrency(store.totalAdelantos) }}</span>
         </div>
       </div>
@@ -155,7 +154,7 @@ function formatCurrency(value) {
           <i class="pi pi-clock" />
         </div>
         <div class="kpi-body">
-          <span class="kpi-label">Saldo Pendiente</span>
+          <span class="kpi-label">{{ $t('sales.kpi.pendingBalance') }}</span>
           <span class="kpi-value">{{ formatCurrency(store.totalSaldo) }}</span>
         </div>
       </div>
@@ -165,7 +164,7 @@ function formatCurrency(value) {
           <i class="pi pi-chart-line" />
         </div>
         <div class="kpi-body">
-          <span class="kpi-label">Ticket Promedio</span>
+          <span class="kpi-label">{{ $t('sales.kpi.averageTicket') }}</span>
           <span class="kpi-value">{{ formatCurrency(store.ticketPromedio) }}</span>
         </div>
       </div>
@@ -179,7 +178,7 @@ function formatCurrency(value) {
           <input
             v-model="search"
             class="search-input"
-            placeholder="Buscar por N° factura o paciente..."
+            :placeholder="$t('sales.searchPlaceholder')"
           />
         </div>
         <pv-select
@@ -187,13 +186,10 @@ function formatCurrency(value) {
           :options="statusOptions"
           option-label="label"
           option-value="value"
-          placeholder="Todos los estados"
+          :placeholder="$t('sales.allStatuses')"
           class="status-select"
         />
-        <button class="btn-export">
-          <i class="pi pi-download" />
-          Exportar
-        </button>
+
       </div>
     </div>
 
@@ -208,7 +204,7 @@ function formatCurrency(value) {
     <div class="table-card">
       <div v-if="store.loading" class="loading-state">
         <pv-progress-spinner style="width: 48px; height: 48px" />
-        <span>Cargando ventas...</span>
+        <span>{{ $t('sales.loading') }}</span>
       </div>
 
       <sale-table
@@ -230,7 +226,7 @@ function formatCurrency(value) {
     <!-- Payment Dialog -->
     <pv-dialog
       v-model:visible="showPaymentDialog"
-      header="Registrar pago de saldo"
+      :header="$t('sales.dialogs.paymentHeader')"
       :style="{ width: 'min(420px, 95vw)' }"
       modal
     >
@@ -245,7 +241,7 @@ function formatCurrency(value) {
     <!-- Feedback Dialog -->
     <pv-dialog
       v-model:visible="showFeedbackDialog"
-      header="Encuesta de satisfacción"
+      :header="$t('sales.dialogs.feedbackHeader')"
       :style="{ width: 'min(460px, 95vw)' }"
       modal
     >
