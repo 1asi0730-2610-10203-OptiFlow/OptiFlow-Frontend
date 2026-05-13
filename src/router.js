@@ -1,9 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import dashboardRoutes   from './dashboard/presentation/dashboard-routes.js'
-import clinicalRoutes    from './clinical/presentation/clinical-routes.js'
-import salesRoutes       from './sales/presentation/sales-routes.js'
-import fulfillmentRoutes from './fulfillment/presentation/fulfillment-routes.js'
-import inventoryRoutes   from './inventory/presentation/inventory-routes.js'
+import dashboardRoutes    from './dashboard/presentation/dashboard-routes.js'
+import clinicalRoutes     from "./clinical/presentation/clinical-routes.js";
+import salesRoutes        from './sales/presentation/sales-routes.js'
+import fulfillmentRoutes  from './fulfillment/presentation/fulfillment-routes.js'
+import inventoryRoutes    from './inventory/presentation/inventory-routes.js'
+import staffRoutes        from './staff/presentation/staff-routes.js'
 import patientRoutes     from './patient-center/presentation/patient-routes.js'
 
 const router = createRouter({
@@ -16,6 +17,7 @@ const router = createRouter({
     ...fulfillmentRoutes,
     ...inventoryRoutes,
     ...clinicalRoutes,
+    ...staffRoutes,
     ...patientRoutes,
     {
       path:      '/:pathMatch(.*)*',

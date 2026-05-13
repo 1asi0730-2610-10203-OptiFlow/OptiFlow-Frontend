@@ -615,5 +615,91 @@
       "phone": "",
       "email": ""
     }
+  ],
+  "staff": [
+    {
+      "id": 1,
+      "employeeCode": "EMP-0001",
+      "firstName": "Emily",
+      "lastName": "Smith",
+      "email": "e.smith@opticspro.com",
+      "phone": "987-654-321",
+      "role": "Optometrista",
+      "department": "Clínica",
+      "status": "Activo",
+      "activeToday": true,
+      "entryDate": "2024-01-15",
+      "photo": ""
+    },
+    {
+      "id": 2,
+      "employeeCode": "EMP-0002",
+      "firstName": "James",
+      "lastName": "Brown",
+      "email": "j.brown@opticspro.com",
+      "phone": "987-654-321",
+      "role": "Optometrista",
+      "department": "Clínica",
+      "status": "Activo",
+      "activeToday": true,
+      "entryDate": "2024-02-20",
+      "photo": ""
+    },
+    {
+      "id": 3,
+      "employeeCode": "EMP-0003",
+      "firstName": "Sarah",
+      "lastName": "Lee",
+      "email": "s.lee@opticspro.com",
+      "phone": "987-654-321",
+      "role": "Optometrista",
+      "department": "Clínica",
+      "status": "Activo",
+      "activeToday": true,
+      "entryDate": "2024-03-10",
+      "photo": ""
+    },
+    {
+      "id": 4,
+      "employeeCode": "EMP-0004",
+      "firstName": "María",
+      "lastName": "García",
+      "email": "m.garcia@opticspro.com",
+      "phone": "987-654-321",
+      "role": "Óptico",
+      "department": "Ventas",
+      "status": "Activo",
+      "activeToday": true,
+      "entryDate": "2023-11-05",
+      "photo": ""
+    },
+    {
+      "id": 5,
+      "employeeCode": "EMP-0005",
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "j.doe@opticspro.com",
+      "phone": "987-654-321",
+      "role": "Administrador",
+      "department": "Administración",
+      "status": "Activo",
+      "activeToday": true,
+      "entryDate": "2023-10-12",
+      "photo": ""
+    },
+    {
+      "id": 6,
+      "employeeCode": "EMP-0006",
+      "firstName": "Lisa",
+      "lastName": "Anderson",
+      "email": "l.anderson@opticspro.com",
+      "phone": "987-654-321",
+      "role": "Recepcionista",
+      "department": "Recepción",
+      "status": "Activo",
+      "activeToday": true,
+      "entryDate": "2024-04-01",
+      "photo": ""
+    }
   ]
 }

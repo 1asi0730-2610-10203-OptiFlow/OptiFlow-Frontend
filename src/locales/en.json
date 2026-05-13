@@ -519,4 +519,62 @@
       "myPlan": "My subscription"
     }
   }
+,
+  "staff": {
+    "pageTitle": "Staff Management",
+    "pageSubtitle": "Manage staff and their access permissions",
+    "addEmployee": "Add Employee",
+    "searchPlaceholder": "Search by name, email or role...",
+    "allDepartments": "All Departments",
+    "allRoles": "All Roles",
+    "kpi": {
+      "totalEmployees": "Total Employees",
+      "optometrists": "Optometrists",
+      "supportStaff": "Support Staff",
+      "activeToday": "Active Today"
+    },
+    "table": {
+      "employee": "EMPLOYEE",
+      "role": "ROLE",
+      "department": "DEPARTMENT",
+      "status": "STATUS"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "roles": {
+      "optometrist": "Optometrist",
+      "optician": "Optician",
+      "admin": "Administrator",
+      "support": "Support Staff"
+    },
+    "departments": {
+      "clinic": "Clinic",
+      "sales": "Sales",
+      "admin": "Administration"
+    },
+    "addModal": {
+      "title": "Add Employee",
+      "subtitle": "Register a new staff member",
+      "fullName": "Full Name",
+      "email": "Email Address",
+      "phone": "Phone",
+      "role": "Role",
+      "department": "Department",
+      "entryDate": "Entry Date",
+      "defaultPermissions": "Default permissions (by role)",
+      "permissionsNote": "Permissions are assigned based on the role. You can edit them later.",
+      "permissions": {
+        "fullAccess": "Full Access",
+        "clinicalRecords": "Clinical Records",
+        "prescriptions": "Prescriptions"
+      },
+      "placeholders": {
+        "fullName": "e.g. Dr. Emily Smith",
+        "email": "name@opticspro.com",
+        "phone": "(555) 000-0000"
+      }
+    }
+  }
 }
