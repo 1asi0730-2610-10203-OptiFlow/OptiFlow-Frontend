@@ -111,12 +111,37 @@
       ],
       "totalAmount": 108,
       "adelanto": 100,
-      "pendingBalance": 8,
+      "pendingBalance": 0,
       "discountCode": "desc15",
       "discountAmount": 15,
-      "status": "PARTIAL",
+      "status": "PAID",
       "paymentMethod": "CASH",
       "createdAt": "2026-05-10",
+      "deliveredAt": "",
+      "notes": ""
+    },
+    {
+      "id": 7,
+      "invoiceNumber": "FAC-9278",
+      "labOrderNumber": "LAB-3164",
+      "patientId": 2,
+      "patientName": "David Martínez",
+      "patientRx": "",
+      "userId": 1,
+      "userName": "John Doe",
+      "articulos": [
+        "Armazón: Lunas con Filtro de Luz Azul",
+        "Tipo de Luna: Monofocales",
+        "Material de Luna: Alto Índice 1.60"
+      ],
+      "totalAmount": 75.65,
+      "adelanto": 140,
+      "pendingBalance": 0,
+      "discountCode": "PROMO15",
+      "discountAmount": 13.35,
+      "status": "RETURNED",
+      "paymentMethod": "DEBIT_CARD",
+      "createdAt": "2026-05-13",
       "deliveredAt": "",
       "notes": ""
     }
@@ -219,6 +244,13 @@
       "amountPaid": 245,
       "method": "CREDIT_CARD",
       "paidAt": "2026-05-05T22:46:26.149Z"
+    },
+    {
+      "id": 7,
+      "saleId": 6,
+      "amountPaid": 8,
+      "method": "DEBIT_CARD",
+      "paidAt": "2026-05-13T04:02:09.309Z"
     }
   ],
   "feedbacks": [
@@ -276,6 +308,17 @@
       "dni": "56789012",
       "email": "miguel@email.com",
       "phone": "987654325"
+    },
+    {
+      "patient_id": 0,
+      "customer_uuid": "",
+      "first_name": "Nicolas",
+      "last_name": "",
+      "dni": "1234 5674",
+      "phone": "123 132 123",
+      "email": "patient@gmail.com",
+      "birth_date": "2006-09-12",
+      "id": 6
     }
   ],
   "work_orders": [
@@ -292,8 +335,8 @@
       "frame": "Ray-Ban RB5228 Negro",
       "prescription": "OD: Esf -2.50, Cil -0.75, Eje 90 | OS: Esf -2.75, Cil -0.50, Eje 85",
       "priority": "urgent",
-      "deposit": 242.50,
-      "total": 485.00,
+      "deposit": 242.5,
+      "total": 485,
       "is_rework": false
     },
     {
@@ -309,8 +352,8 @@
       "frame": "Sin Montura",
       "prescription": "OD: Esf -1.25 | OS: Esf -1.50",
       "priority": "high",
-      "deposit": 90.00,
-      "total": 180.00,
+      "deposit": 90,
+      "total": 180,
       "is_rework": false
     },
     {
@@ -326,8 +369,8 @@
       "frame": "Oakley Holbrook Carey",
       "prescription": "OD: Esf +1.00, Cil +0.25 | OS: Esf +1.25, Cil +0.50",
       "priority": "normal",
-      "deposit": 62.50,
-      "total": 125.00,
+      "deposit": 62.5,
+      "total": 125,
       "is_rework": false
     },
     {
@@ -343,8 +386,8 @@
       "frame": "Nike 7284 Grafito",
       "prescription": "OD: Esf -3.00, Cil -0.50, Eje 175 | OS: Esf -3.25",
       "priority": "urgent",
-      "deposit": 160.00,
-      "total": 320.00,
+      "deposit": 160,
+      "total": 320,
       "is_rework": false
     },
     {
@@ -360,8 +403,8 @@
       "frame": "Maui Jim Peahi Negro",
       "prescription": "OD: Esf -1.75 | OS: Esf -2.00, Cil -0.25",
       "priority": "normal",
-      "deposit": 245.00,
-      "total": 245.00,
+      "deposit": 245,
+      "total": 245,
       "is_rework": false
     },
     {
@@ -377,8 +420,8 @@
       "frame": "Silhouette Titan Marrón",
       "prescription": "OD: Esf +2.50, Add +2.00 | OS: Esf +2.75, Add +2.00",
       "priority": "normal",
-      "deposit": 150.00,
-      "total": 380.00,
+      "deposit": 150,
+      "total": 380,
       "is_rework": false
     },
     {
@@ -394,8 +437,8 @@
       "frame": "Prada PR 05WS Plata",
       "prescription": "OD: Esf -0.75 | OS: Esf -1.00, Cil -0.25",
       "priority": "high",
-      "deposit": 175.00,
-      "total": 290.00,
+      "deposit": 175,
+      "total": 290,
       "is_rework": false
     }
   ],
@@ -413,52 +456,94 @@
   ],
   "products": [
     {
-      "product_id": 1, "category_id": 1, "supplier_id": 1,
-      "brand": "Vision Labs", "model": "Lunas Progresivas",
-      "name": "Lunas Progresivas", "category": "Lunas",
-      "sku": "LUN-PRG-001", "stock": 45,
-      "minimum_stock_threshold": 20, "price": 125.00,
-      "supplier_name": "Vision Labs Inc.", "last_restock_date": "2026-04-10"
+      "product_id": 1,
+      "category_id": 1,
+      "supplier_id": 1,
+      "brand": "Vision Labs",
+      "model": "Lunas Progresivas",
+      "name": "Lunas Progresivas",
+      "category": "Lunas",
+      "sku": "LUN-PRG-001",
+      "stock": 45,
+      "minimum_stock_threshold": 20,
+      "price": 125,
+      "supplier_name": "Vision Labs Inc.",
+      "last_restock_date": "2026-04-10"
     },
     {
-      "product_id": 2, "category_id": 3, "supplier_id": 4,
-      "brand": "Eye Care", "model": "Solución LC",
-      "name": "Solución para Lentes de Contacto", "category": "Accesorios",
-      "sku": "ACC-SLC-002", "stock": 5,
-      "minimum_stock_threshold": 20, "price": 8.99,
-      "supplier_name": "Eye Care Supplies", "last_restock_date": "2026-03-28"
+      "product_id": 2,
+      "category_id": 3,
+      "supplier_id": 4,
+      "brand": "Eye Care",
+      "model": "Solución LC",
+      "name": "Solución para Lentes de Contacto",
+      "category": "Accesorios",
+      "sku": "ACC-SLC-002",
+      "stock": 5,
+      "minimum_stock_threshold": 20,
+      "price": 8.99,
+      "supplier_name": "Eye Care Supplies",
+      "last_restock_date": "2026-03-28"
     },
     {
-      "product_id": 3, "category_id": 1, "supplier_id": 2,
-      "brand": "OpticalPro", "model": "Filtro Azul",
-      "name": "Lunas con Filtro de Luz Azul", "category": "Lunas",
-      "sku": "LUN-FLA-003", "stock": 8,
-      "minimum_stock_threshold": 30, "price": 89.00,
-      "supplier_name": "OpticalPro Lab", "last_restock_date": "2026-04-05"
+      "product_id": 3,
+      "category_id": 1,
+      "supplier_id": 2,
+      "brand": "OpticalPro",
+      "model": "Filtro Azul",
+      "name": "Lunas con Filtro de Luz Azul",
+      "category": "Lunas",
+      "sku": "LUN-FLA-003",
+      "stock": 8,
+      "minimum_stock_threshold": 30,
+      "price": 89,
+      "supplier_name": "OpticalPro Lab",
+      "last_restock_date": "2026-04-05"
     },
     {
-      "product_id": 4, "category_id": 2, "supplier_id": 5,
-      "brand": "Fashion Optics", "model": "Premium",
-      "name": "Armazones Diseñador Premium", "category": "Armazones",
-      "sku": "ARM-DSG-004", "stock": 28,
-      "minimum_stock_threshold": 15, "price": 245.00,
-      "supplier_name": "Fashion Optics Co.", "last_restock_date": "2026-04-15"
+      "product_id": 4,
+      "category_id": 2,
+      "supplier_id": 5,
+      "brand": "Fashion Optics",
+      "model": "Premium",
+      "name": "Armazones Diseñador Premium",
+      "category": "Armazones",
+      "sku": "ARM-DSG-004",
+      "stock": 28,
+      "minimum_stock_threshold": 15,
+      "price": 245,
+      "supplier_name": "Fashion Optics Co.",
+      "last_restock_date": "2026-04-15"
     },
     {
-      "product_id": 5, "category_id": 2, "supplier_id": 6,
-      "brand": "Budget Frames", "model": "Lectura",
-      "name": "Armazones de Lectura", "category": "Armazones",
-      "sku": "ARM-LEC-005", "stock": 12,
-      "minimum_stock_threshold": 25, "price": 35.00,
-      "supplier_name": "Budget Frames Inc.", "last_restock_date": "2026-04-01"
+      "product_id": 5,
+      "category_id": 2,
+      "supplier_id": 6,
+      "brand": "Budget Frames",
+      "model": "Lectura",
+      "name": "Armazones de Lectura",
+      "category": "Armazones",
+      "sku": "ARM-LEC-005",
+      "stock": 12,
+      "minimum_stock_threshold": 25,
+      "price": 35,
+      "supplier_name": "Budget Frames Inc.",
+      "last_restock_date": "2026-04-01"
     },
     {
-      "product_id": 6, "category_id": 3, "supplier_id": 4,
-      "brand": "Eye Care", "model": "Kit Limpieza",
-      "name": "Kits de Limpieza", "category": "Accesorios",
-      "sku": "ACC-LMP-006", "stock": 67,
-      "minimum_stock_threshold": 30, "price": 12.50,
-      "supplier_name": "Eye Care Supplies", "last_restock_date": "2026-04-18"
+      "product_id": 6,
+      "category_id": 3,
+      "supplier_id": 4,
+      "brand": "Eye Care",
+      "model": "Kit Limpieza",
+      "name": "Kits de Limpieza",
+      "category": "Accesorios",
+      "sku": "ACC-LMP-006",
+      "stock": 67,
+      "minimum_stock_threshold": 30,
+      "price": 12.5,
+      "supplier_name": "Eye Care Supplies",
+      "last_restock_date": "2026-04-18"
     }
   ],
   "categories": [

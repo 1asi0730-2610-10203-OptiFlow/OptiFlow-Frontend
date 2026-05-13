@@ -1,5 +1,7 @@
 <script setup>
 import SaleStatusBadge from './sale-status-badge.vue'
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
   sales: { type: Array, required: true }
@@ -7,13 +9,15 @@ const props = defineProps({
 
 const emit = defineEmits(['return-sale', 'collect-payment', 'cancel-sale'])
 
-const paymentMethodLabel = {
-  CASH:        'Efectivo',
-  CREDIT_CARD: 'Tarjeta Crédito',
-  DEBIT_CARD:  'Tarjeta Débito',
-  TRANSFER:    'Transferencia',
-  INSURANCE:   'Seguro'
-}
+const { t } = useI18n()
+
+const paymentMethodLabel = computed(() => ({
+  CASH:        t('sales.form.paymentMethods.cash'),
+  CREDIT_CARD: t('sales.form.paymentMethods.credit'),
+  DEBIT_CARD:  t('sales.form.paymentMethods.debit'),
+  TRANSFER:    t('sales.form.paymentMethods.transfer'),
+  INSURANCE:   t('sales.form.paymentMethods.insurance')
+}))
 
 const paymentMethodIcon = {
   CASH:        'pi pi-money-bill',
@@ -53,7 +57,7 @@ function isDelivered(sale) {
     class="sale-table"
   >
     <!-- Factura -->
-    <pv-column field="invoiceNumber" header="Factura" sortable style="min-width: 140px">
+    <pv-column field="invoiceNumber" :header="$t('sales.table.invoice')" sortable style="min-width: 140px">
       <template #body="{ data }">
         <div class="col-invoice">
           <span class="invoice-num">{{ data.invoiceNumber }}</span>
@@ -63,7 +67,7 @@ function isDelivered(sale) {
     </pv-column>
 
     <!-- Paciente -->
-    <pv-column field="patientName" header="Paciente" sortable style="min-width: 160px">
+    <pv-column field="patientName" :header="$t('sales.table.patient')" sortable style="min-width: 160px">
       <template #body="{ data }">
         <div class="col-patient">
           <span class="patient-name">{{ data.patientName }}</span>
@@ -72,8 +76,8 @@ function isDelivered(sale) {
       </template>
     </pv-column>
 
-    <!-- Artículos -->
-    <pv-column field="articulos" header="Artículos" style="min-width: 180px">
+    <!-- Productos -->
+    <pv-column field="articulos" :header="$t('sales.table.products')" style="min-width: 180px">
       <template #body="{ data }">
         <ul class="articulos-list">
           <li v-for="(art, i) in (data.articulos || [])" :key="i">{{ art }}</li>
@@ -82,7 +86,7 @@ function isDelivered(sale) {
     </pv-column>
 
     <!-- Fecha -->
-    <pv-column field="createdAt" header="Fecha" sortable style="min-width: 110px">
+    <pv-column field="createdAt" :header="$t('sales.table.date')" sortable style="min-width: 110px">
       <template #body="{ data }">
         <span class="col-date">
           <i class="pi pi-calendar" style="font-size: 0.75rem" />
@@ -92,14 +96,14 @@ function isDelivered(sale) {
     </pv-column>
 
     <!-- Total -->
-    <pv-column field="totalAmount" header="Total" sortable style="min-width: 110px">
+    <pv-column field="totalAmount" :header="$t('sales.table.total')" sortable style="min-width: 110px">
       <template #body="{ data }">
         <span class="col-total">{{ formatCurrency(data.totalAmount) }}</span>
       </template>
     </pv-column>
 
     <!-- Adelanto -->
-    <pv-column field="adelanto" header="Adelanto" sortable style="min-width: 140px">
+    <pv-column field="adelanto" :header="$t('sales.table.deposit')" sortable style="min-width: 140px">
       <template #body="{ data }">
         <div class="col-adelanto">
           <span class="adelanto-amount">{{ formatCurrency(data.adelanto) }}</span>
@@ -111,20 +115,20 @@ function isDelivered(sale) {
     </pv-column>
 
     <!-- Saldo -->
-    <pv-column field="pendingBalance" header="Saldo" sortable style="min-width: 130px">
+    <pv-column field="pendingBalance" :header="$t('sales.table.balance')" sortable style="min-width: 130px">
       <template #body="{ data }">
         <div class="col-saldo">
           <template v-if="data.pendingBalance > 0">
             <span class="saldo-pending">{{ formatCurrency(data.pendingBalance) }}</span>
-            <button class="cobrar-btn" @click="emit('collect-payment', data)">Cobrar →</button>
+            <button class="cobrar-btn" @click="emit('collect-payment', data)">{{ $t('sales.table.collect') }}</button>
           </template>
-          <span v-else class="saldo-paid-badge">Pagado</span>
+          <span v-else class="saldo-paid-badge">{{ $t('sales.table.paid') }}</span>
         </div>
       </template>
     </pv-column>
 
     <!-- Método de Pago -->
-    <pv-column field="paymentMethod" header="Pago" style="min-width: 150px">
+    <pv-column field="paymentMethod" :header="$t('sales.table.payment')" style="min-width: 150px">
       <template #body="{ data }">
         <span class="col-payment">
           <i :class="paymentMethodIcon[data.paymentMethod] ?? 'pi pi-wallet'" />
@@ -134,14 +138,14 @@ function isDelivered(sale) {
     </pv-column>
 
     <!-- Estado -->
-    <pv-column field="status" header="Estado" style="min-width: 130px">
+    <pv-column field="status" :header="$t('sales.table.status')" style="min-width: 130px">
       <template #body="{ data }">
         <sale-status-badge :status="data.status" />
       </template>
     </pv-column>
 
     <!-- Acciones -->
-    <pv-column header="Acciones" style="min-width: 120px">
+    <pv-column :header="$t('sales.table.actions')" style="min-width: 120px">
       <template #body="{ data }">
         <div class="action-buttons">
           <button
@@ -149,14 +153,14 @@ function isDelivered(sale) {
             class="action-btn action-btn--cancel"
             @click="emit('cancel-sale', data.id)"
           >
-            Cancelar
+            {{ $t('sales.table.cancel') }}
           </button>
           <button
             v-if="isDelivered(data)"
             class="action-btn action-btn--return"
             @click="emit('return-sale', data.id)"
           >
-            Devolución
+            {{ $t('sales.table.return') }}
           </button>
         </div>
       </template>

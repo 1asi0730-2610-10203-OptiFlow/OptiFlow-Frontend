@@ -70,6 +70,60 @@
     "searchPlaceholder": "Search by invoice # or patient...",
     "allStatuses": "All statuses",
     "loading": "Loading sales...",
+    "form": {
+      "title": "New Sale / Quote",
+      "step": "Step",
+      "of": "of",
+      "steps": {
+        "patient": "Patient & Rx",
+        "products": "Products",
+        "payment": "Payment"
+      },
+      "patientLabel": "Patient",
+      "selectPatient": "Select a patient...",
+      "lastRx": "Latest Linked Prescription",
+      "rxPending": "Prescription pending to be linked with clinical module",
+      "frame": "Frame",
+      "framePlaceholder": "e.g. Ray-Ban RB5228 Black",
+      "lensType": "Lens Type",
+      "lensMaterial": "Lens Material",
+      "select": "Select...",
+      "estimatedTotal": "Estimated Total",
+      "paymentMethod": "Payment Method",
+      "discountCode": "Discount Code (optional)",
+      "discountPlaceholder": "e.g. PROMO15",
+      "apply": "Apply",
+      "deposit": "Deposit (min. 30%)",
+      "subtotal": "Subtotal",
+      "discount": "Discount",
+      "total": "Total",
+      "depositPercent": "Deposit ({percent}%)",
+      "pendingBalance": "Pending Balance",
+      "back": "Back",
+      "cancel": "Cancel",
+      "next": "Next",
+      "create": "Create Sale + Lab Order",
+      "lensTypes": {
+        "monofocal": "Single Vision",
+        "bifocal": "Bifocal",
+        "progressive": "Progressive",
+        "occupational": "Occupational"
+      },
+      "materials": {
+        "cr39": "CR-39 (1.50)",
+        "poly": "Polycarbonate",
+        "hi160": "High Index 1.60",
+        "hi167": "High Index 1.67",
+        "glass": "Glass"
+      },
+      "paymentMethods": {
+        "cash": "Cash",
+        "credit": "Credit Card",
+        "debit": "Debit Card",
+        "transfer": "Transfer",
+        "insurance": "Insurance"
+      }
+    },
     "kpi": {
       "totalRevenue": "Total Revenue",
       "deposits": "Deposits Collected",
@@ -106,6 +160,22 @@
     "dialogs": {
       "paymentHeader": "Register balance payment",
       "feedbackHeader": "Satisfaction survey"
+    },
+    "table": {
+      "invoice": "Invoice",
+      "patient": "Patient",
+      "products": "Products",
+      "date": "Date",
+      "total": "Total",
+      "deposit": "Deposit",
+      "balance": "Balance",
+      "payment": "Payment",
+      "status": "Status",
+      "actions": "Actions",
+      "collect": "Collect →",
+      "paid": "Paid",
+      "cancel": "Cancel",
+      "return": "Return"
     }
   },
   "labOrders": {
