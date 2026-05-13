@@ -1,0 +1,748 @@
+{
+  "app": {
+    "name": "OptiFlow",
+    "subtitle": "ERP / CRM Óptico",
+    "patientSubtitle": "Portal del Paciente"
+  },
+  "nav": {
+    "section": "MENÚ PRINCIPAL",
+    "patientSection": "PORTAL PACIENTE",
+    "panel": "Panel",
+    "patients": "Pacientes",
+    "sales": "Ventas",
+    "labOrders": "Órdenes de Lab",
+    "inventory": "Inventario",
+    "staff": "Personal",
+    "reports": "Reportes",
+    "settings": "Configuración",
+    "myLenses": "Mis Lentes",
+    "tryOn": "Probador Virtual",
+    "calculator": "Calculadora",
+    "notifications": "Notificaciones",
+    "profile": "Mi Perfil"
+  },
+  "user": {
+    "role": "Administrador",
+    "patientRole": "Paciente"
+  },
+  "login": {
+    "chooseRole": "Selecciona cómo deseas acceder al sistema",
+    "adminTitle": "Administrador",
+    "adminDesc": "Gestión de ventas, inventario, órdenes de lab y registros de pacientes",
+    "adminBtn": "Acceso Admin",
+    "patientTitle": "Portal del Paciente",
+    "patientDesc": "Consulta tus pedidos, recetas y usa nuestras herramientas ópticas",
+    "patientBtn": "Acceso Paciente"
+  },
+  "common": {
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "confirm": "Confirmar",
+    "close": "Cerrar",
+    "export": "Exportar",
+    "loading": "Cargando",
+    "noResults": "Sin resultados",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "showing": "Mostrando",
+    "of": "de",
+    "yes": "Sí",
+    "no": "No",
+    "all": "Todos",
+    "add": "Agregar",
+    "new": "Nuevo",
+    "clearFilters": "Limpiar filtros",
+    "actions": "Acciones",
+    "status": "Estado",
+    "date": "Fecha",
+    "name": "Nombre",
+    "total": "Total",
+    "records": "registros",
+    "requiredError": "Por favor rellene los campos obligatorios"
+  },
+  "sales": {
+    "pageTitle": "Gestión de Ventas",
+    "pageSubtitle": "POS · Cotizaciones · Adelantos · Saldos Pendientes",
+    "newSale": "Nueva Venta",
+    "recoverQuote": "Recuperar Cotización",
+    "searchPlaceholder": "Buscar por N° factura o paciente...",
+    "allStatuses": "Todos los estados",
+    "loading": "Cargando ventas...",
+    "form": {
+      "title": "Nueva Venta / Cotización",
+      "step": "Paso",
+      "of": "de",
+      "steps": {
+        "patient": "Paciente y Rx",
+        "products": "Productos",
+        "payment": "Pago"
+      },
+      "patientLabel": "Paciente",
+      "requiredError": "Por favor rellene los campos obligatorios",
+      "selectPatient": "Selecciona un paciente...",
+      "lastRx": "Última Receta Vinculada",
+      "rxPending": "Receta pendiente de vincular con módulo clínico",
+      "frame": "Armazón (Montura)",
+      "framePlaceholder": "Ej. Ray-Ban RB5228 Negro",
+      "lensType": "Tipo de Luna",
+      "lensMaterial": "Material de Luna",
+      "select": "Seleccionar...",
+      "estimatedTotal": "Total Estimado",
+      "paymentMethod": "Método de Pago",
+      "discountCode": "Código de Descuento (opcional)",
+      "discountPlaceholder": "Ej. PROMO15",
+      "apply": "Aplicar",
+      "deposit": "Adelanto (mín. 30%)",
+      "subtotal": "Subtotal",
+      "discount": "Descuento",
+      "total": "Total",
+      "depositPercent": "Adelanto ({percent}%)",
+      "pendingBalance": "Saldo Pendiente",
+      "back": "Atrás",
+      "cancel": "Cancelar",
+      "next": "Siguiente",
+      "create": "Crear Venta + Orden de Lab",
+      "lensTypes": {
+        "monofocal": "Monofocales",
+        "bifocal": "Bifocales",
+        "progressive": "Progresivas",
+        "occupational": "Ocupacionales"
+      },
+      "materials": {
+        "cr39": "Resina 1.50",
+        "poly": "Policarbonato",
+        "hi160": "Alto Índice 1.60",
+        "hi167": "Alto Índice 1.67",
+        "glass": "Cristal"
+      },
+      "paymentMethods": {
+        "cash": "Efectivo",
+        "credit": "Tarjeta de Crédito",
+        "debit": "Tarjeta de Débito",
+        "transfer": "Transferencia",
+        "insurance": "Seguro"
+      }
+    },
+    "kpi": {
+      "totalRevenue": "Ingresos Totales",
+      "deposits": "Adelantos Cobrados",
+      "pendingBalance": "Saldo Pendiente",
+      "averageTicket": "Ticket Promedio"
+    },
+    "status": {
+      "PENDING": "Pendiente",
+      "PARTIAL": "Saldo Pendiente",
+      "PAID": "Pagada",
+      "DELIVERED": "Completada",
+      "RETURNED": "Devuelta"
+    },
+    "toast": {
+      "saleCreated": "Venta creada",
+      "saleCreatedDetail": "registrada correctamente.",
+      "paymentRegistered": "Pago registrado",
+      "paymentRegisteredDetail": "El saldo fue actualizado correctamente.",
+      "returnRegistered": "Devolución registrada",
+      "returnRegisteredDetail": "La orden fue marcada como devuelta.",
+      "saleCancelled": "Venta cancelada",
+      "saleCancelledDetail": "La venta fue marcada como devuelta.",
+      "feedbackSent": "Encuesta enviada",
+      "feedbackSentDetail": "¡Gracias por tu valoración!"
+    },
+    "confirm": {
+      "returnMessage": "¿Desea registrar la devolución de esta venta?",
+      "returnHeader": "Confirmar devolución",
+      "returnAccept": "Sí, devolver",
+      "cancelMessage": "¿Desea cancelar esta venta?",
+      "cancelHeader": "Confirmar cancelación",
+      "cancelAccept": "Sí, cancelar"
+    },
+    "dialogs": {
+      "paymentHeader": "Registrar pago de saldo",
+      "feedbackHeader": "Encuesta de satisfacción"
+    },
+    "table": {
+      "invoice": "Factura",
+      "patient": "Paciente",
+      "products": "Productos",
+      "date": "Fecha",
+      "total": "Total",
+      "deposit": "Adelanto",
+      "balance": "Saldo",
+      "payment": "Pago",
+      "status": "Estado",
+      "actions": "Acciones",
+      "collect": "Cobrar →",
+      "paid": "Pagado",
+      "cancel": "Cancelar",
+      "return": "Devolución"
+    }
+  },
+  "labOrders": {
+    "pageTitle": "Órdenes de Laboratorio",
+    "pageSubtitle": "Seguimiento de Órdenes de Trabajo enviadas a laboratorios",
+    "newOrder": "Nueva Orden",
+    "viewKanban": "Kanban",
+    "viewTable": "Tabla",
+    "searchPlaceholder": "Buscar por N° orden, paciente o laboratorio...",
+    "allStages": "Todas las Etapas",
+    "summary": {
+      "received": "Recibidas",
+      "inProduction": "En Producción",
+      "qualityControl": "Control de Calidad",
+      "readyForDelivery": "Listas para Entrega"
+    },
+    "status": {
+      "PENDING": "Recibida",
+      "IN_PRODUCTION": "Biselado",
+      "QUALITY_CONTROL": "Control de Calidad",
+      "READY": "Listo para Entrega",
+      "DELIVERED": "Entregado"
+    },
+    "priority": {
+      "urgent": "URGENTE",
+      "high": "ALTA",
+      "normal": "Normal"
+    },
+    "card": {
+      "lab": "Lab",
+      "frame": "Armazón",
+      "delivery": "Entrega",
+      "balance": "Saldo",
+      "paid": "✓ Pagado",
+      "rework": "⚠ RETRABAJO"
+    },
+    "kanban": {
+      "noOrders": "Sin órdenes"
+    },
+    "table": {
+      "orderPatient": "Orden / Paciente",
+      "type": "Tipo",
+      "status": "Estado",
+      "delivery": "Entrega",
+      "balance": "Saldo",
+      "noOrders": "No se encontraron órdenes."
+    },
+    "detail": {
+      "orderProgress": "Progreso de la Orden",
+      "productType": "Tipo de Producto",
+      "frame": "Armazón",
+      "laboratory": "Laboratorio",
+      "expectedDate": "Fecha Esperada",
+      "opticalPrescription": "Receta Óptica",
+      "paymentSummary": "Resumen de Pago",
+      "totalAmount": "Total",
+      "depositPaid": "Adelanto pagado",
+      "pendingBalance": "Saldo pendiente",
+      "moveTo": "Mover a",
+      "goBack": "Retroceder",
+      "completed": "✓ Orden completada"
+    },
+    "newOrderModal": {
+      "title": "Nueva Orden de Lab",
+      "subtitle": "Crear una nueva orden de trabajo",
+      "selectPatient": "Seleccionar paciente...",
+      "patient": "Paciente",
+      "laboratory": "Laboratorio",
+      "lensType": "Tipo de Luna",
+      "priority": "Prioridad",
+      "opticalPrescription": "Receta Óptica",
+      "eye": "Ojo",
+      "sphere": "Esfera",
+      "cylinder": "Cilindro",
+      "axis": "Eje",
+      "rightEye": "OD (Der)",
+      "leftEye": "OS (Izq)",
+      "frame": "Armazón",
+      "orderDate": "Fecha de Orden",
+      "deliveryDate": "Fecha de Entrega",
+      "totalAmount": "Total (S/)",
+      "deposit": "Adelanto (S/)",
+      "pendingAfterDeposit": "Saldo pendiente tras adelanto",
+      "createOrder": "Crear Orden de Lab"
+    },
+    "toast": {
+      "statusUpdated": "Estado actualizado",
+      "reworkRegistered": "Retrabajo registrado",
+      "reworkDetail": "volvió a En Producción.",
+      "orderCreated": "Orden creada",
+      "orderCreatedDetail": "Nueva orden de laboratorio registrada."
+    },
+    "showing": "Mostrando",
+    "orders": "órdenes"
+  },
+  "dashboard": {
+    "title": "Panel de Control",
+    "subtitle": "¡Bienvenido/a! Aquí está el resumen de tu negocio ·",
+    "liveIndicator": "En vivo",
+    "stats": {
+      "totalPatients": "Total Pacientes",
+      "patientsToday": "Clientes atendidos hoy",
+      "monthlyRevenue": "Ingresos del Mes",
+      "pendingLabOrders": "Órdenes Lab Pendientes"
+    },
+    "charts": {
+      "conversionTitle": "Conversión Receta → Venta",
+      "conversionSubtitle": "Recetas emitidas vs. ventas cerradas por mes",
+      "last6Months": "Últ. 6 meses",
+      "legendPrescriptions": "Recetas",
+      "legendSales": "Ventas Cerradas",
+      "weeklyRevenueTitle": "Ingresos Semanales",
+      "weeklyRevenueSubtitle": "Semana actual · S/ 52,300 total",
+      "months": [
+        "Nov",
+        "Dic",
+        "Ene",
+        "Feb",
+        "Mar",
+        "Abr"
+      ],
+      "weekDays": [
+        "Lun",
+        "Mar",
+        "Mié",
+        "Jue",
+        "Vie",
+        "Sáb",
+        "Dom"
+      ]
+    },
+    "appointments": {
+      "title": "Clientes Atendidos de Hoy",
+      "attended": "{attended} de {total}",
+      "statusConfirmed": "Confirmada",
+      "statusPending": "Pendiente"
+    },
+    "labOrders": {
+      "title": "Órdenes de Lab Activas",
+      "deliveryLabel": "Entrega: {date}"
+    },
+    "stockAlerts": {
+      "title": "Alertas de Stock Bajo",
+      "itemCount": "{count} artículos",
+      "remaining": "{count} restantes",
+      "reorderMin": "Reorden mínimo: {min} unidades"
+    }
+  },
+  "patients": {
+    "pageTitle": "Gestión de Pacientes",
+    "pageSubtitle": "Historias clínicas y registros de salud (HCE)",
+    "addPatient": "Agregar Paciente",
+    "searchPlaceholder": "Buscar por nombre, correo, teléfono o DNI...",
+    "loading": "Cargando pacientes…",
+    "stats": {
+      "total": "Total Pacientes",
+      "activeThisMonth": "Activos Este Mes",
+      "withPendingOrders": "Con Órdenes Pendientes",
+      "pendingReview": "Pendientes de Revisión"
+    },
+    "table": {
+      "patient": "Paciente",
+      "contact": "Contacto",
+      "dni": "DNI",
+      "lastPrescription": "Última Receta",
+      "lastVisit": "Última Visita",
+      "nextAppointment": "Próxima Cita",
+      "notScheduled": "Sin programar",
+      "viewHce": "Ver HCE",
+      "noResults": "No se encontraron pacientes",
+      "noResultsHint": "Intenta con otro término de búsqueda",
+      "patients": "pacientes"
+    },
+    "rx": {
+      "sph": "Esf",
+      "cyl": "Cil",
+      "noPrescription": "Sin receta"
+    },
+    "toast": {
+      "patientRegistered": "Paciente registrado satisfactoriamente"
+    },
+    "addModal": {
+      "title": "Agregar Paciente",
+      "subtitle": "Registrar un nuevo paciente en el sistema",
+      "fullName": "Nombre Completo",
+      "fullNamePlaceholder": "ej. Sarah Johnson",
+      "dni": "DNI / Doc. Identidad",
+      "dniPlaceholder": "ej. 12345678",
+      "birthDate": "Fecha de Nacimiento",
+      "email": "Correo Electrónico",
+      "emailPlaceholder": "ej. paciente{'@'}correo.com",
+      "phone": "Teléfono",
+      "phonePlaceholder": "ej. 903 897 123",
+      "requiredError": "Por favor rellene los campos obligatorios",
+      "register": "Registrar"
+    },
+    "hce": {
+      "dniLabel": "DNI",
+      "yearsOld": "años",
+      "age": "Edad",
+      "tabs": {
+        "hce": "Historia Clínica (HCE)",
+        "profile": "Perfil",
+        "orders": "Órdenes"
+      },
+      "latestPrescription": "Última Receta Óptica",
+      "prescriptionHistory": "Historial de Recetas",
+      "clinicalNotes": "Notas Clínicas",
+      "lastVisit": "Última Visita",
+      "noRecords": "Sin registros clínicos aún",
+      "noOrders": "No hay órdenes registradas para este paciente",
+      "registerExam": "+ Registrar Nuevo Examen",
+      "examSaved": "Examen guardado satisfactoriamente",
+      "fileLoaded": "Expediente cargado satisfactoriamente",
+      "rx": {
+        "eye": "Ojo",
+        "sphere": "Esfera",
+        "cylinder": "Cilindro",
+        "axis": "Eje",
+        "od": "OD (Der)",
+        "os": "OS (Izq)",
+        "sphShort": "Esf",
+        "cylShort": "Cil",
+        "axisShort": "Eje"
+      }
+    },
+    "newExam": {
+      "title": "Nuevo Examen Clínico",
+      "patientLabel": "Paciente",
+      "tabs": {
+        "manual": "Examen Manual",
+        "upload": "Cargar Expediente"
+      },
+      "examDate": "Fecha del Examen",
+      "doctor": "Doctor / Optometrista",
+      "refraction": "Refracción",
+      "addition": "Adición",
+      "optional": "Opcional",
+      "notesPlaceholder": "Observaciones del examen, recomendaciones, seguimiento...",
+      "dropZoneText": "Arrastra tu expediente aquí",
+      "dropZoneHint": "Soporta: PDF, TXT, CSV de sistemas ópticos",
+      "selectFile": "Seleccionar Archivo",
+      "fileTooLarge": "El archivo ingresado sobrepasa los 30mb",
+      "demoFilesLabel": "Expedientes de Demostración",
+      "saveExam": "Guardar Examen"
+    },
+    "success": {
+      "next": "Siguiente"
+    }
+  },
+  "inventory": {
+    "pageTitle": "Gestión de Inventario",
+    "pageSubtitle": "Control y seguimiento de niveles de stock",
+    "addItem": "Agregar",
+    "restock": "Reabastecer",
+    "viewAudit": "Ver Auditoría",
+    "searchPlaceholder": "Buscar por nombre, SKU o categoría...",
+    "allCategories": "Todas las Categorías",
+    "allLevels": "Todos los Niveles",
+    "activeFilters": "Filtros",
+    "summary": {
+      "totalItems": "Total Artículos",
+      "lowStock": "Stock Bajo",
+      "totalValue": "Valor Total",
+      "articles": "artículos"
+    },
+    "table": {
+      "product": "Producto",
+      "category": "Categoría",
+      "stock": "Stock",
+      "price": "Precio",
+      "supplier": "Proveedor",
+      "actions": "Acciones",
+      "min": "mín",
+      "replenish": "Reponer",
+      "edit": "Editar",
+      "incompatible": "Inventario incompatible",
+      "noResults": "No se encontraron artículos con los filtros seleccionados.",
+      "showing": "Mostrando",
+      "of": "de",
+      "items": "artículos"
+    },
+    "levels": {
+      "critical": "Crítico",
+      "low": "Stock Bajo",
+      "inStock": "En Stock"
+    },
+    "addModal": {
+      "title": "Agregar Artículo",
+      "subtitle": "Registrar un nuevo producto en el inventario",
+      "productName": "Nombre del Producto",
+      "productNamePlaceholder": "Ej. Lunas Progresivas Premium",
+      "category": "Categoría",
+      "sku": "SKU (opcional)",
+      "skuPlaceholder": "Se genera automáticamente",
+      "skuDuplicate": "SKU duplicado ya está registrado en el catálogo.",
+      "initialStock": "Stock Inicial",
+      "reorderLevel": "Nivel de Reorden",
+      "unitPrice": "Precio Unit. (S/)",
+      "supplier": "Proveedor",
+      "selectSupplier": "Seleccionar proveedor...",
+      "receptionDate": "Fecha de Recepción",
+      "addItem": "Agregar Artículo"
+    },
+    "restockModal": {
+      "title": "Reabastecer Artículo",
+      "currentStock": "Stock Actual",
+      "reorderLevel": "Nivel de Reorden",
+      "units": "unid.",
+      "quantityToAdd": "Cantidad a Agregar",
+      "quantityPlaceholder": "Ej. 50",
+      "newStockLevel": "Nuevo nivel de stock",
+      "units_full": "unidades",
+      "notes": "Notas (opcional)",
+      "notesPlaceholder": "Ej. OC #1234, entrega del proveedor",
+      "confirmRestock": "Confirmar Restock"
+    },
+    "bulkRestockModal": {
+      "title": "Reabastecimiento Masivo",
+      "subtitle": "Reponer todos los artículos con stock bajo",
+      "allSufficient": "Todos los artículos tienen stock suficiente.",
+      "add": "Agregar",
+      "replenishAll": "Reponer Todo"
+    },
+    "auditModal": {
+      "title": "Auditoría de Inventario",
+      "subtitle": "Registro histórico de alteraciones de stock",
+      "from": "Desde",
+      "to": "Hasta",
+      "clearFilters": "Limpiar filtros",
+      "recordsFound": "registro(s) encontrado(s)",
+      "noRecords": "Ninguna manipulación humana registrada",
+      "noRecordsDesc": "No se encontraron alteraciones de stock en el período seleccionado.",
+      "columns": {
+        "date": "Fecha",
+        "time": "Hora",
+        "author": "Autor",
+        "item": "Artículo",
+        "sku": "SKU",
+        "operation": "Operación",
+        "previousStock": "Stock Anterior",
+        "quantity": "Cantidad",
+        "newStock": "Stock Nuevo"
+      }
+    },
+    "toast": {
+      "itemAdded": "Artículo agregado",
+      "itemAddedDetail": "registrado en el inventario.",
+      "restockDone": "Restock registrado",
+      "restockDetail": "unidades agregadas."
+    },
+    "editModal": {
+      "title": "Editar Producto",
+      "subtitle": "Modifica la información del producto en el catálogo de inventario.",
+      "productName": "NOMBRE DEL PRODUCTO",
+      "sku": "SKU / CÓDIGO",
+      "category": "CATEGORÍA",
+      "threshold": "UMBRAL DE ALERTA",
+      "price": "PRECIO UNITARIO (S/)",
+      "save": "Guardar Cambios"
+    }
+  },
+  "staff": {
+    "pageTitle": "Gestión de Personal",
+    "pageSubtitle": "Administra al personal y sus permisos de acceso",
+    "addEmployee": "Agregar Empleado",
+    "searchPlaceholder": "Buscar por nombre, correo o cargo...",
+    "allDepartments": "Todos los Departamentos",
+    "allRoles": "Todos los Cargos",
+    "kpi": {
+      "totalEmployees": "Total Empleados",
+      "optometrists": "Optometristas",
+      "supportStaff": "Personal de Apoyo",
+      "activeToday": "Activos Hoy"
+    },
+    "table": {
+      "employee": "EMPLEADO",
+      "role": "CARGO",
+      "department": "DEPARTAMENTO",
+      "status": "ESTADO"
+    },
+    "status": {
+      "active": "Activo",
+      "inactive": "Inactivo"
+    },
+    "roles": {
+      "optometrist": "Optometrista",
+      "optician": "Óptico",
+      "admin": "Administrador",
+      "support": "Personal de Apoyo"
+    },
+    "departments": {
+      "clinic": "Clínica",
+      "sales": "Ventas",
+      "admin": "Administración"
+    },
+    "addModal": {
+      "title": "Agregar Empleado",
+      "subtitle": "Registrar un nuevo miembro del personal",
+      "fullName": "Nombre Completo",
+      "email": "Correo Electrónico",
+      "phone": "Teléfono",
+      "role": "Cargo",
+      "department": "Departamento",
+      "entryDate": "Fecha de Ingreso",
+      "defaultPermissions": "Permisos por defecto (según cargo)",
+      "permissionsNote": "Los permisos se asignan según el cargo. Puedes editarlos después.",
+      "permissions": {
+        "fullAccess": "Acceso Total",
+        "clinicalRecords": "Historias Clínicas",
+        "prescriptions": "Recetas"
+      },
+      "placeholders": {
+        "fullName": "Ej. Dra. Emily Smith",
+        "email": "nombre{'@'}opticspro.com",
+        "phone": "(555) 000-0000"
+      }
+    }
+  },
+  "reports": {
+    "title": "Reportes y Analítica",
+    "subtitle": "Inteligencia de negocio",
+    "periodSelector": "Últimos 6 meses",
+    "export": "Exportar",
+    "resumen": "Resumen",
+    "salesFinance": "Ventas y Finanzas",
+    "productivityLab": "Productivity Lab",
+    "personalPerformance": "Rendimiento Personal",
+    "kpis": {
+      "totalRevenue": "Ingresos Totales",
+      "conversionRate": "Tasa de Conversión",
+      "avgDeliveryTime": "Tiempo Promedio Entrega",
+      "pendingBalances": "Saldos Pendientes",
+      "total6Months": "Total 6 meses",
+      "recipeToSale": "Receta → Venta",
+      "vsPreviousQuarter": "vs trimestre anterior",
+      "openInvoices": "{count} facturas abiertas"
+    },
+    "charts": {
+      "conversionTitle": "Conversión Receta → Venta",
+      "conversionSubtitle": "Recetas emitidas vs ventas cerradas por mes",
+      "salesByProduct": "Ventas por Producto",
+      "periodDistribution": "Distribución del período",
+      "currentMonth": "este mes",
+      "prescriptions": "Recetas",
+      "closedSales": "Ventas Cerradas",
+      "revenueTrendTitle": "Tendencia de Ingresos Mensuales",
+      "revenueTrendSubtitle": "Últimos 6 meses · {total} total"
+    },
+    "products": {
+      "progressive": "Lunas Progresivas",
+      "singleVision": "Visión Simple",
+      "contactLenses": "Lentes de Contacto",
+      "accessories": "Accesorios",
+      "others": "Otros"
+    }
+  },
+  "patientCenter": {
+    "profile": {
+      "title": "Mi Perfil",
+      "subtitle": "Bienvenido/a a tu portal OptiFlow",
+      "patientRole": "Paciente",
+      "successTitle": "Perfil actualizado correctamente",
+      "successMsg": "Tus cambios han sido guardados exitosamente",
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "email": "Correo Electrónico",
+      "phone": "Teléfono",
+      "address": "Dirección",
+      "city": "Ciudad",
+      "birthDate": "Fecha de Nacimiento",
+      "medicalInfo": "Información Médica",
+      "recordNumber": "Número de Historia Clínica",
+      "lastVisit": "Última Consulta",
+      "optometrist": "Optometrista Asignado",
+      "nextAppt": "Próxima Cita Sugerida",
+      "privacyTitle": "Sobre tus datos",
+      "privacyText": "Tu información personal está protegida y solo se usa para brindarte una mejor atención. Puedes actualizarla en cualquier momento."
+    },
+    "myLenses": {
+      "title": "Mis Lentes",
+      "subtitle": "Portal del Paciente · {date}",
+      "searchTitle": "Mis Órdenes",
+      "searchPlaceholder": "Ej. LAB-2850",
+      "searchBtn": "Buscar",
+      "orderNumber": "Número de Orden",
+      "creationDate": "Fecha de Creación",
+      "status": {
+        "lab": "En Laboratorio",
+        "labDesc": "Lentes en fabricación",
+        "qc": "Control de Calidad",
+        "qcDesc": "Verificación final",
+        "ready": "Listo para Retirar",
+        "readyDesc": "Disponible en tienda"
+      },
+      "lensType": "Tipo de Lente",
+      "estimatedDelivery": "Entrega estimada",
+      "paymentTitle": "Estado de Pago",
+      "paymentSubtitle": "Resumen financiero de tu orden",
+      "totalAmount": "Monto Total",
+      "paidAmount": "Monto Pagado",
+      "pendingBalance": "Saldo Pendiente",
+      "paymentProgress": "Progreso de Pago",
+      "percentPaid": "{percent}% pagado"
+    },
+    "calculator": {
+      "title": "Calculador",
+      "subtitle": "Bienvenido/a a tu portal OptiFlow",
+      "cardTitle": "Calculador de Grosor de Cristales",
+      "cardSubtitle": "Simula el grosor según tu graduación",
+      "sphere": "Esfera (Dioptrías) *",
+      "cylinder": "Cilindro (Dioptrías)",
+      "materials": "Material del Lente (Desde API)",
+      "calculateBtn": "Calcular Grosor",
+      "loading": "Cargando precios...",
+      "thickness": "Grosor Estimado (centro)",
+      "with": "con",
+      "comparison": "Comparación de Materiales",
+      "recommendationTitle": "Recomendación",
+      "recommendationDesc": "Tu graduación permite usar cualquier material. El estándar ofrece buena relación calidad-precio.",
+      "guideTitle": "¿Qué significan los índices?",
+      "guides": {
+        "std": {
+          "title": "Índice 1.50 (Estándar)",
+          "text": "Material básico, ideal para graduaciones bajas (-2.00 a +2.00)"
+        },
+        "thin": {
+          "title": "Índice 1.60 (Delgado)",
+          "text": "30% más delgado, recomendado para graduaciones medias"
+        },
+        "extraThin": {
+          "title": "Índice 1.67 (Extra Delgado)",
+          "text": "40% más delgado, ideal para graduaciones altas"
+        },
+        "ultraThin": {
+          "title": "Índice 1.74 (Ultra Delgado)",
+          "text": "Máxima reducción de grosor para graduaciones muy altas"
+        }
+      }
+    },
+    "notifications": {
+      "title": "Notificaciones",
+      "subtitle": "Bienvenido/a a tu portal OptiFlow",
+      "unread": "{count} sin leer",
+      "details": "Ver detalles",
+      "bannerTitle": "Mantente informado",
+      "bannerText": "Te notificaremos cuando tu pedido esté listo para recoger, cuando haya cambios en el estado de tu orden y cuando tengamos promociones especiales para ti."
+    },
+    "virtualTryOn": {
+      "title": "Probador Virtual",
+      "subtitle": "Bienvenido/a a tu portal OptiFlow",
+      "cardTitle": "Probador Virtual 3D",
+      "cardSubtitle": "Pruébate monturas en tiempo real",
+      "activateCamera": "Activa tu cámara",
+      "cameraInstruction": "Para comenzar a probar monturas, necesitamos acceso a tu cámara",
+      "turnOnBtn": "Activar Cámara",
+      "turnOffBtn": "Apagar Cámara",
+      "selectFrame": "Selecciona una montura",
+      "tipsTitle": "Consejos para mejor experiencia",
+      "tips": [
+        "Mantén tu rostro centrado en la cámara",
+        "Asegúrate de tener buena iluminación frontal",
+        "Evita movimientos bruscos para mejor detección"
+      ]
+    }
+  }
+}

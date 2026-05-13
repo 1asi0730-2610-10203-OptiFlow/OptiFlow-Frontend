@@ -1,0 +1,755 @@
+{
+  "app": {
+    "name": "OptiFlow",
+    "subtitle": "Optical ERP / CRM",
+    "patientSubtitle": "Patient Portal"
+  },
+  "nav": {
+    "section": "MAIN MENU",
+    "patientSection": "PATIENT PORTAL",
+    "panel": "Dashboard",
+    "patients": "Patients",
+    "sales": "Sales",
+    "labOrders": "Lab Orders",
+    "inventory": "Inventory",
+    "staff": "Staff",
+    "reports": "Reports",
+    "settings": "Settings",
+    "myLenses": "My Lenses",
+    "tryOn": "Virtual Try-On",
+    "calculator": "Calculator",
+    "notifications": "Notifications",
+    "profile": "My Profile"
+  },
+  "user": {
+    "role": "Administrator",
+    "patientRole": "Patient",
+    "profile": "My Profile"
+  },
+  "login": {
+    "chooseRole": "Select how you want to access the system",
+    "adminTitle": "Administrator",
+    "adminDesc": "Sales management, inventory, lab orders and patient records",
+    "adminBtn": "Admin Access",
+    "patientTitle": "Patient Portal",
+    "patientDesc": "Track your orders, prescriptions and use our optical tools",
+    "patientBtn": "Patient Access"
+  },
+  "common": {
+    "search": "Search",
+    "filter": "Filter",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "close": "Close",
+    "export": "Export",
+    "loading": "Loading",
+    "noResults": "No results",
+    "previous": "Previous",
+    "next": "Next",
+    "showing": "Showing",
+    "of": "of",
+    "all": "All",
+    "add": "Add",
+    "new": "New",
+    "clearFilters": "Clear filters",
+    "actions": "Actions",
+    "status": "Status",
+    "date": "Date",
+    "name": "Name",
+    "total": "Total",
+    "yes": "Yes",
+    "no": "No",
+    "records": "records",
+    "requiredError": "Please fill in the required fields"
+  },
+  "sales": {
+    "pageTitle": "Sales Management",
+    "pageSubtitle": "POS · Quotes · Deposits · Pending Balances",
+    "newSale": "New Sale",
+    "recoverQuote": "Recover Quote",
+    "searchPlaceholder": "Search by invoice # or patient...",
+    "allStatuses": "All statuses",
+    "loading": "Loading sales...",
+    "form": {
+      "title": "New Sale / Quote",
+      "step": "Step",
+      "of": "of",
+      "steps": {
+        "patient": "Patient & Rx",
+        "products": "Products",
+        "payment": "Payment"
+      },
+      "patientLabel": "Patient",
+      "requiredError": "Please fill in the required fields",
+      "selectPatient": "Select a patient...",
+      "lastRx": "Latest Linked Prescription",
+      "rxPending": "Prescription pending to be linked with clinical module",
+      "frame": "Frame",
+      "framePlaceholder": "e.g. Ray-Ban RB5228 Black",
+      "lensType": "Lens Type",
+      "lensMaterial": "Lens Material",
+      "select": "Select...",
+      "estimatedTotal": "Estimated Total",
+      "paymentMethod": "Payment Method",
+      "discountCode": "Discount Code (optional)",
+      "discountPlaceholder": "e.g. PROMO15",
+      "apply": "Apply",
+      "deposit": "Deposit (min. 30%)",
+      "subtotal": "Subtotal",
+      "discount": "Discount",
+      "total": "Total",
+      "depositPercent": "Deposit ({percent}%)",
+      "pendingBalance": "Pending Balance",
+      "back": "Back",
+      "cancel": "Cancel",
+      "next": "Next",
+      "create": "Create Sale + Lab Order",
+      "lensTypes": {
+        "monofocal": "Single Vision",
+        "bifocal": "Bifocal",
+        "progressive": "Progressive",
+        "occupational": "Occupational"
+      },
+      "materials": {
+        "cr39": "CR-39 (1.50)",
+        "poly": "Polycarbonate",
+        "hi160": "High Index 1.60",
+        "hi167": "High Index 1.67",
+        "glass": "Glass"
+      },
+      "paymentMethods": {
+        "cash": "Cash",
+        "credit": "Credit Card",
+        "debit": "Debit Card",
+        "transfer": "Transfer",
+        "insurance": "Insurance"
+      }
+    },
+    "kpi": {
+      "totalRevenue": "Total Revenue",
+      "deposits": "Deposits Collected",
+      "pendingBalance": "Pending Balance",
+      "averageTicket": "Average Ticket"
+    },
+    "status": {
+      "PENDING": "Pending",
+      "PARTIAL": "Partial Payment",
+      "PAID": "Paid",
+      "DELIVERED": "Completed",
+      "RETURNED": "Returned"
+    },
+    "toast": {
+      "saleCreated": "Sale created",
+      "saleCreatedDetail": "registered successfully.",
+      "paymentRegistered": "Payment registered",
+      "paymentRegisteredDetail": "Balance updated successfully.",
+      "returnRegistered": "Return registered",
+      "returnRegisteredDetail": "Order marked as returned.",
+      "saleCancelled": "Sale cancelled",
+      "saleCancelledDetail": "Sale marked as returned.",
+      "feedbackSent": "Survey sent",
+      "feedbackSentDetail": "Thank you for your feedback!"
+    },
+    "confirm": {
+      "returnMessage": "Do you want to register the return of this sale?",
+      "returnHeader": "Confirm return",
+      "returnAccept": "Yes, return",
+      "cancelMessage": "Do you want to cancel this sale?",
+      "cancelHeader": "Confirm cancellation",
+      "cancelAccept": "Yes, cancel"
+    },
+    "dialogs": {
+      "paymentHeader": "Register balance payment",
+      "feedbackHeader": "Satisfaction survey"
+    },
+    "table": {
+      "invoice": "Invoice",
+      "patient": "Patient",
+      "products": "Products",
+      "date": "Date",
+      "total": "Total",
+      "deposit": "Deposit",
+      "balance": "Balance",
+      "payment": "Payment",
+      "status": "Status",
+      "actions": "Actions",
+      "collect": "Collect →",
+      "paid": "Paid",
+      "cancel": "Cancel",
+      "return": "Return"
+    }
+  },
+  "labOrders": {
+    "pageTitle": "Lab Orders",
+    "pageSubtitle": "Work Order tracking sent to laboratories",
+    "newOrder": "New Order",
+    "viewKanban": "Kanban",
+    "viewTable": "Table",
+    "searchPlaceholder": "Search by order #, patient or lab...",
+    "allStages": "All Stages",
+    "summary": {
+      "received": "Received",
+      "inProduction": "In Production",
+      "qualityControl": "Quality Control",
+      "readyForDelivery": "Ready for Delivery"
+    },
+    "status": {
+      "PENDING": "Received",
+      "IN_PRODUCTION": "In Production",
+      "QUALITY_CONTROL": "Quality Control",
+      "READY": "Ready for Delivery",
+      "DELIVERED": "Delivered"
+    },
+    "priority": {
+      "urgent": "URGENT",
+      "high": "HIGH",
+      "normal": "Normal"
+    },
+    "card": {
+      "lab": "Lab",
+      "frame": "Frame",
+      "delivery": "Delivery",
+      "balance": "Balance",
+      "paid": "✓ Paid",
+      "rework": "⚠ REWORK"
+    },
+    "kanban": {
+      "noOrders": "No orders"
+    },
+    "table": {
+      "orderPatient": "Order / Patient",
+      "type": "Type",
+      "status": "Status",
+      "delivery": "Delivery",
+      "balance": "Balance",
+      "noOrders": "No orders found."
+    },
+    "detail": {
+      "orderProgress": "Order Progress",
+      "productType": "Product Type",
+      "frame": "Frame",
+      "laboratory": "Laboratory",
+      "expectedDate": "Expected Date",
+      "opticalPrescription": "Optical Prescription",
+      "paymentSummary": "Payment Summary",
+      "totalAmount": "Total",
+      "depositPaid": "Deposit paid",
+      "pendingBalance": "Pending balance",
+      "moveTo": "Move to",
+      "goBack": "Go back",
+      "completed": "✓ Order completed"
+    },
+    "newOrderModal": {
+      "title": "New Lab Order",
+      "subtitle": "Create a new work order",
+      "selectPatient": "Select patient...",
+      "patient": "Patient",
+      "laboratory": "Laboratory",
+      "lensType": "Lens Type",
+      "priority": "Priority",
+      "opticalPrescription": "Optical Prescription",
+      "eye": "Eye",
+      "sphere": "Sphere",
+      "cylinder": "Cylinder",
+      "axis": "Axis",
+      "rightEye": "OD (Right)",
+      "leftEye": "OS (Left)",
+      "frame": "Frame",
+      "orderDate": "Order Date",
+      "deliveryDate": "Delivery Date",
+      "totalAmount": "Total (S/)",
+      "deposit": "Deposit (S/)",
+      "pendingAfterDeposit": "Balance after deposit",
+      "createOrder": "Create Lab Order"
+    },
+    "toast": {
+      "statusUpdated": "Status updated",
+      "reworkRegistered": "Rework registered",
+      "reworkDetail": "returned to In Production.",
+      "orderCreated": "Order created",
+      "orderCreatedDetail": "New lab order registered."
+    },
+    "showing": "Showing",
+    "orders": "orders"
+  },
+  "dashboard": {
+    "title": "Control Panel",
+    "subtitle": "Welcome back! Here's your business overview",
+    "liveIndicator": "Live",
+    "stats": {
+      "totalPatients": "Total Patients",
+      "patientsToday": "Patients Seen Today",
+      "monthlyRevenue": "Monthly Revenue",
+      "pendingLabOrders": "Active Lab Orders"
+    },
+    "charts": {
+      "conversionTitle": "Prescription to Sale Conversion",
+      "conversionSubtitle": "Issued prescriptions vs. closed sales per month",
+      "last6Months": "Last 6 Months",
+      "legendPrescriptions": "Prescriptions",
+      "legendSales": "Closed Sales",
+      "weeklyRevenueTitle": "Weekly Revenue",
+      "weeklyRevenueSubtitle": "Current Week Summary",
+      "months": [
+        "Nov",
+        "Dec",
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr"
+      ],
+      "weekDays": [
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat",
+        "Sun"
+      ]
+    },
+    "appointments": {
+      "title": "Today's Attended Patients",
+      "attended": "{attended} of {total}",
+      "statusConfirmed": "Confirmed",
+      "statusPending": "Pending"
+    },
+    "labOrders": {
+      "title": "Active Lab Orders",
+      "deliveryLabel": "Delivery: {date}"
+    },
+    "stockAlerts": {
+      "title": "Low Stock Alerts",
+      "itemCount": "{count} items",
+      "remaining": "{count} remaining",
+      "reorderMin": "Min. reorder: {min} units"
+    }
+  },
+  "patients": {
+    "pageTitle": "Patient Management",
+    "pageSubtitle": "Medical records and electronic health records (EHR)",
+    "addPatient": "Add Patient",
+    "searchPlaceholder": "Search by name, email, phone, or ID...",
+    "loading": "Loading patients…",
+    "stats": {
+      "total": "Total Patients",
+      "activeThisMonth": "Active This Month",
+      "withPendingOrders": "With Pending Orders",
+      "pendingReview": "Pending Review"
+    },
+    "table": {
+      "patient": "Patient",
+      "contact": "Contact",
+      "dni": "ID",
+      "lastPrescription": "Last Prescription",
+      "lastVisit": "Last Visit",
+      "nextAppointment": "Next Appointment",
+      "notScheduled": "Not Scheduled",
+      "viewHce": "View EHR",
+      "noResults": "No patients found",
+      "noResultsHint": "Try another search term",
+      "patients": "patients"
+    },
+    "rx": {
+      "sph": "Sph",
+      "cyl": "Cyl",
+      "noPrescription": "No prescription"
+    },
+    "toast": {
+      "patientRegistered": "Patient successfully registered"
+    },
+    "addModal": {
+      "title": "Add Patient",
+      "subtitle": "Register a new patient in the system",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "e.g. Sarah Johnson",
+      "dni": "ID / Identity Document",
+      "dniPlaceholder": "e.g. 12345678",
+      "birthDate": "Date of Birth",
+      "email": "Email Address",
+      "emailPlaceholder": "e.g. patient{'@'}email.com",
+      "phone": "Phone Number",
+      "phonePlaceholder": "e.g. 903 897 123",
+      "requiredError": "Please fill in the required fields",
+      "register": "Register"
+    },
+    "hce": {
+      "dniLabel": "ID",
+      "yearsOld": "years old",
+      "age": "Age",
+      "tabs": {
+        "hce": "Medical Record (EHR)",
+        "profile": "Profile",
+        "orders": "Orders"
+      },
+      "latestPrescription": "Latest Optical Prescription",
+      "prescriptionHistory": "Prescription History",
+      "clinicalNotes": "Clinical Notes",
+      "lastVisit": "Last Visit",
+      "noRecords": "No clinical records yet",
+      "noOrders": "There are no orders registered for this patient",
+      "registerExam": "+ Register New Exam",
+      "examSaved": "Exam successfully saved",
+      "fileLoaded": "File successfully uploaded",
+      "rx": {
+        "eye": "Eye",
+        "sphere": "Sphere",
+        "cylinder": "Cylinder",
+        "axis": "Axis",
+        "od": "OD (Right)",
+        "os": "OS (Left)",
+        "sphShort": "Sph",
+        "cylShort": "Cyl",
+        "axisShort": "Axis"
+      }
+    },
+    "newExam": {
+      "title": "New Clinical Exam",
+      "patientLabel": "Patient",
+      "tabs": {
+        "manual": "Manual Exam",
+        "upload": "Upload Record"
+      },
+      "examDate": "Exam Date",
+      "doctor": "Doctor / Optometrist",
+      "refraction": "Refraction",
+      "addition": "Addition",
+      "optional": "Optional",
+      "notesPlaceholder": "Exam observations, recommendations, follow-up...",
+      "dropZoneText": "Drag your record here",
+      "dropZoneHint": "Supports: PDF, TXT, CSV from optical systems",
+      "selectFile": "Select File",
+      "fileTooLarge": "The uploaded file exceeds 30MB",
+      "demoFilesLabel": "Demo Records",
+      "saveExam": "Save Exam"
+    },
+    "success": {
+      "next": "Next"
+    }
+  },
+  "inventory": {
+    "pageTitle": "Inventory Management",
+    "pageSubtitle": "Stock level control and tracking",
+    "addItem": "Add",
+    "restock": "Restock",
+    "viewAudit": "View Audit",
+    "searchPlaceholder": "Search by name, SKU or category...",
+    "allCategories": "All Categories",
+    "allLevels": "All Levels",
+    "activeFilters": "Filters",
+    "summary": {
+      "totalItems": "Total Items",
+      "lowStock": "Low Stock",
+      "totalValue": "Total Value",
+      "articles": "items"
+    },
+    "table": {
+      "product": "Product",
+      "category": "Category",
+      "stock": "Stock",
+      "price": "Price",
+      "supplier": "Supplier",
+      "actions": "Actions",
+      "min": "min",
+      "replenish": "Restock",
+      "edit": "Edit",
+      "incompatible": "No matching inventory",
+      "noResults": "No items found with the selected filters.",
+      "showing": "Showing",
+      "of": "of",
+      "items": "items"
+    },
+    "levels": {
+      "critical": "Critical",
+      "low": "Low Stock",
+      "inStock": "In Stock"
+    },
+    "addModal": {
+      "title": "Add Item",
+      "subtitle": "Register a new product in the inventory",
+      "productName": "Product Name",
+      "productNamePlaceholder": "e.g. Premium Progressive Lenses",
+      "category": "Category",
+      "sku": "SKU (optional)",
+      "skuPlaceholder": "Auto-generated",
+      "skuDuplicate": "Duplicate SKU already registered in the catalog.",
+      "initialStock": "Initial Stock",
+      "reorderLevel": "Reorder Level",
+      "unitPrice": "Unit Price (S/)",
+      "supplier": "Supplier",
+      "selectSupplier": "Select supplier...",
+      "receptionDate": "Reception Date",
+      "addItem": "Add Item"
+    },
+    "restockModal": {
+      "title": "Restock Item",
+      "currentStock": "Current Stock",
+      "reorderLevel": "Reorder Level",
+      "units": "units",
+      "quantityToAdd": "Quantity to Add",
+      "quantityPlaceholder": "e.g. 50",
+      "newStockLevel": "New stock level",
+      "units_full": "units",
+      "notes": "Notes (optional)",
+      "notesPlaceholder": "e.g. PO #1234, supplier delivery",
+      "confirmRestock": "Confirm Restock"
+    },
+    "bulkRestockModal": {
+      "title": "Bulk Restock",
+      "subtitle": "Replenish all items with low stock",
+      "allSufficient": "All items have sufficient stock.",
+      "add": "Add",
+      "replenishAll": "Replenish All"
+    },
+    "auditModal": {
+      "title": "Inventory Audit",
+      "subtitle": "Historical record of stock changes",
+      "from": "From",
+      "to": "To",
+      "clearFilters": "Clear filters",
+      "recordsFound": "record(s) found",
+      "noRecords": "No manual changes recorded",
+      "noRecordsDesc": "No stock changes found for the selected period.",
+      "columns": {
+        "date": "Date",
+        "time": "Time",
+        "author": "Author",
+        "item": "Item",
+        "sku": "SKU",
+        "operation": "Operation",
+        "previousStock": "Prev. Stock",
+        "quantity": "Quantity",
+        "newStock": "New Stock"
+      }
+    },
+    "toast": {
+      "itemAdded": "Item added",
+      "itemAddedDetail": "registered in inventory.",
+      "restockDone": "Restock registered",
+      "restockDetail": "units added."
+    },
+    "editModal": {
+      "title": "Edit Product",
+      "subtitle": "Modify the product information in the inventory catalog.",
+      "productName": "PRODUCT NAME",
+      "sku": "SKU / CODE",
+      "category": "CATEGORY",
+      "threshold": "ALERT THRESHOLD",
+      "price": "UNIT PRICE (S/)",
+      "save": "Save Changes"
+    }
+  },
+  "subscription": {
+    "meta": {
+      "success": "Payment successful",
+      "myPlan": "My subscription"
+    }
+  },
+  "staff": {
+    "pageTitle": "Staff Management",
+    "pageSubtitle": "Manage staff and their access permissions",
+    "addEmployee": "Add Employee",
+    "searchPlaceholder": "Search by name, email or role...",
+    "allDepartments": "All Departments",
+    "allRoles": "All Roles",
+    "kpi": {
+      "totalEmployees": "Total Employees",
+      "optometrists": "Optometrists",
+      "supportStaff": "Support Staff",
+      "activeToday": "Active Today"
+    },
+    "table": {
+      "employee": "EMPLOYEE",
+      "role": "ROLE",
+      "department": "DEPARTMENT",
+      "status": "STATUS"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "roles": {
+      "optometrist": "Optometrist",
+      "optician": "Optician",
+      "admin": "Administrator",
+      "support": "Support Staff"
+    },
+    "departments": {
+      "clinic": "Clinic",
+      "sales": "Sales",
+      "admin": "Administration"
+    },
+    "addModal": {
+      "title": "Add Employee",
+      "subtitle": "Register a new staff member",
+      "fullName": "Full Name",
+      "email": "Email Address",
+      "phone": "Phone",
+      "role": "Role",
+      "department": "Department",
+      "entryDate": "Entry Date",
+      "defaultPermissions": "Default permissions (by role)",
+      "permissionsNote": "Permissions are assigned based on the role. You can edit them later.",
+      "permissions": {
+        "fullAccess": "Full Access",
+        "clinicalRecords": "Clinical Records",
+        "prescriptions": "Prescriptions"
+      },
+      "placeholders": {
+        "fullName": "e.g. Dr. Emily Smith",
+        "email": "name{'@'}opticspro.com",
+        "phone": "(555) 000-0000"
+      }
+    }
+  },
+  "reports": {
+    "title": "Reports & Analytics",
+    "subtitle": "Business Intelligence",
+    "periodSelector": "Last 6 months",
+    "export": "Export",
+    "resumen": "Summary",
+    "salesFinance": "Sales & Finance",
+    "productivityLab": "Productivity Lab",
+    "personalPerformance": "Personal Performance",
+    "kpis": {
+      "totalRevenue": "Total Revenue",
+      "conversionRate": "Conversion Rate",
+      "avgDeliveryTime": "Average Delivery Time",
+      "pendingBalances": "Pending Balances",
+      "total6Months": "Total 6 months",
+      "recipeToSale": "Prescription to Sale",
+      "vsPreviousQuarter": "vs previous quarter",
+      "openInvoices": "{count} open invoices"
+    },
+    "charts": {
+      "conversionTitle": "Prescription to Sale Conversion",
+      "conversionSubtitle": "Issued prescriptions vs closed sales per month",
+      "salesByProduct": "Sales by Product",
+      "periodDistribution": "Period distribution",
+      "currentMonth": "this month",
+      "prescriptions": "Prescriptions",
+      "closedSales": "Closed Sales",
+      "revenueTrendTitle": "Monthly Revenue Trend",
+      "revenueTrendSubtitle": "Last 6 months · {total} total"
+    },
+    "products": {
+      "progressive": "Progressive Lenses",
+      "singleVision": "Single Vision",
+      "contactLenses": "Contact Lenses",
+      "accessories": "Accessories",
+      "others": "Others"
+    }
+  },
+  "patientCenter": {
+    "profile": {
+          "title": "My Profile",
+          "subtitle": "Welcome to your OptiFlow portal",
+          "patientRole": "Patient",
+          "successTitle": "Profile updated successfully",
+          "successMsg": "Your changes have been saved successfully",
+          "firstName": "First Name",
+          "lastName": "Last Name",
+          "email": "Email Address",
+          "phone": "Phone Number",
+          "address": "Address",
+          "city": "City",
+          "birthDate": "Date of Birth",
+          "medicalInfo": "Medical Information",
+          "recordNumber": "Clinical Record Number",
+          "lastVisit": "Last Visit",
+          "optometrist": "Assigned Optometrist",
+          "nextAppt": "Suggested Next Appointment",
+          "privacyTitle": "About your data",
+          "privacyText": "Your personal information is protected and only used to provide you with better care. You can update it at any time."
+        },
+        "myLenses": {
+          "title": "My Lenses",
+          "subtitle": "Patient Portal · {date}",
+          "searchTitle": "My Orders",
+          "searchPlaceholder": "e.g. LAB-2850",
+          "searchBtn": "Search",
+          "orderNumber": "Order Number",
+          "creationDate": "Creation Date",
+          "status": {
+            "lab": "In Laboratory",
+            "labDesc": "Lenses in manufacturing",
+            "qc": "Quality Control",
+            "qcDesc": "Final verification",
+            "ready": "Ready for Pickup",
+            "readyDesc": "Available in store"
+          },
+          "lensType": "Lens Type",
+          "estimatedDelivery": "Estimated Delivery",
+          "paymentTitle": "Payment Status",
+          "paymentSubtitle": "Financial summary of your order",
+          "totalAmount": "Total Amount",
+          "paidAmount": "Paid Amount",
+          "pendingBalance": "Pending Balance",
+          "paymentProgress": "Payment Progress",
+          "percentPaid": "{percent}% paid"
+        },
+        "calculator": {
+          "title": "Calculator",
+          "subtitle": "Welcome to your OptiFlow portal",
+          "cardTitle": "Lens Thickness Calculator",
+          "cardSubtitle": "Simulate thickness based on your prescription",
+          "sphere": "Sphere (Diopters) *",
+          "cylinder": "Cylinder (Diopters)",
+          "materials": "Lens Material (From API)",
+          "calculateBtn": "Calculate Thickness",
+          "loading": "Loading prices...",
+          "thickness": "Estimated Thickness (center)",
+          "with": "with",
+          "comparison": "Materials Comparison",
+          "recommendationTitle": "Recommendation",
+          "recommendationDesc": "Your prescription allows using any material. The standard offers good value for money.",
+          "guideTitle": "What do the indices mean?",
+          "guides": {
+            "std": {
+              "title": "1.50 Index (Standard)",
+              "text": "Basic material, ideal for low prescriptions (-2.00 to +2.00)"
+            },
+            "thin": {
+              "title": "1.60 Index (Thin)",
+              "text": "30% thinner, recommended for medium prescriptions"
+            },
+            "extraThin": {
+              "title": "1.67 Index (Extra Thin)",
+              "text": "40% thinner, ideal for high prescriptions"
+            },
+            "ultraThin": {
+              "title": "1.74 Index (Ultra Thin)",
+              "text": "Maximum thickness reduction for very high prescriptions"
+            }
+          }
+        },
+        "notifications": {
+          "title": "Notifications",
+          "subtitle": "Welcome to your OptiFlow portal",
+          "unread": "{count} unread",
+          "details": "View details",
+          "bannerTitle": "Stay informed",
+          "bannerText": "We will notify you when your order is ready for pickup, when there are changes in your order status, and when we have special promotions for you."
+        },
+        "virtualTryOn": {
+          "title": "Virtual Try-On",
+          "subtitle": "Welcome to your OptiFlow portal",
+          "cardTitle": "3D Virtual Try-On",
+          "cardSubtitle": "Try on frames in real time",
+          "activateCamera": "Activate your camera",
+          "cameraInstruction": "To start trying on frames, we need access to your camera",
+          "turnOnBtn": "Turn On Camera",
+          "turnOffBtn": "Turn Off Camera",
+          "selectFrame": "Select a frame",
+          "tipsTitle": "Tips for a better experience",
+          "tips": [
+            "Keep your face centered in the camera",
+            "Make sure to have good frontal lighting",
+            "Avoid sudden movements for better detection"
+          ]
+        }
+  }
+}

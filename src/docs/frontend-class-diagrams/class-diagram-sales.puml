@@ -1,0 +1,320 @@
+@startuml BC-03_Sales
+
+package "shared.infrastructure" {
+  class BaseApi {
+    - http: AxiosInstance
+    + constructor()
+    + get http(): AxiosInstance
+  }
+  class BaseEndpoint {
+    - http: AxiosInstance
+    - resourcePath: string
+    + constructor(http, resourcePath)
+    + getAll(): Promise<any[]>
+    + getById(id): Promise<any>
+    + create(resource): Promise<any>
+    + update(id, resource): Promise<any>
+    + patch(id, resource): Promise<any>
+    + delete(id): Promise<void>
+    + getAllByParam(paramKey, paramValue): Promise<any[]>
+  }
+}
+
+package "sales.domain.model" {
+  class Sale {
+    + id: number
+    + invoiceNumber: string
+    + labOrderNumber: string
+    + patientId: number
+    + patientName: string
+    + patientRx: string
+    + userId: number
+    + userName: string
+    + articulos: string[]
+    + totalAmount: number
+    + adelanto: number
+    + discountCode: string
+    + discountAmount: number
+    + pendingBalance: number
+    + status: SaleStatus
+    + paymentMethod: string
+    + createdAt: string
+    + deliveredAt: string
+    + notes: string
+    + constructor()
+  }
+  class SaleDetail {
+    + id: number
+    + saleId: number
+    + productId: number
+    + productName: string
+    + quantity: number
+    + unitPrice: number
+    + subtotal: number
+    + constructor()
+  }
+  class Payment {
+    + id: number
+    + saleId: number
+    + amountPaid: number
+    + method: string
+    + paidAt: string
+    + constructor()
+  }
+  class Feedback {
+    + id: number
+    + saleId: number
+    + patientId: number
+    + rating: number
+    + recommendService: boolean
+    + comment: string
+    + submittedAt: string
+    + constructor()
+  }
+  enum SaleStatus {
+    PENDING
+    PARTIAL
+    PAID
+    DELIVERED
+    RETURNED
+  }
+  enum PaymentMethod {
+    CASH
+    CREDIT_CARD
+    DEBIT_CARD
+    TRANSFER
+    INSURANCE
+  }
+}
+
+package "sales.infrastructure" {
+  class SaleResource {
+    + id: number
+    + invoiceNumber: string
+    + labOrderNumber: string
+    + patientId: number
+    + patientName: string
+    + patientRx: string
+    + userId: number
+    + userName: string
+    + articulos: string[]
+    + totalAmount: number
+    + adelanto: number
+    + discountCode: string
+    + discountAmount: number
+    + pendingBalance: number
+    + status: string
+    + paymentMethod: string
+    + createdAt: string
+    + deliveredAt: string
+    + notes: string
+  }
+  class SaleDetailResource {
+    + id: number
+    + saleId: number
+    + productId: number
+    + productName: string
+    + quantity: number
+    + unitPrice: number
+    + subtotal: number
+  }
+  class PaymentResource {
+    + id: number
+    + saleId: number
+    + amountPaid: number
+    + method: string
+    + paidAt: string
+  }
+  class FeedbackResource {
+    + id: number
+    + saleId: number
+    + patientId: number
+    + rating: number
+    + recommendService: boolean
+    + comment: string
+    + submittedAt: string
+  }
+  class SaleAssembler {
+    + {static} toEntityFromResource(r: SaleResource): Sale
+    + {static} toEntitiesFromResponse(r: SaleResource[]): Sale[]
+    + {static} toResourceFromEntity(s: Sale): SaleResource
+  }
+  class SaleDetailAssembler {
+    + {static} toEntityFromResource(r: SaleDetailResource): SaleDetail
+    + {static} toEntitiesFromResponse(r: SaleDetailResource[]): SaleDetail[]
+  }
+  class PaymentAssembler {
+    + {static} toEntityFromResource(r: PaymentResource): Payment
+    + {static} toEntitiesFromResponse(r: PaymentResource[]): Payment[]
+    + {static} toResourceFromEntity(p: Payment): PaymentResource
+  }
+  class FeedbackAssembler {
+    + {static} toEntityFromResource(r: FeedbackResource): Feedback
+    + {static} toResourceFromEntity(f: Feedback): FeedbackResource
+  }
+  class SalesApi {
+    - sales: BaseEndpoint
+    - saleDetails: BaseEndpoint
+    + constructor()
+    + getSales(): Promise<SaleResource[]>
+    + getSaleById(id: number): Promise<SaleResource>
+    + createSale(r: SaleResource): Promise<SaleResource>
+    + updateSale(id: number, r: SaleResource): Promise<SaleResource>
+    + getSaleDetailsBySaleId(saleId: number): Promise<SaleDetailResource[]>
+  }
+  class PaymentApi {
+    - payments: BaseEndpoint
+    + constructor()
+    + getPaymentsBySaleId(saleId: number): Promise<PaymentResource[]>
+    + registerPayment(r: PaymentResource): Promise<PaymentResource>
+  }
+  class FeedbackApi {
+    - feedbacks: BaseEndpoint
+    + constructor()
+    + createFeedback(r: FeedbackResource): Promise<FeedbackResource>
+  }
+}
+
+package "sales.application" {
+  class SalesStore {
+    + sales: Ref<Sale[]>
+    + payments: Ref<Payment[]>
+    + currentSale: Ref<Sale | null>
+    + loading: Ref<boolean>
+    + errors: Ref<string[]>
+    + salesCount: ComputedRef<number>
+    + openSalesCount: ComputedRef<number>
+    + completedSalesCount: ComputedRef<number>
+    + totalIngresos: ComputedRef<number>
+    + totalAdelantos: ComputedRef<number>
+    + totalSaldo: ComputedRef<number>
+    + ticketPromedio: ComputedRef<number>
+    + fetchSales(): Promise<void>
+    + createSale(s: Sale): Promise<void>
+    + updateSale(id: number, s: Sale): Promise<void>
+    + markAsReturned(id: number): Promise<void>
+    + cancelSale(id: number): Promise<void>
+    + fetchPaymentsBySale(saleId: number): Promise<void>
+    + registerPayment(p: Payment): Promise<void>
+    + submitFeedback(f: Feedback): Promise<void>
+  }
+}
+
+package "sales.presentation.views" {
+  class SaleListView <<view>> {
+    - search: Ref<string>
+    - statusFilter: Ref<string | null>
+    - showNewSaleModal: Ref<boolean>
+    - showPaymentDialog: Ref<boolean>
+    - showFeedbackDialog: Ref<boolean>
+    - selectedSale: Ref<Sale | null>
+    - filteredSales: ComputedRef<Sale[]>
+    + onSaleCreated(sale: Sale): void
+    + onCollectPayment(sale: Sale): void
+    + onPaymentRegistered(payment: Payment): void
+    + onReturnSale(saleId: number): void
+    + onCancelSale(saleId: number): void
+    + onFeedbackSubmitted(feedback: Feedback): void
+    + formatCurrency(value: number): string
+  }
+}
+
+package "sales.presentation.components" {
+  class SaleTable <<component>> {
+    + sales: Sale[] (prop)
+    + emit return-sale: (saleId: number)
+    + emit cancel-sale: (saleId: number)
+    + emit collect-payment: (sale: Sale)
+    + formatCurrency(value: number): string
+    + adelantoPercent(sale: Sale): number
+    + isOpen(sale: Sale): boolean
+    + isDelivered(sale: Sale): boolean
+  }
+  class SaleStatusBadge <<component>> {
+    + status: string (prop)
+  }
+  class SaleFormModal <<component>> {
+    + visible: boolean (prop)
+    - step: Ref<number>
+    - patients: Ref<any[]>
+    - selectedPatient: Ref<any | null>
+    - frameOption: Ref<string>
+    - lenseMaterial: Ref<string>
+    - lenseType: Ref<string>
+    - extraItems: Ref<string[]>
+    - totalAmountInput: Ref<number>
+    - adelanto: Ref<number>
+    - discountCode: Ref<string>
+    - discountAmount: Ref<number>
+    - paymentMethod: Ref<string>
+    - notes: Ref<string>
+    - finalAmount: ComputedRef<number>
+    - pendingBalance: ComputedRef<number>
+    - canSave: ComputedRef<boolean>
+    + emit saved: (sale: Sale)
+    + emit close: void
+    + nextStep(): void
+    + prevStep(): void
+    + addExtraItem(): void
+    + removeExtraItem(i: number): void
+    + buildArticulos(): string[]
+    + generateCode(prefix: string): string
+    + save(): void
+    + close(): void
+  }
+  class PaymentForm <<component>> {
+    + sale: Sale (prop)
+    + payments: Payment[] (prop)
+    - method: Ref<string>
+    - amountPaid: Ref<number>
+    - isValid: ComputedRef<boolean>
+    + emit payment-registered: (payment: Payment)
+    + submit(): void
+  }
+  class FeedbackForm <<component>> {
+    + saleId: number (prop)
+    + patientId: number (prop)
+    - rating: Ref<number>
+    - recommendService: Ref<boolean>
+    - comment: Ref<string>
+    + emit feedback-submitted: (feedback: Feedback)
+    + emit skip: void
+    + submit(): void
+  }
+}
+
+BaseApi <|-- SalesApi
+BaseApi <|-- PaymentApi
+BaseApi <|-- FeedbackApi
+SalesApi --> BaseEndpoint : uses
+PaymentApi --> BaseEndpoint : uses
+FeedbackApi --> BaseEndpoint : uses
+
+SaleAssembler ..> SaleResource : transforms
+SaleAssembler --> Sale : creates
+SaleDetailAssembler ..> SaleDetailResource : transforms
+SaleDetailAssembler --> SaleDetail : creates
+PaymentAssembler ..> PaymentResource : transforms
+PaymentAssembler --> Payment : creates
+FeedbackAssembler ..> FeedbackResource : transforms
+FeedbackAssembler --> Feedback : creates
+
+SalesStore --> SalesApi : uses
+SalesStore --> PaymentApi : uses
+SalesStore --> FeedbackApi : uses
+SalesStore --> SaleAssembler : uses
+SalesStore --> SaleDetailAssembler : uses
+SalesStore --> PaymentAssembler : uses
+SalesStore --> FeedbackAssembler : uses
+
+SaleListView --> SalesStore : uses
+SaleListView *-- SaleTable : contains
+SaleListView *-- SaleFormModal : contains
+SaleListView *-- PaymentForm : dialog
+SaleListView *-- FeedbackForm : dialog
+SaleTable *-- SaleStatusBadge : contains
+
+Sale --> SaleStatus : uses
+Payment --> PaymentMethod : uses
+
+@enduml
