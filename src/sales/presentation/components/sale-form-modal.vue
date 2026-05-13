@@ -98,7 +98,10 @@ function applyDiscount() {
 onMounted(async () => {
   try {
     const res = await axios.get(`${import.meta.env.VITE_OPTIFLOW_API_URL}/patients`)
-    patients.value = res.data
+    patients.value = res.data.map(p => ({
+      ...p,
+      fullName: `${p.first_name || ''} ${p.last_name || ''}`.trim()
+    }))
   } catch (e) {
     console.error('Error loading patients:', e)
   }
