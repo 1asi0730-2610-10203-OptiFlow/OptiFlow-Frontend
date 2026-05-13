@@ -1,534 +1,579 @@
 {
-  "sales": [
+  "roles": [
     {
-      "id": 1,
-      "invoiceNumber": "FAC-2843",
-      "labOrderNumber": "",
-      "patientId": 1,
-      "patientName": "Carlos Rivera",
-      "patientRx": "",
-      "userId": 1,
-      "userName": "Ana Torres",
-      "articulos": [],
-      "totalAmount": 160,
-      "adelanto": 0,
-      "pendingBalance": 0,
-      "discountCode": "",
-      "discountAmount": 0,
-      "status": "RETURNED",
-      "paymentMethod": "CREDIT_CARD",
-      "createdAt": "2026-04-19",
-      "deliveredAt": "2026-04-22",
-      "notes": ""
+      "role_id": 1,
+      "name": "ADMIN"
     },
     {
-      "id": 2,
-      "invoiceNumber": "FAC-2844",
-      "labOrderNumber": "",
-      "patientId": 2,
-      "patientName": "David Martínez",
-      "patientRx": "",
-      "userId": 1,
-      "userName": "Ana Torres",
-      "articulos": [],
-      "totalAmount": 180,
-      "adelanto": 0,
-      "pendingBalance": 0,
-      "discountCode": "",
-      "discountAmount": 0,
-      "status": "PAID",
-      "paymentMethod": "CASH",
-      "createdAt": "2026-04-20",
-      "deliveredAt": "",
-      "notes": ""
+      "role_id": 2,
+      "name": "SALES_ADVISOR"
     },
     {
-      "id": 3,
-      "invoiceNumber": "FAC-2845",
-      "labOrderNumber": "",
-      "patientId": 3,
-      "patientName": "Emma Wilson",
-      "patientRx": "",
-      "userId": 2,
-      "userName": "Luis Gómez",
-      "articulos": [],
-      "totalAmount": 245,
-      "adelanto": 0,
-      "pendingBalance": 0,
-      "discountCode": "DESC15",
-      "discountAmount": 36.75,
-      "status": "PAID",
-      "paymentMethod": "TRANSFER",
-      "createdAt": "2026-04-21",
-      "deliveredAt": "",
-      "notes": "Cliente VIP"
-    },
-    {
-      "id": 4,
-      "invoiceNumber": "FAC-2846",
-      "patientId": 4,
-      "patientName": "Sarah Johnson",
-      "userId": 1,
-      "userName": "Ana Torres",
-      "totalAmount": 125,
-      "discountCode": "",
-      "discountAmount": 0,
-      "pendingBalance": 0,
-      "status": "PAID",
-      "paymentMethod": "DEBIT_CARD",
-      "createdAt": "2026-04-22",
-      "deliveredAt": "",
-      "notes": ""
-    },
-    {
-      "id": 5,
-      "invoiceNumber": "FAC-2847",
-      "patientId": 5,
-      "patientName": "Miguel Flores",
-      "userId": 2,
-      "userName": "Luis Gómez",
-      "totalAmount": 320,
-      "discountCode": "",
-      "discountAmount": 0,
-      "pendingBalance": 0,
-      "status": "RETURNED",
-      "paymentMethod": "CREDIT_CARD",
-      "createdAt": "2026-04-18",
-      "deliveredAt": "2026-04-21",
-      "notes": "Devolución por defecto en lente"
-    },
-    {
-      "id": 6,
-      "invoiceNumber": "FAC-2810",
-      "labOrderNumber": "LAB-1821",
-      "patientId": 2,
-      "patientName": "David Martínez",
-      "patientRx": "",
-      "userId": 1,
-      "userName": "John Doe",
-      "articulos": [
-        "Lunas Progresivo"
-      ],
-      "totalAmount": 108,
-      "adelanto": 100,
-      "pendingBalance": 8,
-      "discountCode": "desc15",
-      "discountAmount": 15,
-      "status": "PARTIAL",
-      "paymentMethod": "CASH",
-      "createdAt": "2026-05-10",
-      "deliveredAt": "",
-      "notes": ""
+      "role_id": 3,
+      "name": "OPTOMETRIST"
     }
   ],
-  "sale_details": [
+  "employees": [
     {
-      "id": 1,
-      "saleId": 1,
-      "productId": 101,
-      "productName": "Montura Ray-Ban RB5154",
-      "quantity": 1,
-      "unitPrice": 120,
-      "subtotal": 120
+      "employee_id": 1,
+      "employee_uuid": "emp-001-uuid",
+      "username": "admin01",
+      "password_hash": "hashed_password_1",
+      "role_id": 1,
+      "name": "Carlos Mendoza",
+      "phone": "999111222",
+      "department": "Management",
+      "status": "ACTIVE",
+      "hire_date": "2024-01-10"
     },
     {
-      "id": 2,
-      "saleId": 1,
-      "productId": 201,
-      "productName": "Luna Progresiva CR-39",
-      "quantity": 1,
-      "unitPrice": 40,
-      "subtotal": 40
+      "employee_id": 2,
+      "employee_uuid": "emp-002-uuid",
+      "username": "sales01",
+      "password_hash": "hashed_password_2",
+      "role_id": 2,
+      "name": "Lucia Ramirez",
+      "phone": "988222333",
+      "department": "Sales",
+      "status": "ACTIVE",
+      "hire_date": "2024-03-15"
     },
     {
-      "id": 3,
-      "saleId": 2,
-      "productId": 102,
-      "productName": "Montura Oakley OX8046",
-      "quantity": 1,
-      "unitPrice": 180,
-      "subtotal": 180
-    },
-    {
-      "id": 4,
-      "saleId": 3,
-      "productId": 103,
-      "productName": "Montura Gucci GG0010O",
-      "quantity": 1,
-      "unitPrice": 245,
-      "subtotal": 245
-    },
-    {
-      "id": 5,
-      "saleId": 4,
-      "productId": 202,
-      "productName": "Luna Fotocromática Trivex",
-      "quantity": 1,
-      "unitPrice": 125,
-      "subtotal": 125
-    },
-    {
-      "id": 6,
-      "saleId": 5,
-      "productId": 104,
-      "productName": "Montura Prada PR 14WV",
-      "quantity": 1,
-      "unitPrice": 320,
-      "subtotal": 320
+      "employee_id": 3,
+      "employee_uuid": "emp-003-uuid",
+      "username": "opto01",
+      "password_hash": "hashed_password_3",
+      "role_id": 3,
+      "name": "Jorge Castillo",
+      "phone": "977333444",
+      "department": "Optometry",
+      "status": "ACTIVE",
+      "hire_date": "2024-05-20"
     }
   ],
-  "payments": [
+  "sessions": [
     {
-      "id": 1,
-      "saleId": 1,
-      "amountPaid": 160,
-      "method": "CREDIT_CARD",
-      "paidAt": "2026-04-19T10:30:00Z"
+      "session_id": 1,
+      "session_uuid": "sess-001-uuid",
+      "employee_id": 1,
+      "token": "token_admin_123",
+      "expires_at": "2026-06-01T12:00:00"
     },
     {
-      "id": 2,
-      "saleId": 2,
-      "amountPaid": 90,
-      "method": "CASH",
-      "paidAt": "2026-04-20T09:15:00Z"
+      "session_id": 2,
+      "session_uuid": "sess-002-uuid",
+      "employee_id": 2,
+      "token": "token_sales_456",
+      "expires_at": "2026-06-01T15:00:00"
     },
     {
-      "id": 3,
-      "saleId": 4,
-      "amountPaid": 125,
-      "method": "DEBIT_CARD",
-      "paidAt": "2026-04-22T11:00:00Z"
-    },
-    {
-      "id": 4,
-      "saleId": 5,
-      "amountPaid": 320,
-      "method": "CREDIT_CARD",
-      "paidAt": "2026-04-18T16:45:00Z"
-    },
-    {
-      "id": 5,
-      "saleId": 2,
-      "amountPaid": 90,
-      "method": "DEBIT_CARD",
-      "paidAt": "2026-05-05T18:55:41.672Z"
-    },
-    {
-      "id": 6,
-      "saleId": 3,
-      "amountPaid": 245,
-      "method": "CREDIT_CARD",
-      "paidAt": "2026-05-05T22:46:26.149Z"
-    }
-  ],
-  "feedbacks": [
-    {
-      "id": 1,
-      "saleId": 1,
-      "patientId": 1,
-      "rating": 5,
-      "recommendService": true,
-      "comment": "Excelente atención",
-      "submittedAt": "2026-04-22T15:00:00Z"
-    },
-    {
-      "id": 2,
-      "saleId": 4,
-      "patientId": 4,
-      "rating": 4,
-      "recommendService": true,
-      "comment": "Muy buena calidad",
-      "submittedAt": "2026-04-22T12:00:00Z"
+      "session_id": 3,
+      "session_uuid": "sess-003-uuid",
+      "employee_id": 3,
+      "token": "token_opto_789",
+      "expires_at": "2026-06-02T10:00:00"
     }
   ],
   "patients": [
     {
-      "id": 1,
-      "name": "Carlos Rivera",
+      "patient_id": 1,
+      "customer_uuid": "pat-001-uuid",
+      "first_name": "Sarah",
+      "last_name": "Johnson",
       "dni": "12345678",
-      "email": "carlos@email.com",
-      "phone": "987654321"
+      "phone": "(555) 123-4567",
+      "email": "sarah.j@email.com",
+      "birth_date": "1989-06-15"
     },
     {
-      "id": 2,
-      "name": "David Martínez",
+      "patient_id": 2,
+      "customer_uuid": "pat-002-uuid",
+      "first_name": "Michael",
+      "last_name": "Chen",
       "dni": "23456789",
-      "email": "david@email.com",
-      "phone": "987654322"
+      "phone": "(555) 234-5678",
+      "email": "m.chen@email.com",
+      "birth_date": "1985-03-22"
     },
     {
-      "id": 3,
-      "name": "Emma Wilson",
+      "patient_id": 3,
+      "customer_uuid": "pat-003-uuid",
+      "first_name": "Emma",
+      "last_name": "Wilson",
       "dni": "34567890",
-      "email": "emma@email.com",
-      "phone": "987654323"
+      "phone": "(555) 345-6789",
+      "email": "emma.w@email.com",
+      "birth_date": "1995-11-08"
     },
     {
-      "id": 4,
-      "name": "Sarah Johnson",
+      "patient_id": 4,
+      "customer_uuid": "pat-004-uuid",
+      "first_name": "David",
+      "last_name": "Martínez",
       "dni": "45678901",
-      "email": "sarah@email.com",
-      "phone": "987654324"
-    },
-    {
-      "id": 5,
-      "name": "Miguel Flores",
-      "dni": "56789012",
-      "email": "miguel@email.com",
-      "phone": "987654325"
+      "phone": "(555) 456-7890",
+      "email": "d.martinez@email.com",
+      "birth_date": "1978-09-30"
     }
   ],
-  "work_orders": [
+  "clinicalRecords": [
     {
-      "order_id": "LAB-2847",
-      "sale_id": 1,
-      "recipe_id": 1,
-      "lab_id": 1,
-      "status": "IN_PRODUCTION",
-      "delivery_date": "2026-04-25",
-      "patient_name": "Sarah Johnson",
-      "laboratory_name": "Vision Labs Inc.",
-      "lens_type": "Lunas Progresivas",
-      "frame": "Ray-Ban RB5228 Negro",
-      "prescription": "OD: Esf -2.50, Cil -0.75, Eje 90 | OS: Esf -2.75, Cil -0.50, Eje 85",
-      "priority": "urgent",
-      "deposit": 242.50,
-      "total": 485.00,
-      "is_rework": false
+      "record_id": 1,
+      "clinical_record_uuid": "record-001-uuid",
+      "patient_id": 1
     },
     {
-      "order_id": "LAB-2846",
-      "sale_id": 2,
-      "recipe_id": 2,
-      "lab_id": 2,
-      "status": "QUALITY_CONTROL",
-      "delivery_date": "2026-04-22",
-      "patient_name": "Michael Chen",
-      "laboratory_name": "OpticalPro Lab",
-      "lens_type": "Lentes de Contacto",
-      "frame": "Sin Montura",
-      "prescription": "OD: Esf -1.25 | OS: Esf -1.50",
-      "priority": "high",
-      "deposit": 90.00,
-      "total": 180.00,
-      "is_rework": false
+      "record_id": 2,
+      "clinical_record_uuid": "record-002-uuid",
+      "patient_id": 2
     },
     {
-      "order_id": "LAB-2845",
-      "sale_id": 3,
-      "recipe_id": 3,
-      "lab_id": 1,
-      "status": "READY",
-      "delivery_date": "2026-04-21",
-      "patient_name": "Emma Wilson",
-      "laboratory_name": "Vision Labs Inc.",
-      "lens_type": "Lunas Monofocales",
-      "frame": "Oakley Holbrook Carey",
-      "prescription": "OD: Esf +1.00, Cil +0.25 | OS: Esf +1.25, Cil +0.50",
-      "priority": "normal",
-      "deposit": 62.50,
-      "total": 125.00,
-      "is_rework": false
+      "record_id": 3,
+      "clinical_record_uuid": "record-003-uuid",
+      "patient_id": 3
     },
     {
-      "order_id": "LAB-2844",
-      "sale_id": 4,
-      "recipe_id": 4,
-      "lab_id": 2,
-      "status": "PENDING",
-      "delivery_date": "2026-04-20",
-      "patient_name": "David Martínez",
-      "laboratory_name": "Premium Optics Lab",
-      "lens_type": "Lunas con Filtro Azul",
-      "frame": "Nike 7284 Grafito",
-      "prescription": "OD: Esf -3.00, Cil -0.50, Eje 175 | OS: Esf -3.25",
-      "priority": "urgent",
-      "deposit": 160.00,
-      "total": 320.00,
-      "is_rework": false
-    },
-    {
-      "order_id": "LAB-2843",
-      "sale_id": 5,
-      "recipe_id": 5,
-      "lab_id": 2,
-      "status": "DELIVERED",
-      "delivery_date": "2026-04-18",
-      "patient_name": "Lisa Anderson",
-      "laboratory_name": "OpticalPro Lab",
-      "lens_type": "Lunas Polarizadas",
-      "frame": "Maui Jim Peahi Negro",
-      "prescription": "OD: Esf -1.75 | OS: Esf -2.00, Cil -0.25",
-      "priority": "normal",
-      "deposit": 245.00,
-      "total": 245.00,
-      "is_rework": false
-    },
-    {
-      "order_id": "LAB-2842",
-      "sale_id": 6,
-      "recipe_id": 6,
-      "lab_id": 1,
-      "status": "PENDING",
-      "delivery_date": "2026-04-26",
-      "patient_name": "Carlos Rivera",
-      "laboratory_name": "Vision Labs Inc.",
-      "lens_type": "Lunas Bifocales",
-      "frame": "Silhouette Titan Marrón",
-      "prescription": "OD: Esf +2.50, Add +2.00 | OS: Esf +2.75, Add +2.00",
-      "priority": "normal",
-      "deposit": 150.00,
-      "total": 380.00,
-      "is_rework": false
-    },
-    {
-      "order_id": "LAB-2841",
-      "sale_id": 7,
-      "recipe_id": 7,
-      "lab_id": 2,
-      "status": "IN_PRODUCTION",
-      "delivery_date": "2026-04-23",
-      "patient_name": "Ana Torres",
-      "laboratory_name": "Premium Optics Lab",
-      "lens_type": "Lunas Antireflejantes",
-      "frame": "Prada PR 05WS Plata",
-      "prescription": "OD: Esf -0.75 | OS: Esf -1.00, Cil -0.25",
-      "priority": "high",
-      "deposit": 175.00,
-      "total": 290.00,
-      "is_rework": false
+      "record_id": 4,
+      "clinical_record_uuid": "record-004-uuid",
+      "patient_id": 4
     }
   ],
-  "laboratories": [
+  "prescriptions": [
     {
-      "lab_id": 1,
-      "name": "Vision Labs Inc.",
-      "contact_info": "visionlabs@email.com"
+      "prescription_id": 1,
+      "prescription_uuid": "presc-001-uuid",
+      "clinical_record_id": 1,
+      "od_sphere": -2.5,
+      "od_cylinder": -0.75,
+      "od_axis": 90,
+      "oi_sphere": -2.75,
+      "oi_cylinder": -0.5,
+      "oi_axis": 85,
+      "addition": null,
+      "notes": "Paciente reporta mayor tiempo frente a pantallas. Se recomienda filtro de luz azul.",
+      "created_at": "2026-04-15T10:00:00",
+      "doctor_name": "Dra. Emily Smith"
     },
     {
-      "lab_id": 2,
-      "name": "OpticalPro Lab",
-      "contact_info": "opticalpro@email.com"
-    }
-  ],
-  "products": [
-    {
-      "product_id": 1, "category_id": 1, "supplier_id": 1,
-      "brand": "Vision Labs", "model": "Lunas Progresivas",
-      "name": "Lunas Progresivas", "category": "Lunas",
-      "sku": "LUN-PRG-001", "stock": 45,
-      "minimum_stock_threshold": 20, "price": 125.00,
-      "supplier_name": "Vision Labs Inc.", "last_restock_date": "2026-04-10"
+      "prescription_id": 2,
+      "prescription_uuid": "presc-002-uuid",
+      "clinical_record_id": 1,
+      "od_sphere": -2.25,
+      "od_cylinder": -0.75,
+      "od_axis": 98,
+      "oi_sphere": -2.5,
+      "oi_cylinder": -0.25,
+      "oi_axis": 80,
+      "addition": null,
+      "notes": "Control anual.",
+      "created_at": "2025-03-10T11:00:00",
+      "doctor_name": "Dra. Emily Smith"
     },
     {
-      "product_id": 2, "category_id": 3, "supplier_id": 4,
-      "brand": "Eye Care", "model": "Solución LC",
-      "name": "Solución para Lentes de Contacto", "category": "Accesorios",
-      "sku": "ACC-SLC-002", "stock": 5,
-      "minimum_stock_threshold": 20, "price": 8.99,
-      "supplier_name": "Eye Care Supplies", "last_restock_date": "2026-03-28"
+      "prescription_id": 3,
+      "prescription_uuid": "presc-003-uuid",
+      "clinical_record_id": 2,
+      "od_sphere": -1.25,
+      "od_cylinder": 0.0,
+      "od_axis": 0,
+      "oi_sphere": -1.5,
+      "oi_cylinder": -0.25,
+      "oi_axis": 75,
+      "addition": null,
+      "notes": "Miopía leve.",
+      "created_at": "2026-04-10T09:00:00",
+      "doctor_name": "Dra. Emily Smith"
     },
     {
-      "product_id": 3, "category_id": 1, "supplier_id": 2,
-      "brand": "OpticalPro", "model": "Filtro Azul",
-      "name": "Lunas con Filtro de Luz Azul", "category": "Lunas",
-      "sku": "LUN-FLA-003", "stock": 8,
-      "minimum_stock_threshold": 30, "price": 89.00,
-      "supplier_name": "OpticalPro Lab", "last_restock_date": "2026-04-05"
+      "prescription_id": 4,
+      "prescription_uuid": "presc-004-uuid",
+      "clinical_record_id": 3,
+      "od_sphere": 1.0,
+      "od_cylinder": 0.25,
+      "od_axis": 10,
+      "oi_sphere": 1.25,
+      "oi_cylinder": 0.5,
+      "oi_axis": 15,
+      "addition": 2.0,
+      "notes": "Hipermetropía con presbicia inicial.",
+      "created_at": "2026-04-18T14:00:00",
+      "doctor_name": "Dra. Emily Smith"
     },
     {
-      "product_id": 4, "category_id": 2, "supplier_id": 5,
-      "brand": "Fashion Optics", "model": "Premium",
-      "name": "Armazones Diseñador Premium", "category": "Armazones",
-      "sku": "ARM-DSG-004", "stock": 28,
-      "minimum_stock_threshold": 15, "price": 245.00,
-      "supplier_name": "Fashion Optics Co.", "last_restock_date": "2026-04-15"
-    },
-    {
-      "product_id": 5, "category_id": 2, "supplier_id": 6,
-      "brand": "Budget Frames", "model": "Lectura",
-      "name": "Armazones de Lectura", "category": "Armazones",
-      "sku": "ARM-LEC-005", "stock": 12,
-      "minimum_stock_threshold": 25, "price": 35.00,
-      "supplier_name": "Budget Frames Inc.", "last_restock_date": "2026-04-01"
-    },
-    {
-      "product_id": 6, "category_id": 3, "supplier_id": 4,
-      "brand": "Eye Care", "model": "Kit Limpieza",
-      "name": "Kits de Limpieza", "category": "Accesorios",
-      "sku": "ACC-LMP-006", "stock": 67,
-      "minimum_stock_threshold": 30, "price": 12.50,
-      "supplier_name": "Eye Care Supplies", "last_restock_date": "2026-04-18"
-    }
-  ],
-  "categories": [
-    {
-      "category_id": 1,
-      "name": "Lunas"
-    },
-    {
-      "category_id": 2,
-      "name": "Armazones"
-    },
-    {
-      "category_id": 3,
-      "name": "Accesorios"
-    },
-    {
-      "category_id": 4,
-      "name": "Lentes de Contacto"
-    },
-    {
-      "category_id": 5,
-      "name": "Lentes de Sol"
-    },
-    {
-      "category_id": 6,
-      "name": "Equipos"
+      "prescription_id": 5,
+      "prescription_uuid": "presc-005-uuid",
+      "clinical_record_id": 4,
+      "od_sphere": -3.0,
+      "od_cylinder": -0.5,
+      "od_axis": 110,
+      "oi_sphere": -3.25,
+      "oi_cylinder": 0.0,
+      "oi_axis": 0,
+      "addition": null,
+      "notes": "Miopía moderada.",
+      "created_at": "2026-04-12T16:00:00",
+      "doctor_name": "Dra. Emily Smith"
     }
   ],
   "suppliers": [
     {
       "supplier_id": 1,
-      "name": "Vision Labs Inc.",
-      "contact_person": "",
-      "phone": "",
-      "email": ""
+      "name": "Optic Supplier SAC",
+      "contact_person": "Juan Perez",
+      "phone": "999888777",
+      "email": "contacto@opticsupplier.com",
+      "address": "Av. Principal 123"
     },
     {
       "supplier_id": 2,
-      "name": "OpticalPro Lab",
-      "contact_person": "",
-      "phone": "",
-      "email": ""
+      "name": "Lens Import Peru",
+      "contact_person": "Maria Gomez",
+      "phone": "988777666",
+      "email": "ventas@lensimport.pe",
+      "address": "Calle Secundaria 456"
     },
     {
       "supplier_id": 3,
-      "name": "Premium Optics Lab",
-      "contact_person": "",
-      "phone": "",
-      "email": ""
+      "name": "Health Vision SAC",
+      "contact_person": "Carlos Ruiz",
+      "phone": "977666555",
+      "email": "info@healthvision.com",
+      "address": "Av. Salud 789"
+    }
+  ],
+  "products": [
+    {
+      "product_id": 1,
+      "product_uuid": "prod-001-uuid",
+      "sku": "FRM-1001",
+      "name": "Classic Black Frame",
+      "product_type": "FRAME",
+      "price": 150.0,
+      "quantity": 20,
+      "minimum_stock_threshold": 5,
+      "material": "Acetate",
+      "brand": "VisionPro",
+      "color": "Black",
+      "lens_type": null,
+      "expiration_date": null,
+      "supplier_id": 1
     },
     {
-      "supplier_id": 4,
-      "name": "Eye Care Supplies",
-      "contact_person": "",
-      "phone": "",
-      "email": ""
+      "product_id": 2,
+      "product_uuid": "prod-002-uuid",
+      "sku": "LNS-2001",
+      "name": "Blue Light Lens",
+      "product_type": "LENS",
+      "price": 220.0,
+      "quantity": 35,
+      "minimum_stock_threshold": 10,
+      "material": null,
+      "brand": "ClearVision",
+      "color": null,
+      "lens_type": "Blue Light Filter",
+      "expiration_date": null,
+      "supplier_id": 2
     },
     {
-      "supplier_id": 5,
-      "name": "Fashion Optics Co.",
-      "contact_person": "",
-      "phone": "",
-      "email": ""
+      "product_id": 3,
+      "product_uuid": "prod-003-uuid",
+      "sku": "SOL-3001",
+      "name": "Lens Cleaning Solution",
+      "product_type": "SOLUTION",
+      "price": 25.0,
+      "quantity": 50,
+      "minimum_stock_threshold": 8,
+      "material": null,
+      "brand": "CleanEyes",
+      "color": null,
+      "lens_type": null,
+      "expiration_date": "2027-01-15",
+      "supplier_id": 3
+    }
+  ],
+  "purchaseOrders": [
+    {
+      "purchase_order_id": 1,
+      "supplier_id": 1,
+      "order_date": "2026-04-20T10:00:00",
+      "status": "DELIVERED",
+      "total_amount": 1500.0
+    }
+  ],
+  "purchaseOrderItems": [
+    {
+      "item_id": 1,
+      "purchase_order_id": 1,
+      "product_id": 1,
+      "quantity": 10,
+      "unit_price": 100.0
+    }
+  ],
+  "inventoryTransactions": [
+    {
+      "transaction_id": 1,
+      "product_id": 1,
+      "transaction_type": "IN",
+      "quantity": 10,
+      "reference_id": 1,
+      "reference_type": "PURCHASE_ORDER",
+      "created_at": "2026-04-25T10:00:00"
     },
     {
-      "supplier_id": 6,
-      "name": "Budget Frames Inc.",
-      "contact_person": "",
-      "phone": "",
-      "email": ""
+      "transaction_id": 2,
+      "product_id": 1,
+      "transaction_type": "OUT",
+      "quantity": 1,
+      "reference_id": 1,
+      "reference_type": "SALE",
+      "created_at": "2026-05-01T13:00:00"
+    }
+  ],
+  "quotations": [
+    {
+      "quotation_id": 1,
+      "quotation_uuid": "quote-001-uuid",
+      "prescription_id": 1,
+      "total": 370.0,
+      "created_at": "2026-05-01T12:00:00"
+    },
+    {
+      "quotation_id": 2,
+      "quotation_uuid": "quote-002-uuid",
+      "prescription_id": 2,
+      "total": 440.0,
+      "created_at": "2026-05-02T14:00:00"
+    },
+    {
+      "quotation_id": 3,
+      "quotation_uuid": "quote-003-uuid",
+      "prescription_id": 3,
+      "total": 175.0,
+      "created_at": "2026-05-03T16:00:00"
+    }
+  ],
+  "quotationItems": [
+    {
+      "item_id": 1,
+      "quotation_id": 1,
+      "product_id": 1,
+      "quantity": 1,
+      "unit_price": 150.0
+    },
+    {
+      "item_id": 2,
+      "quotation_id": 1,
+      "product_id": 2,
+      "quantity": 1,
+      "unit_price": 220.0
+    },
+    {
+      "item_id": 3,
+      "quotation_id": 3,
+      "product_id": 3,
+      "quantity": 1,
+      "unit_price": 25.0
+    }
+  ],
+  "sales": [
+    {
+      "sale_id": 1,
+      "sale_uuid": "sale-001-uuid",
+      "employee_id": 2,
+      "quotation_id": 1,
+      "status": "PAID",
+      "total_amount": 370.0,
+      "deposit_amount": 200.0,
+      "outstanding_balance": 170.0,
+      "created_at": "2026-05-01T13:00:00"
+    },
+    {
+      "sale_id": 2,
+      "sale_uuid": "sale-002-uuid",
+      "employee_id": 2,
+      "quotation_id": 2,
+      "status": "PENDING",
+      "total_amount": 440.0,
+      "deposit_amount": 100.0,
+      "outstanding_balance": 340.0,
+      "created_at": "2026-05-02T15:00:00"
+    },
+    {
+      "sale_id": 3,
+      "sale_uuid": "sale-003-uuid",
+      "employee_id": 2,
+      "quotation_id": 3,
+      "status": "DELIVERED",
+      "total_amount": 175.0,
+      "deposit_amount": 175.0,
+      "outstanding_balance": 0.0,
+      "created_at": "2026-05-03T17:00:00"
+    }
+  ],
+  "payments": [
+    {
+      "payment_id": 1,
+      "sale_id": 1,
+      "amount_paid": 200.0,
+      "method": "CARD",
+      "paid_at": "2026-05-01T13:30:00"
+    },
+    {
+      "payment_id": 2,
+      "sale_id": 2,
+      "amount_paid": 100.0,
+      "method": "TRANSFER",
+      "paid_at": "2026-05-02T15:20:00"
+    },
+    {
+      "payment_id": 3,
+      "sale_id": 3,
+      "amount_paid": 175.0,
+      "method": "CASH",
+      "paid_at": "2026-05-03T17:15:00"
+    }
+  ],
+  "workOrders": [
+    {
+      "order_id": 1,
+      "work_order_uuid": "wo-001-uuid",
+      "sale_id": 1,
+      "status": "IN_PRODUCTION",
+      "priority": "NORMAL",
+      "is_rework": false,
+      "laboratory_name": "LabVision",
+      "estimated_date": "2026-05-10",
+      "created_at": "2026-05-01T14:00:00"
+    },
+    {
+      "order_id": 2,
+      "work_order_uuid": "wo-002-uuid",
+      "sale_id": 2,
+      "status": "RECEIVED",
+      "priority": "HIGH",
+      "is_rework": false,
+      "laboratory_name": "OpticLab",
+      "estimated_date": "2026-05-12",
+      "created_at": "2026-05-02T16:00:00"
+    },
+    {
+      "order_id": 3,
+      "work_order_uuid": "wo-003-uuid",
+      "sale_id": 3,
+      "status": "DELIVERED",
+      "priority": "URGENT",
+      "is_rework": false,
+      "laboratory_name": "FastLens",
+      "estimated_date": "2026-05-05",
+      "created_at": "2026-05-03T18:00:00"
+    }
+  ],
+  "notifications": [
+    {
+      "notification_id": 1,
+      "notification_uuid": "notif-001-uuid",
+      "work_order_id": 1,
+      "message": "Your order is currently in production.",
+      "status": "SENT",
+      "sent_at": "2026-05-02T08:00:00"
+    },
+    {
+      "notification_id": 2,
+      "notification_uuid": "notif-002-uuid",
+      "work_order_id": 2,
+      "message": "Your order has been received by the laboratory.",
+      "status": "PENDING",
+      "sent_at": null
+    },
+    {
+      "notification_id": 3,
+      "notification_uuid": "notif-003-uuid",
+      "work_order_id": 3,
+      "message": "Your glasses are ready for pickup.",
+      "status": "SENT",
+      "sent_at": "2026-05-04T09:30:00"
+    }
+  ],
+  "analyticsReports": [
+    {
+      "report_id": 1,
+      "report_uuid": "report-001-uuid",
+      "generated_by": 1,
+      "period": "2026-04",
+      "generated_at": "2026-05-01T20:00:00",
+      "total_revenue": 12000.5,
+      "total_transactions": 40,
+      "conversion_rate": 72.5,
+      "average_delivery_days": 4.5,
+      "on_time_delivery_rate": 90.0,
+      "rework_rate": 3.0,
+      "total_orders": 38,
+      "pending_balance_0_7": 1200.0,
+      "pending_balance_8_15": 400.0,
+      "pending_balance_16_30": 150.0,
+      "pending_balance_over_30": 50.0
+    },
+    {
+      "report_id": 2,
+      "report_uuid": "report-002-uuid",
+      "generated_by": 1,
+      "period": "2026-05",
+      "generated_at": "2026-06-01T20:00:00",
+      "total_revenue": 14500.75,
+      "total_transactions": 50,
+      "conversion_rate": 76.3,
+      "average_delivery_days": 4.0,
+      "on_time_delivery_rate": 92.1,
+      "rework_rate": 2.1,
+      "total_orders": 48,
+      "pending_balance_0_7": 1000.0,
+      "pending_balance_8_15": 350.0,
+      "pending_balance_16_30": 120.0,
+      "pending_balance_over_30": 40.0
+    },
+    {
+      "report_id": 3,
+      "report_uuid": "report-003-uuid",
+      "generated_by": 1,
+      "period": "2026-06",
+      "generated_at": "2026-07-01T20:00:00",
+      "total_revenue": 16200.0,
+      "total_transactions": 58,
+      "conversion_rate": 80.0,
+      "average_delivery_days": 3.8,
+      "on_time_delivery_rate": 95.0,
+      "rework_rate": 1.5,
+      "total_orders": 56,
+      "pending_balance_0_7": 800.0,
+      "pending_balance_8_15": 200.0,
+      "pending_balance_16_30": 100.0,
+      "pending_balance_over_30": 20.0
+    }
+  ],
+  "staffMetrics": [
+    {
+      "staff_metric_id": 1,
+      "report_id": 1,
+      "employee_name": "Lucia Ramirez",
+      "quotations_issued": 15,
+      "sales_closed": 10,
+      "total_revenue": 4500.0
+    },
+    {
+      "staff_metric_id": 2,
+      "report_id": 2,
+      "employee_name": "Lucia Ramirez",
+      "quotations_issued": 18,
+      "sales_closed": 14,
+      "total_revenue": 6200.0
+    },
+    {
+      "staff_metric_id": 3,
+      "report_id": 3,
+      "employee_name": "Lucia Ramirez",
+      "quotations_issued": 20,
+      "sales_closed": 16,
+      "total_revenue": 7100.0
     }
   ]
 }

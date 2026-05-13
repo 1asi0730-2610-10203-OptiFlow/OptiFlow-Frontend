@@ -12,34 +12,31 @@ const emit = defineEmits(['saved', 'close'])
 
 const step = ref(0)
 const TOTAL_STEPS = 3
-const stepLabels = ['Paciente y Rx', 'Armaz & Lentes', 'Pago']
+const stepLabels = ['Paciente y Rx', 'Productos', 'Pago']
 
 // Step 0
 const patients = ref([])
 const selectedPatient = ref(null)
 
-// Step 1 — descriptive only, feeds articulos
-const frameOption = ref('')
-const lenseMaterial = ref('')
-const lenseType = ref('')
-const extraItems = ref([])
+// Step 1 — products from API + manual extras
+const products = ref([])
+const selectedArmazon = ref(null)
+const tipoLuna = ref(null)
+const materialLuna = ref(null)
 
-const frameOptions = [
-  { label: 'Ray-Ban RB5228',     value: 'Ray-Ban RB5228' },
-  { label: 'Nike 7284',          value: 'Nike 7284' },
-  { label: 'Otro / Sin armazón', value: 'Otro' }
+const tipoLunaOptions = [
+  { label: 'Monofocales', value: 'Monofocales' },
+  { label: 'Bifocales', value: 'Bifocales' },
+  { label: 'Progresivas', value: 'Progresivas' },
+  { label: 'Ocupacionales', value: 'Ocupacionales' }
 ]
-const lenseMaterialOptions = [
-  { label: 'CR-39 (Plástico)',   value: 'CR-39' },
-  { label: 'Policarbonato',      value: 'Policarbonato' },
-  { label: 'Trivex',             value: 'Trivex' },
-  { label: 'Alto índice (1.67)', value: '1.67' }
-]
-const lenseTypeOptions = [
-  { label: 'Monofocal',       value: 'Monofocal' },
-  { label: 'Progresivo',      value: 'Progresivo' },
-  { label: 'Con Filtro Azul', value: 'Filtro Azul' },
-  { label: 'Polarizado',      value: 'Polarizado' }
+
+const materialLunaOptions = [
+  { label: 'Resina 1.50', value: 'Resina 1.50' },
+  { label: 'Policarbonato', value: 'Policarbonato' },
+  { label: 'Alto Índice 1.60', value: 'Alto Índice 1.60' },
+  { label: 'Alto Índice 1.67', value: 'Alto Índice 1.67' },
+  { label: 'Cristal', value: 'Cristal' }
 ]
 
 // Step 2 — pricing
@@ -58,28 +55,53 @@ const paymentMethodOptions = [
   { label: 'Seguro',             value: PaymentMethod.INSURANCE }
 ]
 
+const estimatedTotal = computed(() => {
+  let total = 0
+  if (selectedArmazon.value && typeof selectedArmazon.value === 'object' && selectedArmazon.value.price) {
+    total += Number(selectedArmazon.value.price)
+  }
+  return total > 0 ? total : totalAmountInput.value
+})
+
 const finalAmount = computed(() =>
-  Math.max(0, (totalAmountInput.value || 0) - (discountAmount.value || 0))
+  Math.max(0, estimatedTotal.value - (discountAmount.value || 0))
 )
+
 const pendingBalance = computed(() =>
   Math.max(0, finalAmount.value - (adelanto.value || 0))
 )
+
+const adelantoPercent = computed(() => {
+  if (finalAmount.value === 0) return 0
+  return Math.round(((adelanto.value || 0) / finalAmount.value) * 100)
+})
 
 const canSave = computed(() =>
   !!selectedPatient.value && finalAmount.value > 0
 )
 
-onMounted(async () => {
-  const res = await axios.get(`${import.meta.env.VITE_OPTIFLOW_API_URL}/patients`)
-  patients.value = res.data
-})
+function applyDiscount() {
+  if (discountCode.value.toUpperCase() === 'PROMO15') {
+    discountAmount.value = estimatedTotal.value * 0.15
+  } else {
+    discountAmount.value = 0
+  }
+}
 
-function addExtraItem() {
-  extraItems.value.push('')
-}
-function removeExtraItem(i) {
-  extraItems.value.splice(i, 1)
-}
+onMounted(async () => {
+  try {
+    const res = await axios.get(`${import.meta.env.VITE_OPTIFLOW_API_URL}/patients`)
+    patients.value = res.data
+  } catch (e) {
+    console.error('Error loading patients:', e)
+  }
+  try {
+    const res = await axios.get(`${import.meta.env.VITE_OPTIFLOW_API_URL}${import.meta.env.VITE_PRODUCTS_ENDPOINT_PATH}`)
+    products.value = res.data
+  } catch (e) {
+    console.error('Error loading products:', e)
+  }
+})
 
 function nextStep() {
   if (step.value < TOTAL_STEPS - 1) step.value++
@@ -90,9 +112,16 @@ function prevStep() {
 
 function buildArticulos() {
   const arts = []
-  if (frameOption.value && frameOption.value !== 'Otro') arts.push(frameOption.value)
-  if (lenseType.value) arts.push(`Lunas ${lenseType.value}`)
-  extraItems.value.forEach(item => { if (item.trim()) arts.push(item.trim()) })
+  if (selectedArmazon.value) {
+    const name = typeof selectedArmazon.value === 'string' ? selectedArmazon.value : selectedArmazon.value.name
+    arts.push(`Armazón: ${name}`)
+  }
+  if (tipoLuna.value) {
+    arts.push(`Tipo de Luna: ${tipoLuna.value}`)
+  }
+  if (materialLuna.value) {
+    arts.push(`Material de Luna: ${materialLuna.value}`)
+  }
   return arts
 }
 
@@ -127,10 +156,9 @@ function save() {
 function close() {
   step.value = 0
   selectedPatient.value = null
-  frameOption.value = ''
-  lenseMaterial.value = ''
-  lenseType.value = ''
-  extraItems.value = []
+  selectedArmazon.value = null
+  tipoLuna.value = null
+  materialLuna.value = null
   totalAmountInput.value = 0
   adelanto.value = 0
   discountCode.value = ''
@@ -189,7 +217,7 @@ function close() {
 
         <div v-if="selectedPatient" class="rx-card">
           <div class="rx-card__header">
-            <i class="pi pi-file-edit" />
+            <i class="pi pi-file-edit"/>
             <span>Última Receta Vinculada</span>
           </div>
           <div class="rx-card__body">
@@ -200,16 +228,29 @@ function close() {
         </div>
       </div>
 
-      <!-- Step 1: Armaz & Lentes -->
+      <!-- Step 1: Productos -->
       <div v-else-if="step === 1" class="step-content">
         <div class="form-field">
-          <label>Armazón <span class="required">*</span></label>
+          <label>Armazón (Montura) <span class="required">*</span></label>
           <pv-select
-            v-model="frameOption"
-            :options="frameOptions"
+            v-model="selectedArmazon"
+            :options="products"
+            option-label="name"
+            editable
+            placeholder="Ej. Ray-Ban RB5228 Negro"
+            class="w-full"
+            filter
+          />
+        </div>
+
+        <div class="form-field">
+          <label>Tipo de Luna</label>
+          <pv-select
+            v-model="tipoLuna"
+            :options="tipoLunaOptions"
             option-label="label"
             option-value="value"
-            placeholder="Selecciona armazón..."
+            placeholder="Seleccionar..."
             class="w-full"
           />
         </div>
@@ -217,128 +258,62 @@ function close() {
         <div class="form-field">
           <label>Material de Luna</label>
           <pv-select
-            v-model="lenseMaterial"
-            :options="lenseMaterialOptions"
+            v-model="materialLuna"
+            :options="materialLunaOptions"
             option-label="label"
             option-value="value"
-            placeholder="Selecciona material..."
+            placeholder="Seleccionar..."
             class="w-full"
           />
         </div>
 
-        <div class="form-field">
-          <label>Tipo de Luna</label>
-          <pv-select
-            v-model="lenseType"
-            :options="lenseTypeOptions"
-            option-label="label"
-            option-value="value"
-            placeholder="Selecciona tipo..."
-            class="w-full"
-          />
+        <div class="estimated-total-box">
+          <span class="estimated-label">Total Estimado</span>
+          <span class="estimated-value">S/ {{ estimatedTotal.toFixed(2) }}</span>
         </div>
-
-        <div class="divider" />
-
-        <div class="section-header">
-          <p class="section-label">Artículos adicionales</p>
-          <button class="add-link" @click="addExtraItem">
-            <i class="pi pi-plus" style="font-size: 0.7rem" /> Agregar
-          </button>
-        </div>
-
-        <div v-for="(_, i) in extraItems" :key="i" class="extra-item-row">
-          <pv-input-text
-            v-model="extraItems[i]"
-            placeholder="Kit de limpieza, estuche, etc."
-            class="flex-1"
-          />
-          <button class="remove-btn" @click="removeExtraItem(i)">
-            <i class="pi pi-times" />
-          </button>
-        </div>
-
-        <p v-if="extraItems.length === 0" class="empty-hint">
-          Sin artículos adicionales. El precio total se ingresa en el siguiente paso.
-        </p>
       </div>
 
       <!-- Step 2: Pago -->
       <div v-else class="step-content">
         <div class="form-field">
-          <label>Total de la venta (S/) <span class="required">*</span></label>
-          <div class="price-input-wrap" :class="{ 'price-input-wrap--error': totalAmountInput <= 0 }">
+          <label>Método de Pago</label>
+          <pv-select
+            v-model="paymentMethod"
+            :options="paymentMethodOptions"
+            option-label="label"
+            option-value="value"
+            class="w-full"
+          />
+        </div>
+
+        <div class="form-field">
+          <label><i class="pi pi-tag" style="font-size: 0.8rem; margin-right: 4px;" /> Código de Descuento (opcional)</label>
+          <div class="discount-row">
+            <pv-input-text v-model="discountCode" placeholder="Ej. PROMO15" class="flex-1" />
+            <pv-button label="Aplicar" outlined @click="applyDiscount" />
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label>Adelanto (mín. 30%) <span class="required">*</span></label>
+          <div class="price-input-wrap">
             <span class="price-prefix">S/</span>
             <input
-              v-model.number="totalAmountInput"
+              v-model.number="adelanto"
               type="number"
-              min="0.01"
+              min="0"
+              :max="finalAmount"
               step="0.01"
               class="price-input"
               placeholder="0.00"
-              autofocus
             />
           </div>
-          <span v-if="totalAmountInput <= 0" class="field-hint">Ingresa el monto total acordado con el paciente.</span>
-        </div>
-
-        <div class="two-col">
-          <div class="form-field">
-            <label>Método de pago <span class="required">*</span></label>
-            <pv-select
-              v-model="paymentMethod"
-              :options="paymentMethodOptions"
-              option-label="label"
-              option-value="value"
-              class="w-full"
-            />
-          </div>
-
-          <div class="form-field">
-            <label>Adelanto (S/)</label>
-            <div class="price-input-wrap">
-              <span class="price-prefix">S/</span>
-              <input
-                v-model.number="adelanto"
-                type="number"
-                min="0"
-                :max="finalAmount"
-                step="0.01"
-                class="price-input"
-                placeholder="0.00"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div class="form-field">
-          <label>Código de descuento</label>
-          <div class="discount-row">
-            <pv-input-text v-model="discountCode" placeholder="ej. DESC15" class="flex-1" />
-            <div class="price-input-wrap" style="width: 140px">
-              <span class="price-prefix">S/</span>
-              <input
-                v-model.number="discountAmount"
-                type="number"
-                min="0"
-                :max="totalAmountInput"
-                step="0.01"
-                class="price-input"
-                placeholder="0.00"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div class="form-field">
-          <label>Notas</label>
-          <pv-textarea v-model="notes" rows="2" class="w-full" auto-resize />
         </div>
 
         <div class="summary-box">
           <div class="summary-row">
             <span>Subtotal</span>
-            <span>S/ {{ (totalAmountInput || 0).toFixed(2) }}</span>
+            <span style="font-weight: 600">S/ {{ estimatedTotal.toFixed(2) }}</span>
           </div>
           <div v-if="(discountAmount || 0) > 0" class="summary-row summary-row--discount">
             <span>Descuento</span>
@@ -348,12 +323,12 @@ function close() {
             <span>Total</span>
             <span style="font-weight: 700">S/ {{ finalAmount.toFixed(2) }}</span>
           </div>
-          <div class="summary-row">
-            <span>Adelanto</span>
-            <span class="adelanto-val">S/ {{ (adelanto || 0).toFixed(2) }}</span>
+          <div class="summary-row summary-row--discount">
+            <span>Adelanto ({{ adelantoPercent }}%)</span>
+            <span>- S/ {{ (adelanto || 0).toFixed(2) }}</span>
           </div>
           <div class="summary-row summary-row--total">
-            <span>Saldo pendiente</span>
+            <span>Saldo Pendiente</span>
             <span>S/ {{ pendingBalance.toFixed(2) }}</span>
           </div>
         </div>
@@ -362,9 +337,22 @@ function close() {
 
     <template #footer>
       <div class="modal-footer">
-        <pv-button label="Cancelar" text severity="secondary" @click="close" />
+        <pv-button
+          v-if="step > 0"
+          label="Atrás"
+          outlined
+          severity="secondary"
+          @click="prevStep"
+        />
+        <pv-button
+          v-else
+          label="Cancelar"
+          outlined
+          severity="secondary"
+          @click="close"
+        />
+        
         <div class="footer-nav">
-          <pv-button v-if="step > 0" label="Anterior" icon="pi pi-chevron-left" outlined @click="prevStep" />
           <pv-button
             v-if="step < TOTAL_STEPS - 1"
             label="Siguiente"
@@ -375,8 +363,9 @@ function close() {
           />
           <pv-button
             v-else
-            label="Crear venta + orden de lab"
-            icon="pi pi-check"
+            label="Crear Venta + Orden de Lab"
+            icon="pi pi-chevron-right"
+            icon-pos="right"
             :disabled="!canSave"
             @click="save"
           />
@@ -563,6 +552,56 @@ function close() {
   cursor: pointer;
 }
 
+.add-product-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.add-product-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 14px;
+  background: #00c1b0;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.add-product-btn:disabled {
+  background: #d1d5db;
+  cursor: default;
+}
+
+.selected-products-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.selected-product-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.82rem;
+  color: #14532d;
+}
+
 .extra-item-row {
   display: flex;
   align-items: center;
@@ -581,13 +620,28 @@ function close() {
 
 .remove-btn:hover { color: #e7000b; }
 
-.empty-hint {
+.estimated-total-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f9fafb;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 10px;
+}
+
+.estimated-label {
+  color: #6c757d;
   font-family: 'Montserrat', sans-serif;
-  font-size: 0.78rem;
-  color: #9ca3af;
-  text-align: center;
-  padding: 12px 0;
-  margin: 0;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.estimated-value {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #101828;
 }
 
 .discount-row { display: flex; gap: 8px; }
@@ -615,9 +669,12 @@ function close() {
 .summary-row--total {
   font-weight: 700;
   font-size: 0.95rem;
-  color: #f54900;
+  color: #374151;
   padding-top: 8px;
   border-top: 1px solid #e9ecef;
+}
+.summary-row--total span:last-child {
+  color: #f54900;
 }
 
 .modal-footer {

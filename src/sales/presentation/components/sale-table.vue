@@ -72,8 +72,8 @@ function isDelivered(sale) {
       </template>
     </pv-column>
 
-    <!-- Artículos -->
-    <pv-column field="articulos" header="Artículos" style="min-width: 180px">
+    <!-- Productos -->
+    <pv-column field="articulos" header="Productos" style="min-width: 180px">
       <template #body="{ data }">
         <ul class="articulos-list">
           <li v-for="(art, i) in (data.articulos || [])" :key="i">{{ art }}</li>
