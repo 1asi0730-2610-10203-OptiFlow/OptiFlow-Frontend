@@ -1,7 +1,7 @@
 export class PatientResource {
     constructor({
-        patient_id = 0,
-        customer_uuid = '',
+        patient_id = null,
+        customer_uuid = null,
         first_name = '',
         last_name = '',
         dni = '',
@@ -9,8 +9,8 @@ export class PatientResource {
         email = '',
         birth_date = ''
     } = {}) {
-        this.patient_id    = patient_id
-        this.customer_uuid = customer_uuid
+        if (patient_id) this.patient_id    = patient_id
+        if (customer_uuid) this.customer_uuid = customer_uuid
         this.first_name    = first_name
         this.last_name     = last_name
         this.dni           = dni
