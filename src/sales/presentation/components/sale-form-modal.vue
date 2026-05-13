@@ -32,18 +32,18 @@ const tipoLuna = ref(null)
 const materialLuna = ref(null)
 
 const tipoLunaOptions = computed(() => [
-  { label: t('sales.form.lensTypes.monofocal'), value: 'Monofocales' },
-  { label: t('sales.form.lensTypes.bifocal'), value: 'Bifocales' },
-  { label: t('sales.form.lensTypes.progressive'), value: 'Progresivas' },
-  { label: t('sales.form.lensTypes.occupational'), value: 'Ocupacionales' }
+  { label: t('sales.form.lensTypes.monofocal'), value: 'Monofocales', price: 50 },
+  { label: t('sales.form.lensTypes.bifocal'), value: 'Bifocales', price: 80 },
+  { label: t('sales.form.lensTypes.progressive'), value: 'Progresivas', price: 120 },
+  { label: t('sales.form.lensTypes.occupational'), value: 'Ocupacionales', price: 100 }
 ])
 
 const materialLunaOptions = computed(() => [
-  { label: t('sales.form.materials.cr39'), value: 'Resina 1.50' },
-  { label: t('sales.form.materials.poly'), value: 'Policarbonato' },
-  { label: t('sales.form.materials.hi160'), value: 'Alto Índice 1.60' },
-  { label: t('sales.form.materials.hi167'), value: 'Alto Índice 1.67' },
-  { label: t('sales.form.materials.glass'), value: 'Cristal' }
+  { label: t('sales.form.materials.cr39'), value: 'Resina 1.50', price: 30 },
+  { label: t('sales.form.materials.poly'), value: 'Policarbonato', price: 60 },
+  { label: t('sales.form.materials.hi160'), value: 'Alto Índice 1.60', price: 90 },
+  { label: t('sales.form.materials.hi167'), value: 'Alto Índice 1.67', price: 130 },
+  { label: t('sales.form.materials.glass'), value: 'Cristal', price: 40 }
 ])
 
 // Step 2 — pricing
@@ -66,6 +66,14 @@ const estimatedTotal = computed(() => {
   let total = 0
   if (selectedArmazon.value && typeof selectedArmazon.value === 'object' && selectedArmazon.value.price) {
     total += Number(selectedArmazon.value.price)
+  }
+  if (tipoLuna.value) {
+    const opt = tipoLunaOptions.value.find(o => o.value === tipoLuna.value)
+    if (opt && opt.price) total += opt.price
+  }
+  if (materialLuna.value) {
+    const opt = materialLunaOptions.value.find(o => o.value === materialLuna.value)
+    if (opt && opt.price) total += opt.price
   }
   return total > 0 ? total : totalAmountInput.value
 })
