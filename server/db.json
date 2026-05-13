@@ -44,35 +44,11 @@
       "username": "opto01",
       "password_hash": "hashed_password_3",
       "role_id": 3,
-      "name": "Dr. Jorge Castillo",
+      "name": "Jorge Castillo",
       "phone": "977333444",
       "department": "Optometry",
       "status": "ACTIVE",
       "hire_date": "2024-05-20"
-    },
-    {
-      "employee_id": 4,
-      "employee_uuid": "emp-004-uuid",
-      "username": "opto02",
-      "password_hash": "hashed_password_4",
-      "role_id": 3,
-      "name": "Dra. Emily Smith",
-      "phone": "966444555",
-      "department": "Optometry",
-      "status": "ACTIVE",
-      "hire_date": "2023-08-01"
-    },
-    {
-      "employee_id": 5,
-      "employee_uuid": "emp-005-uuid",
-      "username": "opto03",
-      "password_hash": "hashed_password_5",
-      "role_id": 3,
-      "name": "Dr. Andrés Vargas",
-      "phone": "955555666",
-      "department": "Optometry",
-      "status": "ACTIVE",
-      "hire_date": "2025-01-15"
     }
   ],
   "sessions": [
@@ -370,6 +346,21 @@
       "lens_type": null,
       "expiration_date": "2027-01-15",
       "supplier_id": 3
+    },
+    {
+      "category_id": 0,
+      "supplier_id": 0,
+      "brand": "",
+      "model": "",
+      "name": "Lenses",
+      "category": "Lunas",
+      "sku": "123",
+      "stock": 13,
+      "minimum_stock_threshold": 12,
+      "price": 12,
+      "supplier_name": "OpticalPro Lab",
+      "last_restock_date": "2026-05-13",
+      "id": 4
     }
   ],
   "purchaseOrders": [
@@ -593,10 +584,10 @@
       ],
       "totalAmount": 220,
       "adelanto": 100,
-      "pendingBalance": 120,
+      "pendingBalance": 0,
       "discountCode": "",
       "discountAmount": 0,
-      "status": "PARTIAL",
+      "status": "PAID",
       "paymentMethod": "CREDIT_CARD",
       "createdAt": "2026-05-13",
       "deliveredAt": "",
@@ -661,25 +652,39 @@
   ],
   "payments": [
     {
-      "payment_id": 1,
-      "sale_id": 1,
-      "amount_paid": 200,
+      "id": 1,
+      "saleId": 1,
+      "amountPaid": 200,
       "method": "CARD",
-      "paid_at": "2026-05-01T13:30:00"
+      "paidAt": "2026-05-01T13:30:00"
     },
     {
-      "payment_id": 2,
-      "sale_id": 2,
-      "amount_paid": 100,
+      "id": 2,
+      "saleId": 2,
+      "amountPaid": 100,
       "method": "TRANSFER",
-      "paid_at": "2026-05-02T15:20:00"
+      "paidAt": "2026-05-02T15:20:00"
     },
     {
-      "payment_id": 3,
-      "sale_id": 3,
-      "amount_paid": 175,
+      "id": 3,
+      "saleId": 3,
+      "amountPaid": 175,
       "method": "CASH",
-      "paid_at": "2026-05-03T17:15:00"
+      "paidAt": "2026-05-03T17:15:00"
+    },
+    {
+      "id": 4,
+      "saleId": 7,
+      "amountPaid": 100,
+      "method": "CASH",
+      "paidAt": "2026-05-13T09:04:53.118Z"
+    },
+    {
+      "id": 5,
+      "saleId": 7,
+      "amountPaid": 20,
+      "method": "CASH",
+      "paidAt": "2026-05-13T09:04:58.325Z"
     }
   ],
   "workOrders": [
