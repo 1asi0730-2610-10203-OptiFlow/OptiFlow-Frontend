@@ -1,0 +1,49 @@
+import { Role } from '../domain/model/role.entity.js';
+
+const ROLE_MAP = {
+    'ADMIN': {
+        displayName: 'Administrador',
+        description: 'Acceso total al sistema',
+        color: '#ef4444'
+    },
+    'OPTOMETRIST': {
+        displayName: 'Optometrista',
+        description: 'Historias clínicas, recetas, datos clínicos',
+        color: '#8b5cf6'
+    },
+    'SALES_ADVISOR': {
+        displayName: 'Óptico / Asesor de Ventas',
+        description: 'Ventas, inventario, registros de pacientes',
+        color: '#3b82f6'
+    },
+    'RECEPTIONIST': {
+        displayName: 'Recepcionista',
+        description: 'Citas, registros de pacientes (solo lectura)',
+        color: '#10b981'
+    }
+};
+
+export class RoleAssembler {
+    static toEntity(data, userCount = 0) {
+        const metadata = ROLE_MAP[data.name] || {
+            displayName: data.name,
+            description: 'Rol del sistema',
+            color: '#64748b'
+        };
+
+        return new Role(
+            data.role_id,
+            metadata.displayName,
+            metadata.description,
+            userCount,
+            metadata.color
+        );
+    }
+
+    static toEntities(roles, employees = []) {
+        return roles.map(role => {
+            const count = employees.filter(emp => emp.role_id === role.role_id).length;
+            return this.toEntity(role, count);
+        });
+    }
+}
