@@ -9,8 +9,10 @@ export class PatientResource {
         email = '',
         birth_date = ''
     } = {}) {
-        if (patient_id) this.patient_id    = patient_id
-        if (customer_uuid) this.customer_uuid = customer_uuid
+        // Only include IDs when they have real values (not 0 / empty)
+        // json-server auto-generates `id`; sending patient_id:0 causes conflicts
+        if (patient_id && patient_id !== 0) this.patient_id = patient_id
+        if (customer_uuid && customer_uuid.length > 0) this.customer_uuid = customer_uuid
         this.first_name    = first_name
         this.last_name     = last_name
         this.dni           = dni

@@ -14,8 +14,10 @@ export class PrescriptionResource {
         created_at  = '',
         doctor_name = ''
     } = {}) {
-        this.prescription_id    = prescription_id
-        this.prescription_uuid  = prescription_uuid
+        // Only include IDs when they have real values
+        // json-server auto-generates `id`; sending prescription_id:0 causes conflicts
+        if (prescription_id && prescription_id !== 0) this.prescription_id = prescription_id
+        if (prescription_uuid && prescription_uuid.length > 0) this.prescription_uuid = prescription_uuid
         this.clinical_record_id = clinical_record_id
         this.od_sphere          = od_sphere
         this.od_cylinder        = od_cylinder

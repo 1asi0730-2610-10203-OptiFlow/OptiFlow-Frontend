@@ -139,13 +139,23 @@ function generateCode(prefix) {
   return `${prefix}-${Math.floor(1000 + Math.random() * 9000)}`
 }
 
+function getFrameName() {
+  if (!selectedArmazon.value) return ''
+  return typeof selectedArmazon.value === 'string'
+    ? selectedArmazon.value
+    : selectedArmazon.value.name ?? ''
+}
+
 function save() {
   if (!canSave.value) return
+  const patientId = selectedPatient.value.patient_id ?? selectedPatient.value.id
+  const patientName = selectedPatient.value.fullName ?? `${selectedPatient.value.first_name || ''} ${selectedPatient.value.last_name || ''}`.trim()
+  const labOrderNumber = generateCode('LAB')
   const sale = new Sale({
     invoiceNumber: generateCode('FAC'),
-    labOrderNumber: generateCode('LAB'),
-    patientId: selectedPatient.value.id,
-    patientName: selectedPatient.value.name,
+    labOrderNumber,
+    patientId,
+    patientName,
     patientRx: selectedPatient.value.rx ?? '',
     userId: 1,
     userName: 'John Doe',
@@ -160,6 +170,13 @@ function save() {
     createdAt: new Date().toISOString().split('T')[0],
     notes: notes.value
   })
+  // Attach extra metadata for work-order creation
+  sale._labMeta = {
+    labOrderNumber,
+    frame: getFrameName(),
+    lensType: tipoLuna.value ?? '',
+    material: materialLuna.value ?? ''
+  }
   emit('saved', sale)
 }
 
