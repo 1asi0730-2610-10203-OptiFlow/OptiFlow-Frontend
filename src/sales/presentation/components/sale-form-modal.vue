@@ -215,7 +215,7 @@ function close() {
           <pv-select
             v-model="selectedPatient"
             :options="patients"
-            option-label="name"
+            option-label="fullName"
             :placeholder="$t('sales.form.selectPatient')"
             class="w-full"
             filter
