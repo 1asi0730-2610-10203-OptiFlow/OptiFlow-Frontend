@@ -33,7 +33,7 @@ export class RoleAssembler {
         };
 
         return new Role(
-            data.role_id,
+            data.role_id || data.id,
             data.displayName || metadata.displayName,
             data.description || metadata.description,
             userCount,
@@ -43,7 +43,8 @@ export class RoleAssembler {
 
     static toEntities(roles, employees = []) {
         return roles.map(role => {
-            const count = employees.filter(emp => emp.role_id === role.role_id).length;
+            const roleId = role.role_id || role.id;
+            const count = employees.filter(emp => emp.role_id === roleId).length;
             return this.toEntity(role, count);
         });
     }

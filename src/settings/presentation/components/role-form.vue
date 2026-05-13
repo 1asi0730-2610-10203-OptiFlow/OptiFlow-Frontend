@@ -6,6 +6,7 @@ const emit = defineEmits(['save', 'cancel']);
 const roleName = ref('');
 const selectedColor = ref('#3b82f6');
 const selectedPermissions = ref([]);
+const submitted = ref(false);
 
 const colors = [
   '#ef4444', // Red
@@ -24,7 +25,8 @@ const permissions = [
 ];
 
 const handleSave = () => {
-  if (roleName.value.trim()) {
+  submitted.value = true;
+  if (roleName.value.trim() && selectedPermissions.value.length > 0) {
     emit('save', {
       name: roleName.value,
       color: selectedColor.value,
@@ -36,9 +38,19 @@ const handleSave = () => {
 
 <template>
   <div class="role-form">
+    <div v-if="submitted && (!roleName.trim() || selectedPermissions.length === 0)" 
+         class="bg-red-50 text-red-600 p-3 border-round-lg mb-4 text-sm font-bold flex align-items-center gap-2">
+      <i class="pi pi-exclamation-circle"></i>
+      <span>Datos incompletos</span>
+    </div>
+
     <div class="mb-4">
       <label class="block text-900 font-medium mb-2 font-josefin">Nombre del Rol *</label>
-      <pv-input-text v-model="roleName" placeholder="Ej. Técnico de Laboratorio" class="w-full border-round-lg p-3" />
+      <pv-input-text v-model="roleName" 
+                     placeholder="Ej. Técnico de Laboratorio" 
+                     class="w-full border-round-lg p-3"
+                     :class="{ 'p-invalid': submitted && !roleName.trim() }" />
+      <small v-if="submitted && !roleName.trim()" class="text-red-500 block mt-1">El nombre es obligatorio</small>
     </div>
 
     <div class="mb-4">
@@ -55,7 +67,8 @@ const handleSave = () => {
 
     <div class="mb-4">
       <label class="block text-900 font-medium mb-3 font-josefin">Permisos</label>
-      <div class="permissions-container border-1 border-100 border-round-lg overflow-hidden">
+      <div class="permissions-container border-1 border-round-lg overflow-hidden"
+           :class="submitted && selectedPermissions.length === 0 ? 'border-red-500' : 'border-100'">
         <div v-for="perm in permissions" :key="perm.id" 
              class="permission-item flex align-items-start gap-3 p-3 border-bottom-1 border-100 transition-colors hover:bg-gray-50">
           <pv-checkbox v-model="selectedPermissions" :value="perm.id" />

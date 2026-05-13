@@ -5,12 +5,14 @@ import { RoleAssembler } from '../../infrastructure/role.assembler.js';
 import RoleListItem from '../components/role-list-item.vue';
 import RolesSummary from '../components/roles-summary.vue';
 import SystemStatus from '../components/system-status.vue';
+import { useToast } from 'primevue/usetoast';
 import RoleForm from '../components/role-form.vue';
 
 const roles = ref([]);
 const rolesApi = new RolesApi();
 const loading = ref(true);
 const showAddDialog = ref(false);
+const toast = useToast();
 
 const fetchData = async () => {
   try {
@@ -42,8 +44,10 @@ const handleSaveRole = async (newRoleData) => {
     
     await rolesApi.create(roleToSave);
     showAddDialog.value = false;
+    toast.add({ severity: 'success', summary: 'Éxito', detail: 'Rol creado correctamente', life: 3000 });
     await fetchData();
   } catch (error) {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'No se pudo crear el rol', life: 3000 });
     console.error('Error saving role:', error);
   } finally {
     loading.value = false;
@@ -57,6 +61,7 @@ onMounted(() => {
 
 <template>
   <div class="settings-container p-4 lg:p-6">
+    <pv-toast />
     <header class="mb-6">
       <h1 class="text-900 font-bold text-3xl lg:text-4xl mb-2 mt-0 font-josefin">Configuración</h1>
       <p class="text-600 text-lg m-0">Ajustes del sistema y gestión de permisos</p>
