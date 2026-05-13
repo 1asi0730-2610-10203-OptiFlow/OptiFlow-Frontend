@@ -34,7 +34,6 @@ const handleSaveRole = async (newRoleData) => {
     loading.value = true;
     // Prepare data for DB
     const roleToSave = {
-      role_id: roles.value.length + 1, // Simple ID generation for mock
       name: newRoleData.name.toUpperCase().replace(/\s+/g, '_'), // Internal name
       displayName: newRoleData.name,
       description: newRoleData.description || 'Nuevo rol personalizado',
