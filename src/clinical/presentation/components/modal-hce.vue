@@ -40,10 +40,28 @@ function formatVal(val) {
 async function onSaveExam(data) {
     showNewExam.value = false
     if (data.fromFile) {
+        // File-based exams: create a prescription record with placeholder data
+        await store.createPrescription({
+            clinicalRecordId: data.clinicalRecordId,
+            odSphere: 0,
+            odCylinder: 0,
+            odAxis: 0,
+            oiSphere: 0,
+            oiCylinder: 0,
+            oiAxis: 0,
+            addition: null,
+            notes: `Imported from file: ${data.fileName}`,
+            createdAt: data.createdAt || new Date().toISOString(),
+            doctorName: 'Dra. Emily Smith'
+        })
         successMsg.value = t('patients.hce.fileLoaded')
     } else {
         await store.createPrescription(data)
         successMsg.value = t('patients.hce.examSaved')
+    }
+    // Reload prescriptions for this record
+    if (record.value) {
+        await store.loadPrescriptionsByRecord(record.value.record_id ?? record.value.id)
     }
     showSuccess.value = true
 }

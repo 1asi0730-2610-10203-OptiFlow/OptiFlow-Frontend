@@ -76,6 +76,7 @@
   ],
   "patients": [
     {
+      "id": 1,
       "patient_id": 1,
       "customer_uuid": "pat-001-uuid",
       "first_name": "Sarah",
@@ -86,6 +87,7 @@
       "birth_date": "1989-06-15"
     },
     {
+      "id": 2,
       "patient_id": 2,
       "customer_uuid": "pat-002-uuid",
       "first_name": "Michael",
@@ -96,6 +98,7 @@
       "birth_date": "1985-03-22"
     },
     {
+      "id": 3,
       "patient_id": 3,
       "customer_uuid": "pat-003-uuid",
       "first_name": "Emma",
@@ -106,6 +109,7 @@
       "birth_date": "1995-11-08"
     },
     {
+      "id": 4,
       "patient_id": 4,
       "customer_uuid": "pat-004-uuid",
       "first_name": "David",
@@ -114,32 +118,50 @@
       "phone": "(555) 456-7890",
       "email": "d.martinez@email.com",
       "birth_date": "1978-09-30"
+    },
+    {
+      "first_name": "Nicolas",
+      "last_name": "Atoche",
+      "dni": "1234 5643",
+      "phone": "123 123 123",
+      "email": "xd@gmail.com",
+      "birth_date": "1212-12-12",
+      "id": 5
     }
   ],
   "clinicalRecords": [
     {
+      "id": 1,
       "record_id": 1,
       "clinical_record_uuid": "record-001-uuid",
       "patient_id": 1
     },
     {
+      "id": 2,
       "record_id": 2,
       "clinical_record_uuid": "record-002-uuid",
       "patient_id": 2
     },
     {
+      "id": 3,
       "record_id": 3,
       "clinical_record_uuid": "record-003-uuid",
       "patient_id": 3
     },
     {
+      "id": 4,
       "record_id": 4,
       "clinical_record_uuid": "record-004-uuid",
       "patient_id": 4
+    },
+    {
+      "patient_id": 5,
+      "id": 5
     }
   ],
   "prescriptions": [
     {
+      "id": 1,
       "prescription_id": 1,
       "prescription_uuid": "presc-001-uuid",
       "clinical_record_id": 1,
@@ -155,6 +177,7 @@
       "doctor_name": "Dra. Emily Smith"
     },
     {
+      "id": 2,
       "prescription_id": 2,
       "prescription_uuid": "presc-002-uuid",
       "clinical_record_id": 1,
@@ -170,11 +193,12 @@
       "doctor_name": "Dra. Emily Smith"
     },
     {
+      "id": 3,
       "prescription_id": 3,
       "prescription_uuid": "presc-003-uuid",
       "clinical_record_id": 2,
       "od_sphere": -1.25,
-      "od_cylinder": 0.0,
+      "od_cylinder": 0,
       "od_axis": 0,
       "oi_sphere": -1.5,
       "oi_cylinder": -0.25,
@@ -185,29 +209,31 @@
       "doctor_name": "Dra. Emily Smith"
     },
     {
+      "id": 4,
       "prescription_id": 4,
       "prescription_uuid": "presc-004-uuid",
       "clinical_record_id": 3,
-      "od_sphere": 1.0,
+      "od_sphere": 1,
       "od_cylinder": 0.25,
       "od_axis": 10,
       "oi_sphere": 1.25,
       "oi_cylinder": 0.5,
       "oi_axis": 15,
-      "addition": 2.0,
+      "addition": 2,
       "notes": "Hipermetropía con presbicia inicial.",
       "created_at": "2026-04-18T14:00:00",
       "doctor_name": "Dra. Emily Smith"
     },
     {
+      "id": 5,
       "prescription_id": 5,
       "prescription_uuid": "presc-005-uuid",
       "clinical_record_id": 4,
-      "od_sphere": -3.0,
+      "od_sphere": -3,
       "od_cylinder": -0.5,
       "od_axis": 110,
       "oi_sphere": -3.25,
-      "oi_cylinder": 0.0,
+      "oi_cylinder": 0,
       "oi_axis": 0,
       "addition": null,
       "notes": "Miopía moderada.",
@@ -249,7 +275,7 @@
       "sku": "FRM-1001",
       "name": "Classic Black Frame",
       "product_type": "FRAME",
-      "price": 150.0,
+      "price": 150,
       "quantity": 20,
       "minimum_stock_threshold": 5,
       "material": "Acetate",
@@ -266,7 +292,7 @@
       "sku": "LNS-2001",
       "name": "Blue Light Lens",
       "product_type": "LENS",
-      "price": 220.0,
+      "price": 220,
       "quantity": 35,
       "minimum_stock_threshold": 10,
       "material": null,
@@ -283,7 +309,7 @@
       "sku": "SOL-3001",
       "name": "Lens Cleaning Solution",
       "product_type": "SOLUTION",
-      "price": 25.0,
+      "price": 25,
       "quantity": 50,
       "minimum_stock_threshold": 8,
       "material": null,
@@ -300,7 +326,7 @@
       "supplier_id": 1,
       "order_date": "2026-04-20T10:00:00",
       "status": "DELIVERED",
-      "total_amount": 1500.0
+      "total_amount": 1500
     }
   ],
   "purchaseOrderItems": [
@@ -309,7 +335,7 @@
       "purchase_order_id": 1,
       "product_id": 1,
       "quantity": 10,
-      "unit_price": 100.0
+      "unit_price": 100
     }
   ],
   "inventoryTransactions": [
@@ -337,21 +363,21 @@
       "quotation_id": 1,
       "quotation_uuid": "quote-001-uuid",
       "prescription_id": 1,
-      "total": 370.0,
+      "total": 370,
       "created_at": "2026-05-01T12:00:00"
     },
     {
       "quotation_id": 2,
       "quotation_uuid": "quote-002-uuid",
       "prescription_id": 2,
-      "total": 440.0,
+      "total": 440,
       "created_at": "2026-05-02T14:00:00"
     },
     {
       "quotation_id": 3,
       "quotation_uuid": "quote-003-uuid",
       "prescription_id": 3,
-      "total": 175.0,
+      "total": 175,
       "created_at": "2026-05-03T16:00:00"
     }
   ],
@@ -361,21 +387,21 @@
       "quotation_id": 1,
       "product_id": 1,
       "quantity": 1,
-      "unit_price": 150.0
+      "unit_price": 150
     },
     {
       "item_id": 2,
       "quotation_id": 1,
       "product_id": 2,
       "quantity": 1,
-      "unit_price": 220.0
+      "unit_price": 220
     },
     {
       "item_id": 3,
       "quotation_id": 3,
       "product_id": 3,
       "quantity": 1,
-      "unit_price": 25.0
+      "unit_price": 25
     }
   ],
   "sales": [
@@ -498,6 +524,31 @@
       "createdAt": "2026-05-10",
       "deliveredAt": "",
       "notes": ""
+    },
+    {
+      "id": 7,
+      "invoiceNumber": "FAC-7839",
+      "labOrderNumber": "LAB-9457",
+      "patientId": 1,
+      "patientName": "Sarah Johnson",
+      "patientRx": "",
+      "userId": 1,
+      "userName": "John Doe",
+      "articulos": [
+        "Armazón: Blue Light Lens",
+        "Tipo de Luna: Bifocales",
+        "Material de Luna: Alto Índice 1.60"
+      ],
+      "totalAmount": 220,
+      "adelanto": 100,
+      "pendingBalance": 120,
+      "discountCode": "",
+      "discountAmount": 0,
+      "status": "PARTIAL",
+      "paymentMethod": "CREDIT_CARD",
+      "createdAt": "2026-05-13",
+      "deliveredAt": "",
+      "notes": ""
     }
   ],
   "sale_details": [
@@ -560,21 +611,21 @@
     {
       "payment_id": 1,
       "sale_id": 1,
-      "amount_paid": 200.0,
+      "amount_paid": 200,
       "method": "CARD",
       "paid_at": "2026-05-01T13:30:00"
     },
     {
       "payment_id": 2,
       "sale_id": 2,
-      "amount_paid": 100.0,
+      "amount_paid": 100,
       "method": "TRANSFER",
       "paid_at": "2026-05-02T15:20:00"
     },
     {
       "payment_id": 3,
       "sale_id": 3,
-      "amount_paid": 175.0,
+      "amount_paid": 175,
       "method": "CASH",
       "paid_at": "2026-05-03T17:15:00"
     }
@@ -586,9 +637,14 @@
       "work_order_uuid": "wo-001-uuid",
       "sale_id": 1,
       "status": "IN_PRODUCTION",
-      "priority": "NORMAL",
+      "priority": "normal",
       "is_rework": false,
+      "patient_name": "Carlos Rivera",
       "laboratory_name": "LabVision",
+      "lens_type": "Progresivas",
+      "frame": "Ray-Ban RB5154",
+      "total": 160,
+      "deposit": 80,
       "estimated_date": "2026-05-10",
       "created_at": "2026-05-01T14:00:00"
     },
@@ -597,10 +653,15 @@
       "order_id": 2,
       "work_order_uuid": "wo-002-uuid",
       "sale_id": 2,
-      "status": "RECEIVED",
-      "priority": "HIGH",
+      "status": "PENDING",
+      "priority": "high",
       "is_rework": false,
+      "patient_name": "David Martínez",
       "laboratory_name": "OpticLab",
+      "lens_type": "Monofocales",
+      "frame": "Oakley OX8046",
+      "total": 180,
+      "deposit": 90,
       "estimated_date": "2026-05-12",
       "created_at": "2026-05-02T16:00:00"
     },
@@ -610,11 +671,31 @@
       "work_order_uuid": "wo-003-uuid",
       "sale_id": 3,
       "status": "DELIVERED",
-      "priority": "URGENT",
+      "priority": "urgent",
       "is_rework": false,
+      "patient_name": "Emma Wilson",
       "laboratory_name": "FastLens",
+      "lens_type": "Bifocales",
+      "frame": "Gucci GG0010O",
+      "total": 245,
+      "deposit": 245,
       "estimated_date": "2026-05-05",
       "created_at": "2026-05-03T18:00:00"
+    },
+    {
+      "sale_id": 7,
+      "patient_name": "Sarah Johnson",
+      "laboratory_name": "Vision Labs Inc.",
+      "lens_type": "Bifocales",
+      "frame": "Blue Light Lens",
+      "status": "PENDING",
+      "priority": "normal",
+      "total": 220,
+      "deposit": 100,
+      "delivery_date": "2026-05-20",
+      "is_rework": false,
+      "created_at": "2026-05-13",
+      "id": 4
     }
   ],
   "notifications": [
@@ -654,13 +735,13 @@
       "total_transactions": 40,
       "conversion_rate": 72.5,
       "average_delivery_days": 4.5,
-      "on_time_delivery_rate": 90.0,
-      "rework_rate": 3.0,
+      "on_time_delivery_rate": 90,
+      "rework_rate": 3,
       "total_orders": 38,
-      "pending_balance_0_7": 1200.0,
-      "pending_balance_8_15": 400.0,
-      "pending_balance_16_30": 150.0,
-      "pending_balance_over_30": 50.0
+      "pending_balance_0_7": 1200,
+      "pending_balance_8_15": 400,
+      "pending_balance_16_30": 150,
+      "pending_balance_over_30": 50
     },
     {
       "report_id": 2,
@@ -671,14 +752,14 @@
       "total_revenue": 14500.75,
       "total_transactions": 50,
       "conversion_rate": 76.3,
-      "average_delivery_days": 4.0,
+      "average_delivery_days": 4,
       "on_time_delivery_rate": 92.1,
       "rework_rate": 2.1,
       "total_orders": 48,
-      "pending_balance_0_7": 1000.0,
-      "pending_balance_8_15": 350.0,
-      "pending_balance_16_30": 120.0,
-      "pending_balance_over_30": 40.0
+      "pending_balance_0_7": 1000,
+      "pending_balance_8_15": 350,
+      "pending_balance_16_30": 120,
+      "pending_balance_over_30": 40
     },
     {
       "report_id": 3,
@@ -686,17 +767,17 @@
       "generated_by": 1,
       "period": "2026-06",
       "generated_at": "2026-07-01T20:00:00",
-      "total_revenue": 16200.0,
+      "total_revenue": 16200,
       "total_transactions": 58,
-      "conversion_rate": 80.0,
+      "conversion_rate": 80,
       "average_delivery_days": 3.8,
-      "on_time_delivery_rate": 95.0,
+      "on_time_delivery_rate": 95,
       "rework_rate": 1.5,
       "total_orders": 56,
-      "pending_balance_0_7": 800.0,
-      "pending_balance_8_15": 200.0,
-      "pending_balance_16_30": 100.0,
-      "pending_balance_over_30": 20.0
+      "pending_balance_0_7": 800,
+      "pending_balance_8_15": 200,
+      "pending_balance_16_30": 100,
+      "pending_balance_over_30": 20
     }
   ],
   "staffMetrics": [
@@ -706,7 +787,7 @@
       "employee_name": "Lucia Ramirez",
       "quotations_issued": 15,
       "sales_closed": 10,
-      "total_revenue": 4500.0
+      "total_revenue": 4500
     },
     {
       "staff_metric_id": 2,
@@ -714,7 +795,7 @@
       "employee_name": "Lucia Ramirez",
       "quotations_issued": 18,
       "sales_closed": 14,
-      "total_revenue": 6200.0
+      "total_revenue": 6200
     },
     {
       "staff_metric_id": 3,
@@ -722,7 +803,7 @@
       "employee_name": "Lucia Ramirez",
       "quotations_issued": 20,
       "sales_closed": 16,
-      "total_revenue": 7100.0
+      "total_revenue": 7100
     }
   ],
   "reports": [
@@ -732,7 +813,10 @@
       "description": "Quarterly sales performance across all branches.",
       "type": "Financial",
       "created_at": "2026-04-01T10:00:00Z",
-      "data": { "total_sales": 150000, "growth": "+12%" }
+      "data": {
+        "total_sales": 150000,
+        "growth": "+12%"
+      }
     },
     {
       "id": 2,
@@ -740,7 +824,10 @@
       "description": "Evaluation of average clinical time per patient.",
       "type": "Performance",
       "created_at": "2026-05-10T14:30:00Z",
-      "data": { "avg_time": "15min", "efficiency": "94%" }
+      "data": {
+        "avg_time": "15min",
+        "efficiency": "94%"
+      }
     }
   ]
 }

@@ -68,12 +68,22 @@ export const useSalesStore = defineStore('sales', () => {
       sales.value.unshift(saleEntity)
 
       // Automatically create a Work Order (Lab Order)
+      const labMeta = sale._labMeta || {}
+      const deliveryDate = new Date()
+      deliveryDate.setDate(deliveryDate.getDate() + 7)
+
       await workOrderApi.createWorkOrder({
         sale_id: saleEntity.id,
         patient_name: saleEntity.patientName,
+        laboratory_name: 'Vision Labs Inc.',
+        lens_type: labMeta.lensType || '',
+        frame: labMeta.frame || '',
         status: 'PENDING',
+        priority: 'normal',
         total: saleEntity.totalAmount,
         deposit: saleEntity.adelanto,
+        delivery_date: deliveryDate.toISOString().split('T')[0],
+        is_rework: false,
         created_at: new Date().toISOString().split('T')[0]
       })
     } catch (e) {
