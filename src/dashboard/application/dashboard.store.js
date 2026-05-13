@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { DashboardApi }       from '../infrastructure/dashboard-api.js'
+import DashboardApi       from '../infrastructure/dashboard-api.js'
 import { DashboardAssembler } from '../infrastructure/dashboard.assembler.js'
 
 const api = new DashboardApi()

@@ -70,6 +70,60 @@
     "searchPlaceholder": "Buscar por N° factura o paciente...",
     "allStatuses": "Todos los estados",
     "loading": "Cargando ventas...",
+    "form": {
+      "title": "Nueva Venta / Cotización",
+      "step": "Paso",
+      "of": "de",
+      "steps": {
+        "patient": "Paciente y Rx",
+        "products": "Productos",
+        "payment": "Pago"
+      },
+      "patientLabel": "Paciente",
+      "selectPatient": "Selecciona un paciente...",
+      "lastRx": "Última Receta Vinculada",
+      "rxPending": "Receta pendiente de vincular con módulo clínico",
+      "frame": "Armazón (Montura)",
+      "framePlaceholder": "Ej. Ray-Ban RB5228 Negro",
+      "lensType": "Tipo de Luna",
+      "lensMaterial": "Material de Luna",
+      "select": "Seleccionar...",
+      "estimatedTotal": "Total Estimado",
+      "paymentMethod": "Método de Pago",
+      "discountCode": "Código de Descuento (opcional)",
+      "discountPlaceholder": "Ej. PROMO15",
+      "apply": "Aplicar",
+      "deposit": "Adelanto (mín. 30%)",
+      "subtotal": "Subtotal",
+      "discount": "Descuento",
+      "total": "Total",
+      "depositPercent": "Adelanto ({percent}%)",
+      "pendingBalance": "Saldo Pendiente",
+      "back": "Atrás",
+      "cancel": "Cancelar",
+      "next": "Siguiente",
+      "create": "Crear Venta + Orden de Lab",
+      "lensTypes": {
+        "monofocal": "Monofocales",
+        "bifocal": "Bifocales",
+        "progressive": "Progresivas",
+        "occupational": "Ocupacionales"
+      },
+      "materials": {
+        "cr39": "Resina 1.50",
+        "poly": "Policarbonato",
+        "hi160": "Alto Índice 1.60",
+        "hi167": "Alto Índice 1.67",
+        "glass": "Cristal"
+      },
+      "paymentMethods": {
+        "cash": "Efectivo",
+        "credit": "Tarjeta de Crédito",
+        "debit": "Tarjeta de Débito",
+        "transfer": "Transferencia",
+        "insurance": "Seguro"
+      }
+    },
     "kpi": {
       "totalRevenue": "Ingresos Totales",
       "deposits": "Adelantos Cobrados",
@@ -106,6 +160,22 @@
     "dialogs": {
       "paymentHeader": "Registrar pago de saldo",
       "feedbackHeader": "Encuesta de satisfacción"
+    },
+    "table": {
+      "invoice": "Factura",
+      "patient": "Paciente",
+      "products": "Productos",
+      "date": "Fecha",
+      "total": "Total",
+      "deposit": "Adelanto",
+      "balance": "Saldo",
+      "payment": "Pago",
+      "status": "Estado",
+      "actions": "Acciones",
+      "collect": "Cobrar →",
+      "paid": "Pagado",
+      "cancel": "Cancelar",
+      "return": "Devolución"
     }
   },
   "labOrders": {
@@ -441,6 +511,64 @@
       "itemAddedDetail": "registrado en el inventario.",
       "restockDone": "Restock registrado",
       "restockDetail": "unidades agregadas."
+    }
+  }
+,
+  "staff": {
+    "pageTitle": "Gestión de Personal",
+    "pageSubtitle": "Administra al personal y sus permisos de acceso",
+    "addEmployee": "Agregar Empleado",
+    "searchPlaceholder": "Buscar por nombre, correo o cargo...",
+    "allDepartments": "Todos los Departamentos",
+    "allRoles": "Todos los Cargos",
+    "kpi": {
+      "totalEmployees": "Total Empleados",
+      "optometrists": "Optometristas",
+      "supportStaff": "Personal de Apoyo",
+      "activeToday": "Activos Hoy"
+    },
+    "table": {
+      "employee": "EMPLEADO",
+      "role": "CARGO",
+      "department": "DEPARTAMENTO",
+      "status": "ESTADO"
+    },
+    "status": {
+      "active": "Activo",
+      "inactive": "Inactivo"
+    },
+    "roles": {
+      "optometrist": "Optometrista",
+      "optician": "Óptico",
+      "admin": "Administrador",
+      "support": "Personal de Apoyo"
+    },
+    "departments": {
+      "clinic": "Clínica",
+      "sales": "Ventas",
+      "admin": "Administración"
+    },
+    "addModal": {
+      "title": "Agregar Empleado",
+      "subtitle": "Registrar un nuevo miembro del personal",
+      "fullName": "Nombre Completo",
+      "email": "Correo Electrónico",
+      "phone": "Teléfono",
+      "role": "Cargo",
+      "department": "Departamento",
+      "entryDate": "Fecha de Ingreso",
+      "defaultPermissions": "Permisos por defecto (según cargo)",
+      "permissionsNote": "Los permisos se asignan según el cargo. Puedes editarlos después.",
+      "permissions": {
+        "fullAccess": "Acceso Total",
+        "clinicalRecords": "Historias Clínicas",
+        "prescriptions": "Recetas"
+      },
+      "placeholders": {
+        "fullName": "Ej. Dra. Emily Smith",
+        "email": "nombre@opticspro.com",
+        "phone": "(555) 000-0000"
+      }
     }
   }
 }

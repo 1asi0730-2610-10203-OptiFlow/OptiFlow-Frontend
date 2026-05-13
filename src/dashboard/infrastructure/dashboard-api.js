@@ -1,7 +1,7 @@
-import { BaseApi } from '../../shared/infrastructure/base-api.js'
-import { BaseEndpoint } from '../../shared/infrastructure/base-endpoint.js'
+import {BaseEndpoint} from "../../shared/infrastructure/base-endpoint.js";
+import {BaseApi} from "../../shared/infrastructure/base-api.js";
 
-export class DashboardApi extends BaseApi {
+class DashboardApi extends BaseApi {
   #analyticsReports
   #staffMetrics
   #patients
@@ -26,3 +26,5 @@ export class DashboardApi extends BaseApi {
   async getSales()            { return await this.#sales.getAll() }
   async getProducts()         { return await this.#products.getAll() }
 }
+
+export default DashboardApi
