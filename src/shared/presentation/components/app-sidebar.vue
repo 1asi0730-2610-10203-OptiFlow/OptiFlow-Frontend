@@ -91,6 +91,9 @@ const currentSectionLabel = computed(() => {
           <span class="user-name">John Doe</span>
           <span class="user-role">{{ $t('user.role') }}</span>
         </div>
+        <button class="btn-logout" @click="navigate('/')" :title="$t('common.close')" aria-label="Cerrar sesión">
+          <i class="pi pi-sign-out"></i>
+        </button>
       </div>
 
     </aside>
@@ -203,6 +206,27 @@ const currentSectionLabel = computed(() => {
 .user-info { display: flex; flex-direction: column; gap: 1px; }
 .user-name { font-family: 'Montserrat', sans-serif; font-size: 0.82rem; font-weight: 600; color: #ffffff; }
 .user-role { font-family: 'Montserrat', sans-serif; font-size: 0.7rem; color: #93c1ce; }
+
+.btn-logout {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  transition: background 0.2s, color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-logout i {
+  font-size: 1.1rem;
+}
+.btn-logout:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+}
 
 @media (max-width: 1023px) {
   .sidebar {

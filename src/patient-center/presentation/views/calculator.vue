@@ -1,8 +1,10 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useCalculatorStore } from '../../application/calculator.store.js'
+import { useI18n } from 'vue-i18n'
 
 const store = useCalculatorStore()
+const { t } = useI18n()
 
 const esfera = ref(-2.50)
 const cilindro = ref(-0.75)
@@ -62,8 +64,8 @@ const infoIndices = [
     <!-- Header -->
     <div class="page-header">
       <div>
-        <h1 class="page-title">Calculador</h1>
-        <p class="page-subtitle">Bienvenido/a a tu portal OptiFlow</p>
+        <h1 class="page-title">{{ $t('patientCenter.calculator.title') }}</h1>
+        <p class="page-subtitle">{{ $t('patientCenter.calculator.subtitle') }}</p>
       </div>
     </div>
 
@@ -78,8 +80,8 @@ const infoIndices = [
               <i class="pi pi-calculator" />
             </div>
             <div>
-              <h3 class="card-title">Calculador de Grosor de Cristales</h3>
-              <p class="card-subtitle">Simula el grosor según tu graduación</p>
+              <h3 class="card-title">{{ $t('patientCenter.calculator.cardTitle') }}</h3>
+              <p class="card-subtitle">{{ $t('patientCenter.calculator.cardSubtitle') }}</p>
             </div>
           </div>
         </div>
@@ -87,20 +89,20 @@ const infoIndices = [
         <div class="card-body">
           <div class="form-section">
             <div class="field">
-              <label>Esfera (Dioptrías) *</label>
-              <input v-model="esfera" type="text" class="form-input" placeholder="Ej. -2.50">
+              <label>{{ $t('patientCenter.calculator.sphere') }}</label>
+              <input v-model="esfera" type="text" class="form-input" placeholder="-2.50">
             </div>
             <div class="field">
-              <label>Cilindro (Dioptrías)</label>
-              <input v-model="cilindro" type="text" class="form-input" placeholder="Ej. -0.75">
+              <label>{{ $t('patientCenter.calculator.cylinder') }}</label>
+              <input v-model="cilindro" type="text" class="form-input" placeholder="-0.75">
             </div>
           </div>
 
           <div class="material-section">
-            <label class="section-label">Material del Lente (Desde API)</label>
+            <label class="section-label">{{ $t('patientCenter.calculator.materials') }}</label>
             
             <p v-if="store.loading" style="font-size: 0.8rem; color: #9ca3af; margin-bottom: 10px;">
-              <i class="pi pi-spin pi-spinner"></i> Cargando precios...
+              <i class="pi pi-spin pi-spinner"></i> {{ $t('patientCenter.calculator.loading') }}
             </p>
 
             <div 
@@ -119,7 +121,7 @@ const infoIndices = [
           </div>
 
           <button class="btn-calculate" @click="handleCalculate">
-            Calcular Grosor
+            {{ $t('patientCenter.calculator.calculateBtn') }}
           </button>
         </div>
       </div>
@@ -127,14 +129,14 @@ const infoIndices = [
       <!-- LADO DERECHO: Resultados -->
       <div v-if="showResults" class="results-panel">
         <div class="card result-main-card">
-          <p class="result-label">Grosor Estimado (centro)</p>
+          <p class="result-label">{{ $t('patientCenter.calculator.thickness') }}</p>
           <h2 class="result-value">{{ currentResult.thickness }} mm</h2>
-          <p class="result-sub">con {{ currentResult.name }}</p>
+          <p class="result-sub">{{ $t('patientCenter.calculator.with') }} {{ currentResult.name }}</p>
         </div>
 
         <div class="card comparison-card">
           <div class="card-header">
-            <h3 class="card-title">Comparación de Materiales</h3>
+            <h3 class="card-title">{{ $t('patientCenter.calculator.comparison') }}</h3>
           </div>
           <div class="card-body" style="padding-top: 0;">
             <div v-for="res in results" :key="res.id" class="comp-row">
@@ -152,8 +154,8 @@ const infoIndices = [
         <div class="recommendation-box">
           <i class="pi pi-info-circle"></i>
           <div>
-            <strong>Recomendación</strong>
-            <p>Tu graduación permite usar cualquier material. El estándar ofrece buena relación calidad-precio.</p>
+            <strong>{{ $t('patientCenter.calculator.recommendationTitle') }}</strong>
+            <p>{{ $t('patientCenter.calculator.recommendationDesc') }}</p>
           </div>
         </div>
       </div>
@@ -161,11 +163,23 @@ const infoIndices = [
 
     <!-- Guía Inferior -->
     <div class="info-guide">
-      <p class="guide-title">¿Qué significan los índices?</p>
+      <p class="guide-title">{{ $t('patientCenter.calculator.guideTitle') }}</p>
       <div class="guide-grid">
-        <div v-for="i in infoIndices" :key="i.title" class="guide-item">
-          <strong>{{ i.title }}</strong>
-          <p>{{ i.text }}</p>
+        <div class="guide-item">
+          <strong>{{ $t('patientCenter.calculator.guides.std.title') }}</strong>
+          <p>{{ $t('patientCenter.calculator.guides.std.text') }}</p>
+        </div>
+        <div class="guide-item">
+          <strong>{{ $t('patientCenter.calculator.guides.thin.title') }}</strong>
+          <p>{{ $t('patientCenter.calculator.guides.thin.text') }}</p>
+        </div>
+        <div class="guide-item">
+          <strong>{{ $t('patientCenter.calculator.guides.extraThin.title') }}</strong>
+          <p>{{ $t('patientCenter.calculator.guides.extraThin.text') }}</p>
+        </div>
+        <div class="guide-item">
+          <strong>{{ $t('patientCenter.calculator.guides.ultraThin.title') }}</strong>
+          <p>{{ $t('patientCenter.calculator.guides.ultraThin.text') }}</p>
         </div>
       </div>
     </div>
