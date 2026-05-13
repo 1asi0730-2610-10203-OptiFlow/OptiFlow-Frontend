@@ -52,7 +52,7 @@ async function onSaveExam(data) {
             addition: null,
             notes: `Imported from file: ${data.fileName}`,
             createdAt: data.createdAt || new Date().toISOString(),
-            doctorName: 'Dra. Emily Smith'
+            doctorName: data.doctorName || 'Dra. Emily Smith'
         })
         successMsg.value = t('patients.hce.fileLoaded')
     } else {
