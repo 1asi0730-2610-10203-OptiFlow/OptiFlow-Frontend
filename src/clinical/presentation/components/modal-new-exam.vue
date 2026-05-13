@@ -1,17 +1,32 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import axios from 'axios'
 
 const { t } = useI18n()
 
 const props = defineProps({
-    patient:    { type: Object, required: true },
-    recordId:   { type: Number, required: true },
-    doctorName: { type: String, default: 'Dra. Emily Smith' }
+    patient:  { type: Object, required: true },
+    recordId: { type: Number, required: true }
 })
 const emit = defineEmits(['save', 'close'])
 
 const activeTab = ref('manual') // 'manual' | 'upload'
+
+/* ── Doctors from API ───────────────────────────────────────── */
+const doctors = ref([])
+const selectedDoctor = ref('')
+
+onMounted(async () => {
+    try {
+        const res = await axios.get(`${import.meta.env.VITE_OPTIFLOW_API_URL}/employees?role_id=3`)
+        doctors.value = res.data.map(e => e.name)
+        selectedDoctor.value = doctors.value[0] ?? 'Dra. Emily Smith'
+    } catch {
+        doctors.value = ['Dra. Emily Smith']
+        selectedDoctor.value = 'Dra. Emily Smith'
+    }
+})
 
 /* ── Manual exam form ───────────────────────────────────────── */
 const form = ref({
@@ -38,7 +53,7 @@ function onSaveManual() {
         addition:         form.value.addition !== null ? parseFloat(form.value.addition) : null,
         notes:            form.value.notes,
         createdAt:        new Date().toISOString(),
-        doctorName:       props.doctorName
+        doctorName:       selectedDoctor.value
     })
 }
 
@@ -60,12 +75,12 @@ function onFileSelected(event) {
     }
     uploadError.value = ''
     uploadedFile.value = file
-    emit('save', { fromFile: true, fileName: file.name, clinicalRecordId: props.recordId, createdAt: new Date().toISOString() })
+    emit('save', { fromFile: true, fileName: file.name, clinicalRecordId: props.recordId, createdAt: new Date().toISOString(), doctorName: selectedDoctor.value })
 }
 
 function onDemoFile(demo) {
     uploadError.value = ''
-    emit('save', { fromFile: true, fileName: demo.name, clinicalRecordId: props.recordId, createdAt: new Date().toISOString() })
+    emit('save', { fromFile: true, fileName: demo.name, clinicalRecordId: props.recordId, createdAt: new Date().toISOString(), doctorName: selectedDoctor.value })
 }
 
 function triggerFileInput() {
@@ -112,7 +127,9 @@ function triggerFileInput() {
                     </div>
                     <div class="field">
                         <label>{{ $t('patients.newExam.doctor') }}</label>
-                        <input :value="doctorName" class="form-input" disabled />
+                        <select v-model="selectedDoctor" class="form-input">
+                            <option v-for="doc in doctors" :key="doc" :value="doc">{{ doc }}</option>
+                        </select>
                     </div>
                 </div>
 
