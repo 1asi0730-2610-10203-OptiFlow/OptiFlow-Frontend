@@ -1,7 +1,7 @@
 <script setup>
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n }             from 'vue-i18n'
-import {ref} from "vue";
+import { ref, computed } from "vue";
 
 const router = useRouter()
 const route  = useRoute()
@@ -24,15 +24,32 @@ const navItems = [
 function navigate(to) { router.push(to) }
 function isActive(to)  { return route.path.startsWith(to) }
 
+const currentSectionLabel = computed(() => {
+  const activeItem = navItems.find(item => isActive(item.to))
+  return activeItem ? t(`nav.${activeItem.key}`) : ''
+})
 
 </script>
 
 <template>
 
   <div class="sidebar-wrapper">
-    <button class="hamburger-btn" @click="isMobileOpen = true" aria-label="Open menu">
-      <i class="pi pi-bars"></i>
-    </button>
+    <div class="mobile-topbar">
+      <div class="mobile-topbar__left">
+        <button class="hamburger-btn" @click="isMobileOpen = true" aria-label="Open menu">
+          <i class="pi pi-bars"></i>
+        </button>
+        <div class="mobile-brand">
+          <span class="brand-logo">
+            <i class="pi pi-eye brand-icon" aria-hidden="true" />
+          </span>
+          <span class="brand-name">OptiFlow</span>
+        </div>
+      </div>
+      <div class="mobile-topbar__right">
+        <span class="current-section">{{ currentSectionLabel }}</span>
+      </div>
+    </div>
 
     <transition name="fade">
       <div
@@ -86,6 +103,9 @@ function isActive(to)  { return route.path.startsWith(to) }
   display: flex;
 }
 .hamburger-btn {
+  display: none;
+}
+.mobile-topbar {
   display: none;
 }
 .sidebar-backdrop {
@@ -197,19 +217,51 @@ function isActive(to)  { return route.path.startsWith(to) }
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
+  .mobile-topbar {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    background: #03070a;
+    padding: 16px 20px;
+    border-bottom-left-radius: 28px;
+    border-bottom-right-radius: 28px;
+    z-index: 1100;
+  }
+
+  .mobile-topbar__left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .mobile-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .current-section {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #00c1b0;
+  }
+
   .hamburger-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
-    background: #03070a;
+    background: transparent;
     color: #00c1b0;
-    border: 1px solid rgba(147,193,206,0.15);
-    border-radius: 8px;
+    border: none;
+    font-size: 1.4rem;
     cursor: pointer;
-    margin: 16px;
-    z-index: 900;
+    padding: 0;
+    margin: 0;
   }
 
   /* 2. The Pull: Bring it back to coordinates 0,0 */
