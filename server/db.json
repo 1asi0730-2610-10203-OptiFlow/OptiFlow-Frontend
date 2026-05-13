@@ -297,21 +297,20 @@
   ],
   "products": [
     {
-      "id": 1,
       "product_id": 1,
-      "product_uuid": "prod-001-uuid",
-      "sku": "FRM-1001",
-      "name": "Classic Black Frame",
-      "product_type": "FRAME",
-      "price": 150,
-      "quantity": 20,
-      "minimum_stock_threshold": 5,
-      "material": "Acetate",
+      "category_id": 0,
+      "supplier_id": 1,
       "brand": "VisionPro",
-      "color": "Black",
-      "lens_type": null,
-      "expiration_date": null,
-      "supplier_id": 1
+      "model": "",
+      "price": 165,
+      "stock": 0,
+      "name": "Classic Black Frame",
+      "category": "Lunas",
+      "sku": "FRM-1001",
+      "minimum_stock_threshold": 6,
+      "supplier_name": "",
+      "last_restock_date": "",
+      "id": 1
     },
     {
       "id": 2,
