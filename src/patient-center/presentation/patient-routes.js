@@ -1,5 +1,11 @@
 export default [
     {
+        path: '/patient/profile',
+        name: 'profile',
+        component: () => import('./views/profile.vue'),
+        meta: { title: 'Mi Perfil' }
+    },
+    {
         path: '/patient/my-lenses',
         name: 'my-lenses',
         component: () => import('./views/my-lenses.vue'),

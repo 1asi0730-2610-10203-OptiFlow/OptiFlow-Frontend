@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import LanguageSwitcher from './language-switcher.vue'
@@ -10,11 +10,17 @@ const { t }  = useI18n()
 const isMobileOpen = ref(false)
 
 const navItems = [
+  { key: 'profile',       icon: 'pi pi-user',       to: '/patient/profile' },
   { key: 'myLenses',      icon: 'pi pi-search',     to: '/patient/my-lenses' },
   { key: 'tryOn',         icon: 'pi pi-camera',     to: '/patient/virtual-try-on' },
   { key: 'calculator',    icon: 'pi pi-percentage', to: '/patient/calculator' },
   { key: 'notifications', icon: 'pi pi-bell',       to: '/patient/notifications' },
 ]
+
+const currentSectionLabel = computed(() => {
+  const activeItem = navItems.find(item => isActive(item.to))
+  return activeItem ? t(`nav.${activeItem.key}`) : ''
+})
 
 function navigate(to) { router.push(to); isMobileOpen.value = false }
 function isActive(to)  { return route.path.startsWith(to) }
@@ -25,9 +31,23 @@ function logout()      { router.push('/login') }
   <div class="app-shell">
 
     <div class="sidebar-wrapper">
-      <button class="hamburger-btn" @click="isMobileOpen = true" aria-label="Open menu">
-        <i class="pi pi-bars" />
-      </button>
+      <div class="mobile-topbar">
+        <div class="mobile-topbar__left">
+          <button class="hamburger-btn" @click="isMobileOpen = true" aria-label="Open menu">
+            <i class="pi pi-bars"></i>
+          </button>
+          <div class="mobile-brand">
+            <span class="brand-logo">
+              <i class="pi pi-eye brand-icon" aria-hidden="true" />
+            </span>
+            <span class="brand-name">OptiFlow</span>
+          </div>
+        </div>
+        <div class="mobile-topbar__right">
+          <span class="current-section">{{ currentSectionLabel }}</span>
+        </div>
+      </div>
+
       <div v-if="isMobileOpen" class="sidebar-backdrop" @click="isMobileOpen = false" />
 
       <aside class="sidebar" :class="{ 'sidebar--mobile-open': isMobileOpen }">
@@ -74,7 +94,16 @@ function logout()      { router.push('/login') }
 
     <main class="main-content">
       <div class="topbar">
-        <LanguageSwitcher />
+        <div class="topbar-right">
+          <LanguageSwitcher />
+          <div class="topbar-user">
+            <div class="topbar-user-info">
+              <span class="user-name">John Doe</span>
+              <span class="user-role">{{ $t('user.patientRole') }}</span>
+            </div>
+            <div class="avatar-sm">JD</div>
+          </div>
+        </div>
       </div>
       <div class="page-wrapper">
         <router-view />
@@ -92,6 +121,7 @@ function logout()      { router.push('/login') }
 .sidebar-wrapper { display: flex; }
 .hamburger-btn { display: none; }
 .sidebar-backdrop { display: none; }
+.mobile-topbar { display: none; }
 
 .sidebar {
   width: 240px; min-width: 240px; background: #03070a;
@@ -177,11 +207,12 @@ function logout()      { router.push('/login') }
 
 .btn-logout {
   background: transparent; border: none; cursor: pointer;
-  color: #93c1ce; padding: 6px; border-radius: 6px;
+  color: #ef4444; padding: 6px; border-radius: 6px;
   flex-shrink: 0; font-size: 0.95rem;
   transition: color 0.15s, background 0.15s;
+  display: flex; align-items: center; justify-content: center;
 }
-.btn-logout:hover { color: #ffffff; background: rgba(255,255,255,0.08); }
+.btn-logout:hover { color: #f87171; background: rgba(239, 68, 68, 0.1); }
 
 .main-content { flex: 1; display: flex; flex-direction: column; background: #f9fafb; overflow: hidden; }
 
@@ -190,30 +221,48 @@ function logout()      { router.push('/login') }
   padding: 10px 28px; background: #fff;
   border-bottom: 1px solid #f3f4f6; flex-shrink: 0;
 }
+.topbar-right { display: flex; align-items: center; gap: 20px; }
+.topbar-user { display: flex; align-items: center; gap: 12px; }
+.topbar-user-info { display: flex; flex-direction: column; text-align: right; }
+.topbar-user-info .user-name { font-family: 'Josefin Sans', sans-serif; font-size: 0.95rem; font-weight: 700; color: #111827; }
+.topbar-user-info .user-role { font-family: 'Montserrat', sans-serif; font-size: 0.75rem; color: #9ca3af; }
+.avatar-sm { width: 36px; height: 36px; border-radius: 50%; background: #f97316; color: white; display: flex; align-items: center; justify-content: center; font-family: 'Josefin Sans', sans-serif; font-weight: 700; font-size: 1rem; }
 
 .page-wrapper { flex: 1; overflow-y: auto; }
 
 @media (max-width: 1023px) {
   .sidebar {
-    display: none;
+    display: flex;
     position: fixed;
     top: 0; left: 0;
     height: 100vh;
     z-index: 1000;
-  }
-
-  .hamburger-btn {
-    display: flex; align-items: center; justify-content: center;
-    width: 40px; height: 40px;
-    background: #03070a; color: #00c1b0;
-    border: 1px solid rgba(147,193,206,0.15);
-    border-radius: 8px; cursor: pointer;
-    margin: 16px; z-index: 900;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .sidebar--mobile-open {
-    display: flex;
+    transform: translateX(0);
     box-shadow: 4px 0 15px rgba(0,0,0,0.5);
+  }
+
+  .main-content { padding-top: 70px; }
+
+  .mobile-topbar {
+    display: flex; position: fixed; top: 0; left: 0; width: 100%;
+    align-items: center; justify-content: space-between;
+    background: #03070a; padding: 16px 20px;
+    border-bottom-left-radius: 28px; border-bottom-right-radius: 28px;
+    z-index: 1100;
+  }
+  .mobile-topbar__left { display: flex; align-items: center; gap: 16px; }
+  .mobile-brand { display: flex; align-items: center; gap: 10px; }
+  .current-section { font-family: 'Montserrat', sans-serif; font-size: 0.9rem; font-weight: 500; color: #00c1b0; }
+
+  .hamburger-btn {
+    display: flex; align-items: center; justify-content: center;
+    background: transparent; color: #00c1b0; border: none;
+    font-size: 1.4rem; cursor: pointer; padding: 0; margin: 0;
   }
 
   .sidebar-backdrop {

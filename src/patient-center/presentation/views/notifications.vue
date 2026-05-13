@@ -1,24 +1,41 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
-const notifications = ref([
-  {
-    id: 1,
-    title: '¡Tu pedido está listo!',
-    description: 'Tu orden LAB-2851 ya está lista para recoger en nuestra sucursal.',
-    time: 'Hace 2 horas',
-    type: 'success', // Para el color verde
-    unread: true
-  },
-  {
-    id: 2,
-    title: 'Recordatorio de pago pendiente',
-    description: 'Tienes un saldo pendiente de S/ 200.00 en tu orden LAB-2850.',
-    time: 'Hace 5 horas',
-    type: 'warning', // Para el color naranja
-    unread: false
-  }
-])
+const notifications = ref([])
+const loading = ref(false)
+
+onMounted(async () => {
+    loading.value = true
+    try {
+        const apiUrl = import.meta.env.VITE_OPTIFLOW_API_URL || 'http://localhost:3000'
+        const res = await fetch(`${apiUrl}/notifications`)
+        const data = await res.json()
+        
+        notifications.value = data.map(n => {
+            const isReady = n.message.toLowerCase().includes('ready') || n.message.toLowerCase().includes('listo');
+            
+            // Format relative time or date
+            let timeStr = 'Reciente'
+            if (n.sent_at) {
+              const date = new Date(n.sent_at)
+              timeStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+            }
+
+            return {
+                id: n.notification_id,
+                title: isReady ? '¡Tu pedido está listo!' : 'Actualización de Orden',
+                description: n.message,
+                time: timeStr,
+                type: isReady ? 'success' : 'warning',
+                unread: n.status === 'PENDING'
+            }
+        })
+    } catch (err) {
+        console.error("Error fetching notifications", err)
+    } finally {
+        loading.value = false
+    }
+})
 </script>
 
 <template>
@@ -26,8 +43,8 @@ const notifications = ref([
     <!-- Header con buen margen -->
     <div class="page-header">
       <div>
-        <h1 class="page-title">Notificaciones</h1>
-        <p class="page-subtitle">Bienvenido/a a tu portal OptiFlow</p>
+        <h1 class="page-title">{{ $t('patientCenter.notifications.title') }}</h1>
+        <p class="page-subtitle">{{ $t('patientCenter.notifications.subtitle') }}</p>
       </div>
     </div>
 
@@ -39,13 +56,19 @@ const notifications = ref([
             <i class="pi pi-bell" />
           </div>
           <div>
-            <h3 class="card-title">Notificaciones</h3>
-            <p class="card-subtitle">1 sin leer</p>
+            <h3 class="card-title">{{ $t('patientCenter.notifications.title') }}</h3>
+            <p class="card-subtitle">{{ $t('patientCenter.notifications.unread', { count: notifications.filter(n => n.unread).length }) }}</p>
           </div>
         </div>
       </div>
 
       <div class="card-body">
+        <div v-if="loading" style="text-align: center; padding: 30px; color: #9ca3af;">
+          <i class="pi pi-spin pi-spinner" style="font-size: 1.5rem;"></i>
+        </div>
+        <div v-else-if="notifications.length === 0" style="text-align: center; padding: 30px; color: #9ca3af;">
+          <p>No tienes notificaciones por el momento.</p>
+        </div>
         <div 
           v-for="note in notifications" 
           :key="note.id" 
@@ -66,7 +89,7 @@ const notifications = ref([
           </div>
 
           <button v-if="note.type === 'success'" class="btn-details">
-            Ver detalles
+            {{ $t('patientCenter.notifications.details') }}
           </button>
         </div>
       </div>
@@ -76,9 +99,9 @@ const notifications = ref([
     <div class="info-banner">
       <i class="pi pi-bell info-banner-icon" />
       <div>
-        <p class="info-banner-title">Mantente informado</p>
+        <p class="info-banner-title">{{ $t('patientCenter.notifications.bannerTitle') }}</p>
         <p class="info-banner-text">
-          Te notificaremos cuando tu pedido esté listo para recoger, cuando haya cambios en el estado de tu orden y cuando tengamos promociones especiales para ti.
+          {{ $t('patientCenter.notifications.bannerText') }}
         </p>
       </div>
     </div>
