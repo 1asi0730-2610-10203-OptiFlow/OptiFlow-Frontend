@@ -26,6 +26,12 @@ import LanguageSwitcher from './language-switcher.vue'
 
 .main-content { flex: 1; display: flex; flex-direction: column; background: #f9fafb; overflow: hidden; }
 
+@media (max-width: 1023px) {
+  .main-content {
+    padding-top: 70px; /* Offset for fixed mobile topbar */
+  }
+}
+
 .topbar {
   display: flex; justify-content: flex-end; align-items: center;
   padding: 10px 28px; background: #fff;
