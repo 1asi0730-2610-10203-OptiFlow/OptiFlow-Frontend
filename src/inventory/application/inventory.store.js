@@ -101,9 +101,23 @@ export const useInventoryStore = defineStore('inventory', () => {
         }
     }
 
+    async function createProductFromResource(resource) {
+        loading.value = true
+        try {
+            const created = await productApi.createProduct(resource)
+            productsRef.value.unshift(ProductAssembler.toEntityFromResource(created))
+        } catch (e) {
+            errors.value.push(e.message)
+        } finally {
+            loading.value = false
+        }
+    }
+
     return {
         products, categories, suppliers, lowStockProducts, loading, errors,
         loadProducts, loadCategories, loadSuppliers,
-        createProduct, updateProduct, deleteProduct
+        createProduct, updateProduct, deleteProduct, createProductFromResource
     }
+
+
 })

@@ -107,7 +107,7 @@ function clearFilters() {
 }
 
 async function onAddProduct(data) {
-  await store.createProduct(data)
+  await store.createProductFromResource(data)
   showAddProduct.value = false
   toast.add({
     severity: 'success',

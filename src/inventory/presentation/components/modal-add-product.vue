@@ -29,7 +29,6 @@ function onSubmit() {
     return
   }
   emit('save', {
-    product_id:              0,
     category_id:             0,
     supplier_id:             0,
     brand:                   '',
