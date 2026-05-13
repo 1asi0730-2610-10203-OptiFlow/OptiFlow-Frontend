@@ -592,6 +592,54 @@
       "createdAt": "2026-05-13",
       "deliveredAt": "",
       "notes": ""
+    },
+    {
+      "id": 8,
+      "invoiceNumber": "FAC-3797",
+      "labOrderNumber": "LAB-5152",
+      "patientId": 2,
+      "patientName": "Michael Chen",
+      "patientRx": "",
+      "userId": 1,
+      "userName": "John Doe",
+      "articulos": [
+        "Armazón: Lens Cleaning Solution"
+      ],
+      "totalAmount": 25,
+      "adelanto": 0,
+      "pendingBalance": 25,
+      "discountCode": "",
+      "discountAmount": 0,
+      "status": "RETURNED",
+      "paymentMethod": "CASH",
+      "createdAt": "2026-05-13",
+      "deliveredAt": "",
+      "notes": ""
+    },
+    {
+      "id": 9,
+      "invoiceNumber": "FAC-6575",
+      "labOrderNumber": "LAB-3004",
+      "patientId": 2,
+      "patientName": "Michael Chen",
+      "patientRx": "",
+      "userId": 1,
+      "userName": "John Doe",
+      "articulos": [
+        "Armazón: Classic Black Frame",
+        "Tipo de Luna: Bifocales",
+        "Material de Luna: Policarbonato"
+      ],
+      "totalAmount": 150,
+      "adelanto": 50,
+      "pendingBalance": 100,
+      "discountCode": "",
+      "discountAmount": 0,
+      "status": "PARTIAL",
+      "paymentMethod": "CASH",
+      "createdAt": "2026-05-13",
+      "deliveredAt": "",
+      "notes": ""
     }
   ],
   "sale_details": [
@@ -753,6 +801,36 @@
       "is_rework": false,
       "created_at": "2026-05-13",
       "id": 4
+    },
+    {
+      "sale_id": 8,
+      "patient_name": "Michael Chen",
+      "laboratory_name": "Vision Labs Inc.",
+      "lens_type": "",
+      "frame": "Lens Cleaning Solution",
+      "status": "PENDING",
+      "priority": "normal",
+      "total": 25,
+      "deposit": 0,
+      "delivery_date": "2026-05-20",
+      "is_rework": false,
+      "created_at": "2026-05-13",
+      "id": 5
+    },
+    {
+      "sale_id": 9,
+      "patient_name": "Michael Chen",
+      "laboratory_name": "Vision Labs Inc.",
+      "lens_type": "Bifocales",
+      "frame": "Classic Black Frame",
+      "status": "PENDING",
+      "priority": "normal",
+      "total": 150,
+      "deposit": 50,
+      "delivery_date": "2026-05-20",
+      "is_rework": false,
+      "created_at": "2026-05-13",
+      "id": 6
     }
   ],
   "notifications": [

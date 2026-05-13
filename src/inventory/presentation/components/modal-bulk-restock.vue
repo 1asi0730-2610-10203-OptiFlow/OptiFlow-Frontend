@@ -21,10 +21,30 @@ const quantities = ref(
     )
 )
 
-function onSubmit() {
+const errors = ref({})
+const submitted = ref(false)
+
+const hasErrors = computed(() => Object.keys(errors.value).length > 0)
+
+function validate() {
+  const e = {}
   Object.entries(quantities.value).forEach(([id, qty]) => {
     const quantity = parseInt(qty)
-    if (quantity > 0) emit('restock', { id: parseInt(id), qty: quantity, operation: 'Bulk Restock' })
+    if (!qty || isNaN(quantity) || quantity <= 0) {
+      e[id] = true
+    }
+  })
+  errors.value = e
+  return Object.keys(e).length === 0
+}
+
+function onSubmit() {
+  submitted.value = true
+  if (!validate()) return
+
+  Object.entries(quantities.value).forEach(([id, qty]) => {
+    const quantity = parseInt(qty)
+    emit('restock', { id: parseInt(id), qty: quantity, operation: 'Bulk Restock' })
   })
   emit('close')
 }
@@ -64,11 +84,17 @@ function onSubmit() {
             <input
                 v-model="quantities[product.id]"
                 type="number"
-                min="0"
+                min="1"
                 class="qty-input"
+                :class="{ 'qty-input--error': errors[product.id] }"
+                @input="errors[product.id] = false"
             />
           </div>
         </div>
+
+        <p v-if="submitted && hasErrors" style="color: #dc2626; font-size: 0.8rem; font-family: Montserrat; margin: 10px 0 0; text-align: center;">
+          {{ $t('common.requiredError') }}
+        </p>
       </div>
 
       <div class="modal-footer">
@@ -100,6 +126,7 @@ function onSubmit() {
 .qty-label { font-family: 'Montserrat', sans-serif; font-size: 0.76rem; color: #6b7280; }
 .qty-input { width: 72px; padding: 6px 8px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 0.84rem; text-align: center; outline: none; transition: border-color 0.15s; }
 .qty-input:focus { border-color: #00c1b0; }
+.qty-input--error { border-color: #f87171 !important; background-color: #fff5f5 !important; }
 .btn-cancel { flex: 1; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff; font-family: 'Montserrat', sans-serif; font-size: 0.84rem; font-weight: 600; color: #374151; cursor: pointer; }
 .btn-cancel:hover { background: #f9fafb; }
 .btn-restock { flex: 1; padding: 10px; border: none; border-radius: 8px; background: #16a34a; color: #fff; font-family: 'Montserrat', sans-serif; font-size: 0.84rem; font-weight: 600; cursor: pointer; }

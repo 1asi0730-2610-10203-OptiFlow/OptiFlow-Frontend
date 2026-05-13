@@ -36,8 +36,22 @@ function buildPrescription() {
   return [od, os].filter(Boolean).join(' | ') || t('labOrders.newOrderModal.noPrescription')
 }
 
+const errors = ref({})
+const submitted = ref(false)
+
+function validate() {
+  const e = {}
+  if (!form.value.patientName) e.patientName = true
+  if (!form.value.deliveryDate) e.deliveryDate = true
+  errors.value = e
+  return Object.keys(e).length === 0
+}
+
+const hasErrors = computed(() => Object.keys(errors.value).length > 0)
+
 function onSubmit() {
-  if (!form.value.patientName || !form.value.deliveryDate) return
+  submitted.value = true
+  if (!validate()) return
   const workOrder = new WorkOrder({
     id: 0,
     saleId: 0,
@@ -77,7 +91,12 @@ function onSubmit() {
         <div class="form-row">
           <div class="field">
             <label>{{ $t('labOrders.newOrderModal.patient') }} *</label>
-            <select v-model="form.patientName" class="form-select" required>
+            <select 
+              v-model="form.patientName" 
+              class="form-select" 
+              :class="{ 'form-select--error': errors.patientName }"
+              @change="errors.patientName = false"
+            >
               <option value="">{{ $t('labOrders.newOrderModal.selectPatient') }}</option>
               <option v-for="patient in patients" :key="patient" :value="patient">{{ patient }}</option>
             </select>
@@ -148,7 +167,13 @@ function onSubmit() {
           </div>
           <div class="field">
             <label>{{ $t('labOrders.newOrderModal.deliveryDate') }} *</label>
-            <input v-model="form.deliveryDate" type="date" class="form-input" required />
+            <input 
+              v-model="form.deliveryDate" 
+              type="date" 
+              class="form-input" 
+              :class="{ 'form-input--error': errors.deliveryDate }"
+              @input="errors.deliveryDate = false"
+            />
           </div>
         </div>
 
@@ -171,6 +196,10 @@ function onSubmit() {
             S/ {{ pendingBalance.toFixed(2) }}
           </span>
         </div>
+
+        <p v-if="submitted && hasErrors" style="color: #dc2626; font-size: 0.8rem; font-family: Montserrat; margin: 0;">
+          {{ $t('common.requiredError') }}
+        </p>
       </div>
 
       <div class="modal-footer">
@@ -196,6 +225,7 @@ function onSubmit() {
 .field label { font-family: 'Montserrat', sans-serif; font-size: 0.82rem; font-weight: 600; color: #374151; }
 .form-select, .form-input { padding: 9px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 0.84rem; color: #111827; outline: none; background: #fff; transition: border-color 0.15s; }
 .form-select:focus, .form-input:focus { border-color: #00c1b0; }
+.form-input--error, .form-select--error { border-color: #f87171 !important; background-color: #fff5f5 !important; }
 .recipe-section { display: flex; flex-direction: column; gap: 8px; }
 .recipe-label { display: flex; align-items: center; gap: 6px; font-family: 'Montserrat', sans-serif; font-size: 0.82rem; font-weight: 700; color: #374151; }
 .recipe-grid-wrapper { background: rgba(150,246,238,0.2); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }

@@ -61,7 +61,8 @@
     "date": "Fecha",
     "name": "Nombre",
     "total": "Total",
-    "records": "registros"
+    "records": "registros",
+    "requiredError": "Por favor rellene los campos obligatorios"
   },
   "sales": {
     "pageTitle": "Gestión de Ventas",
@@ -81,6 +82,7 @@
         "payment": "Pago"
       },
       "patientLabel": "Paciente",
+      "requiredError": "Por favor rellene los campos obligatorios",
       "selectPatient": "Selecciona un paciente...",
       "lastRx": "Última Receta Vinculada",
       "rxPending": "Receta pendiente de vincular con módulo clínico",

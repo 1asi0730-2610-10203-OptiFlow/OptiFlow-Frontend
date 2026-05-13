@@ -25,6 +25,8 @@ const stepLabels = computed(() => [
 const patients = ref([])
 const selectedPatient = ref(null)
 
+const showValidationErrors = ref(false)
+
 // Step 1 — products from API + manual extras
 const products = ref([])
 const selectedArmazon = ref(null)
@@ -114,9 +116,19 @@ onMounted(async () => {
 })
 
 function nextStep() {
+  if (step.value === 0 && !selectedPatient.value) {
+    showValidationErrors.value = true
+    return
+  }
+  if (step.value === 1 && (!selectedArmazon.value || !tipoLuna.value || !materialLuna.value)) {
+    showValidationErrors.value = true
+    return
+  }
+  showValidationErrors.value = false
   if (step.value < TOTAL_STEPS - 1) step.value++
 }
 function prevStep() {
+  showValidationErrors.value = false
   if (step.value > 0) step.value--
 }
 
@@ -147,6 +159,10 @@ function getFrameName() {
 }
 
 function save() {
+  if (adelanto.value < finalAmount.value * 0.3) {
+    showValidationErrors.value = true
+    return
+  }
   if (!canSave.value) return
   const patientId = selectedPatient.value.patient_id ?? selectedPatient.value.id
   const patientName = selectedPatient.value.fullName ?? `${selectedPatient.value.first_name || ''} ${selectedPatient.value.last_name || ''}`.trim()
@@ -192,6 +208,7 @@ function close() {
   discountAmount.value = 0
   paymentMethod.value = PaymentMethod.CASH
   notes.value = ''
+  showValidationErrors.value = false
   emit('close')
 }
 </script>
@@ -238,8 +255,10 @@ function close() {
             option-label="fullName"
             :placeholder="$t('sales.form.selectPatient')"
             class="w-full"
+            :class="{ 'p-invalid': showValidationErrors && !selectedPatient }"
             filter
           />
+          <span v-if="showValidationErrors && !selectedPatient" class="field-hint">{{ $t('sales.form.requiredError') }}</span>
         </div>
 
         <div v-if="selectedPatient" class="rx-card">
@@ -266,12 +285,14 @@ function close() {
             editable
             :placeholder="$t('sales.form.framePlaceholder')"
             class="w-full"
+            :class="{ 'p-invalid': showValidationErrors && !selectedArmazon }"
             filter
           />
+          <span v-if="showValidationErrors && !selectedArmazon" class="field-hint">{{ $t('sales.form.requiredError') }}</span>
         </div>
 
         <div class="form-field">
-          <label>{{ $t('sales.form.lensType') }}</label>
+          <label>{{ $t('sales.form.lensType') }} <span class="required">*</span></label>
           <pv-select
             v-model="tipoLuna"
             :options="tipoLunaOptions"
@@ -279,11 +300,13 @@ function close() {
             option-value="value"
             :placeholder="$t('sales.form.select')"
             class="w-full"
+            :class="{ 'p-invalid': showValidationErrors && !tipoLuna }"
           />
+          <span v-if="showValidationErrors && !tipoLuna" class="field-hint">{{ $t('sales.form.requiredError') }}</span>
         </div>
 
         <div class="form-field">
-          <label>{{ $t('sales.form.lensMaterial') }}</label>
+          <label>{{ $t('sales.form.lensMaterial') }} <span class="required">*</span></label>
           <pv-select
             v-model="materialLuna"
             :options="materialLunaOptions"
@@ -291,7 +314,9 @@ function close() {
             option-value="value"
             :placeholder="$t('sales.form.select')"
             class="w-full"
+            :class="{ 'p-invalid': showValidationErrors && !materialLuna }"
           />
+          <span v-if="showValidationErrors && !materialLuna" class="field-hint">{{ $t('sales.form.requiredError') }}</span>
         </div>
 
         <div class="estimated-total-box">
@@ -323,7 +348,7 @@ function close() {
 
         <div class="form-field">
           <label>{{ $t('sales.form.deposit') }} <span class="required">*</span></label>
-          <div class="price-input-wrap">
+          <div class="price-input-wrap" :class="{ 'price-input-wrap--error': showValidationErrors && adelanto < finalAmount * 0.3 }">
             <span class="price-prefix">S/</span>
             <input
               v-model.number="adelanto"
@@ -333,8 +358,10 @@ function close() {
               step="0.01"
               class="price-input"
               placeholder="0.00"
+              @input="showValidationErrors = false"
             />
           </div>
+          <span v-if="showValidationErrors && adelanto < finalAmount * 0.3" class="field-hint">{{ $t('sales.form.requiredError') }} (Min. 30%)</span>
         </div>
 
         <div class="summary-box">
@@ -385,7 +412,6 @@ function close() {
             :label="$t('sales.form.next')"
             icon="pi pi-chevron-right"
             icon-pos="right"
-            :disabled="step === 0 && !selectedPatient"
             @click="nextStep"
           />
           <pv-button
@@ -393,7 +419,6 @@ function close() {
             :label="$t('sales.form.create')"
             icon="pi pi-chevron-right"
             icon-pos="right"
-            :disabled="!canSave"
             @click="save"
           />
         </div>
