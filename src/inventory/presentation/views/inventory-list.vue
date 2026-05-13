@@ -7,6 +7,7 @@ import ModalAddProduct  from '../components/modal-add-product.vue'
 import ModalRestock     from '../components/modal-restock.vue'
 import ModalBulkRestock from '../components/modal-bulk-restock.vue'
 import ModalAuditLog    from '../components/modal-audit-log.vue'
+import ModalEditProduct from '../components/modal-edit-product.vue'
 
 const { t } = useI18n()
 const store = useInventoryStore()
@@ -20,6 +21,7 @@ const selectedProductRestock = ref(null)
 const showBulkRestock = ref(false)
 const showAuditLog = ref(false)
 const auditLogs = ref([])
+const selectedProductEdit = ref(null)
 
 const categories = computed(() => [
   { label: t('inventory.allCategories'), value: 'all' },
@@ -167,6 +169,16 @@ async function onRestock({ id, qty, operation }) {
   })
 }
 
+async function onEditProduct(updatedProduct) {
+  await store.updateProduct(updatedProduct)
+  selectedProductEdit.value = null
+  toast.add({
+    severity: 'success',
+    summary: 'Producto actualizado',
+    detail: `${updatedProduct.name} fue actualizado correctamente.`,
+    life: 2500
+  })
+}
 </script>
 
 <template>
@@ -312,7 +324,7 @@ async function onRestock({ id, qty, operation }) {
           <button class="btn-reponer" @click="selectedProductRestock = product">
             {{ $t('inventory.table.replenish') }}
           </button>
-          <button class="btn-editar">{{ $t('inventory.table.edit') }}</button>
+          <button class="btn-editar" @click="selectedProductEdit = product">{{ $t('inventory.table.edit') }}</button>
         </div>
       </div>
 
@@ -356,6 +368,12 @@ async function onRestock({ id, qty, operation }) {
         @close="showAuditLog = false"
     />
 
+    <ModalEditProduct
+        v-if="selectedProductEdit"
+        :product="selectedProductEdit"
+        @save="onEditProduct"
+        @close="selectedProductEdit = null"
+    />
   </div>
 </template>
 
@@ -430,4 +448,5 @@ async function onRestock({ id, qty, operation }) {
 .page-btn { padding: 5px 12px; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff; font-family: 'Montserrat', sans-serif; font-size: 0.8rem; color: #374151; cursor: pointer; }
 .page-btn:hover { background: #f9fafb; }
 .page-btn--active { background: #00c1b0; color: #fff; border-color: #00c1b0; }
+
 </style>

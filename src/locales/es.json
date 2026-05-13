@@ -529,6 +529,16 @@
       "itemAddedDetail": "registrado en el inventario.",
       "restockDone": "Restock registrado",
       "restockDetail": "unidades agregadas."
+    },
+    "editModal": {
+      "title": "Editar Producto",
+      "subtitle": "Modifica la información del producto en el catálogo de inventario.",
+      "productName": "NOMBRE DEL PRODUCTO",
+      "sku": "SKU / CÓDIGO",
+      "category": "CATEGORÍA",
+      "threshold": "UMBRAL DE ALERTA",
+      "price": "PRECIO UNITARIO (S/)",
+      "save": "Guardar Cambios"
     }
   },
   "staff": {

@@ -530,6 +530,16 @@
       "itemAddedDetail": "registered in inventory.",
       "restockDone": "Restock registered",
       "restockDetail": "units added."
+    },
+    "editModal": {
+      "title": "Edit Product",
+      "subtitle": "Modify the product information in the inventory catalog.",
+      "productName": "PRODUCT NAME",
+      "sku": "SKU / CODE",
+      "category": "CATEGORY",
+      "threshold": "ALERT THRESHOLD",
+      "price": "UNIT PRICE (S/)",
+      "save": "Save Changes"
     }
   },
   "subscription": {
