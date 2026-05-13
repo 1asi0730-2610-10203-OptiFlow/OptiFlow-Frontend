@@ -94,10 +94,14 @@ const existingSkus = computed(() =>
     store.products.map(product => (product.sku || '').toUpperCase())
 )
 
-onMounted(() => {
+onMounted(async () => {
   store.loadProducts()
   store.loadCategories()
   store.loadSuppliers()
+
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/audit_logs`)
+  const data = await res.json()
+  auditLogs.value = data.reverse()
 })
 
 function clearFilters() {
@@ -117,7 +121,7 @@ async function onAddProduct(data) {
   })
 }
 
-function onRestock({ id, qty, operation }) {
+async function onRestock({ id, qty, operation }) {
   const product = store.products.find(product => product.id === id)
   if (!product) return
   const now = new Date()
@@ -135,6 +139,21 @@ function onRestock({ id, qty, operation }) {
     previousStock: product.stock,
     newStock:      product.stock + qty
   })
+  await fetch(`${import.meta.env.VITE_BASE_URL}/audit_logs`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      date,
+      time,
+      author:        'John Doe',
+      itemName:      product.name,
+      sku:           product.sku,
+      quantity:      qty,
+      operation,
+      previousStock: product.stock,
+      newStock:      product.stock + qty
+    })
+  })
   const index = store.products.findIndex(product => product.id === id)
   if (index !== -1) {
     store.products[index].stock += qty
@@ -147,6 +166,7 @@ function onRestock({ id, qty, operation }) {
     life: 2500
   })
 }
+
 </script>
 
 <template>
