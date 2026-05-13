@@ -275,22 +275,22 @@
   },
   "dashboard": {
     "title": "Control Panel",
-    "subtitle": "Welcome! Here's your business summary ·",
+    "subtitle": "Welcome back! Here's your business overview",
     "liveIndicator": "Live",
     "stats": {
       "totalPatients": "Total Patients",
-      "patientsToday": "Patients attended today",
+      "patientsToday": "Patients Seen Today",
       "monthlyRevenue": "Monthly Revenue",
-      "pendingLabOrders": "Pending Lab Orders"
+      "pendingLabOrders": "Active Lab Orders"
     },
     "charts": {
-      "conversionTitle": "Prescription → Sale Conversion",
-      "conversionSubtitle": "Prescriptions issued vs. closed sales per month",
-      "last6Months": "Last 6 months",
+      "conversionTitle": "Prescription to Sale Conversion",
+      "conversionSubtitle": "Issued prescriptions vs. closed sales per month",
+      "last6Months": "Last 6 Months",
       "legendPrescriptions": "Prescriptions",
       "legendSales": "Closed Sales",
       "weeklyRevenueTitle": "Weekly Revenue",
-      "weeklyRevenueSubtitle": "Current week · S/ 52,300 total",
+      "weeklyRevenueSubtitle": "Current Week Summary",
       "months": ["Nov", "Dec", "Jan", "Feb", "Mar", "Apr"],
       "weekDays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     },
@@ -579,6 +579,42 @@
       }
     }
   },
+  "reports": {
+    "title": "Reports & Analytics",
+    "subtitle": "Business Intelligence",
+    "periodSelector": "Last 6 months",
+    "export": "Export",
+    "resumen": "Summary",
+    "salesFinance": "Sales & Finance",
+    "productivityLab": "Productivity Lab",
+    "personalPerformance": "Personal Performance",
+    "kpis": {
+      "totalRevenue": "Total Revenue",
+      "conversionRate": "Conversion Rate",
+      "avgDeliveryTime": "Average Delivery Time",
+      "pendingBalances": "Pending Balances",
+      "total6Months": "Total 6 months",
+      "recipeToSale": "Prescription to Sale",
+      "vsPreviousQuarter": "vs previous quarter",
+      "openInvoices": "{count} open invoices"
+    },
+    "charts": {
+      "conversionTitle": "Prescription to Sale Conversion",
+      "conversionSubtitle": "Issued prescriptions vs closed sales per month",
+      "salesByProduct": "Sales by Product",
+      "periodDistribution": "Period distribution",
+      "currentMonth": "this month",
+      "prescriptions": "Prescriptions",
+      "closedSales": "Closed Sales",
+      "revenueTrendTitle": "Monthly Revenue Trend",
+      "revenueTrendSubtitle": "Last 6 months · {total} total"
+    },
+    "products": {
+      "progressive": "Progressive Lenses",
+      "singleVision": "Single Vision",
+      "contactLenses": "Contact Lenses",
+      "accessories": "Accessories",
+      "others": "Others"
   "patientCenter": {
     "profile": {
       "title": "My Profile",

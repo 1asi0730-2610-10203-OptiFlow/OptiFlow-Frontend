@@ -572,6 +572,42 @@
       }
     }
   },
+  "reports": {
+    "title": "Reportes y Analítica",
+    "subtitle": "Inteligencia de negocio",
+    "periodSelector": "Últimos 6 meses",
+    "export": "Exportar",
+    "resumen": "Resumen",
+    "salesFinance": "Ventas y Finanzas",
+    "productivityLab": "Productivity Lab",
+    "personalPerformance": "Rendimiento Personal",
+    "kpis": {
+      "totalRevenue": "Ingresos Totales",
+      "conversionRate": "Tasa de Conversión",
+      "avgDeliveryTime": "Tiempo Promedio Entrega",
+      "pendingBalances": "Saldos Pendientes",
+      "total6Months": "Total 6 meses",
+      "recipeToSale": "Receta → Venta",
+      "vsPreviousQuarter": "vs trimestre anterior",
+      "openInvoices": "{count} facturas abiertas"
+    },
+    "charts": {
+      "conversionTitle": "Conversión Receta → Venta",
+      "conversionSubtitle": "Recetas emitidas vs ventas cerradas por mes",
+      "salesByProduct": "Ventas por Producto",
+      "periodDistribution": "Distribución del período",
+      "currentMonth": "este mes",
+      "prescriptions": "Recetas",
+      "closedSales": "Ventas Cerradas",
+      "revenueTrendTitle": "Tendencia de Ingresos Mensuales",
+      "revenueTrendSubtitle": "Últimos 6 meses · {total} total"
+    },
+    "products": {
+      "progressive": "Lunas Progresivas",
+      "singleVision": "Visión Simple",
+      "contactLenses": "Lentes de Contacto",
+      "accessories": "Accesorios",
+      "others": "Otros"
   "patientCenter": {
     "profile": {
       "title": "Mi Perfil",

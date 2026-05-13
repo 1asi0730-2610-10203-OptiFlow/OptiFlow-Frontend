@@ -724,5 +724,23 @@
       "sales_closed": 16,
       "total_revenue": 7100.0
     }
+  ],
+  "reports": [
+    {
+      "id": 1,
+      "title": "Sales Summary Q1 2026",
+      "description": "Quarterly sales performance across all branches.",
+      "type": "Financial",
+      "created_at": "2026-04-01T10:00:00Z",
+      "data": { "total_sales": 150000, "growth": "+12%" }
+    },
+    {
+      "id": 2,
+      "title": "Staff Productivity Report",
+      "description": "Evaluation of average clinical time per patient.",
+      "type": "Performance",
+      "created_at": "2026-05-10T14:30:00Z",
+      "data": { "avg_time": "15min", "efficiency": "94%" }
+    }
   ]
 }

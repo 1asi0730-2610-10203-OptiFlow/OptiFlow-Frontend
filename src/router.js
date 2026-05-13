@@ -6,6 +6,7 @@ import fulfillmentRoutes  from './fulfillment/presentation/fulfillment-routes.js
 import inventoryRoutes    from './inventory/presentation/inventory-routes.js'
 import staffRoutes        from './staff/presentation/staff-routes.js'
 import patientRoutes     from './patient-center/presentation/patient-routes.js'
+import reportRoutes      from './report/presentation/report-routes.js'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -19,6 +20,7 @@ const router = createRouter({
     ...clinicalRoutes,
     ...staffRoutes,
     ...patientRoutes,
+    ...reportRoutes,
     {
       path:      '/:pathMatch(.*)*',
       name:      'not-found',
