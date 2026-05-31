@@ -16,10 +16,22 @@ const form = ref({
 const errors = ref({})
 const submitted = ref(false)
 
+const today = new Date()
+const maxBirthDate = computed(() => today.toISOString().split('T')[0])
+const minBirthDate = computed(() => {
+    const d = new Date(today)
+    d.setFullYear(d.getFullYear() - 100)
+    return d.toISOString().split('T')[0]
+})
+
 function validate() {
     const e = {}
     if (!form.value.fullName.trim()) e.fullName = true
     if (!form.value.dni.trim())      e.dni = true
+    if (form.value.birthDate) {
+        const bd = form.value.birthDate
+        if (bd < minBirthDate.value || bd > maxBirthDate.value) e.birthDate = true
+    }
     errors.value = e
     return Object.keys(e).length === 0
 }
@@ -90,7 +102,14 @@ function onSubmit() {
                             v-model="form.birthDate"
                             type="date"
                             class="form-input"
+                            :class="{ 'form-input--error': errors.birthDate }"
+                            :min="minBirthDate"
+                            :max="maxBirthDate"
+                            @change="errors.birthDate = false"
                         />
+                        <span v-if="errors.birthDate" class="field-error">
+                            {{ $t('patients.addModal.birthDateError') }}
+                        </span>
                     </div>
                 </div>
 
@@ -145,6 +164,7 @@ function onSubmit() {
 .form-input { padding: 9px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 0.84rem; color: #111827; outline: none; transition: border-color 0.15s; width: 100%; box-sizing: border-box; }
 .form-input:focus { border-color: #00c1b0; }
 .form-input--error { border-color: #f87171; }
+.field-error { font-family: 'Montserrat', sans-serif; font-size: 0.75rem; color: #dc2626; margin-top: 2px; }
 .global-error { font-family: 'Montserrat', sans-serif; font-size: 0.78rem; color: #dc2626; margin: 0; }
 .btn-cancel { flex: 1; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff; font-family: 'Montserrat', sans-serif; font-size: 0.84rem; font-weight: 600; color: #374151; cursor: pointer; }
 .btn-cancel:hover { background: #f9fafb; }
