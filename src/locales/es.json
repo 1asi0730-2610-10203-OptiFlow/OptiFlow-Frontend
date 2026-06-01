@@ -814,7 +814,24 @@
           "title": "Acceso Total",
           "desc": "Acceso sin restricciones a todos los módulos"
         }
+      },
+      "summary": {
+        "title": "Resumen de Roles",
+        "users": "{count} usuario(s)"
+      },
+      "listItem": {
+        "usersAssigned": "{count} usuario(s) asignado(s)",
+        "edit": "Editar"
       }
+    },
+    "systemStatus": {
+      "title": "Estado del Sistema",
+      "server": "Servidor",
+      "online": "En línea",
+      "database": "Base de Datos",
+      "connected": "Conectada",
+      "lastUpdate": "Última Actualización",
+      "version": "Versión"
     }
   }
 }

@@ -62,8 +62,8 @@ onMounted(() => {
   <div class="settings-container p-4 lg:p-6">
     <pv-toast />
     <header class="mb-6">
-      <h1 class="text-900 font-bold text-3xl lg:text-4xl mb-2 mt-0 font-josefin">Configuración</h1>
-      <p class="text-600 text-lg m-0">Ajustes del sistema y gestión de permisos</p>
+      <h1 class="text-900 font-bold text-3xl lg:text-4xl mb-2 mt-0 font-josefin">{{ $t('settings.pageTitle') }}</h1>
+      <p class="text-600 text-lg m-0">{{ $t('settings.pageSubtitle') }}</p>
     </header>
 
     <div class="grid">
@@ -78,11 +78,11 @@ onMounted(() => {
                   <i class="pi pi-shield text-2xl"></i>
                 </div>
                 <div>
-                  <h2 class="text-900 font-bold text-xl lg:text-2xl m-0 font-josefin">Gestión de Roles</h2>
-                  <p class="text-500 m-0 text-sm lg:text-base">Definir y gestionar roles y permisos de usuario</p>
+                  <h2 class="text-900 font-bold text-xl lg:text-2xl m-0 font-josefin">{{ $t('settings.roles.title') }}</h2>
+                  <p class="text-500 m-0 text-sm lg:text-base">{{ $t('settings.roles.subtitle') }}</p>
                 </div>
               </div>
-              <pv-button label="Agregar Rol" icon="pi pi-plus" class="p-button-primary border-round-lg font-bold px-4" 
+              <pv-button :label="$t('settings.roles.addRole')" icon="pi pi-plus" class="p-button-primary border-round-lg font-bold px-4" 
                          style="background-color: #00c1b0; border-color: #00c1b0" @click="showAddDialog = true" />
             </div>
 
@@ -104,11 +104,11 @@ onMounted(() => {
     </div>
 
     <!-- Add Role Dialog -->
-    <pv-dialog v-model:visible="showAddDialog" modal header="Agregar Nuevo Rol" :style="{ width: '500px' }" class="p-fluid">
+    <pv-dialog v-model:visible="showAddDialog" modal :header="$t('settings.roles.dialog.title')" :style="{ width: '500px' }" class="p-fluid">
       <template #header>
         <div class="flex flex-column gap-1">
-          <h2 class="m-0 font-josefin text-xl font-bold">Agregar Nuevo Rol</h2>
-          <span class="text-500 text-sm">Definir un nuevo rol de usuario y sus permisos</span>
+          <h2 class="m-0 font-josefin text-xl font-bold">{{ $t('settings.roles.dialog.title') }}</h2>
+          <span class="text-500 text-sm">{{ $t('settings.roles.dialog.subtitle') }}</span>
         </div>
       </template>
       <RoleForm @save="handleSaveRole" @cancel="showAddDialog = false" />

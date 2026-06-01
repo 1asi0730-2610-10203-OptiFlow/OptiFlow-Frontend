@@ -18,11 +18,11 @@ defineProps({
         <div class="flex align-items-center gap-2">
           <span class="text-900 font-bold font-josefin text-lg">{{ role.name }}</span>
         </div>
-        <span class="text-500 text-xs mt-1">{{ role.userCount }} usuario(s) asignado(s)</span>
+        <span class="text-500 text-xs mt-1">{{ $t('settings.roles.listItem.usersAssigned', { count: role.userCount }) }}</span>
         <span class="text-600 text-sm mt-2">{{ role.description }}</span>
       </div>
     </div>
-    <pv-button label="Editar" variant="text" class="p-button-link text-primary font-medium text-sm" />
+    <pv-button :label="$t('settings.roles.listItem.edit')" variant="text" class="p-button-link text-primary font-medium text-sm" />
   </div>
 </template>
 

@@ -821,7 +821,24 @@
           "title": "Full Access",
           "desc": "Unrestricted access to all modules"
         }
+      },
+      "summary": {
+        "title": "Roles Summary",
+        "users": "{count} user(s)"
+      },
+      "listItem": {
+        "usersAssigned": "{count} assigned user(s)",
+        "edit": "Edit"
       }
+    },
+    "systemStatus": {
+      "title": "System Status",
+      "server": "Server",
+      "online": "Online",
+      "database": "Database",
+      "connected": "Connected",
+      "lastUpdate": "Last Update",
+      "version": "Version"
     }
   }
 }

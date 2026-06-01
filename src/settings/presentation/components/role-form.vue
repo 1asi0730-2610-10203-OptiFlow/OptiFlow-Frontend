@@ -17,18 +17,18 @@ const colors = [
   '#6366f1'  // Indigo
 ];
 const permissions = [
-  { id: 'dashboard', title: 'Panel de Control', description: 'Ver resumen y estadísticas del negocio' },
-  { id: 'clinical', title: 'Historias Clínicas', description: 'Ver y editar datos de pacientes' },
-  { id: 'prescriptions', title: 'Recetas Ópticas', description: 'Crear y gestionar recetas' },
-  { id: 'appointments', title: 'Citas', description: 'Ver y agendar citas' },
-  { id: 'sales', title: 'Ventas', description: 'Crear y gestionar ventas / facturas' },
-  { id: 'lab_orders', title: 'Órdenes de Lab', description: 'Gestionar órdenes de trabajo' },
-  { id: 'inventory', title: 'Inventario', description: 'Ver y gestionar el stock' },
-  { id: 'staff', title: 'Gestión de Personal', description: 'Gestionar empleados y accesos' },
-  { id: 'settings', title: 'Configuración', description: 'Modificar ajustes del sistema' },
-  { id: 'reports', title: 'Reportes y Exportación', description: 'Generar y exportar informes' },
-  { id: 'users', title: 'Gestión de Usuarios', description: 'Agregar y remover usuarios del sistema' },
-  { id: 'full_access', title: 'Acceso Total', description: 'Acceso sin restricciones a todos los módulos' }
+  { id: 'dashboard', titleKey: 'settings.roles.permissions.dashboard.title', descKey: 'settings.roles.permissions.dashboard.desc' },
+  { id: 'clinical', titleKey: 'settings.roles.permissions.clinical.title', descKey: 'settings.roles.permissions.clinical.desc' },
+  { id: 'prescriptions', titleKey: 'settings.roles.permissions.prescriptions.title', descKey: 'settings.roles.permissions.prescriptions.desc' },
+  { id: 'appointments', titleKey: 'settings.roles.permissions.appointments.title', descKey: 'settings.roles.permissions.appointments.desc' },
+  { id: 'sales', titleKey: 'settings.roles.permissions.sales.title', descKey: 'settings.roles.permissions.sales.desc' },
+  { id: 'lab_orders', titleKey: 'settings.roles.permissions.lab_orders.title', descKey: 'settings.roles.permissions.lab_orders.desc' },
+  { id: 'inventory', titleKey: 'settings.roles.permissions.inventory.title', descKey: 'settings.roles.permissions.inventory.desc' },
+  { id: 'staff', titleKey: 'settings.roles.permissions.staff.title', descKey: 'settings.roles.permissions.staff.desc' },
+  { id: 'settings', titleKey: 'settings.roles.permissions.settings.title', descKey: 'settings.roles.permissions.settings.desc' },
+  { id: 'reports', titleKey: 'settings.roles.permissions.reports.title', descKey: 'settings.roles.permissions.reports.desc' },
+  { id: 'users', titleKey: 'settings.roles.permissions.users.title', descKey: 'settings.roles.permissions.users.desc' },
+  { id: 'full_access', titleKey: 'settings.roles.permissions.full_access.title', descKey: 'settings.roles.permissions.full_access.desc' }
 ];
 
 const handleSave = () => {
@@ -48,20 +48,20 @@ const handleSave = () => {
     <div v-if="submitted && (!roleName.trim() || selectedPermissions.length === 0)" 
          class="bg-red-50 text-red-600 p-3 border-round-lg mb-4 text-sm font-bold flex align-items-center gap-2">
       <i class="pi pi-exclamation-circle"></i>
-      <span>Datos incompletos</span>
+      <span>{{ $t('settings.roles.dialog.incompleteData') }}</span>
     </div>
 
     <div class="mb-4">
-      <label class="block text-900 font-medium mb-2 font-josefin">Nombre del Rol *</label>
+      <label class="block text-900 font-medium mb-2 font-josefin">{{ $t('settings.roles.dialog.roleName') }}</label>
       <pv-input-text v-model="roleName" 
-                     placeholder="Ej. Técnico de Laboratorio" 
+                     :placeholder="$t('settings.roles.dialog.roleNamePlaceholder')" 
                      class="w-full border-round-lg p-3"
                      :class="{ 'p-invalid': submitted && !roleName.trim() }" />
-      <small v-if="submitted && !roleName.trim()" class="text-red-500 block mt-1">El nombre es obligatorio</small>
+      <small v-if="submitted && !roleName.trim()" class="text-red-500 block mt-1">{{ $t('settings.roles.dialog.nameRequired') }}</small>
     </div>
 
     <div class="mb-4">
-      <label class="block text-900 font-medium mb-3 font-josefin">Color del Rol</label>
+      <label class="block text-900 font-medium mb-3 font-josefin">{{ $t('settings.roles.dialog.roleColor') }}</label>
       <div class="flex gap-3">
         <div v-for="color in colors" :key="color" 
              @click="selectedColor = color"
@@ -73,24 +73,24 @@ const handleSave = () => {
     </div>
 
     <div class="mb-4">
-      <label class="block text-900 font-medium mb-3 font-josefin">Permisos</label>
+      <label class="block text-900 font-medium mb-3 font-josefin">{{ $t('settings.roles.dialog.permissions') }}</label>
       <div class="permissions-container border-1 border-round-lg overflow-hidden"
            :class="submitted && selectedPermissions.length === 0 ? 'border-red-500' : 'border-100'">
         <div v-for="perm in permissions" :key="perm.id" 
              class="permission-item flex align-items-start gap-3 p-3 border-bottom-1 border-100 transition-colors hover:bg-gray-50">
           <pv-checkbox v-model="selectedPermissions" :value="perm.id" />
           <div class="flex flex-column">
-            <span class="text-900 font-bold text-sm">{{ perm.title }}</span>
-            <span class="text-500 text-xs mt-1">{{ perm.description }}</span>
+            <span class="text-900 font-bold text-sm">{{ $t(perm.titleKey) }}</span>
+            <span class="text-500 text-xs mt-1">{{ $t(perm.descKey) }}</span>
           </div>
         </div>
       </div>
-      <p class="text-500 text-xs mt-2">{{ selectedPermissions.length }} permiso(s) seleccionado(s)</p>
+      <p class="text-500 text-xs mt-2">{{ $t('settings.roles.dialog.permissionsSelected', { count: selectedPermissions.length }) }}</p>
     </div>
 
     <div class="flex justify-content-end gap-3 mt-5">
-      <pv-button label="Cancelar" variant="text" class="p-button-secondary font-bold px-5" @click="emit('cancel')" />
-      <pv-button label="Crear Rol" class="p-button-primary border-round-lg font-bold px-6" 
+      <pv-button :label="$t('settings.roles.dialog.cancel')" variant="text" class="p-button-secondary font-bold px-5" @click="emit('cancel')" />
+      <pv-button :label="$t('settings.roles.dialog.createRole')" class="p-button-primary border-round-lg font-bold px-6" 
                  style="background-color: #00c1b0; border-color: #00c1b0" @click="handleSave" />
     </div>
   </div>
