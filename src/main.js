@@ -32,6 +32,7 @@ import ConfirmDialog from 'primevue/confirmdialog'
 import ProgressSpinner from 'primevue/progressspinner'
 import Card from 'primevue/card'
 import ScrollPanel from 'primevue/scrollpanel'
+import Chart from 'primevue/chart'
 
 const app = createApp(App)
 app.use(i18n)
@@ -66,5 +67,6 @@ app.component('pv-progress-spinner', ProgressSpinner)
 app.component('pv-select-button', SelectButton)
 app.component('pv-card', Card)
 app.component('pv-scroll-panel', ScrollPanel)
+app.component('pv-chart', Chart)
 
 app.mount('#app')

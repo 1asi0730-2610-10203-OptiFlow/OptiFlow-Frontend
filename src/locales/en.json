@@ -273,24 +273,24 @@
       "orderCreatedDetail": "New lab order registered."
     },
     "qaModal": {
-      "title":    "Quality Assurance – QA",
+      "title": "Quality Assurance – QA",
       "subtitle": "Complete the inspection before approving",
       "prescriptionCheck": "Prescription Verification",
-      "lensInspection":    "Lens Inspection",
-      "frameInspection":   "Frame Inspection",
+      "lensInspection": "Lens Inspection",
+      "frameInspection": "Frame Inspection",
       "btnApprove": "Confirm QA",
-      "btnReject":  "Register Rejection",
+      "btnReject": "Register Rejection",
       "checks": {
-        "sphereMatch":   "OD/OS sphere matches prescription",
-        "cylinderAxis":  "OD/OS cylinder and axis are correct",
+        "sphereMatch": "OD/OS sphere matches prescription",
+        "cylinderAxis": "OD/OS cylinder and axis are correct",
         "additionMatch": "Addition verified (if applicable)",
-        "noScratches":   "No scratches, bubbles or impurities",
-        "coatingOk":     "Coating applied correctly",
-        "centeredLens":  "Lens properly centered in the frame",
+        "noScratches": "No scratches, bubbles or impurities",
+        "coatingOk": "Coating applied correctly",
+        "centeredLens": "Lens properly centered in the frame",
         "powerVerified": "Power verified with lensometer",
-        "frameOk":       "Frame free of visible damage",
-        "bevelOk":       "Bevel correct and without sharp edges",
-        "adjustmentOk":  "Bridge and temple adjustment correct"
+        "frameOk": "Frame free of visible damage",
+        "bevelOk": "Bevel correct and without sharp edges",
+        "adjustmentOk": "Bridge and temple adjustment correct"
       }
     },
     "toast": {
@@ -659,6 +659,18 @@
       "closedSales": "Closed Sales",
       "revenueTrendTitle": "Monthly Revenue Trend",
       "revenueTrendSubtitle": "Last 6 months · {total} total"
+    },
+    "sales": {
+      "pendingBalances": "Pending Balances by Aging",
+      "pendingSubtitle": "Accounts receivable breakdown",
+      "days0to7": "0-7 days",
+      "days8to15": "8-15 days",
+      "days16to30": "16-30 days",
+      "days31plus": "31+ days",
+      "revenueByCategory": "Revenue by Category",
+      "revenueSubtitle": "This period",
+      "conversionTrend": "Conversion Rate Trend",
+      "conversionSubtitle": "Prescription → Sale %"
     },
     "products": {
       "progressive": "Progressive Lenses",

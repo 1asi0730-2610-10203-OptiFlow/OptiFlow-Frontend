@@ -9,10 +9,10 @@ const activeTab = ref('resumen')
 const selectedPeriod = ref({ label: 'Últimos 6 meses', value: 6 })
 
 const kpis = computed(() => [
-  { icon: '💰', value: 'S/ 303,693', label: t('reports.kpis.totalRevenue'), subtext: t('reports.kpis.total6Months'), trend: '+18%', trendUp: true },
-  { icon: '📊', value: '86%', label: t('reports.kpis.conversionRate'), subtext: t('reports.kpis.recipeToSale'), trend: '+9pts', trendUp: true },
-  { icon: '⏱️', value: '3.9 días', label: t('reports.kpis.avgDeliveryTime'), subtext: t('reports.kpis.vsPreviousQuarter'), trend: '-0.8d', trendUp: true },
-  { icon: '⚠️', value: 'S/ 16,660', label: t('reports.kpis.pendingBalances'), subtext: t('reports.kpis.openInvoices', { count: 52 }), trend: '+5%', trendUp: false }
+  { icon: 'pi pi-money-bill text-primary', value: 'S/ 303,693', label: t('reports.kpis.totalRevenue'), subtext: t('reports.kpis.total6Months'), trend: '+18%', trendUp: true },
+  { icon: 'pi pi-chart-bar text-primary', value: '86%', label: t('reports.kpis.conversionRate'), subtext: t('reports.kpis.recipeToSale'), trend: '+9pts', trendUp: true },
+  { icon: 'pi pi-clock text-primary', value: '3.9 días', label: t('reports.kpis.avgDeliveryTime'), subtext: t('reports.kpis.vsPreviousQuarter'), trend: '-0.8d', trendUp: true },
+  { icon: 'pi pi-exclamation-triangle text-orange-500', value: 'S/ 16,660', label: t('reports.kpis.pendingBalances'), subtext: t('reports.kpis.openInvoices', { count: 52 }), trend: '+5%', trendUp: false }
 ])
 
 const chartData = [
@@ -114,6 +114,73 @@ const donutSegments = computed(() => {
     return { path, color: item.color, label: item.label, percent: item.value }
   })
 })
+
+// --- Sales and Finance Data (PrimeVue Chart) ---
+const agingBalances = computed(() => [
+  { label: t('reports.sales.days0to7'), count: 28, amount: 'S/ 8,400' },
+  { label: t('reports.sales.days8to15'), count: 14, amount: 'S/ 4,200' },
+  { label: t('reports.sales.days16to30'), count: 7, amount: 'S/ 2,800' },
+  { label: t('reports.sales.days31plus'), count: 3, amount: 'S/ 1,260' }
+])
+
+const revenueChartData = computed(() => ({
+  labels: [
+    t('reports.products.progressive'), 
+    t('reports.products.singleVision'), 
+    t('reports.products.contactLenses'), 
+    t('reports.products.accessories'), 
+    t('reports.products.others')
+  ],
+  datasets: [
+    {
+      label: t('reports.sales.revenueByCategory'),
+      backgroundColor: ['#00c1b0', '#a3e635', '#93c5fd', '#fbbf24', '#ef4444'],
+      data: [38, 24, 18, 12, 8],
+      borderRadius: 4
+    }
+  ]
+}))
+
+const revenueChartOptions = ref({
+  indexAxis: 'y',
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { display: false }
+  },
+  scales: {
+    x: { grid: { color: '#f3f4f6' }, ticks: { color: '#9ca3af' } },
+    y: { grid: { display: false }, ticks: { color: '#6b7280' } }
+  }
+})
+
+const conversionTrendData = computed(() => ({
+  labels: ['Nov', 'Dic', 'Ene', 'Feb', 'Mar', 'Abr'],
+  datasets: [
+    {
+      label: t('reports.sales.conversionTrend'),
+      data: [77, 80, 75, 82, 84, 86],
+      fill: false,
+      borderColor: '#a3e635',
+      tension: 0.4,
+      pointBackgroundColor: '#a3e635',
+      pointBorderColor: '#fff',
+      pointBorderWidth: 2,
+      pointRadius: 4
+    }
+  ]
+}))
+
+const conversionTrendOptions = ref({
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { display: false }
+  },
+  scales: {
+    x: { grid: { display: false }, ticks: { color: '#9ca3af' } },
+    y: { grid: { color: '#f3f4f6', borderDash: [5, 5] }, ticks: { color: '#9ca3af' }, min: 70, max: 90 }
+  }
+})
+
 </script>
 
 <template>
@@ -139,7 +206,7 @@ const donutSegments = computed(() => {
     <div class="kpi-grid">
       <div v-for="kpi in kpis" :key="kpi.label" class="kpi-card">
         <div class="kpi-top">
-          <span class="kpi-icon">{{ kpi.icon }}</span>
+          <div class="kpi-icon"><i :class="kpi.icon" class="text-xl"></i></div>
           <span :class="['trend-badge', kpi.trendUp ? 'up' : 'down']">
             <i :class="['pi', kpi.trendUp ? 'pi-arrow-up-right' : 'pi-chart-line']"></i>
             {{ kpi.trend }}
@@ -184,7 +251,7 @@ const donutSegments = computed(() => {
     </nav>
 
     <!-- Main Content Area -->
-    <div class="report-main">
+    <div class="report-main" v-if="activeTab === 'resumen'">
       <div class="main-card bar-chart-section">
         <div class="card-header">
           <div class="card-title-group">
@@ -290,6 +357,47 @@ const donutSegments = computed(() => {
             <polyline :points="revPts" fill="none" stroke="#00c1b0" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" />
             <circle v-for="d in revDots" :cx="d.cx" :cy="d.cy" r="4" fill="white" stroke="#00c1b0" stroke-width="2" />
           </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ventas y Finanzas -->
+    <div class="sales-finance-main" v-else-if="activeTab === 'sales'">
+      <!-- Saldos Pendientes -->
+      <div class="aging-section w-full mb-5">
+        <h3 class="text-900 font-bold text-xl m-0 mb-1 font-josefin">{{ $t('reports.sales.pendingBalances') }}</h3>
+        <p class="text-500 text-sm m-0 mb-4">{{ $t('reports.sales.pendingSubtitle') }}</p>
+        
+        <div class="grid">
+          <div v-for="balance in agingBalances" :key="balance.label" class="col-12 md:col-6 xl:col-3">
+            <pv-card class="shadow-none border-1 border-100 border-round-xl h-full" style="background-color: #f8fafc">
+              <template #content>
+                <div class="text-600 text-sm mb-3">{{ balance.label }}</div>
+                <div class="text-900 font-bold text-3xl mb-2">{{ balance.count }}</div>
+                <div class="text-primary font-semibold text-lg" style="color: #00c1b0 !important">{{ balance.amount }}</div>
+              </template>
+            </pv-card>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <!-- Ingresos por Categoría -->
+        <div class="col-12 lg:col-6">
+          <h3 class="text-900 font-bold text-xl m-0 mb-1 font-josefin">{{ $t('reports.sales.revenueByCategory') }}</h3>
+          <p class="text-500 text-sm m-0 mb-4">{{ $t('reports.sales.revenueSubtitle') }}</p>
+          <div style="height: 300px">
+            <pv-chart type="bar" :data="revenueChartData" :options="revenueChartOptions" class="h-full w-full" />
+          </div>
+        </div>
+
+        <!-- Tendencia de Conversión -->
+        <div class="col-12 lg:col-6">
+          <h3 class="text-900 font-bold text-xl m-0 mb-1 font-josefin">{{ $t('reports.sales.conversionTrend') }}</h3>
+          <p class="text-500 text-sm m-0 mb-4">{{ $t('reports.sales.conversionSubtitle') }}</p>
+          <div style="height: 300px">
+            <pv-chart type="line" :data="conversionTrendData" :options="conversionTrendOptions" class="h-full w-full" />
+          </div>
         </div>
       </div>
     </div>
