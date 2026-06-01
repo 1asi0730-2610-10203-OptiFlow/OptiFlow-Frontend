@@ -19,4 +19,9 @@ export class RolesApi extends BaseApi {
         const response = await this.http.post('/roles', role);
         return response.data;
     }
+
+    async update(id, role) {
+        const response = await this.http.put(`/roles/${id}`, role);
+        return response.data;
+    }
 }

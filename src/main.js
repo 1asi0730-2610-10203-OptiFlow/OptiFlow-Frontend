@@ -31,7 +31,7 @@ import Toast from 'primevue/toast'
 import ConfirmDialog from 'primevue/confirmdialog'
 import ProgressSpinner from 'primevue/progressspinner'
 import Card from 'primevue/card'
-import inputText from 'primevue/inputtext'
+import ScrollPanel from 'primevue/scrollpanel'
 
 const app = createApp(App)
 app.use(i18n)
@@ -65,6 +65,6 @@ app.component('pv-confirm-dialog', ConfirmDialog)
 app.component('pv-progress-spinner', ProgressSpinner)
 app.component('pv-select-button', SelectButton)
 app.component('pv-card', Card)
-app.component('pv-input-text', InputText)
+app.component('pv-scroll-panel', ScrollPanel)
 
 app.mount('#app')

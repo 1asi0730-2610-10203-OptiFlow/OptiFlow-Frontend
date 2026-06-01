@@ -10,7 +10,7 @@ defineProps({
 <template>
   <pv-card class="roles-summary-card shadow-1 border-none mb-4">
     <template #title>
-      <h3 class="text-900 font-bold text-xl m-0 font-josefin">Resumen de Roles</h3>
+      <h3 class="text-900 font-bold text-xl m-0 font-josefin">{{ $t('settings.roles.summary.title') }}</h3>
     </template>
     <template #content>
       <div v-for="role in roles" :key="role.id" class="flex align-items-center justify-content-between mb-3 last:mb-0">
@@ -18,7 +18,7 @@ defineProps({
           <div class="w-1rem h-1rem border-circle" :style="{ backgroundColor: role.color }"></div>
           <span class="text-700 font-medium">{{ role.name }}</span>
         </div>
-        <span class="text-500 text-sm">{{ role.userCount }} usuario(s)</span>
+        <span class="text-500 text-sm">{{ $t('settings.roles.summary.users', { count: role.userCount }) }}</span>
       </div>
     </template>
   </pv-card>
