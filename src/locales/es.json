@@ -271,6 +271,31 @@
       "orderCreated": "Orden creada",
       "orderCreatedDetail": "Nueva orden de laboratorio registrada."
     },
+    "qaModal": {
+      "title":    "Control de Calidad – QA",
+      "subtitle": "Complete la inspección antes de aprobar",
+      "prescriptionCheck": "Verificación de Receta",
+      "lensInspection":    "Inspección del Lente",
+      "frameInspection":   "Inspección de Montura",
+      "btnApprove": "Confirmar QA",
+      "btnReject":  "Registrar Rechazo",
+      "checks": {
+        "sphereMatch":   "Esfera OD/OI coincide con la receta",
+        "cylinderAxis":  "Cilindro y Eje OD/OI son correctos",
+        "additionMatch": "Adición verificada (si aplica)",
+        "noScratches":   "Sin rayaduras, burbujas ni impurezas",
+        "coatingOk":     "Recubrimiento aplicado correctamente",
+        "centeredLens":  "Lente bien centrado en el aro",
+        "powerVerified": "Potencia verificada con frontofocómetro",
+        "frameOk":       "Montura sin daños visibles",
+        "bevelOk":       "Biselado correcto y sin bordes filosos",
+        "adjustmentOk":  "Ajuste de puente y patillas correcto"
+      }
+    },
+    "toast": {
+      "qaApproved": "QA Aprobado",
+      "qaRejected": "Retrabajo registrado"
+    },
     "showing": "Mostrando",
     "orders": "órdenes"
   },

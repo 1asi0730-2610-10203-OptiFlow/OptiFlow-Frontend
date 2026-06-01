@@ -6,6 +6,7 @@ import { useFulfillmentStore } from '../../application/fulfillment.store.js'
 import KanbanBoard from '../components/kanban-board.vue'
 import WorkOrderDetailModal from '../components/work-order-detail-modal.vue'
 import NewWorkOrderModal from '../components/new-work-order-modal.vue'
+import QualityAssuranceModal from '../components/quality-assurance-modal.vue'
 
 const { t } = useI18n()
 const store = useFulfillmentStore()
@@ -16,6 +17,8 @@ const searchQuery = ref('')
 const statusFilter = ref('all')
 const selectedOrder = ref(null)
 const showNewOrderModal = ref(false)
+const showQaModal = ref(false)
+const qaTargetOrder = ref(null)
 
 const ORDER_FLOW = ['PENDING', 'IN_PRODUCTION', 'QUALITY_CONTROL', 'READY', 'DELIVERED']
 
@@ -60,6 +63,13 @@ onMounted(() => {
 })
 
 async function onStatusChanged({ workOrder, status }) {
+  // Regla de negocio: QC → READY requiere pasar el formulario de QA
+  if (workOrder.status === 'QUALITY_CONTROL' && status === 'READY') {
+    qaTargetOrder.value = workOrder
+    showQaModal.value = true
+    return
+  }
+
   const currentIndex = ORDER_FLOW.indexOf(workOrder.status)
   const newIndex = ORDER_FLOW.indexOf(status)
   const isRework = newIndex < currentIndex
@@ -81,6 +91,38 @@ async function onStatusChanged({ workOrder, status }) {
   }
   if (selectedOrder.value?.id === workOrder.id) {
     selectedOrder.value = { ...selectedOrder.value, status }
+  }
+}
+
+async function onQaApproved() {
+  const workOrder = qaTargetOrder.value
+  showQaModal.value = false
+  qaTargetOrder.value = null
+  await store.updateOrderStatus(workOrder.id, 'READY')
+  toast.add({
+    severity: 'success',
+    summary: t('labOrders.toast.qaApproved'),
+    detail: `${t('common.order')} #${workOrder.id} → ${t('labOrders.status.READY')}`,
+    life: 2500
+  })
+  if (selectedOrder.value?.id === workOrder.id) {
+    selectedOrder.value = { ...selectedOrder.value, status: 'READY' }
+  }
+}
+
+async function onQaRejected() {
+  const workOrder = qaTargetOrder.value
+  showQaModal.value = false
+  qaTargetOrder.value = null
+  await store.updateOrderStatus(workOrder.id, 'IN_PRODUCTION')
+  toast.add({
+    severity: 'warn',
+    summary: t('labOrders.toast.qaRejected'),
+    detail: `${t('common.order')} #${workOrder.id} ${t('labOrders.toast.reworkDetail')}`,
+    life: 2500
+  })
+  if (selectedOrder.value?.id === workOrder.id) {
+    selectedOrder.value = { ...selectedOrder.value, status: 'IN_PRODUCTION' }
   }
 }
 
@@ -241,6 +283,13 @@ async function onNewOrder(workOrder) {
         @save="onNewOrder"
         @close="showNewOrderModal = false"
     />
+    <QualityAssuranceModal
+        v-if="showQaModal && qaTargetOrder"
+        :work-order="qaTargetOrder"
+        @approved="onQaApproved"
+        @rejected="onQaRejected"
+        @close="showQaModal = false; qaTargetOrder = null"
+    />
 
   </div>
 </template>
@@ -305,24 +354,20 @@ async function onNewOrder(workOrder) {
 .table-empty { padding: 48px 20px; text-align: center; font-family: 'Montserrat', sans-serif; font-size: 0.84rem; color: #9ca3af; }
 .table-footer { padding: 12px 20px; border-top: 1px solid #f3f4f6; font-family: 'Montserrat', sans-serif; font-size: 0.82rem; color: #6b7280; }
 
-/* ── Responsive: móvil ─────────────────────────────────────────────────── */
 @media (max-width: 640px) {
   /* Página */
   .page { padding: 16px; gap: 16px; }
 
-  /* Header */
   .page-title { font-size: 1.25rem; }
   .header-actions { width: 100%; }
   .view-toggle { flex: 1; }
   .toggle-btn { flex: 1; justify-content: center; padding: 6px 8px; font-size: 0.78rem; }
   .btn-nueva { flex: 1; justify-content: center; }
 
-  /* Summary: 2 columnas en lugar de 4 */
   .summary-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
   .summary-card { padding: 12px; }
   .summary-value { font-size: 1.2rem; }
 
-  /* Tabla: card rows en lugar de grid con columnas fijas */
   .table-header-row { display: none; }
 
   .table-row {
@@ -333,10 +378,8 @@ async function onNewOrder(workOrder) {
     padding: 12px 16px;
   }
 
-  /* Fila superior: info principal ocupa todo el ancho */
   .row-main { flex: 0 0 100%; order: 1; }
 
-  /* Fila inferior: badge | fecha | saldo | flecha */
   .estado-badge { order: 2; flex-shrink: 0; font-size: 0.7rem; padding: 3px 8px; }
   .row-date     { order: 3; flex: 1; text-align: center; }
   .saldo--pending,

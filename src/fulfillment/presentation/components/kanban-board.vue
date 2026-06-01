@@ -64,7 +64,6 @@ function onStatusChanged(workOrder, status) {
 .col--gray   { color: #4b5563; } .col--teal   { color: #00c1b0; } .col--purple { color: #7c3aed; } .col--green  { color: #16a34a; } .col--light  { color: #9ca3af; }
 .colbg--gray   { background: #f3f4f6; } .colbg--teal   { background: rgba(0,193,176,0.1); } .colbg--purple { background: #ede9fe; } .colbg--green  { background: #dcfce7; } .colbg--light  { background: #f9fafb; }
 
-/* ── Responsive: móvil ─────────────────────────────────────────────────── */
 @media (max-width: 640px) {
   /* ~75vw por columna: muestra 1 columna completa + "peek" de la siguiente */
   .kanban-col { min-width: 75vw; max-width: 80vw; }

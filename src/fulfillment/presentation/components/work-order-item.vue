@@ -128,9 +128,7 @@ function pendingBalance() {
 }
 .card:hover .advance-btn { opacity: 1; }
 
-/* ── Responsive: móvil ─────────────────────────────────────────────────── */
 @media (hover: none) and (pointer: coarse) {
-  /* En touch no hay :hover, el botón de avanzar debe ser siempre visible */
   .advance-btn { opacity: 1; }
   .card { padding: 10px; }
 }
