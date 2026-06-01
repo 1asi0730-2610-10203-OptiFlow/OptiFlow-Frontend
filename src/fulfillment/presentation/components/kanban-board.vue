@@ -54,8 +54,8 @@ function onStatusChanged(workOrder, status) {
 </template>
 
 <style scoped>
-.kanban { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 16px; }
-.kanban-col { flex-shrink: 0; flex: 1; min-width: 180px; max-width: 260px; }
+.kanban { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 16px; width: 100%; min-width: 0; }
+.kanban-col { flex-shrink: 0; flex: 1; min-width: 200px; max-width: 260px; }
 .col-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border-radius: 8px; margin-bottom: 12px; }
 .col-title { font-family: 'Montserrat', sans-serif; font-size: 0.82rem; font-weight: 700; }
 .col-count { font-family: 'Montserrat', sans-serif; font-size: 0.72rem; font-weight: 700; padding: 1px 8px; border-radius: 20px; background: white; }
@@ -63,4 +63,9 @@ function onStatusChanged(workOrder, status) {
 .col-empty { text-align: center; padding: 24px 0; font-family: 'Montserrat', sans-serif; font-size: 0.76rem; color: #9ca3af; border: 2px dashed #e5e7eb; border-radius: 10px; }
 .col--gray   { color: #4b5563; } .col--teal   { color: #00c1b0; } .col--purple { color: #7c3aed; } .col--green  { color: #16a34a; } .col--light  { color: #9ca3af; }
 .colbg--gray   { background: #f3f4f6; } .colbg--teal   { background: rgba(0,193,176,0.1); } .colbg--purple { background: #ede9fe; } .colbg--green  { background: #dcfce7; } .colbg--light  { background: #f9fafb; }
+
+@media (max-width: 640px) {
+  /* ~75vw por columna: muestra 1 columna completa + "peek" de la siguiente */
+  .kanban-col { min-width: 75vw; max-width: 80vw; }
+}
 </style>

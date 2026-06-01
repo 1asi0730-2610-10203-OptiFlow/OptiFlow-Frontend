@@ -272,6 +272,31 @@
       "orderCreated": "Order created",
       "orderCreatedDetail": "New lab order registered."
     },
+    "qaModal": {
+      "title":    "Quality Assurance – QA",
+      "subtitle": "Complete the inspection before approving",
+      "prescriptionCheck": "Prescription Verification",
+      "lensInspection":    "Lens Inspection",
+      "frameInspection":   "Frame Inspection",
+      "btnApprove": "Confirm QA",
+      "btnReject":  "Register Rejection",
+      "checks": {
+        "sphereMatch":   "OD/OS sphere matches prescription",
+        "cylinderAxis":  "OD/OS cylinder and axis are correct",
+        "additionMatch": "Addition verified (if applicable)",
+        "noScratches":   "No scratches, bubbles or impurities",
+        "coatingOk":     "Coating applied correctly",
+        "centeredLens":  "Lens properly centered in the frame",
+        "powerVerified": "Power verified with lensometer",
+        "frameOk":       "Frame free of visible damage",
+        "bevelOk":       "Bevel correct and without sharp edges",
+        "adjustmentOk":  "Bridge and temple adjustment correct"
+      }
+    },
+    "toast": {
+      "qaApproved": "QA Approved",
+      "qaRejected": "Rework registered"
+    },
     "showing": "Showing",
     "orders": "orders"
   },

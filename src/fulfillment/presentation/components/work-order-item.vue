@@ -127,4 +127,9 @@ function pendingBalance() {
   opacity: 0; transition: opacity 0.15s; padding: 0;
 }
 .card:hover .advance-btn { opacity: 1; }
+
+@media (hover: none) and (pointer: coarse) {
+  .advance-btn { opacity: 1; }
+  .card { padding: 10px; }
+}
 </style>
