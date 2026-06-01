@@ -763,7 +763,9 @@
         "permissions": "Permisos",
         "permissionsSelected": "{count} permiso(s) seleccionado(s)",
         "cancel": "Cancelar",
-        "createRole": "Crear Rol"
+        "createRole": "Crear Rol",
+        "editTitle": "Editar Rol: {name}",
+        "saveChanges": "Guardar Cambios"
       },
       "permissions": {
         "dashboard": {
@@ -832,6 +834,87 @@
       "connected": "Conectada",
       "lastUpdate": "Última Actualización",
       "version": "Versión"
+    },
+    "modifySettings": "Modificar Ajustes",
+    "toast": {
+      "success": "Éxito",
+      "error": "Error",
+      "updateFailed": "No se pudieron actualizar los ajustes",
+      "businessUpdated": "Información del negocio actualizada correctamente",
+      "securityUpdated": "Configuración de seguridad actualizada correctamente",
+      "backupUpdated": "Configuración de copias de seguridad actualizada correctamente"
+    },
+    "business": {
+      "title": "Información del Negocio",
+      "subtitle": "Actualizar datos de la empresa",
+      "name": "Nombre del Negocio",
+      "nameLabel": "Nombre del Negocio *",
+      "address": "Dirección",
+      "addressLabel": "Dirección *",
+      "phone": "Teléfono",
+      "phoneLabel": "Teléfono *",
+      "email": "Correo",
+      "emailLabel": "Correo Electrónico *",
+      "cancel": "Cancelar",
+      "saveChanges": "Guardar Cambios"
+    },
+    "security": {
+      "title": "Seguridad",
+      "dialogTitle": "Configuración de Seguridad",
+      "subtitle": "Ajustar políticas de acceso y seguridad",
+      "twoFactor": "Autenticación en Dos Pasos",
+      "autoLogout": "Cierre de Sesión Automático",
+      "passwordPolicy": "Política de Contraseñas",
+      "dataEncryption": "Cifrado de Datos",
+      "enabled": "Activada",
+      "disabled": "Desactivada",
+      "autoLogoutValue": "30 minutos",
+      "passwordPolicyValue": "Fuerte (mín. 12 caracteres)",
+      "encryptionValue": "AES-256",
+      "autoLogout15": "15 minutos",
+      "autoLogout30": "30 minutos",
+      "autoLogout60": "60 minutos",
+      "passwordPolicyStrong": "Fuerte (mín. 12 caracteres)",
+      "passwordPolicyMedium": "Media (mín. 8 caracteres)",
+      "passwordPolicyBasic": "Básica (mín. 6 caracteres)",
+      "encryptionAes": "AES-256",
+      "encryptionDes": "DES",
+      "encryptionNone": "Ninguno",
+      "warningNote": "Los cambios de seguridad se aplicarán en el próximo inicio de sesión de todos los usuarios.",
+      "options": {
+        "enabled": "Activada",
+        "disabled": "Desactivada",
+        "logout15": "15 minutos",
+        "logout30": "30 minutos",
+        "logout60": "60 minutos",
+        "policyStrong": "Fuerte (mín. 12 caracteres)",
+        "policyMedium": "Media (mín. 8 caracteres)",
+        "policyBasic": "Básica (mín. 6 caracteres)",
+        "encryptionAes": "AES-256",
+        "encryptionDes": "DES",
+        "encryptionNone": "Ninguno"
+      }
+    },
+    "backup": {
+      "title": "Datos y Copias de Seguridad",
+      "dialogTitle": "Copias de Seguridad",
+      "subtitle": "Configurar respaldo automático de datos",
+      "frequencyLabel": "Frecuencia de Copias",
+      "timeLabel": "Hora de Ejecución",
+      "retentionLabel": "Retención de Copias (días)",
+      "automatic": "Copias Automáticas",
+      "retention": "Retención de Copias",
+      "lastBackup": "Última Copia",
+      "storage": "Almacenamiento Usado",
+      "nextBackup": "Próxima Copia",
+      "successNote": "Las copias automáticas se programarán según la configuración establecida.",
+      "save": "Guardar",
+      "options": {
+        "daily": "Diariamente",
+        "weekly": "Semanalmente",
+        "monthly": "Mensualmente",
+        "annually": "Anualmente"
+      }
     }
   }
 }

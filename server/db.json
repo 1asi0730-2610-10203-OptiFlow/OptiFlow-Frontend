@@ -7,34 +7,56 @@
       "description": "Acceso total al sistema",
       "userCount": 1,
       "name": "ADMIN",
-      "displayName": "Administrador"
+      "displayName": "Administrador",
+      "permissions": [
+        "settings",
+        "reports",
+        "users",
+        "full_access"
+      ]
     },
     {
       "id": 2,
       "role_id": 2,
       "color": "#8b5cf6",
-      "description": "Historias cl�nicas, recetas, datos cl�nicos",
+      "description": "Historias clínicas, recetas, datos clínicos",
       "userCount": 3,
       "name": "OPTOMETRIST",
-      "displayName": "Optometrista"
+      "displayName": "Optometrista",
+      "permissions": [
+        "dashboard",
+        "clinical",
+        "prescriptions",
+        "appointments"
+      ]
     },
     {
       "id": 3,
       "role_id": 3,
-      "color": "#3b82f6",
-      "description": "Ventas, inventario, registros de pacientes",
-      "userCount": 1,
       "name": "SALES_ADVISOR",
-      "displayName": "�ptico"
+      "displayName": "Óptico",
+      "description": "Ventas, inventario, registros de pacientes",
+      "color": "#3b82f6",
+      "permissions": [
+        "sales",
+        "inventory",
+        "lab_orders",
+        "dashboard",
+        "clinical"
+      ]
     },
     {
       "id": 4,
       "role_id": 4,
-      "color": "#10b981",
-      "description": "Citas, registros de pacientes (solo lectura)",
-      "userCount": 1,
       "name": "RECEPTIONIST",
-      "displayName": "Recepcionista"
+      "displayName": "Recepcionista",
+      "description": "Citas, registros de pacientes (solo lectura)",
+      "color": "#10b981",
+      "permissions": [
+        "appointments",
+        "dashboard",
+        "clinical"
+      ]
     },
     {
       "name": "VENTAS",
@@ -1015,6 +1037,36 @@
         "avg_time": "15min",
         "efficiency": "94%"
       }
+    }
+  ],
+  "business": [
+    {
+      "id": 1,
+      "name": "OptiFlow Vision Center",
+      "address": "Av. Javier Prado Este 4200, Lima, Perú",
+      "phone": "(01) 613-8888",
+      "email": "info@optiflow.pe"
+    }
+  ],
+  "security": [
+    {
+      "id": 1,
+      "twoFactor": "ENABLED",
+      "autoLogout": "30m",
+      "passwordPolicy": "STRONG",
+      "dataEncryption": "AES256"
+    }
+  ],
+  "backups": [
+    {
+      "id": 1,
+      "frequency": "DAILY",
+      "time": "02:00 a. m.",
+      "retention": 90,
+      "automatic": "21/04/2026 02:15 AM",
+      "lastBackup": "21/04/2026 02:15 AM",
+      "storage": "45.2 GB / 100 GB",
+      "nextBackup": "22/04/2026 02:00 AM"
     }
   ]
 }

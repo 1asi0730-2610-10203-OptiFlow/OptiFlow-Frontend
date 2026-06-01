@@ -5,6 +5,8 @@ defineProps({
     required: true
   }
 });
+
+const emit = defineEmits(['edit']);
 </script>
 
 <template>
@@ -22,7 +24,7 @@ defineProps({
         <span class="text-600 text-sm mt-2">{{ role.description }}</span>
       </div>
     </div>
-    <pv-button :label="$t('settings.roles.listItem.edit')" variant="text" class="p-button-link text-primary font-medium text-sm" />
+    <pv-button :label="$t('settings.roles.listItem.edit')" variant="text" class="p-button-link text-primary font-medium text-sm" @click="emit('edit', role)" />
   </div>
 </template>
 

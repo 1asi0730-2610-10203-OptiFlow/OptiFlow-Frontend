@@ -29,15 +29,33 @@ export class RoleAssembler {
         const metadata = ROLE_MAP[data.name] || {
             displayName: data.displayName || data.name,
             description: data.description || 'Rol del sistema',
-            color: data.color || '#64748b'
+            color: data.color || '#64748b',
+            permissions: data.permissions || []
         };
+
+        let permissions = data.permissions;
+        if (!permissions) {
+            if (data.name === 'ADMIN') {
+                permissions = ["settings", "reports", "users", "full_access"];
+            } else if (data.name === 'OPTOMETRIST') {
+                permissions = ["dashboard", "clinical", "prescriptions", "appointments"];
+            } else if (data.name === 'SALES_ADVISOR') {
+                permissions = ["sales", "inventory", "lab_orders"];
+            } else if (data.name === 'RECEPTIONIST') {
+                permissions = ["appointments"];
+            } else {
+                permissions = [];
+            }
+        }
 
         return new Role(
             data.role_id || data.id,
             data.displayName || metadata.displayName,
             data.description || metadata.description,
             userCount,
-            data.color || metadata.color
+            data.color || metadata.color,
+            permissions,
+            data.name
         );
     }
 

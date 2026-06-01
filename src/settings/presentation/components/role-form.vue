@@ -1,11 +1,18 @@
 <script setup>
 import { ref } from 'vue';
 
+const props = defineProps({
+  role: {
+    type: Object,
+    default: null
+  }
+});
+
 const emit = defineEmits(['save', 'cancel']);
 
-const roleName = ref('');
-const selectedColor = ref('#3b82f6');
-const selectedPermissions = ref([]);
+const roleName = ref(props.role ? props.role.name : '');
+const selectedColor = ref(props.role ? props.role.color : '#3b82f6');
+const selectedPermissions = ref(props.role ? [...props.role.permissions] : []);
 const submitted = ref(false);
 
 const colors = [
@@ -66,7 +73,13 @@ const handleSave = () => {
         <div v-for="color in colors" :key="color" 
              @click="selectedColor = color"
              class="color-circle border-circle cursor-pointer flex align-items-center justify-content-center"
-             :style="{ backgroundColor: color, width: '32px', height: '32px' }">
+             :style="{ 
+               backgroundColor: color, 
+               width: '32px', 
+               height: '32px',
+               border: selectedColor === color ? '2px solid #ffffff' : 'none',
+               boxShadow: selectedColor === color ? '0 0 0 2px #9ca3af' : 'none'
+             }">
           <i v-if="selectedColor === color" class="pi pi-check text-white text-xs"></i>
         </div>
       </div>
@@ -74,23 +87,26 @@ const handleSave = () => {
 
     <div class="mb-4">
       <label class="block text-900 font-medium mb-3 font-josefin">{{ $t('settings.roles.dialog.permissions') }}</label>
-      <div class="permissions-container border-1 border-round-lg overflow-hidden"
+      <pv-scroll-panel style="width: 100%; height: 250px" class="border-1 border-round-lg overflow-hidden"
            :class="submitted && selectedPermissions.length === 0 ? 'border-red-500' : 'border-100'">
-        <div v-for="perm in permissions" :key="perm.id" 
-             class="permission-item flex align-items-start gap-3 p-3 border-bottom-1 border-100 transition-colors hover:bg-gray-50">
-          <pv-checkbox v-model="selectedPermissions" :value="perm.id" />
-          <div class="flex flex-column">
-            <span class="text-900 font-bold text-sm">{{ $t(perm.titleKey) }}</span>
-            <span class="text-500 text-xs mt-1">{{ $t(perm.descKey) }}</span>
+        <div class="p-3 bg-50 flex flex-column gap-2">
+          <div v-for="perm in permissions" :key="perm.id" 
+               class="permission-item flex align-items-start gap-3 p-3 border-1 border-round-lg border-100 transition-all hover:border-primary-300 hover:shadow-1 surface-card"
+               :class="{ 'border-primary-400 bg-primary-50': selectedPermissions.includes(perm.id) }">
+            <pv-checkbox v-model="selectedPermissions" :value="perm.id" :inputId="perm.id" />
+            <label :for="perm.id" class="flex flex-column cursor-pointer w-full">
+              <span class="text-900 font-bold text-sm">{{ $t(perm.titleKey) }}</span>
+              <span class="text-500 text-xs mt-1">{{ $t(perm.descKey) }}</span>
+            </label>
           </div>
         </div>
-      </div>
+      </pv-scroll-panel>
       <p class="text-500 text-xs mt-2">{{ $t('settings.roles.dialog.permissionsSelected', { count: selectedPermissions.length }) }}</p>
     </div>
 
     <div class="flex justify-content-end gap-3 mt-5">
       <pv-button :label="$t('settings.roles.dialog.cancel')" variant="text" class="p-button-secondary font-bold px-5" @click="emit('cancel')" />
-      <pv-button :label="$t('settings.roles.dialog.createRole')" class="p-button-primary border-round-lg font-bold px-6" 
+      <pv-button :label="role ? $t('settings.roles.dialog.saveChanges') : $t('settings.roles.dialog.createRole')" class="p-button-primary border-round-lg font-bold px-6" 
                  style="background-color: #00c1b0; border-color: #00c1b0" @click="handleSave" />
     </div>
   </div>
@@ -103,11 +119,7 @@ const handleSave = () => {
 .color-circle:hover {
   transform: scale(1.1);
 }
-.permissions-container {
-  max-height: 500px;
-  overflow-y: auto;
-}
-.permission-item:last-child {
-  border-bottom: none;
+.permission-item {
+  transition: all 0.2s ease-in-out;
 }
 </style>

@@ -770,7 +770,9 @@
         "permissions": "Permissions",
         "permissionsSelected": "{count} permission(s) selected",
         "cancel": "Cancel",
-        "createRole": "Create Role"
+        "createRole": "Create Role",
+        "editTitle": "Edit Role: {name}",
+        "saveChanges": "Save Changes"
       },
       "permissions": {
         "dashboard": {
@@ -839,6 +841,87 @@
       "connected": "Connected",
       "lastUpdate": "Last Update",
       "version": "Version"
+    },
+    "modifySettings": "Modify Settings",
+    "toast": {
+      "success": "Success",
+      "error": "Error",
+      "updateFailed": "Could not update settings",
+      "businessUpdated": "Business information updated successfully",
+      "securityUpdated": "Security settings updated successfully",
+      "backupUpdated": "Backup settings updated successfully"
+    },
+    "business": {
+      "title": "Business Information",
+      "subtitle": "Update company details",
+      "name": "Business Name",
+      "nameLabel": "Business Name *",
+      "address": "Address",
+      "addressLabel": "Address *",
+      "phone": "Phone",
+      "phoneLabel": "Phone *",
+      "email": "Email",
+      "emailLabel": "Email Address *",
+      "cancel": "Cancel",
+      "saveChanges": "Save Changes"
+    },
+    "security": {
+      "title": "Security",
+      "dialogTitle": "Security Settings",
+      "subtitle": "Adjust access policies and security",
+      "twoFactor": "Two-Factor Authentication",
+      "autoLogout": "Automatic Session Logout",
+      "passwordPolicy": "Password Policy",
+      "dataEncryption": "Data Encryption",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "autoLogoutValue": "30 minutes",
+      "passwordPolicyValue": "Strong (min. 12 characters)",
+      "encryptionValue": "AES-256",
+      "autoLogout15": "15 minutes",
+      "autoLogout30": "30 minutes",
+      "autoLogout60": "60 minutes",
+      "passwordPolicyStrong": "Strong (min. 12 characters)",
+      "passwordPolicyMedium": "Medium (min. 8 characters)",
+      "passwordPolicyBasic": "Basic (min. 6 characters)",
+      "encryptionAes": "AES-256",
+      "encryptionDes": "DES",
+      "encryptionNone": "None",
+      "warningNote": "Security changes will apply on the next login of all users.",
+      "options": {
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "logout15": "15 minutes",
+        "logout30": "30 minutes",
+        "logout60": "60 minutes",
+        "policyStrong": "Strong (min. 12 characters)",
+        "policyMedium": "Medium (min. 8 characters)",
+        "policyBasic": "Basic (min. 6 characters)",
+        "encryptionAes": "AES-256",
+        "encryptionDes": "DES",
+        "encryptionNone": "None"
+      }
+    },
+    "backup": {
+      "title": "Data & Backups",
+      "dialogTitle": "Backups",
+      "subtitle": "Configure automatic data backups",
+      "frequencyLabel": "Backup Frequency",
+      "timeLabel": "Execution Time",
+      "retentionLabel": "Backup Retention (days)",
+      "automatic": "Automatic Backups",
+      "retention": "Backup Retention",
+      "lastBackup": "Last Backup",
+      "storage": "Storage Used",
+      "nextBackup": "Next Backup",
+      "successNote": "Automatic backups will be scheduled according to the established configuration.",
+      "save": "Save",
+      "options": {
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly",
+        "annually": "Annually"
+      }
     }
   }
 }
