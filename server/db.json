@@ -810,7 +810,7 @@
       "order_id": 2,
       "work_order_uuid": "wo-002-uuid",
       "sale_id": 2,
-      "status": "PENDING",
+      "status": "IN_PRODUCTION",
       "priority": "high",
       "is_rework": false,
       "patient_name": "David Martínez",
