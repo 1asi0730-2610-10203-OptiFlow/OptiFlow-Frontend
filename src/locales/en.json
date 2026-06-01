@@ -645,111 +645,183 @@
   },
   "patientCenter": {
     "profile": {
-          "title": "My Profile",
-          "subtitle": "Welcome to your OptiFlow portal",
-          "patientRole": "Patient",
-          "successTitle": "Profile updated successfully",
-          "successMsg": "Your changes have been saved successfully",
-          "firstName": "First Name",
-          "lastName": "Last Name",
-          "email": "Email Address",
-          "phone": "Phone Number",
-          "address": "Address",
-          "city": "City",
-          "birthDate": "Date of Birth",
-          "medicalInfo": "Medical Information",
-          "recordNumber": "Clinical Record Number",
-          "lastVisit": "Last Visit",
-          "optometrist": "Assigned Optometrist",
-          "nextAppt": "Suggested Next Appointment",
-          "privacyTitle": "About your data",
-          "privacyText": "Your personal information is protected and only used to provide you with better care. You can update it at any time."
+      "title": "My Profile",
+      "subtitle": "Welcome to your OptiFlow portal",
+      "patientRole": "Patient",
+      "successTitle": "Profile updated successfully",
+      "successMsg": "Your changes have been saved successfully",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "address": "Address",
+      "city": "City",
+      "birthDate": "Date of Birth",
+      "medicalInfo": "Medical Information",
+      "recordNumber": "Clinical Record Number",
+      "lastVisit": "Last Visit",
+      "optometrist": "Assigned Optometrist",
+      "nextAppt": "Suggested Next Appointment",
+      "privacyTitle": "About your data",
+      "privacyText": "Your personal information is protected and only used to provide you with better care. You can update it at any time."
+    },
+    "myLenses": {
+      "title": "My Lenses",
+      "subtitle": "Patient Portal · {date}",
+      "searchTitle": "My Orders",
+      "searchPlaceholder": "e.g. LAB-2850",
+      "searchBtn": "Search",
+      "orderNumber": "Order Number",
+      "creationDate": "Creation Date",
+      "status": {
+        "lab": "In Laboratory",
+        "labDesc": "Lenses in manufacturing",
+        "qc": "Quality Control",
+        "qcDesc": "Final verification",
+        "ready": "Ready for Pickup",
+        "readyDesc": "Available in store"
+      },
+      "lensType": "Lens Type",
+      "estimatedDelivery": "Estimated Delivery",
+      "paymentTitle": "Payment Status",
+      "paymentSubtitle": "Financial summary of your order",
+      "totalAmount": "Total Amount",
+      "paidAmount": "Paid Amount",
+      "pendingBalance": "Pending Balance",
+      "paymentProgress": "Payment Progress",
+      "percentPaid": "{percent}% paid"
+    },
+    "calculator": {
+      "title": "Calculator",
+      "subtitle": "Welcome to your OptiFlow portal",
+      "cardTitle": "Lens Thickness Calculator",
+      "cardSubtitle": "Simulate thickness based on your prescription",
+      "sphere": "Sphere (Diopters) *",
+      "cylinder": "Cylinder (Diopters)",
+      "materials": "Lens Material (From API)",
+      "calculateBtn": "Calculate Thickness",
+      "loading": "Loading prices...",
+      "thickness": "Estimated Thickness (center)",
+      "with": "with",
+      "comparison": "Materials Comparison",
+      "recommendationTitle": "Recommendation",
+      "recommendationDesc": "Your prescription allows using any material. The standard offers good value for money.",
+      "guideTitle": "What do the indices mean?",
+      "guides": {
+        "std": {
+          "title": "1.50 Index (Standard)",
+          "text": "Basic material, ideal for low prescriptions (-2.00 to +2.00)"
         },
-        "myLenses": {
-          "title": "My Lenses",
-          "subtitle": "Patient Portal · {date}",
-          "searchTitle": "My Orders",
-          "searchPlaceholder": "e.g. LAB-2850",
-          "searchBtn": "Search",
-          "orderNumber": "Order Number",
-          "creationDate": "Creation Date",
-          "status": {
-            "lab": "In Laboratory",
-            "labDesc": "Lenses in manufacturing",
-            "qc": "Quality Control",
-            "qcDesc": "Final verification",
-            "ready": "Ready for Pickup",
-            "readyDesc": "Available in store"
-          },
-          "lensType": "Lens Type",
-          "estimatedDelivery": "Estimated Delivery",
-          "paymentTitle": "Payment Status",
-          "paymentSubtitle": "Financial summary of your order",
-          "totalAmount": "Total Amount",
-          "paidAmount": "Paid Amount",
-          "pendingBalance": "Pending Balance",
-          "paymentProgress": "Payment Progress",
-          "percentPaid": "{percent}% paid"
+        "thin": {
+          "title": "1.60 Index (Thin)",
+          "text": "30% thinner, recommended for medium prescriptions"
         },
-        "calculator": {
-          "title": "Calculator",
-          "subtitle": "Welcome to your OptiFlow portal",
-          "cardTitle": "Lens Thickness Calculator",
-          "cardSubtitle": "Simulate thickness based on your prescription",
-          "sphere": "Sphere (Diopters) *",
-          "cylinder": "Cylinder (Diopters)",
-          "materials": "Lens Material (From API)",
-          "calculateBtn": "Calculate Thickness",
-          "loading": "Loading prices...",
-          "thickness": "Estimated Thickness (center)",
-          "with": "with",
-          "comparison": "Materials Comparison",
-          "recommendationTitle": "Recommendation",
-          "recommendationDesc": "Your prescription allows using any material. The standard offers good value for money.",
-          "guideTitle": "What do the indices mean?",
-          "guides": {
-            "std": {
-              "title": "1.50 Index (Standard)",
-              "text": "Basic material, ideal for low prescriptions (-2.00 to +2.00)"
-            },
-            "thin": {
-              "title": "1.60 Index (Thin)",
-              "text": "30% thinner, recommended for medium prescriptions"
-            },
-            "extraThin": {
-              "title": "1.67 Index (Extra Thin)",
-              "text": "40% thinner, ideal for high prescriptions"
-            },
-            "ultraThin": {
-              "title": "1.74 Index (Ultra Thin)",
-              "text": "Maximum thickness reduction for very high prescriptions"
-            }
-          }
+        "extraThin": {
+          "title": "1.67 Index (Extra Thin)",
+          "text": "40% thinner, ideal for high prescriptions"
         },
-        "notifications": {
-          "title": "Notifications",
-          "subtitle": "Welcome to your OptiFlow portal",
-          "unread": "{count} unread",
-          "details": "View details",
-          "bannerTitle": "Stay informed",
-          "bannerText": "We will notify you when your order is ready for pickup, when there are changes in your order status, and when we have special promotions for you."
-        },
-        "virtualTryOn": {
-          "title": "Virtual Try-On",
-          "subtitle": "Welcome to your OptiFlow portal",
-          "cardTitle": "3D Virtual Try-On",
-          "cardSubtitle": "Try on frames in real time",
-          "activateCamera": "Activate your camera",
-          "cameraInstruction": "To start trying on frames, we need access to your camera",
-          "turnOnBtn": "Turn On Camera",
-          "turnOffBtn": "Turn Off Camera",
-          "selectFrame": "Select a frame",
-          "tipsTitle": "Tips for a better experience",
-          "tips": [
-            "Keep your face centered in the camera",
-            "Make sure to have good frontal lighting",
-            "Avoid sudden movements for better detection"
-          ]
+        "ultraThin": {
+          "title": "1.74 Index (Ultra Thin)",
+          "text": "Maximum thickness reduction for very high prescriptions"
         }
+      }
+    },
+    "notifications": {
+      "title": "Notifications",
+      "subtitle": "Welcome to your OptiFlow portal",
+      "unread": "{count} unread",
+      "details": "View details",
+      "bannerTitle": "Stay informed",
+      "bannerText": "We will notify you when your order is ready for pickup, when there are changes in your order status, and when we have special promotions for you."
+    },
+    "virtualTryOn": {
+      "title": "Virtual Try-On",
+      "subtitle": "Welcome to your OptiFlow portal",
+      "cardTitle": "3D Virtual Try-On",
+      "cardSubtitle": "Try on frames in real time",
+      "activateCamera": "Activate your camera",
+      "cameraInstruction": "To start trying on frames, we need access to your camera",
+      "turnOnBtn": "Turn On Camera",
+      "turnOffBtn": "Turn Off Camera",
+      "selectFrame": "Select a frame",
+      "tipsTitle": "Tips for a better experience",
+      "tips": [
+        "Keep your face centered in the camera",
+        "Make sure to have good frontal lighting",
+        "Avoid sudden movements for better detection"
+      ]
+    }
+  },
+  "settings": {
+    "pageTitle": "Settings",
+    "pageSubtitle": "System settings and permission management",
+    "roles": {
+      "title": "Role Management",
+      "subtitle": "Define and manage user roles and permissions",
+      "addRole": "Add Role",
+      "dialog": {
+        "title": "Add New Role",
+        "subtitle": "Define a new user role and its permissions",
+        "incompleteData": "Incomplete data",
+        "roleName": "Role Name *",
+        "roleNamePlaceholder": "e.g. Lab Technician",
+        "nameRequired": "Name is required",
+        "roleColor": "Role Color",
+        "permissions": "Permissions",
+        "permissionsSelected": "{count} permission(s) selected",
+        "cancel": "Cancel",
+        "createRole": "Create Role"
+      },
+      "permissions": {
+        "dashboard": {
+          "title": "Dashboard",
+          "desc": "View business summary and statistics"
+        },
+        "clinical": {
+          "title": "Clinical Records",
+          "desc": "View and edit patient data"
+        },
+        "prescriptions": {
+          "title": "Optical Prescriptions",
+          "desc": "Create and manage prescriptions"
+        },
+        "appointments": {
+          "title": "Appointments",
+          "desc": "View and schedule appointments"
+        },
+        "sales": {
+          "title": "Sales",
+          "desc": "Create and manage sales / invoices"
+        },
+        "lab_orders": {
+          "title": "Lab Orders",
+          "desc": "Manage work orders"
+        },
+        "inventory": {
+          "title": "Inventory",
+          "desc": "View and manage stock"
+        },
+        "staff": {
+          "title": "Staff Management",
+          "desc": "Manage employees and access"
+        },
+        "settings": {
+          "title": "Settings",
+          "desc": "Modify system settings"
+        },
+        "reports": {
+          "title": "Reports and Export",
+          "desc": "Generate and export reports"
+        },
+        "users": {
+          "title": "User Management",
+          "desc": "Add and remove users from the system"
+        },
+        "full_access": {
+          "title": "Full Access",
+          "desc": "Unrestricted access to all modules"
+        }
+      }
+    }
   }
 }

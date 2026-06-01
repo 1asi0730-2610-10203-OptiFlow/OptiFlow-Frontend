@@ -16,12 +16,19 @@ const colors = [
   '#f97316', // Orange
   '#6366f1'  // Indigo
 ];
-
 const permissions = [
   { id: 'dashboard', title: 'Panel de Control', description: 'Ver resumen y estadísticas del negocio' },
   { id: 'clinical', title: 'Historias Clínicas', description: 'Ver y editar datos de pacientes' },
   { id: 'prescriptions', title: 'Recetas Ópticas', description: 'Crear y gestionar recetas' },
-  { id: 'appointments', title: 'Citas', description: 'Ver y agendar citas' }
+  { id: 'appointments', title: 'Citas', description: 'Ver y agendar citas' },
+  { id: 'sales', title: 'Ventas', description: 'Crear y gestionar ventas / facturas' },
+  { id: 'lab_orders', title: 'Órdenes de Lab', description: 'Gestionar órdenes de trabajo' },
+  { id: 'inventory', title: 'Inventario', description: 'Ver y gestionar el stock' },
+  { id: 'staff', title: 'Gestión de Personal', description: 'Gestionar empleados y accesos' },
+  { id: 'settings', title: 'Configuración', description: 'Modificar ajustes del sistema' },
+  { id: 'reports', title: 'Reportes y Exportación', description: 'Generar y exportar informes' },
+  { id: 'users', title: 'Gestión de Usuarios', description: 'Agregar y remover usuarios del sistema' },
+  { id: 'full_access', title: 'Acceso Total', description: 'Acceso sin restricciones a todos los módulos' }
 ];
 
 const handleSave = () => {
@@ -97,7 +104,7 @@ const handleSave = () => {
   transform: scale(1.1);
 }
 .permissions-container {
-  max-height: 250px;
+  max-height: 500px;
   overflow-y: auto;
 }
 .permission-item:last-child {

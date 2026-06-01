@@ -744,5 +744,77 @@
         "Evita movimientos bruscos para mejor detección"
       ]
     }
+  },
+  "settings": {
+    "pageTitle": "Configuración",
+    "pageSubtitle": "Ajustes del sistema y gestión de permisos",
+    "roles": {
+      "title": "Gestión de Roles",
+      "subtitle": "Definir y gestionar roles y permisos de usuario",
+      "addRole": "Agregar Rol",
+      "dialog": {
+        "title": "Agregar Nuevo Rol",
+        "subtitle": "Definir un nuevo rol de usuario y sus permisos",
+        "incompleteData": "Datos incompletos",
+        "roleName": "Nombre del Rol *",
+        "roleNamePlaceholder": "Ej. Técnico de Laboratorio",
+        "nameRequired": "El nombre es obligatorio",
+        "roleColor": "Color del Rol",
+        "permissions": "Permisos",
+        "permissionsSelected": "{count} permiso(s) seleccionado(s)",
+        "cancel": "Cancelar",
+        "createRole": "Crear Rol"
+      },
+      "permissions": {
+        "dashboard": {
+          "title": "Panel de Control",
+          "desc": "Ver resumen y estadísticas del negocio"
+        },
+        "clinical": {
+          "title": "Historias Clínicas",
+          "desc": "Ver y editar datos de pacientes"
+        },
+        "prescriptions": {
+          "title": "Recetas Ópticas",
+          "desc": "Crear y gestionar recetas"
+        },
+        "appointments": {
+          "title": "Citas",
+          "desc": "Ver y agendar citas"
+        },
+        "sales": {
+          "title": "Ventas",
+          "desc": "Crear y gestionar ventas / facturas"
+        },
+        "lab_orders": {
+          "title": "Órdenes de Lab",
+          "desc": "Gestionar órdenes de trabajo"
+        },
+        "inventory": {
+          "title": "Inventario",
+          "desc": "Ver y gestionar el stock"
+        },
+        "staff": {
+          "title": "Gestión de Personal",
+          "desc": "Gestionar empleados y accesos"
+        },
+        "settings": {
+          "title": "Configuración",
+          "desc": "Modificar ajustes del sistema"
+        },
+        "reports": {
+          "title": "Reportes y Exportación",
+          "desc": "Generar y exportar informes"
+        },
+        "users": {
+          "title": "Gestión de Usuarios",
+          "desc": "Agregar y remover usuarios del sistema"
+        },
+        "full_access": {
+          "title": "Acceso Total",
+          "desc": "Acceso sin restricciones a todos los módulos"
+        }
+      }
+    }
   }
 }
