@@ -693,6 +693,30 @@
         "coatingProblem": "Coating problem",
         "customerChange": "Customer change"
       }
+    },
+    "personal": {
+      "table": {
+        "employee": "EMPLOYEE",
+        "quotes": "QUOTES",
+        "closedSales": "CLOSED SALES",
+        "conversion": "CONVERSION",
+        "revenue": "REVENUE",
+        "performance": "PERFORMANCE"
+      },
+      "performanceStatus": {
+        "excellent": "Excellent",
+        "good": "Good",
+        "improving": "Improving"
+      },
+      "badges": {
+        "topPerformer": "Top performer"
+      },
+      "chart": {
+        "title": "Quotes vs. Closed Sales",
+        "subtitle": "By team member",
+        "legendQuotes": "Quotes",
+        "legendSales": "Closed Sales"
+      }
     }
   },
   "patientCenter": {

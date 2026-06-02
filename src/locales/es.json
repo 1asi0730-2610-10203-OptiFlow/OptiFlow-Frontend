@@ -686,6 +686,30 @@
         "coatingProblem": "Problema de recubrimiento",
         "customerChange": "Cambio del cliente"
       }
+    },
+    "personal": {
+      "table": {
+        "employee": "EMPLEADO",
+        "quotes": "COTIZACIONES",
+        "closedSales": "VENTAS CERRADAS",
+        "conversion": "CONVERSIÓN",
+        "revenue": "INGRESOS",
+        "performance": "RENDIMIENTO"
+      },
+      "performanceStatus": {
+        "excellent": "Excelente",
+        "good": "Bueno",
+        "improving": "En Mejora"
+      },
+      "badges": {
+        "topPerformer": "Mejor desempeño"
+      },
+      "chart": {
+        "title": "Cotizaciones vs. Ventas Cerradas",
+        "subtitle": "Por miembro del equipo",
+        "legendQuotes": "Cotizaciones",
+        "legendSales": "Ventas Cerradas"
+      }
     }
   },
   "patientCenter": {
