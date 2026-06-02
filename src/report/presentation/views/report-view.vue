@@ -19,22 +19,19 @@ const exportData = () => {
   toast.add({ severity: 'success', summary: t('common.export') || 'Exportar', detail: 'Descarga iniciada...', life: 3000 })
 }
 
-const kpis = computed(() => {
-  if (activeTab.value === 'productivity') {
-    return [
-      { icon: 'pi pi-stopwatch text-indigo-500', value: '3.9 días', label: t('reports.productivity.avgProductionTime') },
-      { icon: 'pi pi-check-square text-green-500', value: '93%', label: t('reports.productivity.onTimeDeliveryRate') },
-      { icon: 'pi pi-sync text-blue-500', value: '2.1%', label: t('reports.productivity.reworkRate') },
-      { icon: 'pi pi-box text-orange-400', value: '287', label: t('reports.productivity.totalOrders') }
-    ]
-  }
-  return [
-    { icon: 'pi pi-money-bill text-primary', value: 'S/ 303,693', label: t('reports.kpis.totalRevenue'), subtext: t('reports.kpis.total6Months'), trend: '+18%', trendUp: true },
-    { icon: 'pi pi-chart-bar text-primary', value: '86%', label: t('reports.kpis.conversionRate'), subtext: t('reports.kpis.recipeToSale'), trend: '+9pts', trendUp: true },
-    { icon: 'pi pi-clock text-primary', value: '3.9 días', label: t('reports.kpis.avgDeliveryTime'), subtext: t('reports.kpis.vsPreviousQuarter'), trend: '-0.8d', trendUp: true },
-    { icon: 'pi pi-exclamation-triangle text-orange-500', value: 'S/ 16,660', label: t('reports.kpis.pendingBalances'), subtext: t('reports.kpis.openInvoices', { count: 52 }), trend: '+5%', trendUp: false }
-  ]
-})
+const kpis = computed(() => [
+  { icon: 'pi pi-money-bill text-primary', value: 'S/ 303,693', label: t('reports.kpis.totalRevenue'), subtext: t('reports.kpis.total6Months'), trend: '+18%', trendUp: true },
+  { icon: 'pi pi-chart-bar text-primary', value: '86%', label: t('reports.kpis.conversionRate'), subtext: t('reports.kpis.recipeToSale'), trend: '+9pts', trendUp: true },
+  { icon: 'pi pi-clock text-primary', value: '3.9 días', label: t('reports.kpis.avgDeliveryTime'), subtext: t('reports.kpis.vsPreviousQuarter'), trend: '-0.8d', trendUp: true },
+  { icon: 'pi pi-exclamation-triangle text-orange-500', value: 'S/ 16,660', label: t('reports.kpis.pendingBalances'), subtext: t('reports.kpis.openInvoices', { count: 52 }), trend: '+5%', trendUp: false }
+])
+
+const productivityKpis = computed(() => [
+  { icon: 'pi pi-stopwatch text-indigo-500', value: '3.9 días', label: t('reports.productivity.avgProductionTime') },
+  { icon: 'pi pi-check-square text-green-500', value: '93%', label: t('reports.productivity.onTimeDeliveryRate') },
+  { icon: 'pi pi-sync text-blue-500', value: '2.1%', label: t('reports.productivity.reworkRate') },
+  { icon: 'pi pi-box text-orange-400', value: '287', label: t('reports.productivity.totalOrders') }
+])
 
 const chartData = [
   { month: 'Nov', value: 140 },
@@ -553,6 +550,16 @@ const personalChartOptions = ref({
     </div>
 
     <div class="productivity-main" v-else-if="activeTab === 'productivity'">
+      <div class="kpi-grid mb-5">
+        <div v-for="kpi in productivityKpis" :key="kpi.label" class="kpi-card">
+          <div class="kpi-top">
+            <div class="kpi-icon"><i :class="kpi.icon" class="text-xl"></i></div>
+          </div>
+          <div class="kpi-value">{{ kpi.value }}</div>
+          <div class="kpi-label">{{ kpi.label }}</div>
+        </div>
+      </div>
+
       <div class="grid mt-2">
         <div class="col-12 lg:col-6">
           <h3 class="text-900 font-bold text-xl m-0 mb-1 font-josefin">{{ $t('reports.productivity.onTimeTitle') }}</h3>
