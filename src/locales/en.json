@@ -270,7 +270,9 @@
       "reworkRegistered": "Rework registered",
       "reworkDetail": "returned to In Production.",
       "orderCreated": "Order created",
-      "orderCreatedDetail": "New lab order registered."
+      "orderCreatedDetail": "New lab order registered.",
+      "qaApproved": "QA Approved",
+      "qaRejected": "Rework registered"
     },
     "qaModal": {
       "title": "Quality Assurance – QA",
@@ -292,10 +294,6 @@
         "bevelOk": "Bevel correct and without sharp edges",
         "adjustmentOk": "Bridge and temple adjustment correct"
       }
-    },
-    "toast": {
-      "qaApproved": "QA Approved",
-      "qaRejected": "Rework registered"
     },
     "showing": "Showing",
     "orders": "orders"
@@ -678,6 +676,23 @@
       "contactLenses": "Contact Lenses",
       "accessories": "Accessories",
       "others": "Others"
+    },
+    "productivity": {
+      "avgProductionTime": "Avg. Production Time",
+      "onTimeDeliveryRate": "On-Time Delivery Rate",
+      "reworkRate": "Rework Rate",
+      "totalOrders": "Total Orders (6 months)",
+      "onTimeTitle": "% On-Time Deliveries per Week",
+      "onTimeSubtitle": "Last 5 weeks",
+      "reworkTitle": "Causes of Rework (6 months)",
+      "reworkSubtitle": "Root cause analysis",
+      "causes": {
+        "wrongRecipe": "Wrong recipe",
+        "frameMismatch": "Frame mismatch",
+        "lensDefect": "Lens defect",
+        "coatingProblem": "Coating problem",
+        "customerChange": "Customer change"
+      }
     }
   },
   "patientCenter": {

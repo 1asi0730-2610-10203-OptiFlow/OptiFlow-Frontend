@@ -669,6 +669,23 @@
       "contactLenses": "Lentes de Contacto",
       "accessories": "Accesorios",
       "others": "Otros"
+    },
+    "productivity": {
+      "avgProductionTime": "Tiempo Prom. de Producción",
+      "onTimeDeliveryRate": "Tasa de Entrega a Tiempo",
+      "reworkRate": "Tasa de Reproceso",
+      "totalOrders": "Total Órdenes (6 meses)",
+      "onTimeTitle": "% Entregas a Tiempo por Semana",
+      "onTimeSubtitle": "Últimas 5 semanas",
+      "reworkTitle": "Causas de Reproceso (6 meses)",
+      "reworkSubtitle": "Análisis de causa raíz",
+      "causes": {
+        "wrongRecipe": "Receta incorrecta",
+        "frameMismatch": "Armazón no coincide",
+        "lensDefect": "Defecto en luna",
+        "coatingProblem": "Problema de recubrimiento",
+        "customerChange": "Cambio del cliente"
+      }
     }
   },
   "patientCenter": {

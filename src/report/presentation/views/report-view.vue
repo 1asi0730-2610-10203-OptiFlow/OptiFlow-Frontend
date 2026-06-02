@@ -8,12 +8,22 @@ const { t } = useI18n()
 const activeTab = ref('resumen')
 const selectedPeriod = ref({ label: 'Últimos 6 meses', value: 6 })
 
-const kpis = computed(() => [
-  { icon: 'pi pi-money-bill text-primary', value: 'S/ 303,693', label: t('reports.kpis.totalRevenue'), subtext: t('reports.kpis.total6Months'), trend: '+18%', trendUp: true },
-  { icon: 'pi pi-chart-bar text-primary', value: '86%', label: t('reports.kpis.conversionRate'), subtext: t('reports.kpis.recipeToSale'), trend: '+9pts', trendUp: true },
-  { icon: 'pi pi-clock text-primary', value: '3.9 días', label: t('reports.kpis.avgDeliveryTime'), subtext: t('reports.kpis.vsPreviousQuarter'), trend: '-0.8d', trendUp: true },
-  { icon: 'pi pi-exclamation-triangle text-orange-500', value: 'S/ 16,660', label: t('reports.kpis.pendingBalances'), subtext: t('reports.kpis.openInvoices', { count: 52 }), trend: '+5%', trendUp: false }
-])
+const kpis = computed(() => {
+  if (activeTab.value === 'productivity') {
+    return [
+      { icon: 'pi pi-stopwatch text-indigo-500', value: '3.9 días', label: t('reports.productivity.avgProductionTime') },
+      { icon: 'pi pi-check-square text-green-500', value: '93%', label: t('reports.productivity.onTimeDeliveryRate') },
+      { icon: 'pi pi-sync text-blue-500', value: '2.1%', label: t('reports.productivity.reworkRate') },
+      { icon: 'pi pi-box text-orange-400', value: '287', label: t('reports.productivity.totalOrders') }
+    ]
+  }
+  return [
+    { icon: 'pi pi-money-bill text-primary', value: 'S/ 303,693', label: t('reports.kpis.totalRevenue'), subtext: t('reports.kpis.total6Months'), trend: '+18%', trendUp: true },
+    { icon: 'pi pi-chart-bar text-primary', value: '86%', label: t('reports.kpis.conversionRate'), subtext: t('reports.kpis.recipeToSale'), trend: '+9pts', trendUp: true },
+    { icon: 'pi pi-clock text-primary', value: '3.9 días', label: t('reports.kpis.avgDeliveryTime'), subtext: t('reports.kpis.vsPreviousQuarter'), trend: '-0.8d', trendUp: true },
+    { icon: 'pi pi-exclamation-triangle text-orange-500', value: 'S/ 16,660', label: t('reports.kpis.pendingBalances'), subtext: t('reports.kpis.openInvoices', { count: 52 }), trend: '+5%', trendUp: false }
+  ]
+})
 
 const chartData = [
   { month: 'Nov', value: 140 },
@@ -181,6 +191,62 @@ const conversionTrendOptions = ref({
   }
 })
 
+// --- Productivity Data (PrimeVue Chart) ---
+const onTimeDeliveryChartData = computed(() => ({
+  labels: ['Sem 14', 'Sem 15', 'Sem 16', 'Sem 17', 'Sem 18'],
+  datasets: [
+    {
+      label: '%',
+      data: [92, 95, 87, 93, 97],
+      fill: true,
+      borderColor: '#a3e635',
+      backgroundColor: 'rgba(163, 230, 53, 0.1)',
+      tension: 0.4,
+      pointBackgroundColor: '#a3e635',
+      pointBorderColor: '#fff',
+      pointBorderWidth: 2,
+      pointRadius: 4
+    }
+  ]
+}))
+
+const onTimeDeliveryChartOptions = ref({
+  maintainAspectRatio: false,
+  plugins: { legend: { display: false } },
+  scales: {
+    x: { grid: { display: true, color: '#f3f4f6', borderDash: [5, 5] }, ticks: { color: '#9ca3af' } },
+    y: { grid: { display: true, color: '#f3f4f6', borderDash: [5, 5] }, ticks: { color: '#9ca3af', callback: function(value) { return value + '%' } }, min: 80, max: 100 }
+  }
+})
+
+const reworkCausesChartData = computed(() => ({
+  labels: [
+    t('reports.productivity.causes.wrongRecipe'),
+    t('reports.productivity.causes.frameMismatch'),
+    t('reports.productivity.causes.lensDefect'),
+    t('reports.productivity.causes.coatingProblem'),
+    t('reports.productivity.causes.customerChange')
+  ],
+  datasets: [
+    {
+      label: 'Casos',
+      backgroundColor: '#ef4444',
+      data: [5, 3, 4, 2, 3],
+      borderRadius: 4
+    }
+  ]
+}))
+
+const reworkCausesChartOptions = ref({
+  indexAxis: 'y',
+  maintainAspectRatio: false,
+  plugins: { legend: { display: false } },
+  scales: {
+    x: { grid: { display: true, color: '#f3f4f6', borderDash: [5, 5] }, ticks: { color: '#9ca3af' }, min: 0, max: 8 },
+    y: { grid: { display: false }, ticks: { color: '#6b7280' } }
+  }
+})
+
 </script>
 
 <template>
@@ -207,14 +273,14 @@ const conversionTrendOptions = ref({
       <div v-for="kpi in kpis" :key="kpi.label" class="kpi-card">
         <div class="kpi-top">
           <div class="kpi-icon"><i :class="kpi.icon" class="text-xl"></i></div>
-          <span :class="['trend-badge', kpi.trendUp ? 'up' : 'down']">
+          <span v-if="kpi.trend" :class="['trend-badge', kpi.trendUp ? 'up' : 'down']">
             <i :class="['pi', kpi.trendUp ? 'pi-arrow-up-right' : 'pi-chart-line']"></i>
             {{ kpi.trend }}
           </span>
         </div>
         <div class="kpi-value">{{ kpi.value }}</div>
         <div class="kpi-label">{{ kpi.label }}</div>
-        <div class="kpi-subtext">{{ kpi.subtext }}</div>
+        <div v-if="kpi.subtext" class="kpi-subtext">{{ kpi.subtext }}</div>
       </div>
     </div>
 
@@ -397,6 +463,29 @@ const conversionTrendOptions = ref({
           <p class="text-500 text-sm m-0 mb-4">{{ $t('reports.sales.conversionSubtitle') }}</p>
           <div style="height: 300px">
             <pv-chart type="line" :data="conversionTrendData" :options="conversionTrendOptions" class="h-full w-full" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Productivity Lab -->
+    <div class="productivity-main" v-else-if="activeTab === 'productivity'">
+      <div class="grid mt-2">
+        <!-- Entregas a Tiempo -->
+        <div class="col-12 lg:col-6">
+          <h3 class="text-900 font-bold text-xl m-0 mb-1 font-josefin">{{ $t('reports.productivity.onTimeTitle') }}</h3>
+          <p class="text-500 text-sm m-0 mb-4">{{ $t('reports.productivity.onTimeSubtitle') }}</p>
+          <div style="height: 300px">
+            <pv-chart type="line" :data="onTimeDeliveryChartData" :options="onTimeDeliveryChartOptions" class="h-full w-full" />
+          </div>
+        </div>
+
+        <!-- Causas de Reproceso -->
+        <div class="col-12 lg:col-6">
+          <h3 class="text-900 font-bold text-xl m-0 mb-1 font-josefin">{{ $t('reports.productivity.reworkTitle') }}</h3>
+          <p class="text-500 text-sm m-0 mb-4">{{ $t('reports.productivity.reworkSubtitle') }}</p>
+          <div style="height: 300px">
+            <pv-chart type="bar" :data="reworkCausesChartData" :options="reworkCausesChartOptions" class="h-full w-full" />
           </div>
         </div>
       </div>
