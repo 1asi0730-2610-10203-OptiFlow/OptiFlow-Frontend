@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
+import * as XLSX from 'xlsx'
 
 const { t } = useI18n()
 const toast = useToast()
@@ -17,6 +18,32 @@ const periodOptions = computed(() => [
 
 const exportData = () => {
   toast.add({ severity: 'success', summary: t('common.export') || 'Exportar', detail: 'Descarga iniciada...', life: 3000 })
+  
+  let dataToExport = []
+  let sheetName = 'Reporte'
+  
+  if (activeTab.value === 'personal') {
+    dataToExport = personalPerformanceData.value.map(d => ({
+      Empleado: d.name,
+      Cotizaciones: d.quotes,
+      'Ventas Cerradas': d.sales,
+      'Conversión (%)': d.conversion,
+      Ingresos: d.revenue,
+      Estado: t(`reports.personal.performanceStatus.${d.status}`)
+    }))
+    sheetName = 'Rendimiento_Personal'
+  } else if (activeTab.value === 'resumen') {
+    dataToExport = barData.map(d => ({ Mes: d.month, Recetas: d.recipes, Ventas: d.sales }))
+    sheetName = 'Resumen'
+  } else {
+    dataToExport = personalPerformanceData.value.map(d => ({ Empleado: d.name, 'Ventas Cerradas': d.sales }))
+    sheetName = 'Datos'
+  }
+
+  const worksheet = XLSX.utils.json_to_sheet(dataToExport)
+  const workbook = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(workbook, worksheet, sheetName)
+  XLSX.writeFile(workbook, `Reporte_OptiFlow_${activeTab.value}.xlsx`)
 }
 
 const kpis = computed(() => [
