@@ -270,32 +270,30 @@
       "reworkRegistered": "Rework registered",
       "reworkDetail": "returned to In Production.",
       "orderCreated": "Order created",
-      "orderCreatedDetail": "New lab order registered."
-    },
-    "qaModal": {
-      "title":    "Quality Assurance – QA",
-      "subtitle": "Complete the inspection before approving",
-      "prescriptionCheck": "Prescription Verification",
-      "lensInspection":    "Lens Inspection",
-      "frameInspection":   "Frame Inspection",
-      "btnApprove": "Confirm QA",
-      "btnReject":  "Register Rejection",
-      "checks": {
-        "sphereMatch":   "OD/OS sphere matches prescription",
-        "cylinderAxis":  "OD/OS cylinder and axis are correct",
-        "additionMatch": "Addition verified (if applicable)",
-        "noScratches":   "No scratches, bubbles or impurities",
-        "coatingOk":     "Coating applied correctly",
-        "centeredLens":  "Lens properly centered in the frame",
-        "powerVerified": "Power verified with lensometer",
-        "frameOk":       "Frame free of visible damage",
-        "bevelOk":       "Bevel correct and without sharp edges",
-        "adjustmentOk":  "Bridge and temple adjustment correct"
-      }
-    },
-    "toast": {
+      "orderCreatedDetail": "New lab order registered.",
       "qaApproved": "QA Approved",
       "qaRejected": "Rework registered"
+    },
+    "qaModal": {
+      "title": "Quality Assurance – QA",
+      "subtitle": "Complete the inspection before approving",
+      "prescriptionCheck": "Prescription Verification",
+      "lensInspection": "Lens Inspection",
+      "frameInspection": "Frame Inspection",
+      "btnApprove": "Confirm QA",
+      "btnReject": "Register Rejection",
+      "checks": {
+        "sphereMatch": "OD/OS sphere matches prescription",
+        "cylinderAxis": "OD/OS cylinder and axis are correct",
+        "additionMatch": "Addition verified (if applicable)",
+        "noScratches": "No scratches, bubbles or impurities",
+        "coatingOk": "Coating applied correctly",
+        "centeredLens": "Lens properly centered in the frame",
+        "powerVerified": "Power verified with lensometer",
+        "frameOk": "Frame free of visible damage",
+        "bevelOk": "Bevel correct and without sharp edges",
+        "adjustmentOk": "Bridge and temple adjustment correct"
+      }
     },
     "showing": "Showing",
     "orders": "orders"
@@ -660,12 +658,65 @@
       "revenueTrendTitle": "Monthly Revenue Trend",
       "revenueTrendSubtitle": "Last 6 months · {total} total"
     },
+    "sales": {
+      "pendingBalances": "Pending Balances by Aging",
+      "pendingSubtitle": "Accounts receivable breakdown",
+      "days0to7": "0-7 days",
+      "days8to15": "8-15 days",
+      "days16to30": "16-30 days",
+      "days31plus": "31+ days",
+      "revenueByCategory": "Revenue by Category",
+      "revenueSubtitle": "This period",
+      "conversionTrend": "Conversion Rate Trend",
+      "conversionSubtitle": "Prescription → Sale %"
+    },
     "products": {
       "progressive": "Progressive Lenses",
       "singleVision": "Single Vision",
       "contactLenses": "Contact Lenses",
       "accessories": "Accessories",
       "others": "Others"
+    },
+    "productivity": {
+      "avgProductionTime": "Avg. Production Time",
+      "onTimeDeliveryRate": "On-Time Delivery Rate",
+      "reworkRate": "Rework Rate",
+      "totalOrders": "Total Orders (6 months)",
+      "onTimeTitle": "% On-Time Deliveries per Week",
+      "onTimeSubtitle": "Last 5 weeks",
+      "reworkTitle": "Causes of Rework (6 months)",
+      "reworkSubtitle": "Root cause analysis",
+      "causes": {
+        "wrongRecipe": "Wrong recipe",
+        "frameMismatch": "Frame mismatch",
+        "lensDefect": "Lens defect",
+        "coatingProblem": "Coating problem",
+        "customerChange": "Customer change"
+      }
+    },
+    "personal": {
+      "table": {
+        "employee": "EMPLOYEE",
+        "quotes": "QUOTES",
+        "closedSales": "CLOSED SALES",
+        "conversion": "CONVERSION",
+        "revenue": "REVENUE",
+        "performance": "PERFORMANCE"
+      },
+      "performanceStatus": {
+        "excellent": "Excellent",
+        "good": "Good",
+        "improving": "Improving"
+      },
+      "badges": {
+        "topPerformer": "Top performer"
+      },
+      "chart": {
+        "title": "Quotes vs. Closed Sales",
+        "subtitle": "By team member",
+        "legendQuotes": "Quotes",
+        "legendSales": "Closed Sales"
+      }
     }
   },
   "patientCenter": {

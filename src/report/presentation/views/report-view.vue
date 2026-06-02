@@ -1,18 +1,63 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useToast } from 'primevue/usetoast'
+import * as XLSX from 'xlsx'
 
 const { t } = useI18n()
+const toast = useToast()
 
-// --- Mock Data ---
 const activeTab = ref('resumen')
 const selectedPeriod = ref({ label: 'Últimos 6 meses', value: 6 })
 
+const periodOptions = computed(() => [
+  { label: t('reports.periods.last30days', 'Últimos 30 días'), value: 1 },
+  { label: t('reports.periodSelector', 'Últimos 6 meses'), value: 6 },
+  { label: t('reports.periods.thisYear', 'Este año'), value: 12 }
+])
+
+const exportData = () => {
+  toast.add({ severity: 'success', summary: t('common.export') || 'Exportar', detail: 'Descarga iniciada...', life: 3000 })
+  
+  let dataToExport = []
+  let sheetName = 'Reporte'
+  
+  if (activeTab.value === 'personal') {
+    dataToExport = personalPerformanceData.value.map(d => ({
+      Empleado: d.name,
+      Cotizaciones: d.quotes,
+      'Ventas Cerradas': d.sales,
+      'Conversión (%)': d.conversion,
+      Ingresos: d.revenue,
+      Estado: t(`reports.personal.performanceStatus.${d.status}`)
+    }))
+    sheetName = 'Rendimiento_Personal'
+  } else if (activeTab.value === 'resumen') {
+    dataToExport = barData.map(d => ({ Mes: d.month, Recetas: d.recipes, Ventas: d.sales }))
+    sheetName = 'Resumen'
+  } else {
+    dataToExport = personalPerformanceData.value.map(d => ({ Empleado: d.name, 'Ventas Cerradas': d.sales }))
+    sheetName = 'Datos'
+  }
+
+  const worksheet = XLSX.utils.json_to_sheet(dataToExport)
+  const workbook = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(workbook, worksheet, sheetName)
+  XLSX.writeFile(workbook, `Reporte_OptiFlow_${activeTab.value}.xlsx`)
+}
+
 const kpis = computed(() => [
-  { icon: '💰', value: 'S/ 303,693', label: t('reports.kpis.totalRevenue'), subtext: t('reports.kpis.total6Months'), trend: '+18%', trendUp: true },
-  { icon: '📊', value: '86%', label: t('reports.kpis.conversionRate'), subtext: t('reports.kpis.recipeToSale'), trend: '+9pts', trendUp: true },
-  { icon: '⏱️', value: '3.9 días', label: t('reports.kpis.avgDeliveryTime'), subtext: t('reports.kpis.vsPreviousQuarter'), trend: '-0.8d', trendUp: true },
-  { icon: '⚠️', value: 'S/ 16,660', label: t('reports.kpis.pendingBalances'), subtext: t('reports.kpis.openInvoices', { count: 52 }), trend: '+5%', trendUp: false }
+  { icon: 'pi pi-money-bill text-primary', value: 'S/ 303,693', label: t('reports.kpis.totalRevenue'), subtext: t('reports.kpis.total6Months'), trend: '+18%', trendUp: true },
+  { icon: 'pi pi-chart-bar text-primary', value: '86%', label: t('reports.kpis.conversionRate'), subtext: t('reports.kpis.recipeToSale'), trend: '+9pts', trendUp: true },
+  { icon: 'pi pi-clock text-primary', value: '3.9 días', label: t('reports.kpis.avgDeliveryTime'), subtext: t('reports.kpis.vsPreviousQuarter'), trend: '-0.8d', trendUp: true },
+  { icon: 'pi pi-exclamation-triangle text-orange-500', value: 'S/ 16,660', label: t('reports.kpis.pendingBalances'), subtext: t('reports.kpis.openInvoices', { count: 52 }), trend: '+5%', trendUp: false }
+])
+
+const productivityKpis = computed(() => [
+  { icon: 'pi pi-stopwatch text-indigo-500', value: '3.9 días', label: t('reports.productivity.avgProductionTime') },
+  { icon: 'pi pi-check-square text-green-500', value: '93%', label: t('reports.productivity.onTimeDeliveryRate') },
+  { icon: 'pi pi-sync text-blue-500', value: '2.1%', label: t('reports.productivity.reworkRate') },
+  { icon: 'pi pi-box text-orange-400', value: '287', label: t('reports.productivity.totalOrders') }
 ])
 
 const chartData = [
@@ -32,7 +77,6 @@ const donutData = computed(() => [
   { label: t('reports.products.others'), value: 8, color: '#ef4444' }
 ])
 
-// --- Bar Chart Geometry ---
 const BC = { left: 40, right: 740, top: 20, bottom: 180 }
 const bcW = BC.right - BC.left
 const bcH = BC.bottom - BC.top
@@ -64,7 +108,6 @@ const bars = barData.map((d, i) => ({
   month: d.month
 }))
 
-// --- Revenue Trend Chart Geometry ---
 const RC = { left: 50, right: 900, top: 20, bottom: 180 }
 const rcW = RC.right - RC.left
 const rcH = RC.bottom - RC.top
@@ -89,20 +132,18 @@ const revXLabels = computed(() => barData.map((d, i) => ({
   label: d.month
 })))
 
-// --- Donut Chart Logic ---
 const donutRadius = 60
 const donutThickness = 18
 const center = 80
 
 const donutSegments = computed(() => {
-  let currentAngle = -90 // Start from top
+  let currentAngle = -90 
   return donutData.value.map(item => {
     const angle = (item.value / 100) * 360
     const startAngle = currentAngle
     const endAngle = currentAngle + angle
     currentAngle += angle
     
-    // Convert polar to cartesian
     const x1 = center + donutRadius * Math.cos(Math.PI * startAngle / 180)
     const y1 = center + donutRadius * Math.sin(Math.PI * startAngle / 180)
     const x2 = center + donutRadius * Math.cos(Math.PI * endAngle / 180)
@@ -114,44 +155,250 @@ const donutSegments = computed(() => {
     return { path, color: item.color, label: item.label, percent: item.value }
   })
 })
+
+const agingBalances = computed(() => [
+  { label: t('reports.sales.days0to7'), count: 28, amount: 'S/ 8,400' },
+  { label: t('reports.sales.days8to15'), count: 14, amount: 'S/ 4,200' },
+  { label: t('reports.sales.days16to30'), count: 7, amount: 'S/ 2,800' },
+  { label: t('reports.sales.days31plus'), count: 3, amount: 'S/ 1,260' }
+])
+
+const revenueChartData = computed(() => ({
+  labels: [
+    t('reports.products.progressive'), 
+    t('reports.products.singleVision'), 
+    t('reports.products.contactLenses'), 
+    t('reports.products.accessories'), 
+    t('reports.products.others')
+  ],
+  datasets: [
+    {
+      label: t('reports.sales.revenueByCategory'),
+      backgroundColor: ['#00c1b0', '#a3e635', '#93c5fd', '#fbbf24', '#ef4444'],
+      data: [38, 24, 18, 12, 8],
+      borderRadius: 4
+    }
+  ]
+}))
+
+const revenueChartOptions = ref({
+  indexAxis: 'y',
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { display: false }
+  },
+  scales: {
+    x: { grid: { color: '#f3f4f6' }, ticks: { color: '#9ca3af' } },
+    y: { grid: { display: false }, ticks: { color: '#6b7280' } }
+  }
+})
+
+const conversionTrendData = computed(() => ({
+  labels: ['Nov', 'Dic', 'Ene', 'Feb', 'Mar', 'Abr'],
+  datasets: [
+    {
+      label: t('reports.sales.conversionTrend'),
+      data: [77, 80, 75, 82, 84, 86],
+      fill: false,
+      borderColor: '#a3e635',
+      tension: 0.4,
+      pointBackgroundColor: '#a3e635',
+      pointBorderColor: '#fff',
+      pointBorderWidth: 2,
+      pointRadius: 4
+    }
+  ]
+}))
+
+const conversionTrendOptions = ref({
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { display: false }
+  },
+  scales: {
+    x: { grid: { display: false }, ticks: { color: '#9ca3af' } },
+    y: { grid: { color: '#f3f4f6', borderDash: [5, 5] }, ticks: { color: '#9ca3af' }, min: 70, max: 90 }
+  }
+})
+
+const onTimeDeliveryChartData = computed(() => ({
+  labels: ['Sem 14', 'Sem 15', 'Sem 16', 'Sem 17', 'Sem 18'],
+  datasets: [
+    {
+      label: '%',
+      data: [92, 95, 87, 93, 97],
+      fill: true,
+      borderColor: '#a3e635',
+      backgroundColor: 'rgba(163, 230, 53, 0.1)',
+      tension: 0.4,
+      pointBackgroundColor: '#a3e635',
+      pointBorderColor: '#fff',
+      pointBorderWidth: 2,
+      pointRadius: 4
+    }
+  ]
+}))
+
+const onTimeDeliveryChartOptions = ref({
+  maintainAspectRatio: false,
+  plugins: { legend: { display: false } },
+  scales: {
+    x: { grid: { display: true, color: '#f3f4f6', borderDash: [5, 5] }, ticks: { color: '#9ca3af' } },
+    y: { grid: { display: true, color: '#f3f4f6', borderDash: [5, 5] }, ticks: { color: '#9ca3af', callback: function(value) { return value + '%' } }, min: 80, max: 100 }
+  }
+})
+
+const reworkCausesChartData = computed(() => ({
+  labels: [
+    t('reports.productivity.causes.wrongRecipe'),
+    t('reports.productivity.causes.frameMismatch'),
+    t('reports.productivity.causes.lensDefect'),
+    t('reports.productivity.causes.coatingProblem'),
+    t('reports.productivity.causes.customerChange')
+  ],
+  datasets: [
+    {
+      label: 'Casos',
+      backgroundColor: '#ef4444',
+      data: [5, 3, 4, 2, 3],
+      borderRadius: 4
+    }
+  ]
+}))
+
+const reworkCausesChartOptions = ref({
+  indexAxis: 'y',
+  maintainAspectRatio: false,
+  plugins: { legend: { display: false } },
+  scales: {
+    x: { grid: { display: true, color: '#f3f4f6', borderDash: [5, 5] }, ticks: { color: '#9ca3af' }, min: 0, max: 8 },
+    y: { grid: { display: false }, ticks: { color: '#6b7280' } }
+  }
+})
+
+const personalPerformanceData = computed(() => [
+  { 
+    id: 1, 
+    name: 'María García', 
+    initials: 'MG', 
+    topPerformer: true, 
+    quotes: 54, 
+    sales: 47, 
+    conversion: 87, 
+    revenue: 'S/ 12,840', 
+    status: 'excellent',
+    color: '#00c1b0'
+  },
+  { 
+    id: 2, 
+    name: 'Lisa Anderson', 
+    initials: 'LA', 
+    topPerformer: false, 
+    quotes: 38, 
+    sales: 29, 
+    conversion: 76, 
+    revenue: 'S/ 7,920', 
+    status: 'improving',
+    color: '#9ca3af'
+  },
+  { 
+    id: 3, 
+    name: 'Robert Kim', 
+    initials: 'RK', 
+    topPerformer: false, 
+    quotes: 42, 
+    sales: 33, 
+    conversion: 79, 
+    revenue: 'S/ 9,340', 
+    status: 'good',
+    color: '#00c1b0' 
+  },
+  { 
+    id: 4, 
+    name: 'Ana Torres', 
+    initials: 'AT', 
+    topPerformer: false, 
+    quotes: 31, 
+    sales: 25, 
+    conversion: 81, 
+    revenue: 'S/ 6,870', 
+    status: 'good',
+    color: '#00c1b0' 
+  }
+])
+
+const personalChartData = computed(() => ({
+  labels: personalPerformanceData.value.map(d => d.name),
+  datasets: [
+    {
+      label: t('reports.personal.chart.legendQuotes'),
+      backgroundColor: '#00c1b0',
+      data: personalPerformanceData.value.map(d => d.quotes),
+      borderRadius: 4
+    },
+    {
+      label: t('reports.personal.chart.legendSales'),
+      backgroundColor: '#00c1b0', 
+      data: personalPerformanceData.value.map(d => d.sales),
+      borderRadius: 4
+    }
+  ]
+}))
+
+const personalChartOptions = ref({
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      display: true,
+      position: 'bottom',
+      labels: { usePointStyle: true, color: '#6b7280' }
+    }
+  },
+  scales: {
+    x: { grid: { display: false }, ticks: { color: '#9ca3af' } },
+    y: { grid: { color: '#f3f4f6', borderDash: [5, 5] }, ticks: { color: '#9ca3af' }, min: 0, max: 60 }
+  }
+})
+
 </script>
 
 <template>
   <div class="report-container">
-    <!-- Header Section -->
+   
     <header class="report-header">
       <div class="title-section">
         <h1>{{ $t('reports.title') }}</h1>
         <p class="subtitle">{{ $t('reports.subtitle') }} · Abril 2026</p>
       </div>
       <div class="header-actions">
-        <div class="period-selector">
-          <i class="pi pi-calendar"></i>
-          <span>{{ $t('reports.periodSelector') }}</span>
-          <i class="pi pi-chevron-down"></i>
-        </div>
-        <pv-button :label="$t('reports.export')" icon="pi pi-download" class="export-btn" />
+        <pv-select v-model="selectedPeriod" :options="periodOptions" optionLabel="label" class="border-round-xl border-1 surface-border bg-white" style="height: 42px">
+          <template #value="slotProps">
+            <div v-if="slotProps.value" class="flex align-items-center gap-2">
+              <i class="pi pi-calendar text-500"></i>
+              <span class="text-700 text-sm font-medium">{{ slotProps.value.label }}</span>
+            </div>
+          </template>
+        </pv-select>
+        <pv-button :label="$t('reports.export')" icon="pi pi-download" class="export-btn" @click="exportData" />
         <pv-button icon="pi pi-refresh" text rounded class="refresh-btn" />
       </div>
     </header>
 
-    <!-- KPI Grid -->
     <div class="kpi-grid">
       <div v-for="kpi in kpis" :key="kpi.label" class="kpi-card">
         <div class="kpi-top">
-          <span class="kpi-icon">{{ kpi.icon }}</span>
-          <span :class="['trend-badge', kpi.trendUp ? 'up' : 'down']">
+          <div class="kpi-icon"><i :class="kpi.icon" class="text-xl"></i></div>
+          <span v-if="kpi.trend" :class="['trend-badge', kpi.trendUp ? 'up' : 'down']">
             <i :class="['pi', kpi.trendUp ? 'pi-arrow-up-right' : 'pi-chart-line']"></i>
             {{ kpi.trend }}
           </span>
         </div>
         <div class="kpi-value">{{ kpi.value }}</div>
         <div class="kpi-label">{{ kpi.label }}</div>
-        <div class="kpi-subtext">{{ kpi.subtext }}</div>
+        <div v-if="kpi.subtext" class="kpi-subtext">{{ kpi.subtext }}</div>
       </div>
     </div>
 
-    <!-- Navigation Tabs -->
     <nav class="report-tabs">
       <button 
         :class="['tab-item', { active: activeTab === 'resumen' }]"
@@ -183,8 +430,7 @@ const donutSegments = computed(() => {
       </button>
     </nav>
 
-    <!-- Main Content Area -->
-    <div class="report-main">
+    <div class="report-main" v-if="activeTab === 'resumen'">
       <div class="main-card bar-chart-section">
         <div class="card-header">
           <div class="card-title-group">
@@ -259,7 +505,6 @@ const donutSegments = computed(() => {
         </div>
       </div>
 
-      <!-- New Trend Chart -->
       <div class="main-card full-card trend-chart-section">
         <div class="card-header">
           <div class="card-title-group">
@@ -293,6 +538,148 @@ const donutSegments = computed(() => {
         </div>
       </div>
     </div>
+
+    <div class="sales-finance-main" v-else-if="activeTab === 'sales'">
+      <div class="aging-section w-full mb-5">
+        <h3 class="text-900 font-bold text-xl m-0 mb-1 font-josefin">{{ $t('reports.sales.pendingBalances') }}</h3>
+        <p class="text-500 text-sm m-0 mb-4">{{ $t('reports.sales.pendingSubtitle') }}</p>
+        
+        <div class="grid">
+          <div v-for="balance in agingBalances" :key="balance.label" class="col-12 md:col-6 xl:col-3">
+            <pv-card class="shadow-none border-1 border-100 border-round-xl h-full" style="background-color: #f8fafc">
+              <template #content>
+                <div class="text-600 text-sm mb-3">{{ balance.label }}</div>
+                <div class="text-900 font-bold text-3xl mb-2">{{ balance.count }}</div>
+                <div class="text-primary font-semibold text-lg" style="color: #00c1b0 !important">{{ balance.amount }}</div>
+              </template>
+            </pv-card>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="col-12 lg:col-6">
+          <h3 class="text-900 font-bold text-xl m-0 mb-1 font-josefin">{{ $t('reports.sales.revenueByCategory') }}</h3>
+          <p class="text-500 text-sm m-0 mb-4">{{ $t('reports.sales.revenueSubtitle') }}</p>
+          <div style="height: 300px">
+            <pv-chart type="bar" :data="revenueChartData" :options="revenueChartOptions" class="h-full w-full" />
+          </div>
+        </div>
+
+        <div class="col-12 lg:col-6">
+          <h3 class="text-900 font-bold text-xl m-0 mb-1 font-josefin">{{ $t('reports.sales.conversionTrend') }}</h3>
+          <p class="text-500 text-sm m-0 mb-4">{{ $t('reports.sales.conversionSubtitle') }}</p>
+          <div style="height: 300px">
+            <pv-chart type="line" :data="conversionTrendData" :options="conversionTrendOptions" class="h-full w-full" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="productivity-main" v-else-if="activeTab === 'productivity'">
+      <div class="kpi-grid mb-5">
+        <div v-for="kpi in productivityKpis" :key="kpi.label" class="kpi-card">
+          <div class="kpi-top">
+            <div class="kpi-icon"><i :class="kpi.icon" class="text-xl"></i></div>
+          </div>
+          <div class="kpi-value">{{ kpi.value }}</div>
+          <div class="kpi-label">{{ kpi.label }}</div>
+        </div>
+      </div>
+
+      <div class="grid mt-2">
+        <div class="col-12 lg:col-6">
+          <h3 class="text-900 font-bold text-xl m-0 mb-1 font-josefin">{{ $t('reports.productivity.onTimeTitle') }}</h3>
+          <p class="text-500 text-sm m-0 mb-4">{{ $t('reports.productivity.onTimeSubtitle') }}</p>
+          <div style="height: 300px">
+            <pv-chart type="line" :data="onTimeDeliveryChartData" :options="onTimeDeliveryChartOptions" class="h-full w-full" />
+          </div>
+        </div>
+
+        <div class="col-12 lg:col-6">
+          <h3 class="text-900 font-bold text-xl m-0 mb-1 font-josefin">{{ $t('reports.productivity.reworkTitle') }}</h3>
+          <p class="text-500 text-sm m-0 mb-4">{{ $t('reports.productivity.reworkSubtitle') }}</p>
+          <div style="height: 300px">
+            <pv-chart type="bar" :data="reworkCausesChartData" :options="reworkCausesChartOptions" class="h-full w-full" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="personal-main" v-else-if="activeTab === 'personal'">
+      <div class="main-card full-card mb-5 p-0 overflow-hidden">
+        <pv-data-table :value="personalPerformanceData" responsiveLayout="scroll" class="p-datatable-sm border-none">
+          <pv-column field="employee" :header="$t('reports.personal.table.employee')">
+            <template #body="slotProps">
+              <div class="flex align-items-center gap-3 py-2">
+                <div class="flex align-items-center justify-content-center border-circle text-white font-bold text-sm" 
+                     :style="{ width: '40px', height: '40px', backgroundColor: slotProps.data.color }">
+                  {{ slotProps.data.initials }}
+                </div>
+                <div>
+                  <div class="text-900 font-semibold">{{ slotProps.data.name }}</div>
+                  <div v-if="slotProps.data.topPerformer" class="text-sm mt-1" style="color: #00c1b0 !important;">
+                    🏆 {{ $t('reports.personal.badges.topPerformer') }}
+                  </div>
+                </div>
+              </div>
+            </template>
+          </pv-column>
+          <pv-column field="quotes" :header="$t('reports.personal.table.quotes')">
+            <template #body="slotProps">
+              <div class="text-600 font-medium">{{ slotProps.data.quotes }}</div>
+            </template>
+          </pv-column>
+          <pv-column field="sales" :header="$t('reports.personal.table.closedSales')">
+            <template #body="slotProps">
+              <div class="text-600 font-medium">{{ slotProps.data.sales }}</div>
+            </template>
+          </pv-column>
+          <pv-column field="conversion" :header="$t('reports.personal.table.conversion')">
+            <template #body="slotProps">
+              <div class="flex align-items-center gap-3">
+                <div class="w-6rem h-1rem border-round surface-200 overflow-hidden" style="height: 6px !important;">
+                  <div class="h-full border-round" 
+                       :style="{ width: slotProps.data.conversion + '%', backgroundColor: slotProps.data.status === 'excellent' ? '#a3e635' : (slotProps.data.status === 'good' ? '#00c1b0' : '#9ca3af') }">
+                  </div>
+                </div>
+                <span class="font-bold text-700">{{ slotProps.data.conversion }}%</span>
+              </div>
+            </template>
+          </pv-column>
+          <pv-column field="revenue" :header="$t('reports.personal.table.revenue')">
+            <template #body="slotProps">
+              <div class="font-bold text-900">{{ slotProps.data.revenue }}</div>
+            </template>
+          </pv-column>
+          <pv-column field="performance" :header="$t('reports.personal.table.performance')">
+            <template #body="slotProps">
+              <span class="px-3 py-1 border-round-3xl text-xs font-semibold"
+                    :class="{
+                      'bg-green-100 text-green-700': slotProps.data.status === 'excellent',
+                      'bg-cyan-100 text-cyan-700': slotProps.data.status === 'good',
+                      'surface-200 text-600': slotProps.data.status === 'improving'
+                    }">
+                {{ $t('reports.personal.performanceStatus.' + slotProps.data.status) }}
+              </span>
+            </template>
+          </pv-column>
+        </pv-data-table>
+      </div>
+
+      <div class="main-card full-card">
+        <div class="card-header mb-4">
+          <div class="card-title-group">
+            <h3 class="text-900 font-bold text-xl m-0 mb-1 font-josefin">{{ $t('reports.personal.chart.title') }}</h3>
+            <p class="text-500 text-sm m-0">{{ $t('reports.personal.chart.subtitle') }}</p>
+          </div>
+        </div>
+        
+        <div style="height: 350px">
+          <pv-chart type="bar" :data="personalChartData" :options="personalChartOptions" class="h-full w-full" />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -307,7 +694,6 @@ const donutSegments = computed(() => {
   color: #1f2937;
 }
 
-/* Header Styles */
 .report-header {
   display: flex;
   justify-content: space-between;
@@ -614,7 +1000,6 @@ const donutSegments = computed(() => {
   height: 100%;
 }
 
-/* Donut Chart */
 .donut-container {
   display: flex;
   flex-direction: column;
