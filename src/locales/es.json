@@ -73,25 +73,18 @@
     "allStatuses": "Todos los estados",
     "loading": "Cargando ventas...",
     "form": {
-      "title": "Nueva Venta / Cotización",
+      "title": "Nueva Venta",
       "step": "Paso",
       "of": "de",
       "steps": {
-        "patient": "Paciente y Rx",
-        "products": "Productos",
+        "order": "Seleccionar Orden",
         "payment": "Pago"
       },
-      "patientLabel": "Paciente",
+      "selectOrderLabel": "Orden Colocada",
+      "orderSearchPlaceholder": "Buscar por paciente, armazón o N° orden...",
+      "noOrders": "No se encontraron órdenes",
+      "orderSelected": "Orden seleccionada",
       "requiredError": "Por favor rellene los campos obligatorios",
-      "selectPatient": "Selecciona un paciente...",
-      "lastRx": "Última Receta Vinculada",
-      "rxPending": "Receta pendiente de vincular con módulo clínico",
-      "frame": "Armazón (Montura)",
-      "framePlaceholder": "Ej. Ray-Ban RB5228 Negro",
-      "lensType": "Tipo de Luna",
-      "lensMaterial": "Material de Luna",
-      "select": "Seleccionar...",
-      "estimatedTotal": "Total Estimado",
       "paymentMethod": "Método de Pago",
       "discountCode": "Código de Descuento (opcional)",
       "discountPlaceholder": "Ej. PROMO15",
@@ -105,7 +98,7 @@
       "back": "Atrás",
       "cancel": "Cancelar",
       "next": "Siguiente",
-      "create": "Crear Venta + Orden de Lab",
+      "create": "Crear Venta",
       "lensTypes": {
         "monofocal": "Monofocales",
         "bifocal": "Bifocales",
@@ -163,6 +156,22 @@
     "dialogs": {
       "paymentHeader": "Registrar pago de saldo",
       "feedbackHeader": "Encuesta de satisfacción"
+    },
+    "payment": {
+      "pendingBalance": "Saldo pendiente",
+      "paymentMethod": "Método de pago",
+      "amountLabel": "Monto a cobrar (S/)",
+      "amountExceedsBalance": "El monto supera el saldo pendiente.",
+      "registerBtn": "Registrar pago"
+    },
+    "feedback": {
+      "intro": "¿Cómo calificaría la atención y calidad del producto?",
+      "rating": "Calificación",
+      "recommend": "¿Recomendaría el servicio?",
+      "comments": "Comentarios (opcional)",
+      "commentsPlaceholder": "Comparte tu experiencia...",
+      "skip": "Omitir",
+      "submit": "Enviar encuesta"
     },
     "table": {
       "invoice": "Factura",
@@ -478,11 +487,20 @@
       "min": "mín",
       "replenish": "Reponer",
       "edit": "Editar",
+      "copySku": "Copiar SKU",
       "incompatible": "Inventario incompatible",
       "noResults": "No se encontraron artículos con los filtros seleccionados.",
       "showing": "Mostrando",
       "of": "de",
       "items": "artículos"
+    },
+    "categories": {
+      "lenses": "Lunas",
+      "frames": "Armazones",
+      "accessories": "Accesorios",
+      "contactLenses": "Lentes de Contacto",
+      "sunLenses": "Lentes de Sol",
+      "equipment": "Equipos"
     },
     "levels": {
       "critical": "Crítico",
@@ -550,8 +568,12 @@
     "toast": {
       "itemAdded": "Artículo agregado",
       "itemAddedDetail": "registrado en el inventario.",
+      "itemUpdated": "Producto actualizado",
+      "itemUpdatedDetail": "{name} fue actualizado correctamente.",
       "restockDone": "Restock registrado",
-      "restockDetail": "unidades agregadas."
+      "restockDetail": "unidades agregadas.",
+      "lowStock": "Stock bajo",
+      "lowStockDetail": "{name} sigue por debajo del mínimo ({threshold} und.)."
     },
     "editModal": {
       "title": "Editar Producto",

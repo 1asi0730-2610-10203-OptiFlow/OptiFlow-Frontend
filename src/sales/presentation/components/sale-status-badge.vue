@@ -1,19 +1,28 @@
 <script setup>
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
   status: { type: String, required: true }
 })
 
-const config = {
-  PENDING:   { label: 'Pendiente',       bg: '#fef9c2', color: '#a65f00' },
-  PARTIAL:   { label: 'Saldo Pendiente', bg: '#fef9c2', color: '#a65f00' },
-  PAID:      { label: 'Pagada',          bg: '#dcfce7', color: '#008236' },
-  DELIVERED: { label: 'Completada',      bg: '#dcfce7', color: '#008236' },
-  RETURNED:  { label: 'Devuelta',        bg: '#fee2e2', color: '#b91c1c' }
+const { t } = useI18n()
+
+const styleMap = {
+  PENDING:   { bg: '#fef9c2', color: '#a65f00' },
+  PARTIAL:   { bg: '#fef9c2', color: '#a65f00' },
+  PAID:      { bg: '#dcfce7', color: '#008236' },
+  DELIVERED: { bg: '#dcfce7', color: '#008236' },
+  RETURNED:  { bg: '#fee2e2', color: '#b91c1c' }
 }
 
-const badge = computed(() => config[props.status] ?? { label: props.status, bg: '#f3f4f6', color: '#374151' })
+const badge = computed(() => {
+  const style = styleMap[props.status] ?? { bg: '#f3f4f6', color: '#374151' }
+  const label = styleMap[props.status]
+    ? t(`sales.status.${props.status}`)
+    : props.status
+  return { ...style, label }
+})
 </script>
 
 <template>

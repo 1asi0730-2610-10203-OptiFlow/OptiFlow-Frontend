@@ -7,12 +7,10 @@ import { SaleAssembler } from '../infrastructure/sale.assembler.js'
 import { SaleDetailAssembler } from '../infrastructure/sale-detail.assembler.js'
 import { PaymentAssembler } from '../infrastructure/payment.assembler.js'
 import { FeedbackAssembler } from '../infrastructure/feedback.assembler.js'
-import { WorkOrderApi } from '../../fulfillment/infrastructure/work-order-api.js'
 
 const salesApi = new SalesApi()
 const paymentApi = new PaymentApi()
 const feedbackApi = new FeedbackApi()
-const workOrderApi = new WorkOrderApi()
 
 export const useSalesStore = defineStore('sales', () => {
   const sales = ref([])
@@ -66,26 +64,6 @@ export const useSalesStore = defineStore('sales', () => {
       const created = await salesApi.createSale(resource)
       const saleEntity = SaleAssembler.toEntityFromResource(created)
       sales.value.unshift(saleEntity)
-
-      // Automatically create a Work Order (Lab Order)
-      const labMeta = sale._labMeta || {}
-      const deliveryDate = new Date()
-      deliveryDate.setDate(deliveryDate.getDate() + 7)
-
-      await workOrderApi.createWorkOrder({
-        sale_id: saleEntity.id,
-        patient_name: saleEntity.patientName,
-        laboratory_name: 'Vision Labs Inc.',
-        lens_type: labMeta.lensType || '',
-        frame: labMeta.frame || '',
-        status: 'PENDING',
-        priority: 'normal',
-        total: saleEntity.totalAmount,
-        deposit: saleEntity.adelanto,
-        delivery_date: deliveryDate.toISOString().split('T')[0],
-        is_rework: false,
-        created_at: new Date().toISOString().split('T')[0]
-      })
     } catch (e) {
       errors.value.push(e.message)
     } finally {
