@@ -31,7 +31,8 @@
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\DELL\\\\Desktop\\\\Mierda2\\\\Estudio\\\\UPC\\\\CICLO 2026 - 1\\\\WEB APPLICATIONS\\\\optiflow-frontend\\\\src\\\\sales\" -Recurse -File)",
       "Bash(Select-Object FullName)",
       "Bash(Sort-Object FullName)",
-      "Bash(python *)"
+      "Bash(python *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\lucia\\\\WebstormProjects\\\\OptiFlow-Frontend\" -Force)"
     ]
   }
 }
