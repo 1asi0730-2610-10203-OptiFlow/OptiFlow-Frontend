@@ -1,27 +1,82 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
 import * as XLSX from 'xlsx'
+import { useSalesStore } from '../../../sales/application/sales.store.js'
+import { useFulfillmentStore } from '../../../fulfillment/application/fulfillment.store.js'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const toast = useToast()
+const salesStore = useSalesStore()
+const fulfillmentStore = useFulfillmentStore()
 
 const activeTab = ref('resumen')
-const selectedPeriod = ref({ label: 'Últimos 6 meses', value: 6 })
+const selectedPeriod = ref(null)
 
 const periodOptions = computed(() => [
-  { label: t('reports.periods.last30days', 'Últimos 30 días'), value: 1 },
-  { label: t('reports.periodSelector', 'Últimos 6 meses'), value: 6 },
-  { label: t('reports.periods.thisYear', 'Este año'), value: 12 }
+  { label: t('reports.periods.last30days'), value: 1 },
+  { label: t('reports.periods.last6months'), value: 6 },
+  { label: t('reports.periods.thisYear'), value: 12 }
 ])
 
+onMounted(async () => {
+  await Promise.all([
+    salesStore.fetchSales(),
+    fulfillmentStore.loadWorkOrders()
+  ])
+})
+
+// --- Helpers ---
+function getLastMonths(n) {
+  const now = new Date()
+  const result = []
+  const loc = locale.value === 'es' ? 'es-PE' : 'en-US'
+  for (let i = n - 1; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+    const label = d.toLocaleDateString(loc, { month: 'short' })
+    result.push({ label, year: d.getFullYear(), month: d.getMonth() })
+  }
+  return result
+}
+
+function formatCurrency(amount) {
+  return `S/ ${Math.round(amount).toLocaleString('es-PE')}`
+}
+
+const currentPeriodLabel = computed(() => {
+  const now = new Date()
+  const loc = locale.value === 'es' ? 'es-PE' : 'en-US'
+  const monthName = now.toLocaleDateString(loc, { month: 'long' })
+  return `${monthName} ${now.getFullYear()}`
+})
+
+// --- Sales aggregated by month (reactive to period selector) ---
+const periodMonths = computed(() => getLastMonths(selectedPeriod.value?.value ?? 6))
+
+const salesByMonth = computed(() =>
+  periodMonths.value.map(({ label, year, month }) => {
+    const monthSales = salesStore.sales.filter(s => {
+      const d = new Date(s.createdAt)
+      return d.getFullYear() === year && d.getMonth() === month
+    })
+    const closed = monthSales.filter(s => s.status === 'PAID' || s.status === 'DELIVERED')
+    return {
+      month: label,
+      sales: monthSales.length,
+      closedSales: closed.length,
+      revenue: monthSales.reduce((sum, s) => sum + s.totalAmount, 0)
+    }
+  })
+)
+
+// --- Export ---
 const exportData = () => {
   toast.add({ severity: 'success', summary: t('common.export') || 'Exportar', detail: 'Descarga iniciada...', life: 3000 })
-  
+
   let dataToExport = []
   let sheetName = 'Reporte'
-  
+
   if (activeTab.value === 'personal') {
     dataToExport = personalPerformanceData.value.map(d => ({
       Empleado: d.name,
@@ -33,7 +88,7 @@ const exportData = () => {
     }))
     sheetName = 'Rendimiento_Personal'
   } else if (activeTab.value === 'resumen') {
-    dataToExport = barData.map(d => ({ Mes: d.month, Recetas: d.recipes, Ventas: d.sales }))
+    dataToExport = barData.value.map(d => ({ Mes: d.month, Ventas: d.sales }))
     sheetName = 'Resumen'
   } else {
     dataToExport = personalPerformanceData.value.map(d => ({ Empleado: d.name, 'Ventas Cerradas': d.sales }))
@@ -46,197 +101,252 @@ const exportData = () => {
   XLSX.writeFile(workbook, `Reporte_OptiFlow_${activeTab.value}.xlsx`)
 }
 
-const kpis = computed(() => [
-  { icon: 'pi pi-money-bill text-primary', value: 'S/ 303,693', label: t('reports.kpis.totalRevenue'), subtext: t('reports.kpis.total6Months'), trend: '+18%', trendUp: true },
-  { icon: 'pi pi-chart-bar text-primary', value: '86%', label: t('reports.kpis.conversionRate'), subtext: t('reports.kpis.recipeToSale'), trend: '+9pts', trendUp: true },
-  { icon: 'pi pi-clock text-primary', value: '3.9 días', label: t('reports.kpis.avgDeliveryTime'), subtext: t('reports.kpis.vsPreviousQuarter'), trend: '-0.8d', trendUp: true },
-  { icon: 'pi pi-exclamation-triangle text-orange-500', value: 'S/ 16,660', label: t('reports.kpis.pendingBalances'), subtext: t('reports.kpis.openInvoices', { count: 52 }), trend: '+5%', trendUp: false }
-])
+// --- Top KPIs ---
+const currentMonthConversion = computed(() => {
+  const now = new Date()
+  const thisMonth = salesStore.sales.filter(s => {
+    const d = new Date(s.createdAt)
+    return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()
+  })
+  if (!thisMonth.length) return 0
+  const closed = thisMonth.filter(s => s.status === 'PAID' || s.status === 'DELIVERED').length
+  return Math.round(closed / thisMonth.length * 100)
+})
 
-const productivityKpis = computed(() => [
-  { icon: 'pi pi-stopwatch text-indigo-500', value: '3.9 días', label: t('reports.productivity.avgProductionTime') },
-  { icon: 'pi pi-check-square text-green-500', value: '93%', label: t('reports.productivity.onTimeDeliveryRate') },
-  { icon: 'pi pi-sync text-blue-500', value: '2.1%', label: t('reports.productivity.reworkRate') },
-  { icon: 'pi pi-box text-orange-400', value: '287', label: t('reports.productivity.totalOrders') }
-])
+const kpis = computed(() => {
+  const convRate = salesStore.salesCount > 0
+    ? Math.round(salesStore.completedSalesCount / salesStore.salesCount * 100)
+    : 0
+  return [
+    { icon: 'pi pi-money-bill text-primary',          value: formatCurrency(salesStore.totalIngresos), label: t('reports.kpis.totalRevenue'),    subtext: t('reports.kpis.total6Months'),                                        trend: null, trendUp: true  },
+    { icon: 'pi pi-chart-bar text-primary',           value: `${convRate}%`,                           label: t('reports.kpis.conversionRate'),   subtext: t('reports.kpis.recipeToSale'),                                        trend: null, trendUp: true  },
+    { icon: 'pi pi-clock text-primary',               value: '—',                                      label: t('reports.kpis.avgDeliveryTime'),  subtext: t('reports.kpis.vsPreviousQuarter'),                                   trend: null, trendUp: true  },
+    { icon: 'pi pi-exclamation-triangle text-orange-500', value: formatCurrency(salesStore.totalSaldo), label: t('reports.kpis.pendingBalances'), subtext: t('reports.kpis.openInvoices', { count: salesStore.openSalesCount }), trend: null, trendUp: false }
+  ]
+})
 
-const chartData = [
-  { month: 'Nov', value: 140 },
-  { month: 'Dic', value: 175 },
-  { month: 'Ene', value: 160 },
-  { month: 'Feb', value: 190 },
-  { month: 'Mar', value: 210 },
-  { month: 'Abr', value: 200 }
-]
-
-const donutData = computed(() => [
-  { label: t('reports.products.progressive'), value: 38, color: '#00c1b0' },
-  { label: t('reports.products.singleVision'), value: 24, color: '#a3e635' },
-  { label: t('reports.products.contactLenses'), value: 18, color: '#93c5fd' },
-  { label: t('reports.products.accessories'), value: 12, color: '#fbbf24' },
-  { label: t('reports.products.others'), value: 8, color: '#ef4444' }
-])
-
+// --- Bar chart (sales count per month) ---
 const BC = { left: 40, right: 740, top: 20, bottom: 180 }
 const bcW = BC.right - BC.left
 const bcH = BC.bottom - BC.top
 
-const barData = [
-  { month: 'Nov', recipes: 110, sales: 145 },
-  { month: 'Dic', recipes: 130, sales: 178 },
-  { month: 'Ene', recipes: 120, sales: 160 },
-  { month: 'Feb', recipes: 150, sales: 195 },
-  { month: 'Mar', recipes: 170, sales: 220 },
-  { month: 'Abr', recipes: 160, sales: 200 }
-]
+const barData = computed(() => salesByMonth.value)
 
-const maxBarVal = 220
-const gridValues = [0, 55, 110, 165, 220]
+const maxBarVal = computed(() => {
+  const max = Math.max(...barData.value.map(d => d.sales), 10)
+  return Math.ceil(max / 4) * 4
+})
 
-function bx(i, total) { return BC.left + i * (bcW / total) + (bcW / total) / 4 }
-function by(v) { return BC.bottom - (v / maxBarVal) * bcH }
-function bh(v) { return (v / maxBarVal) * bcH }
+const gridValues = computed(() => {
+  const step = maxBarVal.value / 4
+  return [0, step, step * 2, step * 3, maxBarVal.value]
+})
 
-const gridLines = gridValues.map(v => ({ y: by(v), label: v }))
-const xLabels = barData.map((d, i) => ({ x: BC.left + i * (bcW / barData.length) + (bcW / barData.length) / 2, label: d.month }))
+function by(v) { return BC.bottom - (v / maxBarVal.value) * bcH }
+function bh(v) { return (v / maxBarVal.value) * bcH }
 
-const bars = barData.map((d, i) => ({
-  x: BC.left + i * (bcW / barData.length) + (bcW / barData.length) / 4,
+const gridLines = computed(() => gridValues.value.map(v => ({ y: by(v), label: Math.round(v) })))
+const xLabels = computed(() => barData.value.map((d, i) => ({
+  x: BC.left + i * (bcW / barData.value.length) + (bcW / barData.value.length) / 2,
+  label: d.month
+})))
+const bars = computed(() => barData.value.map((d, i) => ({
+  x: BC.left + i * (bcW / barData.value.length) + (bcW / barData.value.length) / 4,
   y: by(d.sales),
-  w: (bcW / barData.length) / 2,
+  w: (bcW / barData.value.length) / 2,
   h: bh(d.sales),
   month: d.month
-}))
+})))
 
+// --- Revenue trend chart ---
 const RC = { left: 50, right: 900, top: 20, bottom: 180 }
 const rcW = RC.right - RC.left
 const rcH = RC.bottom - RC.top
 
-const revData = [38000, 52000, 42000, 58000, 64000, 49000]
-const maxRev = 80000
+const revData = computed(() => salesByMonth.value.map(m => m.revenue))
 
-function rx(i, total) { return RC.left + i * (rcW / (total - 1)) }
-function ry(v) { return RC.bottom - (v / maxRev) * rcH }
+const maxRev = computed(() => {
+  const max = Math.max(...revData.value, 1000)
+  const magnitude = Math.pow(10, Math.floor(Math.log10(max)))
+  return Math.ceil(max / magnitude) * magnitude
+})
 
-const revPts = computed(() => revData.map((v, i) => `${rx(i, revData.length).toFixed(1)},${ry(v).toFixed(1)}`).join(' '))
+function rx(i, total) {
+  if (total <= 1) return RC.left + rcW / 2
+  return RC.left + i * (rcW / (total - 1))
+}
+function ry(v) { return RC.bottom - (v / maxRev.value) * rcH }
+
+const revPts     = computed(() => revData.value.map((v, i) => `${rx(i, revData.value.length).toFixed(1)},${ry(v).toFixed(1)}`).join(' '))
 const revAreaPts = computed(() => `${revPts.value} ${RC.right},${RC.bottom} ${RC.left},${RC.bottom}`)
-const revDots = computed(() => revData.map((v, i) => ({ cx: rx(i, revData.length).toFixed(1), cy: ry(v).toFixed(1) })))
+const revDots    = computed(() => revData.value.map((v, i) => ({ cx: rx(i, revData.value.length).toFixed(1), cy: ry(v).toFixed(1) })))
 
-const revGridLines = [0, 20000, 40000, 60000, 80000].map(v => ({
-  y: ry(v),
-  label: v === 0 ? 'S/0k' : `S/${v / 1000}k`
-}))
+const revGridLines = computed(() => {
+  const step = maxRev.value / 4
+  return [0, step, step * 2, step * 3, maxRev.value].map(v => ({
+    y: ry(v),
+    label: v === 0 ? 'S/0k' : `S/${Math.round(v / 1000)}k`
+  }))
+})
 
-const revXLabels = computed(() => barData.map((d, i) => ({
-  x: rx(i, barData.length).toFixed(1),
+const revXLabels = computed(() => barData.value.map((d, i) => ({
+  x: rx(i, barData.value.length).toFixed(1),
   label: d.month
 })))
 
-const donutRadius = 60
+// --- Donut chart (lens type distribution from work orders) ---
+const DONUT_COLORS = ['#00c1b0', '#a3e635', '#93c5fd', '#fbbf24', '#ef4444']
+
+const donutData = computed(() => {
+  const orders = fulfillmentStore.workOrders
+  if (!orders.length) {
+    return [
+      { label: t('reports.products.progressive'),    value: 38, color: '#00c1b0' },
+      { label: t('reports.products.singleVision'),   value: 24, color: '#a3e635' },
+      { label: t('reports.products.contactLenses'),  value: 18, color: '#93c5fd' },
+      { label: t('reports.products.accessories'),    value: 12, color: '#fbbf24' },
+      { label: t('reports.products.others'),         value: 8,  color: '#ef4444' }
+    ]
+  }
+  const total = orders.length
+  const byType = {}
+  orders.forEach(wo => {
+    const type = wo.lensType || t('reports.products.others')
+    byType[type] = (byType[type] || 0) + 1
+  })
+  return Object.entries(byType)
+    .sort((a, b) => b[1] - a[1])
+    .map(([label, count], idx) => ({
+      label,
+      value: Math.round(count / total * 100),
+      color: DONUT_COLORS[idx % DONUT_COLORS.length]
+    }))
+})
+
+const donutRadius    = 60
 const donutThickness = 18
-const center = 80
+const center         = 80
 
 const donutSegments = computed(() => {
-  let currentAngle = -90 
+  let currentAngle = -90
   return donutData.value.map(item => {
     const angle = (item.value / 100) * 360
     const startAngle = currentAngle
     const endAngle = currentAngle + angle
     currentAngle += angle
-    
+
     const x1 = center + donutRadius * Math.cos(Math.PI * startAngle / 180)
     const y1 = center + donutRadius * Math.sin(Math.PI * startAngle / 180)
     const x2 = center + donutRadius * Math.cos(Math.PI * endAngle / 180)
     const y2 = center + donutRadius * Math.sin(Math.PI * endAngle / 180)
-    
+
     const largeArcFlag = angle > 180 ? 1 : 0
     const path = `M ${x1} ${y1} A ${donutRadius} ${donutRadius} 0 ${largeArcFlag} 1 ${x2} ${y2}`
-    
+
     return { path, color: item.color, label: item.label, percent: item.value }
   })
 })
 
-const agingBalances = computed(() => [
-  { label: t('reports.sales.days0to7'), count: 28, amount: 'S/ 8,400' },
-  { label: t('reports.sales.days8to15'), count: 14, amount: 'S/ 4,200' },
-  { label: t('reports.sales.days16to30'), count: 7, amount: 'S/ 2,800' },
-  { label: t('reports.sales.days31plus'), count: 3, amount: 'S/ 1,260' }
-])
-
-const revenueChartData = computed(() => ({
-  labels: [
-    t('reports.products.progressive'), 
-    t('reports.products.singleVision'), 
-    t('reports.products.contactLenses'), 
-    t('reports.products.accessories'), 
-    t('reports.products.others')
-  ],
-  datasets: [
-    {
-      label: t('reports.sales.revenueByCategory'),
-      backgroundColor: ['#00c1b0', '#a3e635', '#93c5fd', '#fbbf24', '#ef4444'],
-      data: [38, 24, 18, 12, 8],
-      borderRadius: 4
-    }
+// --- Aging balances (pending/partial sales grouped by days overdue) ---
+const agingBalances = computed(() => {
+  const now = new Date()
+  const pending = salesStore.sales.filter(s => s.status === 'PENDING' || s.status === 'PARTIAL')
+  const buckets = [
+    { labelKey: 'reports.sales.days0to7',  min: 0,  max: 7   },
+    { labelKey: 'reports.sales.days8to15', min: 8,  max: 15  },
+    { labelKey: 'reports.sales.days16to30',min: 16, max: 30  },
+    { labelKey: 'reports.sales.days31plus',min: 31, max: Infinity }
   ]
+  return buckets.map(({ labelKey, min, max }) => {
+    const filtered = pending.filter(s => {
+      const days = Math.floor((now - new Date(s.createdAt)) / 86400000)
+      return days >= min && days <= max
+    })
+    const amount = filtered.reduce((sum, s) => sum + s.pendingBalance, 0)
+    return { label: t(labelKey), count: filtered.length, amount: formatCurrency(amount) }
+  })
+})
+
+// --- Revenue by category chart (uses donut distribution) ---
+const revenueChartData = computed(() => ({
+  labels: donutData.value.map(d => d.label),
+  datasets: [{
+    label: t('reports.sales.revenueByCategory'),
+    backgroundColor: donutData.value.map(d => d.color),
+    data: donutData.value.map(d => d.value),
+    borderRadius: 4
+  }]
 }))
 
 const revenueChartOptions = ref({
   indexAxis: 'y',
   maintainAspectRatio: false,
-  plugins: {
-    legend: { display: false }
-  },
+  plugins: { legend: { display: false } },
   scales: {
     x: { grid: { color: '#f3f4f6' }, ticks: { color: '#9ca3af' } },
     y: { grid: { display: false }, ticks: { color: '#6b7280' } }
   }
 })
 
+// --- Conversion trend chart (actual monthly conversion rate) ---
 const conversionTrendData = computed(() => ({
-  labels: ['Nov', 'Dic', 'Ene', 'Feb', 'Mar', 'Abr'],
-  datasets: [
-    {
-      label: t('reports.sales.conversionTrend'),
-      data: [77, 80, 75, 82, 84, 86],
-      fill: false,
-      borderColor: '#a3e635',
-      tension: 0.4,
-      pointBackgroundColor: '#a3e635',
-      pointBorderColor: '#fff',
-      pointBorderWidth: 2,
-      pointRadius: 4
-    }
-  ]
+  labels: salesByMonth.value.map(m => m.month),
+  datasets: [{
+    label: t('reports.sales.conversionTrend'),
+    data: salesByMonth.value.map(m => m.sales > 0 ? Math.round(m.closedSales / m.sales * 100) : 0),
+    fill: false,
+    borderColor: '#a3e635',
+    tension: 0.4,
+    pointBackgroundColor: '#a3e635',
+    pointBorderColor: '#fff',
+    pointBorderWidth: 2,
+    pointRadius: 4
+  }]
 }))
 
 const conversionTrendOptions = ref({
   maintainAspectRatio: false,
-  plugins: {
-    legend: { display: false }
-  },
+  plugins: { legend: { display: false } },
   scales: {
     x: { grid: { display: false }, ticks: { color: '#9ca3af' } },
-    y: { grid: { color: '#f3f4f6', borderDash: [5, 5] }, ticks: { color: '#9ca3af' }, min: 70, max: 90 }
+    y: { grid: { color: '#f3f4f6', borderDash: [5, 5] }, ticks: { color: '#9ca3af' }, min: 0, max: 100 }
   }
 })
 
+// --- Productivity KPIs (from work orders) ---
+const productivityKpis = computed(() => {
+  const orders = fulfillmentStore.workOrders
+  const total   = orders.length
+  const reworks = orders.filter(wo => wo.isRework).length
+  const reworkRate = total > 0 ? ((reworks / total) * 100).toFixed(1) : '0.0'
+
+  const delivered = orders.filter(wo => wo.status === 'DELIVERED')
+  const onTimeCount = delivered.filter(wo => !wo.deliveryDate || new Date(wo.deliveryDate) >= new Date()).length
+  const onTimeRate  = delivered.length > 0 ? Math.round(onTimeCount / delivered.length * 100) : 0
+
+  return [
+    { icon: 'pi pi-stopwatch text-indigo-500',      value: '—',             label: t('reports.productivity.avgProductionTime') },
+    { icon: 'pi pi-check-square text-green-500',    value: `${onTimeRate}%`, label: t('reports.productivity.onTimeDeliveryRate') },
+    { icon: 'pi pi-sync text-blue-500',             value: `${reworkRate}%`, label: t('reports.productivity.reworkRate') },
+    { icon: 'pi pi-box text-orange-400',            value: String(total),    label: t('reports.productivity.totalOrders') }
+  ]
+})
+
+// On-time delivery weekly trend — no per-week data in store, kept static
 const onTimeDeliveryChartData = computed(() => ({
   labels: ['Sem 14', 'Sem 15', 'Sem 16', 'Sem 17', 'Sem 18'],
-  datasets: [
-    {
-      label: '%',
-      data: [92, 95, 87, 93, 97],
-      fill: true,
-      borderColor: '#a3e635',
-      backgroundColor: 'rgba(163, 230, 53, 0.1)',
-      tension: 0.4,
-      pointBackgroundColor: '#a3e635',
-      pointBorderColor: '#fff',
-      pointBorderWidth: 2,
-      pointRadius: 4
-    }
-  ]
+  datasets: [{
+    label: '%',
+    data: [92, 95, 87, 93, 97],
+    fill: true,
+    borderColor: '#a3e635',
+    backgroundColor: 'rgba(163, 230, 53, 0.1)',
+    tension: 0.4,
+    pointBackgroundColor: '#a3e635',
+    pointBorderColor: '#fff',
+    pointBorderWidth: 2,
+    pointRadius: 4
+  }]
 }))
 
 const onTimeDeliveryChartOptions = ref({
@@ -248,6 +358,7 @@ const onTimeDeliveryChartOptions = ref({
   }
 })
 
+// Rework causes breakdown — no cause field in work order, kept static
 const reworkCausesChartData = computed(() => ({
   labels: [
     t('reports.productivity.causes.wrongRecipe'),
@@ -256,14 +367,12 @@ const reworkCausesChartData = computed(() => ({
     t('reports.productivity.causes.coatingProblem'),
     t('reports.productivity.causes.customerChange')
   ],
-  datasets: [
-    {
-      label: 'Casos',
-      backgroundColor: '#ef4444',
-      data: [5, 3, 4, 2, 3],
-      borderRadius: 4
-    }
-  ]
+  datasets: [{
+    label: 'Casos',
+    backgroundColor: '#ef4444',
+    data: [5, 3, 4, 2, 3],
+    borderRadius: 4
+  }]
 }))
 
 const reworkCausesChartOptions = ref({
@@ -276,56 +385,41 @@ const reworkCausesChartOptions = ref({
   }
 })
 
-const personalPerformanceData = computed(() => [
-  { 
-    id: 1, 
-    name: 'María García', 
-    initials: 'MG', 
-    topPerformer: true, 
-    quotes: 54, 
-    sales: 47, 
-    conversion: 87, 
-    revenue: 'S/ 12,840', 
-    status: 'excellent',
-    color: '#00c1b0'
-  },
-  { 
-    id: 2, 
-    name: 'Lisa Anderson', 
-    initials: 'LA', 
-    topPerformer: false, 
-    quotes: 38, 
-    sales: 29, 
-    conversion: 76, 
-    revenue: 'S/ 7,920', 
-    status: 'improving',
-    color: '#9ca3af'
-  },
-  { 
-    id: 3, 
-    name: 'Robert Kim', 
-    initials: 'RK', 
-    topPerformer: false, 
-    quotes: 42, 
-    sales: 33, 
-    conversion: 79, 
-    revenue: 'S/ 9,340', 
-    status: 'good',
-    color: '#00c1b0' 
-  },
-  { 
-    id: 4, 
-    name: 'Ana Torres', 
-    initials: 'AT', 
-    topPerformer: false, 
-    quotes: 31, 
-    sales: 25, 
-    conversion: 81, 
-    revenue: 'S/ 6,870', 
-    status: 'good',
-    color: '#00c1b0' 
-  }
-])
+// --- Personal performance (sales grouped by userName) ---
+const PERFORMER_COLORS = ['#00c1b0', '#a3e635', '#93c5fd', '#fbbf24', '#9ca3af']
+
+const personalPerformanceData = computed(() => {
+  const byUser = {}
+  salesStore.sales.forEach(s => {
+    if (!s.userName) return
+    if (!byUser[s.userName]) byUser[s.userName] = { name: s.userName, total: 0, all: [], closed: [] }
+    byUser[s.userName].all.push(s)
+    byUser[s.userName].total += s.totalAmount
+    if (s.status === 'PAID' || s.status === 'DELIVERED') byUser[s.userName].closed.push(s)
+  })
+
+  return Object.values(byUser)
+    .sort((a, b) => b.total - a.total)
+    .map((user, idx) => {
+      const quotes     = user.all.length
+      const sold       = user.closed.length
+      const conversion = quotes > 0 ? Math.round(sold / quotes * 100) : 0
+      const initials   = user.name.split(' ').slice(0, 2).map(w => w[0] ?? '').join('').toUpperCase()
+      const status     = conversion >= 85 ? 'excellent' : conversion >= 75 ? 'good' : 'improving'
+      return {
+        id: idx + 1,
+        name: user.name,
+        initials,
+        topPerformer: idx === 0,
+        quotes,
+        sales: sold,
+        conversion,
+        revenue: formatCurrency(user.total),
+        status,
+        color: PERFORMER_COLORS[idx] ?? '#9ca3af'
+      }
+    })
+})
 
 const personalChartData = computed(() => ({
   labels: personalPerformanceData.value.map(d => d.name),
@@ -338,7 +432,7 @@ const personalChartData = computed(() => ({
     },
     {
       label: t('reports.personal.chart.legendSales'),
-      backgroundColor: '#00c1b0', 
+      backgroundColor: '#a3e635',
       data: personalPerformanceData.value.map(d => d.sales),
       borderRadius: 4
     }
@@ -356,7 +450,7 @@ const personalChartOptions = ref({
   },
   scales: {
     x: { grid: { display: false }, ticks: { color: '#9ca3af' } },
-    y: { grid: { color: '#f3f4f6', borderDash: [5, 5] }, ticks: { color: '#9ca3af' }, min: 0, max: 60 }
+    y: { grid: { color: '#f3f4f6', borderDash: [5, 5] }, ticks: { color: '#9ca3af' }, min: 0 }
   }
 })
 
@@ -368,10 +462,10 @@ const personalChartOptions = ref({
     <header class="report-header">
       <div class="title-section">
         <h1>{{ $t('reports.title') }}</h1>
-        <p class="subtitle">{{ $t('reports.subtitle') }} · Abril 2026</p>
+        <p class="subtitle">{{ $t('reports.subtitle') }} · {{ currentPeriodLabel }}</p>
       </div>
       <div class="header-actions">
-        <pv-select v-model="selectedPeriod" :options="periodOptions" optionLabel="label" class="border-round-xl border-1 surface-border bg-white" style="height: 42px">
+        <pv-select v-model="selectedPeriod" :options="periodOptions" optionLabel="label" :placeholder="t('reports.periods.select')" class="border-round-xl border-1 surface-border bg-white" style="height: 42px">
           <template #value="slotProps">
             <div v-if="slotProps.value" class="flex align-items-center gap-2">
               <i class="pi pi-calendar text-500"></i>
@@ -437,7 +531,7 @@ const personalChartOptions = ref({
             <h3>{{ $t('reports.charts.conversionTitle') }}</h3>
             <p>{{ $t('reports.charts.conversionSubtitle') }}</p>
           </div>
-          <span class="month-indicator">86% {{ $t('reports.charts.currentMonth') }}</span>
+          <span class="month-indicator">{{ currentMonthConversion }}% {{ $t('reports.charts.currentMonth') }}</span>
         </div>
         
         <div class="bar-chart-container">
@@ -509,7 +603,7 @@ const personalChartOptions = ref({
         <div class="card-header">
           <div class="card-title-group">
             <h3>{{ $t('reports.charts.revenueTrendTitle') }}</h3>
-            <p>{{ $t('reports.charts.revenueTrendSubtitle', { total: 'S/ 303,693' }) }}</p>
+            <p>{{ $t('reports.charts.revenueTrendSubtitle', { total: formatCurrency(salesStore.totalIngresos) }) }}</p>
           </div>
         </div>
         
