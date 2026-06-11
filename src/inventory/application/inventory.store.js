@@ -122,10 +122,30 @@ export const useInventoryStore = defineStore('inventory', () => {
         }
     }
 
+    async function restock(id, qty, operation) {
+        const index = productsRef.value.findIndex(p => p.id === id)
+        if (index === -1) return
+        const product      = productsRef.value[index]
+        const previousStock = product.stock
+        product.stock          += qty
+        product.lastRestockDate = new Date().toISOString().split('T')[0]
+        try {
+            const resource = ProductAssembler.toResourceFromEntity(product)
+            await productApi.updateProduct(resource)
+            eventBus.emit(InventoryEvents.STOCK_RESTOCKED, { product, qty, operation })
+            if (product.stock <= product.minimumStockThreshold) {
+                eventBus.emit(InventoryEvents.STOCK_LOW_ALERT, { product })
+            }
+        } catch (e) {
+            product.stock = previousStock
+            errors.value.push(e.message)
+        }
+    }
+
     return {
         products, categories, suppliers, lowStockProducts, loading, errors,
         loadProducts, loadCategories, loadSuppliers,
-        createProduct, updateProduct, deleteProduct, createProductFromResource
+        createProduct, updateProduct, deleteProduct, createProductFromResource, restock
     }
 
 

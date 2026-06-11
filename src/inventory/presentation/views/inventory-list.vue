@@ -197,18 +197,8 @@ async function onAddProduct(data) {
 }
 
 async function onRestock({ id, qty, operation }) {
-  const product = store.products.find(p => p.id === id)
-  if (!product) return
-  const index = store.products.findIndex(p => p.id === id)
-  if (index !== -1) {
-    store.products[index].stock += qty
-    store.products[index].lastRestockDate = new Date().toISOString().split('T')[0]
-  }
-  // Emit event — KardexService subscriber writes to inventoryTransactions automatically
-  eventBus.emit(InventoryEvents.STOCK_RESTOCKED, { product, qty, operation })
-  if (index !== -1 && store.products[index].stock <= store.products[index].minimumStockThreshold) {
-    eventBus.emit(InventoryEvents.STOCK_LOW_ALERT, { product: store.products[index] })
-  }
+  await store.restock(id, qty, operation)
+  // store.restock persists to API, then emits STOCK_RESTOCKED → toast + Kardex entry
 }
 
 async function onEditProduct(updatedProduct) {
