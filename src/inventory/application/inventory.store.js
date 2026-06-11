@@ -6,10 +6,15 @@ import { SupplierApi } from '../infrastructure/supplier-api.js'
 import { ProductAssembler } from '../infrastructure/product.assembler.js'
 import { CategoryAssembler } from '../infrastructure/category.assembler.js'
 import { SupplierAssembler } from '../infrastructure/supplier.assembler.js'
+import { eventBus } from '../../shared/infrastructure/event-bus.js'
+import { InventoryEvents } from '../domain/events/inventory-events.js'
+import { initKardexListener } from './kardex-service.js'
 
 const productApi  = new ProductApi()
 const categoryApi = new CategoryApi()
 const supplierApi = new SupplierApi()
+
+initKardexListener()
 
 export const useInventoryStore = defineStore('inventory', () => {
     const productsRef   = ref([])
@@ -82,6 +87,7 @@ export const useInventoryStore = defineStore('inventory', () => {
             const entity = ProductAssembler.toEntityFromResource(updated)
             const index = productsRef.value.findIndex(p => p.id === product.id)
             if (index !== -1) productsRef.value[index] = entity
+            eventBus.emit(InventoryEvents.PRODUCT_UPDATED, { product: entity })
         } catch (e) {
             errors.value.push(e.message)
         } finally {
@@ -94,6 +100,7 @@ export const useInventoryStore = defineStore('inventory', () => {
         try {
             await productApi.deleteProduct(id)
             productsRef.value = productsRef.value.filter(p => p.id !== id)
+            eventBus.emit(InventoryEvents.PRODUCT_DELETED, { id })
         } catch (e) {
             errors.value.push(e.message)
         } finally {
@@ -105,7 +112,9 @@ export const useInventoryStore = defineStore('inventory', () => {
         loading.value = true
         try {
             const created = await productApi.createProduct(resource)
-            productsRef.value.unshift(ProductAssembler.toEntityFromResource(created))
+            const entity = ProductAssembler.toEntityFromResource(created)
+            productsRef.value.unshift(entity)
+            eventBus.emit(InventoryEvents.PRODUCT_CREATED, { product: entity })
         } catch (e) {
             errors.value.push(e.message)
         } finally {
