@@ -646,7 +646,12 @@
   "reports": {
     "title": "Reportes y Analítica",
     "subtitle": "Inteligencia de negocio",
-    "periodSelector": "Últimos 6 meses",
+    "periods": {
+      "select": "Seleccionar período",
+      "last30days": "Últimos 30 días",
+      "last6months": "Últimos 6 meses",
+      "thisYear": "Este año"
+    },
     "export": "Exportar",
     "resumen": "Resumen",
     "salesFinance": "Ventas y Finanzas",
