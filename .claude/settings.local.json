@@ -25,7 +25,9 @@
       "Bash(node -e \"const db = JSON.parse\\(require\\('fs'\\).readFileSync\\('server/db.json','utf8'\\)\\); console.log\\('inventoryTransactions:', JSON.stringify\\(db.inventoryTransactions?.slice\\(0,3\\), null, 2\\)\\); console.log\\('sale_details sample:', JSON.stringify\\(db.sale_details?.slice\\(0,2\\), null, 2\\)\\);\")",
       "Bash(node -e \"console.log\\(require\\('fs'\\).readFileSync\\('server/routes.json','utf8'\\)\\)\")",
       "Bash(type .env.development)",
-      "Bash(type .env)"
+      "Bash(type .env)",
+      "Bash(node -e \"const db = JSON.parse\\(require\\('fs'\\).readFileSync\\('server/db.json','utf8'\\)\\); const p = db.products[0]; console.log\\('First product raw keys:', Object.keys\\(p\\)\\); console.log\\('product_id:', p.product_id, ' id:', p.id\\);\")",
+      "Bash(node -e ' *)"
     ]
   }
 }
