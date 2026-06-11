@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { Payment, PaymentMethod } from '../../../sales/domain/model/payment.entity.js'
 
 const props = defineProps({
@@ -9,12 +10,14 @@ const props = defineProps({
 
 const emit = defineEmits(['payment-registered'])
 
-const methodOptions = [
-  { label: 'Efectivo',           value: PaymentMethod.CASH },
-  { label: 'Tarjeta de Crédito', value: PaymentMethod.CREDIT_CARD },
-  { label: 'Tarjeta de Débito',  value: PaymentMethod.DEBIT_CARD },
-  { label: 'Transferencia',      value: PaymentMethod.TRANSFER }
-]
+const { t } = useI18n()
+
+const methodOptions = computed(() => [
+  { label: t('sales.form.paymentMethods.cash'),     value: PaymentMethod.CASH },
+  { label: t('sales.form.paymentMethods.credit'),   value: PaymentMethod.CREDIT_CARD },
+  { label: t('sales.form.paymentMethods.debit'),    value: PaymentMethod.DEBIT_CARD },
+  { label: t('sales.form.paymentMethods.transfer'), value: PaymentMethod.TRANSFER }
+])
 
 const method = ref(PaymentMethod.CASH)
 const amountPaid = ref(props.sale.pendingBalance)
@@ -36,17 +39,17 @@ function submit() {
 <template>
   <div class="payment-form">
     <div class="pending-info">
-      <span class="pending-label">Saldo pendiente</span>
+      <span class="pending-label">{{ $t('sales.payment.pendingBalance') }}</span>
       <span class="pending-amount">S/ {{ Number(props.sale.pendingBalance).toFixed(2) }}</span>
     </div>
 
     <div class="form-field">
-      <label>Método de pago</label>
+      <label>{{ $t('sales.payment.paymentMethod') }}</label>
       <pv-select v-model="method" :options="methodOptions" option-label="label" option-value="value" class="w-full" />
     </div>
 
     <div class="form-field">
-      <label>Monto a cobrar (S/)</label>
+      <label>{{ $t('sales.payment.amountLabel') }}</label>
       <div class="price-input-wrap">
         <span class="price-prefix">S/</span>
         <input
@@ -61,10 +64,10 @@ function submit() {
     </div>
 
     <div v-if="!isValid && amountPaid > props.sale.pendingBalance" class="form-error">
-      El monto supera el saldo pendiente.
+      {{ $t('sales.payment.amountExceedsBalance') }}
     </div>
 
-    <pv-button label="Registrar pago" icon="pi pi-check" :disabled="!isValid" class="w-full mt-3" @click="submit" />
+    <pv-button :label="$t('sales.payment.registerBtn')" icon="pi pi-check" :disabled="!isValid" class="w-full mt-3" @click="submit" />
   </div>
 </template>
 

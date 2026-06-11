@@ -157,6 +157,22 @@
       "paymentHeader": "Registrar pago de saldo",
       "feedbackHeader": "Encuesta de satisfacción"
     },
+    "payment": {
+      "pendingBalance": "Saldo pendiente",
+      "paymentMethod": "Método de pago",
+      "amountLabel": "Monto a cobrar (S/)",
+      "amountExceedsBalance": "El monto supera el saldo pendiente.",
+      "registerBtn": "Registrar pago"
+    },
+    "feedback": {
+      "intro": "¿Cómo calificaría la atención y calidad del producto?",
+      "rating": "Calificación",
+      "recommend": "¿Recomendaría el servicio?",
+      "comments": "Comentarios (opcional)",
+      "commentsPlaceholder": "Comparte tu experiencia...",
+      "skip": "Omitir",
+      "submit": "Enviar encuesta"
+    },
     "table": {
       "invoice": "Factura",
       "patient": "Paciente",
@@ -471,11 +487,20 @@
       "min": "mín",
       "replenish": "Reponer",
       "edit": "Editar",
+      "copySku": "Copiar SKU",
       "incompatible": "Inventario incompatible",
       "noResults": "No se encontraron artículos con los filtros seleccionados.",
       "showing": "Mostrando",
       "of": "de",
       "items": "artículos"
+    },
+    "categories": {
+      "lenses": "Lunas",
+      "frames": "Armazones",
+      "accessories": "Accesorios",
+      "contactLenses": "Lentes de Contacto",
+      "sunLenses": "Lentes de Sol",
+      "equipment": "Equipos"
     },
     "levels": {
       "critical": "Crítico",
@@ -543,8 +568,12 @@
     "toast": {
       "itemAdded": "Artículo agregado",
       "itemAddedDetail": "registrado en el inventario.",
+      "itemUpdated": "Producto actualizado",
+      "itemUpdatedDetail": "{name} fue actualizado correctamente.",
       "restockDone": "Restock registrado",
-      "restockDetail": "unidades agregadas."
+      "restockDetail": "unidades agregadas.",
+      "lowStock": "Stock bajo",
+      "lowStockDetail": "{name} sigue por debajo del mínimo ({threshold} und.)."
     },
     "editModal": {
       "title": "Editar Producto",

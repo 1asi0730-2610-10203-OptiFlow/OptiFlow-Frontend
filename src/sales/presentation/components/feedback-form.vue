@@ -1,6 +1,9 @@
 <script setup>
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { Feedback } from '../../../sales/domain/model/feedback.entity.js'
+
+const { t } = useI18n()
 
 const props = defineProps({
   saleId: { type: Number, required: true },
@@ -29,26 +32,26 @@ function submit() {
 <template>
   <div class="feedback-form">
     <p class="feedback-intro">
-      ¿Cómo calificaría la atención y calidad del producto?
+      {{ $t('sales.feedback.intro') }}
     </p>
 
     <div class="form-field">
-      <label>Calificación</label>
+      <label>{{ $t('sales.feedback.rating') }}</label>
       <pv-rating v-model="rating" :stars="5" />
     </div>
 
     <div class="form-field">
-      <label>¿Recomendaría el servicio?</label>
+      <label>{{ $t('sales.feedback.recommend') }}</label>
       <div class="recommend-options">
         <pv-button
-          label="Sí"
+          :label="$t('common.yes')"
           :outlined="!recommendService"
           severity="success"
           size="small"
           @click="recommendService = true"
         />
         <pv-button
-          label="No"
+          :label="$t('common.no')"
           :outlined="recommendService"
           severity="danger"
           size="small"
@@ -58,13 +61,13 @@ function submit() {
     </div>
 
     <div class="form-field">
-      <label>Comentarios (opcional)</label>
-      <pv-textarea v-model="comment" rows="3" placeholder="Comparte tu experiencia..." class="w-full" auto-resize />
+      <label>{{ $t('sales.feedback.comments') }}</label>
+      <pv-textarea v-model="comment" rows="3" :placeholder="$t('sales.feedback.commentsPlaceholder')" class="w-full" auto-resize />
     </div>
 
     <div class="feedback-actions">
-      <pv-button label="Omitir" text severity="secondary" @click="emit('skip')" />
-      <pv-button label="Enviar encuesta" icon="pi pi-send" @click="submit" />
+      <pv-button :label="$t('sales.feedback.skip')" text severity="secondary" @click="emit('skip')" />
+      <pv-button :label="$t('sales.feedback.submit')" icon="pi pi-send" @click="submit" />
     </div>
   </div>
 </template>

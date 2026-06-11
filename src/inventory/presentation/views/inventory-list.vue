@@ -42,7 +42,7 @@ const contextMenuItems = computed(() => [
   },
   { separator: true },
   {
-    label: 'Copiar SKU',
+    label: t('inventory.table.copySku'),
     icon: 'pi pi-copy',
     command: () => { navigator.clipboard.writeText(contextProduct.value?.sku || '') }
   },
@@ -59,13 +59,13 @@ function onRowContextMenu(event, product) {
 }
 
 const categories = computed(() => [
-  { label: t('inventory.allCategories'), value: 'all' },
-  { label: 'Lunas',               value: 'Lunas' },
-  { label: 'Armazones',           value: 'Armazones' },
-  { label: 'Accesorios',          value: 'Accesorios' },
-  { label: 'Lentes de Contacto',  value: 'Lentes de Contacto' },
-  { label: 'Lentes de Sol',       value: 'Lentes de Sol' },
-  { label: 'Equipos',             value: 'Equipos' }
+  { label: t('inventory.allCategories'),              value: 'all' },
+  { label: t('inventory.categories.lenses'),          value: 'Lunas' },
+  { label: t('inventory.categories.frames'),          value: 'Armazones' },
+  { label: t('inventory.categories.accessories'),     value: 'Accesorios' },
+  { label: t('inventory.categories.contactLenses'),   value: 'Lentes de Contacto' },
+  { label: t('inventory.categories.sunLenses'),       value: 'Lentes de Sol' },
+  { label: t('inventory.categories.equipment'),       value: 'Equipos' }
 ])
 
 const stockLevels = computed(() => [
@@ -153,8 +153,8 @@ onMounted(async () => {
     selectedProductEdit.value = null
     toast.add({
       severity: 'success',
-      summary: 'Producto actualizado',
-      detail: `${product.name} fue actualizado correctamente.`,
+      summary: t('inventory.toast.itemUpdated'),
+      detail: t('inventory.toast.itemUpdatedDetail', { name: product.name }),
       life: 2500
     })
   })
@@ -171,8 +171,8 @@ onMounted(async () => {
   unsubLowAlert = eventBus.on(InventoryEvents.STOCK_LOW_ALERT, ({ product }) => {
     toast.add({
       severity: 'warn',
-      summary: 'Stock bajo',
-      detail: `${product.name} sigue por debajo del mínimo (${product.minimumStockThreshold} und.).`,
+      summary: t('inventory.toast.lowStock'),
+      detail: t('inventory.toast.lowStockDetail', { name: product.name, threshold: product.minimumStockThreshold }),
       life: 4000
     })
   })

@@ -158,6 +158,22 @@
       "paymentHeader": "Register balance payment",
       "feedbackHeader": "Satisfaction survey"
     },
+    "payment": {
+      "pendingBalance": "Pending balance",
+      "paymentMethod": "Payment method",
+      "amountLabel": "Amount to collect (S/)",
+      "amountExceedsBalance": "Amount exceeds the pending balance.",
+      "registerBtn": "Register payment"
+    },
+    "feedback": {
+      "intro": "How would you rate the service and product quality?",
+      "rating": "Rating",
+      "recommend": "Would you recommend the service?",
+      "comments": "Comments (optional)",
+      "commentsPlaceholder": "Share your experience...",
+      "skip": "Skip",
+      "submit": "Submit survey"
+    },
     "table": {
       "invoice": "Invoice",
       "patient": "Patient",
@@ -472,11 +488,20 @@
       "min": "min",
       "replenish": "Restock",
       "edit": "Edit",
+      "copySku": "Copy SKU",
       "incompatible": "No matching inventory",
       "noResults": "No items found with the selected filters.",
       "showing": "Showing",
       "of": "of",
       "items": "items"
+    },
+    "categories": {
+      "lenses": "Lenses",
+      "frames": "Frames",
+      "accessories": "Accessories",
+      "contactLenses": "Contact Lenses",
+      "sunLenses": "Sunglasses",
+      "equipment": "Equipment"
     },
     "levels": {
       "critical": "Critical",
@@ -544,8 +569,12 @@
     "toast": {
       "itemAdded": "Item added",
       "itemAddedDetail": "registered in inventory.",
+      "itemUpdated": "Product updated",
+      "itemUpdatedDetail": "{name} was updated successfully.",
       "restockDone": "Restock registered",
-      "restockDetail": "units added."
+      "restockDetail": "units added.",
+      "lowStock": "Low stock",
+      "lowStockDetail": "{name} is still below the minimum ({threshold} units)."
     },
     "editModal": {
       "title": "Edit Product",
