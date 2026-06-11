@@ -210,18 +210,30 @@ const infoIndices = [
 
 
 <style scoped>
-/* Contenedor Principal en Grid */
-.calculator-grid { 
-  display: grid; 
-  grid-template-columns: 1fr 400px; /* La columna derecha es un poco más estrecha */
-  gap: 24px; 
-  align-items: start; 
-  margin-top: 20px;
+/* ── Base layout ── */
+.page { padding: 24px 32px; display: flex; flex-direction: column; gap: 20px; }
+.page-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; }
+.page-title { font-family: 'Josefin Sans', sans-serif; font-size: 1.5rem; font-weight: 700; color: #03070a; margin: 0; }
+.page-subtitle { font-family: 'Montserrat', sans-serif; font-size: 0.84rem; color: #6b7280; margin: 4px 0 0; }
+
+.card { background: #fff; border-radius: 14px; border: 1px solid #f3f4f6; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+.card-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #f3f4f6; }
+.card-title { font-family: 'Josefin Sans', sans-serif; font-size: 0.95rem; font-weight: 700; color: #111827; margin: 0; }
+.card-subtitle { font-family: 'Montserrat', sans-serif; font-size: 0.76rem; color: #6b7280; margin: 2px 0 0; }
+.avatar { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+
+/* ── Calculator ── */
+.calculator-grid {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 24px;
+  align-items: start;
 }
 
 .calculator-container { width: 100%; }
 .card-body { padding: 24px; }
 .header-with-icon { display: flex; align-items: center; gap: 12px; }
+.material-section { margin-top: 8px; }
 
 /* Formulario */
 .form-section { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }

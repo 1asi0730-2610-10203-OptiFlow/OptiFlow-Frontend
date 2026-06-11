@@ -1,5 +1,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const notifications = ref([])
 const loading = ref(false)
@@ -88,7 +91,7 @@ onMounted(async () => {
             <span class="note-time">{{ note.time }}</span>
           </div>
 
-          <button v-if="note.type === 'success'" class="btn-details">
+          <button v-if="note.type === 'success'" class="btn-details" @click="router.push('/patient/my-lenses')">
             {{ $t('patientCenter.notifications.details') }}
           </button>
         </div>
@@ -109,7 +112,20 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.notifications-container { max-width: 800px; margin-top: 24px; }
+/* ── Base layout ── */
+.page { padding: 24px 32px; display: flex; flex-direction: column; gap: 20px; }
+.page-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; }
+.page-title { font-family: 'Josefin Sans', sans-serif; font-size: 1.5rem; font-weight: 700; color: #03070a; margin: 0; }
+.page-subtitle { font-family: 'Montserrat', sans-serif; font-size: 0.84rem; color: #6b7280; margin: 4px 0 0; }
+
+.card { background: #fff; border-radius: 14px; border: 1px solid #f3f4f6; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+.card-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #f3f4f6; }
+.card-title { font-family: 'Josefin Sans', sans-serif; font-size: 0.95rem; font-weight: 700; color: #111827; margin: 0; }
+.card-subtitle { font-family: 'Montserrat', sans-serif; font-size: 0.76rem; color: #6b7280; margin: 2px 0 0; }
+.avatar { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+
+/* ── Notifications ── */
+.notifications-container { max-width: 800px; }
 .card-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
 .header-with-icon { display: flex; align-items: center; gap: 12px; }
 
