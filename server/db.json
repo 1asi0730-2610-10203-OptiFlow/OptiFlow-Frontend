@@ -847,6 +847,30 @@
       "createdAt": "2026-05-13",
       "deliveredAt": "",
       "notes": ""
+    },
+    {
+      "id": 10,
+      "invoiceNumber": "FAC-4216",
+      "labOrderNumber": "WO-2",
+      "patientId": 4,
+      "patientName": "David Martínez",
+      "patientRx": "",
+      "userId": 1,
+      "userName": "John Doe",
+      "articulos": [
+        "Armazón: Oakley OX8046",
+        "Tipo de Luna: Monofocales"
+      ],
+      "totalAmount": 180,
+      "adelanto": 70,
+      "pendingBalance": 110,
+      "discountCode": "",
+      "discountAmount": 0,
+      "status": "PARTIAL",
+      "paymentMethod": "CASH",
+      "createdAt": "2026-06-11",
+      "deliveredAt": "",
+      "notes": ""
     }
   ],
   "sale_details": [

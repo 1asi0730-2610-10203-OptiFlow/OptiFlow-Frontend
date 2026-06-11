@@ -27,7 +27,11 @@
       "Bash(type .env.development)",
       "Bash(type .env)",
       "Bash(node -e \"const db = JSON.parse\\(require\\('fs'\\).readFileSync\\('server/db.json','utf8'\\)\\); const p = db.products[0]; console.log\\('First product raw keys:', Object.keys\\(p\\)\\); console.log\\('product_id:', p.product_id, ' id:', p.id\\);\")",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\DELL\\\\Desktop\\\\Mierda2\\\\Estudio\\\\UPC\\\\CICLO 2026 - 1\\\\WEB APPLICATIONS\\\\optiflow-frontend\\\\src\\\\sales\" -Recurse -File)",
+      "Bash(Select-Object FullName)",
+      "Bash(Sort-Object FullName)",
+      "Bash(python *)"
     ]
   }
 }

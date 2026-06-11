@@ -14,42 +14,20 @@ const emit = defineEmits(['saved', 'close'])
 const { t } = useI18n()
 
 const step = ref(0)
-const TOTAL_STEPS = 3
+const TOTAL_STEPS = 2
 const stepLabels = computed(() => [
-  t('sales.form.steps.patient'),
-  t('sales.form.steps.products'),
+  t('sales.form.steps.order'),
   t('sales.form.steps.payment')
 ])
 
-// Step 0
+// Step 0 — select existing order
+const orders = ref([])
+const selectedOrder = ref(null)
+const orderSearch = ref('')
 const patients = ref([])
-const selectedPatient = ref(null)
-
 const showValidationErrors = ref(false)
 
-// Step 1 — products from API + manual extras
-const products = ref([])
-const selectedArmazon = ref(null)
-const tipoLuna = ref(null)
-const materialLuna = ref(null)
-
-const tipoLunaOptions = computed(() => [
-  { label: t('sales.form.lensTypes.monofocal'), value: 'Monofocales' },
-  { label: t('sales.form.lensTypes.bifocal'), value: 'Bifocales' },
-  { label: t('sales.form.lensTypes.progressive'), value: 'Progresivas' },
-  { label: t('sales.form.lensTypes.occupational'), value: 'Ocupacionales' }
-])
-
-const materialLunaOptions = computed(() => [
-  { label: t('sales.form.materials.cr39'), value: 'Resina 1.50' },
-  { label: t('sales.form.materials.poly'), value: 'Policarbonato' },
-  { label: t('sales.form.materials.hi160'), value: 'Alto Índice 1.60' },
-  { label: t('sales.form.materials.hi167'), value: 'Alto Índice 1.67' },
-  { label: t('sales.form.materials.glass'), value: 'Cristal' }
-])
-
-// Step 2 — pricing
-const totalAmountInput = ref(0)
+// Step 1 — payment
 const adelanto = ref(0)
 const discountCode = ref('')
 const discountAmount = ref(0)
@@ -57,20 +35,25 @@ const paymentMethod = ref(PaymentMethod.CASH)
 const notes = ref('')
 
 const paymentMethodOptions = computed(() => [
-  { label: t('sales.form.paymentMethods.cash'),           value: PaymentMethod.CASH },
-  { label: t('sales.form.paymentMethods.credit'), value: PaymentMethod.CREDIT_CARD },
-  { label: t('sales.form.paymentMethods.debit'),  value: PaymentMethod.DEBIT_CARD },
-  { label: t('sales.form.paymentMethods.transfer'),      value: PaymentMethod.TRANSFER },
-  { label: t('sales.form.paymentMethods.insurance'),             value: PaymentMethod.INSURANCE }
+  { label: t('sales.form.paymentMethods.cash'),     value: PaymentMethod.CASH },
+  { label: t('sales.form.paymentMethods.credit'),   value: PaymentMethod.CREDIT_CARD },
+  { label: t('sales.form.paymentMethods.debit'),    value: PaymentMethod.DEBIT_CARD },
+  { label: t('sales.form.paymentMethods.transfer'), value: PaymentMethod.TRANSFER },
+  { label: t('sales.form.paymentMethods.insurance'),value: PaymentMethod.INSURANCE }
 ])
 
-const estimatedTotal = computed(() => {
-  let total = 0
-  if (selectedArmazon.value && typeof selectedArmazon.value === 'object' && selectedArmazon.value.price) {
-    total += Number(selectedArmazon.value.price)
-  }
-  return total > 0 ? total : totalAmountInput.value
+const filteredOrders = computed(() => {
+  if (!orderSearch.value) return orders.value
+  const q = orderSearch.value.toLowerCase()
+  return orders.value.filter(o =>
+    (o.patient_name || '').toLowerCase().includes(q) ||
+    (o.frame || '').toLowerCase().includes(q) ||
+    (o.lens_type || '').toLowerCase().includes(q) ||
+    String(o.id).includes(q)
+  )
 })
+
+const estimatedTotal = computed(() => selectedOrder.value?.total ?? 0)
 
 const finalAmount = computed(() =>
   Math.max(0, estimatedTotal.value - (discountAmount.value || 0))
@@ -85,9 +68,7 @@ const adelantoPercent = computed(() => {
   return Math.round(((adelanto.value || 0) / finalAmount.value) * 100)
 })
 
-const canSave = computed(() =>
-  !!selectedPatient.value && finalAmount.value > 0
-)
+const canSave = computed(() => !!selectedOrder.value && finalAmount.value > 0)
 
 function applyDiscount() {
   if (discountCode.value.toUpperCase() === 'PROMO15') {
@@ -98,64 +79,37 @@ function applyDiscount() {
 }
 
 onMounted(async () => {
+  const baseUrl = import.meta.env.VITE_OPTIFLOW_API_URL
   try {
-    const res = await axios.get(`${import.meta.env.VITE_OPTIFLOW_API_URL}/patients`)
-    patients.value = res.data.map(p => ({
-      ...p,
-      fullName: `${p.first_name || ''} ${p.last_name || ''}`.trim()
-    }))
+    const res = await axios.get(`${baseUrl}${import.meta.env.VITE_WORK_ORDERS_ENDPOINT_PATH}`)
+    orders.value = res.data
   } catch (e) {
-    console.error('Error loading patients:', e)
+    console.error('Error loading orders:', e)
   }
   try {
-    const res = await axios.get(`${import.meta.env.VITE_OPTIFLOW_API_URL}${import.meta.env.VITE_PRODUCTS_ENDPOINT_PATH}`)
-    products.value = res.data
+    const res = await axios.get(`${baseUrl}/patients`)
+    patients.value = res.data
   } catch (e) {
-    console.error('Error loading products:', e)
+    console.error('Error loading patients:', e)
   }
 })
 
 function nextStep() {
-  if (step.value === 0 && !selectedPatient.value) {
-    showValidationErrors.value = true
-    return
-  }
-  if (step.value === 1 && (!selectedArmazon.value || !tipoLuna.value || !materialLuna.value)) {
+  if (step.value === 0 && !selectedOrder.value) {
     showValidationErrors.value = true
     return
   }
   showValidationErrors.value = false
   if (step.value < TOTAL_STEPS - 1) step.value++
 }
+
 function prevStep() {
   showValidationErrors.value = false
   if (step.value > 0) step.value--
 }
 
-function buildArticulos() {
-  const arts = []
-  if (selectedArmazon.value) {
-    const name = typeof selectedArmazon.value === 'string' ? selectedArmazon.value : selectedArmazon.value.name
-    arts.push(`Armazón: ${name}`)
-  }
-  if (tipoLuna.value) {
-    arts.push(`Tipo de Luna: ${tipoLuna.value}`)
-  }
-  if (materialLuna.value) {
-    arts.push(`Material de Luna: ${materialLuna.value}`)
-  }
-  return arts
-}
-
 function generateCode(prefix) {
   return `${prefix}-${Math.floor(1000 + Math.random() * 9000)}`
-}
-
-function getFrameName() {
-  if (!selectedArmazon.value) return ''
-  return typeof selectedArmazon.value === 'string'
-    ? selectedArmazon.value
-    : selectedArmazon.value.name ?? ''
 }
 
 function save() {
@@ -164,18 +118,25 @@ function save() {
     return
   }
   if (!canSave.value) return
-  const patientId = selectedPatient.value.patient_id ?? selectedPatient.value.id
-  const patientName = selectedPatient.value.fullName ?? `${selectedPatient.value.first_name || ''} ${selectedPatient.value.last_name || ''}`.trim()
-  const labOrderNumber = generateCode('LAB')
+
+  const order = selectedOrder.value
+  const matchedPatient = patients.value.find(p =>
+    `${p.first_name || ''} ${p.last_name || ''}`.trim().toLowerCase() === (order.patient_name || '').toLowerCase()
+  )
+
+  const articulos = []
+  if (order.frame) articulos.push(`Armazón: ${order.frame}`)
+  if (order.lens_type) articulos.push(`Tipo de Luna: ${order.lens_type}`)
+
   const sale = new Sale({
     invoiceNumber: generateCode('FAC'),
-    labOrderNumber,
-    patientId,
-    patientName,
-    patientRx: selectedPatient.value.rx ?? '',
+    labOrderNumber: `WO-${order.id}`,
+    patientId: matchedPatient?.patient_id ?? 0,
+    patientName: order.patient_name || '',
+    patientRx: '',
     userId: 1,
     userName: 'John Doe',
-    articulos: buildArticulos(),
+    articulos,
     totalAmount: finalAmount.value,
     adelanto: adelanto.value || 0,
     discountCode: discountCode.value,
@@ -186,23 +147,13 @@ function save() {
     createdAt: new Date().toISOString().split('T')[0],
     notes: notes.value
   })
-  // Attach extra metadata for work-order creation
-  sale._labMeta = {
-    labOrderNumber,
-    frame: getFrameName(),
-    lensType: tipoLuna.value ?? '',
-    material: materialLuna.value ?? ''
-  }
   emit('saved', sale)
 }
 
 function close() {
   step.value = 0
-  selectedPatient.value = null
-  selectedArmazon.value = null
-  tipoLuna.value = null
-  materialLuna.value = null
-  totalAmountInput.value = 0
+  selectedOrder.value = null
+  orderSearch.value = ''
   adelanto.value = 0
   discountCode.value = ''
   discountAmount.value = 0
@@ -216,7 +167,7 @@ function close() {
 <template>
   <pv-dialog
     :visible="visible"
-    :style="{ width: 'min(580px, 95vw)' }"
+    :style="{ width: 'min(600px, 95vw)' }"
     modal
     :closable="false"
     @update:visible="close"
@@ -245,87 +196,60 @@ function close() {
         </div>
       </div>
 
-      <!-- Step 0: Paciente y Rx -->
+      <!-- Step 0: Select existing order -->
       <div v-if="step === 0" class="step-content">
         <div class="form-field">
-          <label>{{ $t('sales.form.patientLabel') }} <span class="required">*</span></label>
-          <pv-select
-            v-model="selectedPatient"
-            :options="patients"
-            option-label="fullName"
-            :placeholder="$t('sales.form.selectPatient')"
-            class="w-full"
-            :class="{ 'p-invalid': showValidationErrors && !selectedPatient }"
-            filter
-          />
-          <span v-if="showValidationErrors && !selectedPatient" class="field-hint">{{ $t('sales.form.requiredError') }}</span>
+          <label>{{ $t('sales.form.selectOrderLabel') }} <span class="required">*</span></label>
+          <div class="search-wrap">
+            <i class="pi pi-search search-icon" />
+            <input
+              v-model="orderSearch"
+              class="search-input"
+              :placeholder="$t('sales.form.orderSearchPlaceholder')"
+            />
+          </div>
+          <span v-if="showValidationErrors && !selectedOrder" class="field-hint">{{ $t('sales.form.requiredError') }}</span>
         </div>
 
-        <div v-if="selectedPatient" class="rx-card">
-          <div class="rx-card__header">
-            <i class="pi pi-file-edit"/>
-            <span>{{ $t('sales.form.lastRx') }}</span>
+        <div v-if="filteredOrders.length === 0" class="empty-orders">
+          <i class="pi pi-inbox" />
+          <span>{{ $t('sales.form.noOrders') }}</span>
+        </div>
+
+        <div class="orders-list">
+          <div
+            v-for="order in filteredOrders"
+            :key="order.id"
+            class="order-card"
+            :class="{ 'order-card--selected': selectedOrder?.id === order.id }"
+            @click="selectedOrder = order"
+          >
+            <div class="order-card__check">
+              <i v-if="selectedOrder?.id === order.id" class="pi pi-check-circle" style="color: #00c1b0;" />
+              <i v-else class="pi pi-circle" style="color: #d1d5db;" />
+            </div>
+            <div class="order-card__body">
+              <div class="order-card__top">
+                <span class="order-card__patient">{{ order.patient_name }}</span>
+                <span class="order-card__id">#{{ order.id }}</span>
+              </div>
+              <div class="order-card__detail">
+                <span v-if="order.frame">{{ order.frame }}</span>
+                <span v-if="order.frame && order.lens_type"> · </span>
+                <span v-if="order.lens_type">{{ order.lens_type }}</span>
+              </div>
+            </div>
+            <div class="order-card__total">S/ {{ Number(order.total).toFixed(2) }}</div>
           </div>
-          <div class="rx-card__body">
-            <div class="rx-row"><span class="rx-eye">OD:</span><span>Esf — / Cil — / Eje —°</span></div>
-            <div class="rx-row"><span class="rx-eye">OS:</span><span>Esf — / Cil — / Eje —°</span></div>
-            <span class="rx-note">{{ $t('sales.form.rxPending') }}</span>
-          </div>
+        </div>
+
+        <div v-if="selectedOrder" class="selected-order-preview">
+          <i class="pi pi-info-circle" style="color: #00c1b0; flex-shrink: 0;" />
+          <span>{{ $t('sales.form.orderSelected') }}: <strong>{{ selectedOrder.patient_name }}</strong> — S/ {{ Number(selectedOrder.total).toFixed(2) }}</span>
         </div>
       </div>
 
-      <!-- Step 1: Productos -->
-      <div v-else-if="step === 1" class="step-content">
-        <div class="form-field">
-          <label>{{ $t('sales.form.frame') }} <span class="required">*</span></label>
-          <pv-select
-            v-model="selectedArmazon"
-            :options="products"
-            option-label="name"
-            editable
-            :placeholder="$t('sales.form.framePlaceholder')"
-            class="w-full"
-            :class="{ 'p-invalid': showValidationErrors && !selectedArmazon }"
-            filter
-          />
-          <span v-if="showValidationErrors && !selectedArmazon" class="field-hint">{{ $t('sales.form.requiredError') }}</span>
-        </div>
-
-        <div class="form-field">
-          <label>{{ $t('sales.form.lensType') }} <span class="required">*</span></label>
-          <pv-select
-            v-model="tipoLuna"
-            :options="tipoLunaOptions"
-            option-label="label"
-            option-value="value"
-            :placeholder="$t('sales.form.select')"
-            class="w-full"
-            :class="{ 'p-invalid': showValidationErrors && !tipoLuna }"
-          />
-          <span v-if="showValidationErrors && !tipoLuna" class="field-hint">{{ $t('sales.form.requiredError') }}</span>
-        </div>
-
-        <div class="form-field">
-          <label>{{ $t('sales.form.lensMaterial') }} <span class="required">*</span></label>
-          <pv-select
-            v-model="materialLuna"
-            :options="materialLunaOptions"
-            option-label="label"
-            option-value="value"
-            :placeholder="$t('sales.form.select')"
-            class="w-full"
-            :class="{ 'p-invalid': showValidationErrors && !materialLuna }"
-          />
-          <span v-if="showValidationErrors && !materialLuna" class="field-hint">{{ $t('sales.form.requiredError') }}</span>
-        </div>
-
-        <div class="estimated-total-box">
-          <span class="estimated-label">{{ $t('sales.form.estimatedTotal') }}</span>
-          <span class="estimated-value">S/ {{ estimatedTotal.toFixed(2) }}</span>
-        </div>
-      </div>
-
-      <!-- Step 2: Pago -->
+      <!-- Step 1: Pago -->
       <div v-else class="step-content">
         <div class="form-field">
           <label>{{ $t('sales.form.paymentMethod') }}</label>
@@ -405,7 +329,7 @@ function close() {
           severity="secondary"
           @click="close"
         />
-        
+
         <div class="footer-nav">
           <pv-button
             v-if="step < TOTAL_STEPS - 1"
@@ -531,169 +455,128 @@ function close() {
   gap: 12px;
 }
 
-.rx-card {
-  border: 1px solid #dbeafe;
-  border-radius: 8px;
-  background: #eff6ff;
-  overflow: hidden;
+/* ── Order selection (step 0) ── */
+.search-wrap {
+  position: relative;
 }
 
-.rx-card__header {
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  font-size: 0.85rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 9px 12px 9px 34px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.search-input:focus { border-color: #00c1b0; }
+
+.empty-orders {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 9px 14px;
-  background: #dbeafe;
+  padding: 20px;
+  color: #9ca3af;
   font-family: 'Montserrat', sans-serif;
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: #1d4ed8;
+  font-size: 0.85rem;
+  justify-content: center;
 }
 
-.rx-card__body {
-  padding: 12px 14px;
+.orders-list {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-}
-
-.rx-row {
-  display: flex;
   gap: 8px;
-  font-family: 'Consolas', monospace;
-  font-size: 0.82rem;
-  color: #374151;
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 2px;
 }
 
-.rx-eye { font-weight: 700; color: #1d4ed8; width: 24px; }
-
-.rx-note {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.72rem;
-  color: #6b7280;
-  margin-top: 4px;
+.order-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid #f3f4f6;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
 }
 
-.divider { border-top: 1px solid #f3f4f6; }
+.order-card:hover { border-color: #a7f3ed; background: #f0fdfb; }
 
-.section-header {
+.order-card--selected {
+  border-color: #00c1b0;
+  background: rgba(0, 193, 176, 0.04);
+}
+
+.order-card__check { flex-shrink: 0; font-size: 1.1rem; }
+
+.order-card__body { flex: 1; min-width: 0; }
+
+.order-card__top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-
-.section-label {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: #6a7282;
-  margin: 0;
-}
-
-.add-link {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  background: none;
-  border: none;
-  padding: 0;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: #00c1b0;
-  cursor: pointer;
-}
-
-.add-product-row {
-  display: flex;
   gap: 8px;
-  align-items: center;
 }
 
-.add-product-btn {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 8px 14px;
-  background: #00c1b0;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
+.order-card__patient {
+  font-family: 'Josefin Sans', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #111827;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.order-card__id {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.72rem;
+  color: #9ca3af;
   flex-shrink: 0;
 }
 
-.add-product-btn:disabled {
-  background: #d1d5db;
-  cursor: default;
-}
-
-.selected-products-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.selected-product-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  border-radius: 8px;
-  padding: 8px 12px;
+.order-card__detail {
   font-family: 'Montserrat', sans-serif;
-  font-size: 0.82rem;
-  color: #14532d;
+  font-size: 0.78rem;
+  color: #6b7280;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.extra-item-row {
+.order-card__total {
+  font-family: 'Josefin Sans', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #111827;
+  flex-shrink: 0;
+}
+
+.selected-order-preview {
   display: flex;
   align-items: center;
   gap: 8px;
-}
-
-.remove-btn {
-  background: none;
-  border: none;
-  padding: 4px 6px;
-  color: #9ca3af;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: color 0.15s;
-}
-
-.remove-btn:hover { color: #e7000b; }
-
-.estimated-total-box {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #f9fafb;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
   border-radius: 8px;
-  padding: 16px;
-  margin-top: 10px;
-}
-
-.estimated-label {
-  color: #6c757d;
+  padding: 10px 14px;
   font-family: 'Montserrat', sans-serif;
-  font-weight: 500;
-  font-size: 0.9rem;
-}
-
-.estimated-value {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 700;
-  font-size: 1.1rem;
-  color: #101828;
+  font-size: 0.82rem;
+  color: #166534;
 }
 
 .discount-row { display: flex; gap: 8px; }
