@@ -14,7 +14,18 @@
       "Bash(python -u -c ' *)",
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\DELL\\\\Desktop\\\\Mierda2\\\\Estudio\\\\UPC\\\\CICLO 2026 - 1\\\\WEB APPLICATIONS\\\\optiflow-frontend\\\\src\" -Directory)",
       "Bash(Select-Object Name)",
-      "Bash(npx vite *)"
+      "Bash(npx vite *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\DELL\\\\Desktop\\\\Mierda2\\\\Estudio\\\\UPC\\\\CICLO 2026 - 1\\\\WEB APPLICATIONS\\\\optiflow-frontend\" -Recurse -Directory)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Sort-Object)",
+      "Bash(Select-Object -First 50)",
+      "Bash(npm install *)",
+      "Bash(node -e \"const db = JSON.parse\\(require\\('fs'\\).readFileSync\\('server/db.json','utf8'\\)\\); console.log\\('audit_logs sample:', JSON.stringify\\(db.audit_logs?.slice\\(0,3\\), null, 2\\)\\); console.log\\('sales sample:', JSON.stringify\\(db.sales?.slice\\(0,2\\), null, 2\\)\\);\")",
+      "Bash(node -e \"const db = JSON.parse\\(require\\('fs'\\).readFileSync\\('server/db.json','utf8'\\)\\); console.log\\('Keys:', Object.keys\\(db\\)\\); console.log\\('audit_logs count:', db.audit_logs?.length ?? 'NOT FOUND'\\); console.log\\('kardex count:', db.kardex?.length ?? 'NOT FOUND'\\);\")",
+      "Bash(node -e \"const db = JSON.parse\\(require\\('fs'\\).readFileSync\\('server/db.json','utf8'\\)\\); console.log\\('inventoryTransactions:', JSON.stringify\\(db.inventoryTransactions?.slice\\(0,3\\), null, 2\\)\\); console.log\\('sale_details sample:', JSON.stringify\\(db.sale_details?.slice\\(0,2\\), null, 2\\)\\);\")",
+      "Bash(node -e \"console.log\\(require\\('fs'\\).readFileSync\\('server/routes.json','utf8'\\)\\)\")",
+      "Bash(type .env.development)",
+      "Bash(type .env)"
     ]
   }
 }

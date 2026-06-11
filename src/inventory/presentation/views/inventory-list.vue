@@ -1,8 +1,11 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
+import ContextMenu from 'primevue/contextmenu'
 import { useInventoryStore } from '../../application/inventory.store.js'
+import { eventBus } from '../../../shared/infrastructure/event-bus.js'
+import { InventoryEvents } from '../../domain/events/inventory-events.js'
 import ModalAddProduct  from '../components/modal-add-product.vue'
 import ModalRestock     from '../components/modal-restock.vue'
 import ModalBulkRestock from '../components/modal-bulk-restock.vue'
@@ -20,8 +23,40 @@ const showAddProduct = ref(false)
 const selectedProductRestock = ref(null)
 const showBulkRestock = ref(false)
 const showAuditLog = ref(false)
-const auditLogs = ref([])
 const selectedProductEdit = ref(null)
+
+// Right-click context menu
+const contextMenuRef = ref(null)
+const contextProduct = ref(null)
+
+const contextMenuItems = computed(() => [
+  {
+    label: t('inventory.table.replenish'),
+    icon: 'pi pi-arrow-up',
+    command: () => { selectedProductRestock.value = contextProduct.value }
+  },
+  {
+    label: t('inventory.table.edit'),
+    icon: 'pi pi-pencil',
+    command: () => { selectedProductEdit.value = contextProduct.value }
+  },
+  { separator: true },
+  {
+    label: 'Copiar SKU',
+    icon: 'pi pi-copy',
+    command: () => { navigator.clipboard.writeText(contextProduct.value?.sku || '') }
+  },
+  {
+    label: t('inventory.viewAudit'),
+    icon: 'pi pi-file-edit',
+    command: () => { showAuditLog.value = true }
+  }
+])
+
+function onRowContextMenu(event, product) {
+  contextProduct.value = product
+  contextMenuRef.value.show(event)
+}
 
 const categories = computed(() => [
   { label: t('inventory.allCategories'), value: 'all' },
@@ -96,14 +131,58 @@ const existingSkus = computed(() =>
     store.products.map(product => (product.sku || '').toUpperCase())
 )
 
+let unsubCreated, unsubUpdated, unsubRestocked, unsubLowAlert
+
 onMounted(async () => {
   store.loadProducts()
   store.loadCategories()
   store.loadSuppliers()
 
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/audit_logs`)
-  const data = await res.json()
-  auditLogs.value = data.reverse()
+  // Event-driven reactions: store emits, view reacts
+  unsubCreated = eventBus.on(InventoryEvents.PRODUCT_CREATED, ({ product }) => {
+    showAddProduct.value = false
+    toast.add({
+      severity: 'success',
+      summary: t('inventory.toast.itemAdded'),
+      detail: `${product.name} ${t('inventory.toast.itemAddedDetail')}`,
+      life: 2500
+    })
+  })
+
+  unsubUpdated = eventBus.on(InventoryEvents.PRODUCT_UPDATED, ({ product }) => {
+    selectedProductEdit.value = null
+    toast.add({
+      severity: 'success',
+      summary: 'Producto actualizado',
+      detail: `${product.name} fue actualizado correctamente.`,
+      life: 2500
+    })
+  })
+
+  unsubRestocked = eventBus.on(InventoryEvents.STOCK_RESTOCKED, ({ product, qty }) => {
+    toast.add({
+      severity: 'success',
+      summary: t('inventory.toast.restockDone'),
+      detail: `+${qty} ${t('inventory.toast.restockDetail')}`,
+      life: 2500
+    })
+  })
+
+  unsubLowAlert = eventBus.on(InventoryEvents.STOCK_LOW_ALERT, ({ product }) => {
+    toast.add({
+      severity: 'warn',
+      summary: 'Stock bajo',
+      detail: `${product.name} sigue por debajo del mínimo (${product.minimumStockThreshold} und.).`,
+      life: 4000
+    })
+  })
+})
+
+onUnmounted(() => {
+  unsubCreated?.()
+  unsubUpdated?.()
+  unsubRestocked?.()
+  unsubLowAlert?.()
 })
 
 function clearFilters() {
@@ -114,70 +193,27 @@ function clearFilters() {
 
 async function onAddProduct(data) {
   await store.createProductFromResource(data)
-  showAddProduct.value = false
-  toast.add({
-    severity: 'success',
-    summary: t('inventory.toast.itemAdded'),
-    detail: `${data.name} ${t('inventory.toast.itemAddedDetail')}`,
-    life: 2500
-  })
+  // PRODUCT_CREATED event → event handler closes modal + shows toast
 }
 
 async function onRestock({ id, qty, operation }) {
-  const product = store.products.find(product => product.id === id)
+  const product = store.products.find(p => p.id === id)
   if (!product) return
-  const now = new Date()
-  const date = now.toISOString().split('T')[0]
-  const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
-  auditLogs.value.unshift({
-    id:            `LOG-${Date.now()}-${id}`,
-    date,
-    time,
-    author:        'John Doe',
-    itemName:      product.name,
-    sku:           product.sku,
-    quantity:      qty,
-    operation,
-    previousStock: product.stock,
-    newStock:      product.stock + qty
-  })
-  await fetch(`${import.meta.env.VITE_BASE_URL}/audit_logs`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      date,
-      time,
-      author:        'John Doe',
-      itemName:      product.name,
-      sku:           product.sku,
-      quantity:      qty,
-      operation,
-      previousStock: product.stock,
-      newStock:      product.stock + qty
-    })
-  })
-  const index = store.products.findIndex(product => product.id === id)
+  const index = store.products.findIndex(p => p.id === id)
   if (index !== -1) {
     store.products[index].stock += qty
-    store.products[index].lastRestockDate = date
+    store.products[index].lastRestockDate = new Date().toISOString().split('T')[0]
   }
-  toast.add({
-    severity: 'success',
-    summary: t('inventory.toast.restockDone'),
-    detail: `+${qty} ${t('inventory.toast.restockDetail')}`,
-    life: 2500
-  })
+  // Emit event — KardexService subscriber writes to inventoryTransactions automatically
+  eventBus.emit(InventoryEvents.STOCK_RESTOCKED, { product, qty, operation })
+  if (index !== -1 && store.products[index].stock <= store.products[index].minimumStockThreshold) {
+    eventBus.emit(InventoryEvents.STOCK_LOW_ALERT, { product: store.products[index] })
+  }
 }
 
 async function onEditProduct(updatedProduct) {
   await store.updateProduct(updatedProduct)
-  selectedProductEdit.value = null
-  toast.add({
-    severity: 'success',
-    summary: 'Producto actualizado',
-    detail: `${updatedProduct.name} fue actualizado correctamente.`,
-    life: 2500
-  })
+  // PRODUCT_UPDATED event → event handler closes modal + shows toast
 }
 </script>
 
@@ -284,6 +320,7 @@ async function onEditProduct(updatedProduct) {
           v-for="product in filteredProducts"
           :key="product.id"
           class="table-row"
+          @contextmenu.prevent="onRowContextMenu($event, product)"
       >
         <div class="row-product">
           <div class="product-icon"><i class="pi pi-box" /></div>
@@ -364,7 +401,7 @@ async function onEditProduct(updatedProduct) {
     />
     <ModalAuditLog
         v-if="showAuditLog"
-        :logs="auditLogs"
+        :products="store.products"
         @close="showAuditLog = false"
     />
 
@@ -374,6 +411,8 @@ async function onEditProduct(updatedProduct) {
         @save="onEditProduct"
         @close="selectedProductEdit = null"
     />
+
+    <ContextMenu ref="contextMenuRef" :model="contextMenuItems" />
   </div>
 </template>
 
