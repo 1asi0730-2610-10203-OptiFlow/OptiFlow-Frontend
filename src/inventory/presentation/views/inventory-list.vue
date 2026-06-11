@@ -82,24 +82,35 @@ function getStockStatus(stock, threshold) {
   return                 { status: 'normal',   color: 'text--green' }
 }
 
-const summary = computed(() => [
-  {
-    labelKey: 'inventory.summary.totalItems',
-    value: String(store.products.reduce((sum, product) => sum + (product.stock || 0), 0)),
-    icon: 'pi pi-box', trend: 'up', change: '+8%'
-  },
-  {
-    labelKey: 'inventory.summary.lowStock',
-    value: String(store.products.filter(product => product.stock <= product.minimumStockThreshold).length),
-    icon: 'pi pi-exclamation-triangle', trend: 'down',
-    change: `${store.products.filter(product => product.stock <= product.minimumStockThreshold).length} ${t('inventory.summary.articles')}`
-  },
-  {
-    labelKey: 'inventory.summary.totalValue',
-    value: `S/ ${store.products.reduce((sum, product) => sum + (product.stock || 0) * (product.price || 0), 0).toFixed(0)}`,
-    icon: 'pi pi-chart-line', trend: 'up', change: '+12%'
-  }
-])
+const summary = computed(() => {
+  const totalStock = store.products.reduce((sum, p) => sum + (p.stock || 0), 0)
+  const totalValue = store.products.reduce((sum, p) => sum + (p.stock || 0) * (p.price || 0), 0)
+  const lowStockList = store.products.filter(p => p.stock <= p.minimumStockThreshold)
+  const healthyCount = store.products.filter(p => p.stock > p.minimumStockThreshold).length
+  const healthPct = store.products.length ? Math.round((healthyCount / store.products.length) * 100) : 0
+
+  return [
+    {
+      labelKey: 'inventory.summary.totalItems',
+      value: String(totalStock),
+      icon: 'pi pi-box',
+      trend: healthPct >= 50 ? 'up' : 'down',
+      change: `${healthPct}%`
+    },
+    {
+      labelKey: 'inventory.summary.lowStock',
+      value: String(lowStockList.length),
+      icon: 'pi pi-exclamation-triangle',
+      trend: 'down',
+      change: `${lowStockList.length} ${t('inventory.summary.articles')}`
+    },
+    {
+      labelKey: 'inventory.summary.totalValue',
+      value: `S/ ${totalValue.toFixed(0)}`,
+      icon: 'pi pi-chart-line'
+    }
+  ]
+})
 
 const hasActiveFilters = computed(() =>
     searchQuery.value ||
@@ -238,7 +249,7 @@ async function onEditProduct(updatedProduct) {
           <div class="summary-icon">
             <i :class="item.icon" />
           </div>
-          <div class="summary-trend" :class="item.trend === 'up' ? 'trend--up' : 'trend--neutral'">
+          <div v-if="item.change" class="summary-trend" :class="item.trend === 'up' ? 'trend--up' : 'trend--neutral'">
             <i :class="item.trend === 'up' ? 'pi pi-arrow-up-right' : 'pi pi-arrow-down-right'" />
             <span>{{ item.change }}</span>
           </div>
