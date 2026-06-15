@@ -16,4 +16,10 @@ export class PaymentApi extends BaseApi {
   async registerPayment(resource) {
     return await this.#payments.create(resource)
   }
+
+  async payOutstandingBalance(saleId, resource){
+      const response = await this.http.post(
+          `${this.#payments}/${saleId}/pay`,
+      )
+  }
 }
