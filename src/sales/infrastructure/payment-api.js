@@ -19,7 +19,9 @@ export class PaymentApi extends BaseApi {
 
   async payOutstandingBalance(saleId, resource){
       const response = await this.http.post(
-          `${this.#payments}/${saleId}/pay`,
+          `${this.#payments}/${saleId}/pay`, resource
       )
+
+      return response.data;
   }
 }
