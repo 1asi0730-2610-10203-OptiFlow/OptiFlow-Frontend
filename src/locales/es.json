@@ -280,7 +280,9 @@
       "orderCreated": "Orden creada",
       "orderCreatedDetail": "Nueva orden de laboratorio registrada.",
       "qaApproved": "QA Aprobado",
-      "qaRejected": "Retrabajo registrado"
+      "qaRejected": "Retrabajo registrado",
+      "labRegistered": "Laboratorio registrado",
+      "labRegisteredDetail": "fue añadido exitosamente."
     },
     "qaModal": {
       "title": "Control de Calidad – QA",
@@ -302,6 +304,23 @@
         "bevelOk": "Biselado correcto y sin bordes filosos",
         "adjustmentOk": "Ajuste de puente y patillas correcto"
       }
+    },
+    "registerLab": "Registrar Laboratorio",
+    "registerLabModal": {
+      "title": "Registrar Laboratorio",
+      "subtitle": "Ingresa los datos del nuevo laboratorio proveedor",
+      "name": "Nombre",
+      "namePlaceholder": "Ej. Vision Labs Inc.",
+      "nameRequired": "El nombre es obligatorio",
+      "phone": "Teléfono",
+      "phonePlaceholder": "Ej. +51 987 654 321",
+      "phoneRequired": "El teléfono es obligatorio",
+      "email": "Correo Electrónico",
+      "emailPlaceholder": "Ej. contacto@lab.com",
+      "emailRequired": "El correo es obligatorio",
+      "emailInvalid": "Ingresa un correo válido",
+      "preview": "Vista previa",
+      "register": "Registrar"
     },
     "showing": "Mostrando",
     "orders": "órdenes"

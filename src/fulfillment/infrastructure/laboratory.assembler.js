@@ -1,15 +1,26 @@
 import { Laboratory } from '../domain/model/laboratory.entity.js'
+import { LaboratoryResource } from './laboratory.resource.js'
 
 export class LaboratoryAssembler {
     static toEntityFromResource(r) {
         return new Laboratory({
-            id: r.lab_id,
+            id: r.id,
             name: r.name,
-            contactInfo: r.contact_info ?? ''
+            phone: r.phone ?? '',
+            email: r.email ?? ''
         })
     }
 
     static toEntitiesFromResponse(resources) {
         return resources.map(r => LaboratoryAssembler.toEntityFromResource(r))
+    }
+
+    static toResourceFromEntity(entity) {
+        return new LaboratoryResource({
+            id: entity.id,
+            name: entity.name,
+            phone: entity.phone,
+            email: entity.email
+        })
     }
 }

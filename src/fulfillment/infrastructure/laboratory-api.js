@@ -12,4 +12,8 @@ export class LaboratoryApi extends BaseApi {
     async getLaboratories() {
         return await this.#endpoint.getAll()
     }
+
+    async createLaboratory(resource) {
+        return await this.#endpoint.create(resource)
+    }
 }

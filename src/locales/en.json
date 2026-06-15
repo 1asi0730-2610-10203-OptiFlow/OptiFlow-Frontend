@@ -281,7 +281,26 @@
       "orderCreated": "Order created",
       "orderCreatedDetail": "New lab order registered.",
       "qaApproved": "QA Approved",
-      "qaRejected": "Rework registered"
+      "qaRejected": "Rework registered",
+      "labRegistered": "Laboratory registered",
+      "labRegisteredDetail": "was added successfully."
+    },
+    "registerLab": "Register Laboratory",
+    "registerLabModal": {
+      "title": "Register Laboratory",
+      "subtitle": "Enter the details of the new supplier laboratory",
+      "name": "Name",
+      "namePlaceholder": "E.g. Vision Labs Inc.",
+      "nameRequired": "Name is required",
+      "phone": "Phone",
+      "phonePlaceholder": "E.g. +1 555 123 4567",
+      "phoneRequired": "Phone is required",
+      "email": "Email",
+      "emailPlaceholder": "E.g. contact@lab.com",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Enter a valid email address",
+      "preview": "Preview",
+      "register": "Register"
     },
     "qaModal": {
       "title": "Quality Assurance – QA",

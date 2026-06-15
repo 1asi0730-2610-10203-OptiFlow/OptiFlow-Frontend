@@ -32,7 +32,9 @@
       "Bash(Select-Object FullName)",
       "Bash(Sort-Object FullName)",
       "Bash(python *)",
-      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\lucia\\\\WebstormProjects\\\\OptiFlow-Frontend\" -Force)"
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\lucia\\\\WebstormProjects\\\\OptiFlow-Frontend\" -Force)",
+      "PowerShell(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('src/locales/es.json','utf8'\\)\\); console.log\\('es.json OK'\\)\")",
+      "PowerShell(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('src/locales/en.json','utf8'\\)\\); console.log\\('en.json OK'\\)\")"
     ]
   }
 }
