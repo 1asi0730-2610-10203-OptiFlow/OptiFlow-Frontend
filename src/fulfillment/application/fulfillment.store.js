@@ -72,9 +72,22 @@ export const useFulfillmentStore = defineStore('fulfillment', () => {
         }
     }
 
+    async function createLaboratory(lab) {
+        loading.value = true
+        try {
+            const resource = LaboratoryAssembler.toResourceFromEntity(lab)
+            const created = await laboratoryApi.createLaboratory(resource)
+            laboratoriesRef.value.unshift(LaboratoryAssembler.toEntityFromResource(created))
+        } catch (e) {
+            errors.value.push(e.message)
+        } finally {
+            loading.value = false
+        }
+    }
+
     return {
         workOrders, laboratories, pendingOrders,
         loadWorkOrders, loadLaboratories,
-        createWorkOrder, updateOrderStatus
+        createWorkOrder, updateOrderStatus, createLaboratory
     }
 })

@@ -1,7 +1,8 @@
 export class LaboratoryResource {
-    constructor({lab_id = 0, name = '', contact_info = ''} = {}) {
-        this.lab_id = lab_id
+    constructor({id = 0, name = '', phone = '', email = ''} = {}) {
+        this.id = id
         this.name = name
-        this.contact_info = contact_info
+        this.phone = phone
+        this.email = email
     }
 }

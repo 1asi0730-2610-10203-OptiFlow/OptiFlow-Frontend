@@ -7,6 +7,7 @@ import KanbanBoard from '../components/kanban-board.vue'
 import WorkOrderDetailModal from '../components/work-order-detail-modal.vue'
 import NewWorkOrderModal from '../components/new-work-order-modal.vue'
 import QualityAssuranceModal from '../components/quality-assurance-modal.vue'
+import RegisterLaboratoryModal from '../components/register-laboratory-modal.vue'
 
 const { t } = useI18n()
 const store = useFulfillmentStore()
@@ -17,6 +18,7 @@ const searchQuery = ref('')
 const statusFilter = ref('all')
 const selectedOrder = ref(null)
 const showNewOrderModal = ref(false)
+const showRegisterLabModal = ref(false)
 const showQaModal = ref(false)
 const qaTargetOrder = ref(null)
 
@@ -136,6 +138,16 @@ async function onNewOrder(workOrder) {
     life: 2500
   })
 }
+
+async function onNewLaboratory(laboratory) {
+  await store.createLaboratory(laboratory)
+  toast.add({
+    severity: 'success',
+    summary: t('labOrders.toast.labRegistered'),
+    detail: `${laboratory.name} ${t('labOrders.toast.labRegisteredDetail')}`,
+    life: 2500
+  })
+}
 </script>
 
 <template>
@@ -164,6 +176,9 @@ async function onNewOrder(workOrder) {
             <i class="pi pi-list" /> {{ $t('labOrders.viewTable') }}
           </button>
         </div>
+        <button class="btn-register-lab" @click="showRegisterLabModal = true">
+          <i class="pi pi-building" /> {{ $t('labOrders.registerLab') }}
+        </button>
         <button class="btn-nueva" @click="showNewOrderModal = true">
           <i class="pi pi-plus" /> {{ $t('labOrders.newOrder') }}
         </button>
@@ -290,6 +305,11 @@ async function onNewOrder(workOrder) {
         @rejected="onQaRejected"
         @close="showQaModal = false; qaTargetOrder = null"
     />
+    <RegisterLaboratoryModal
+        v-if="showRegisterLabModal"
+        @save="onNewLaboratory"
+        @close="showRegisterLabModal = false"
+    />
 
   </div>
 </template>
@@ -303,6 +323,8 @@ async function onNewOrder(workOrder) {
 .view-toggle { display: flex; background: #f3f4f6; border-radius: 10px; padding: 4px; }
 .toggle-btn { display: flex; align-items: center; gap: 6px; padding: 6px 14px; border: none; background: transparent; border-radius: 7px; font-family: 'Montserrat', sans-serif; font-size: 0.82rem; font-weight: 500; color: #6b7280; cursor: pointer; transition: all 0.15s; }
 .toggle-btn--active { background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.1); color: #111827; }
+.btn-register-lab { display: flex; align-items: center; gap: 6px; padding: 8px 16px; background: #fff; color: #00c1b0; border: 1.5px solid #00c1b0; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 0.84rem; font-weight: 600; cursor: pointer; transition: background 0.15s, color 0.15s; }
+.btn-register-lab:hover { background: rgba(0,193,176,0.06); }
 .btn-nueva { display: flex; align-items: center; gap: 6px; padding: 8px 16px; background: #00c1b0; color: #fff; border: none; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 0.84rem; font-weight: 600; cursor: pointer; transition: opacity 0.15s; }
 .btn-nueva:hover { opacity: 0.9; }
 .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
@@ -362,6 +384,7 @@ async function onNewOrder(workOrder) {
   .header-actions { width: 100%; }
   .view-toggle { flex: 1; }
   .toggle-btn { flex: 1; justify-content: center; padding: 6px 8px; font-size: 0.78rem; }
+  .btn-register-lab { flex: 1; justify-content: center; }
   .btn-nueva { flex: 1; justify-content: center; }
 
   .summary-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
