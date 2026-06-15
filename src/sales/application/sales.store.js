@@ -114,14 +114,13 @@ export const useSalesStore = defineStore('sales', () => {
     loading.value = true
     try {
       const resource = PaymentAssembler.toResourceFromEntity(payment)
-      const created = await paymentApi.registerPayment(resource)
+      const created = await  paymentApi.payOutstandingBalance(payment.saleId, resource);
       payments.value.push(PaymentAssembler.toEntityFromResource(created))
 
-      const sale = sales.value.find(s => s.id === payment.saleId)
-      if (sale) {
-        const newBalance = Math.max(0, sale.pendingBalance - payment.amountPaid)
-        const newStatus = newBalance === 0 ? 'PAID' : 'PARTIAL'
-        await updateSale(sale.id, { ...sale, pendingBalance: newBalance, status: newStatus })
+      const updatedSale = await salesApi.getSaleById(payment.saleId)
+      const saleIndex = sales.value.findIndex(s => s.id === payment.saleId)
+      if (saleIndex !== -1 && updatedSale) {
+        sales.value[saleIndex] = SaleAssembler.toEntityFromResource(updatedSale)
       }
     } catch (e) {
       errors.value.push(e.message)
