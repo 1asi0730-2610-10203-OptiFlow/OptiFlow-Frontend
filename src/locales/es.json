@@ -603,6 +603,22 @@
       "threshold": "UMBRAL DE ALERTA",
       "price": "PRECIO UNITARIO (S/)",
       "save": "Guardar Cambios"
+    },
+    "supplierModal": {
+      "title": "Registrar Proveedor",
+      "subtitle": "Ingresa los datos del nuevo proveedor",
+      "name": "Nombre",
+      "namePlaceholder": "Ej. OpticalPro Suministros",
+      "nameRequired": "El nombre es obligatorio",
+      "contactPerson": "Persona de Contacto",
+      "contactPersonPlaceholder": "Ej. Juan Pérez",
+      "phone": "Teléfono",
+      "phonePlaceholder": "Ej. +51 987 654 321",
+      "email": "Correo Electrónico",
+      "emailPlaceholder": "Ej. contacto@proveedor.com",
+      "emailInvalid": "Ingresa un correo válido",
+      "preview": "Vista previa",
+      "register": "Registrar"
     }
   },
   "staff": {
