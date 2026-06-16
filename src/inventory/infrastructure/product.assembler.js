@@ -4,19 +4,19 @@ import { ProductResource } from './product.resource.js'
 export class ProductAssembler {
     static toEntityFromResource(resource) {
         return new Product({
-            id:                     resource.product_id,
-            categoryId:             resource.category_id,
-            supplierId:             resource.supplier_id,
-            brand:                  resource.brand                   ?? '',
-            model:                  resource.model                   ?? '',
-            price:                  resource.price                   ?? 0,
-            stock:                  resource.stock                   ?? 0,
-            name:                   resource.name                    ?? '',
-            category:               resource.category                ?? '',
-            sku:                    resource.sku                     ?? '',
-            minimumStockThreshold:  resource.minimum_stock_threshold ?? 10,
-            supplierName:           resource.supplier_name           ?? '',
-            lastRestockDate:        resource.last_restock_date       ?? ''
+            id:                    resource.id,
+            categoryId:            resource.categoryId,
+            supplierId:            resource.supplierId,
+            brand:                 resource.brand ?? '',
+            model:                 resource.model ?? '',
+            price:                 resource.price ?? 0,
+            stock:                 resource.stock ?? 0,
+            name:                  resource.name ?? '',
+            category:              resource.category ?? '',
+            sku:                   resource.sku ?? '',
+            minimumStockThreshold: resource.minimumStockThreshold ?? 10,
+            supplierName:          resource.supplierName ?? '',
+            lastRestockDate:       resource.lastRestockDate ?? ''
         })
     }
 

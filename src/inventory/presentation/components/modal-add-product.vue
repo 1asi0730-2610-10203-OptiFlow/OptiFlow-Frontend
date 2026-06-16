@@ -1,7 +1,10 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useInventoryStore } from '../../application/inventory.store.js'
 
+const inventoryStore = useInventoryStore()
+const suppliers = computed(() => inventoryStore.suppliers)
 const { t } = useI18n()
 
 const props = defineProps({
@@ -10,7 +13,6 @@ const props = defineProps({
 const emit = defineEmits(['save', 'close'])
 
 const categories = ['Lunas', 'Armazones', 'Accesorios', 'Lentes de Contacto', 'Lentes de Sol', 'Equipos']
-const suppliers = ['Vision Labs Inc.', 'OpticalPro Lab', 'Premium Optics Lab', 'Eye Care Supplies', 'Fashion Optics Co.', 'Budget Frames Inc.']
 
 const form = ref({
   name: '', category: 'Lunas', sku: '',
@@ -141,8 +143,9 @@ function onSubmit() {
           <div class="select-wrapper">
             <select v-model="form.supplierName" class="form-select">
               <option value="">{{ $t('inventory.addModal.selectSupplier') }}</option>
-              <option v-for="supplier in suppliers" :key="supplier">{{ supplier }}</option>
-            </select>
+              <option v-for="supplier in suppliers" :key="supplier.id" :value="supplier.name">
+                {{ supplier.name }}
+              </option>            </select>
             <i class="pi pi-chevron-down select-arrow" />
           </div>
         </div>
