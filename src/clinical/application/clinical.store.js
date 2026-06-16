@@ -6,19 +6,19 @@ import { ClinicalRecordApi } from '../infrastructure/clinical-record-api.js'
 import { PatientAssembler } from '../infrastructure/patient.assembler.js'
 import { PrescriptionAssembler } from '../infrastructure/prescription.assembler.js'
 
-const patientApi       = new PatientApi()
-const prescriptionApi  = new PrescriptionApi()
+const patientApi        = new PatientApi()
+const prescriptionApi   = new PrescriptionApi()
 const clinicalRecordApi = new ClinicalRecordApi()
 
 export const useClinicalStore = defineStore('clinical', () => {
-    const patientsRef     = ref([])
-    const prescriptionsRef = ref([])
+    const patientsRef        = ref([])
+    const prescriptionsRef   = ref([])
     const clinicalRecordsRef = ref([])
     const loading = ref(false)
     const errors  = ref([])
 
-    const patients      = computed(() => patientsRef.value)
-    const prescriptions = computed(() => prescriptionsRef.value)
+    const patients        = computed(() => patientsRef.value)
+    const prescriptions   = computed(() => prescriptionsRef.value)
     const clinicalRecords = computed(() => clinicalRecordsRef.value)
 
     // ── Patients ──────────────────────────────────────────────────────────
@@ -42,11 +42,9 @@ export const useClinicalStore = defineStore('clinical', () => {
             const entity   = PatientAssembler.toEntityFromResource(created)
             patientsRef.value.unshift(entity)
 
-            // also create a linked clinicalRecord
-            const record = await clinicalRecordApi.createClinicalRecord({
-                patient_id: entity.id
-            })
-            clinicalRecordsRef.value.push(record)
+            // El backend auto-crea el clinical record al crear el paciente,
+            // pero lo recargamos para tenerlo en el store.
+            await loadClinicalRecords()
 
             return entity
         } catch (e) {
@@ -61,6 +59,7 @@ export const useClinicalStore = defineStore('clinical', () => {
         loading.value = true
         try {
             const records = await clinicalRecordApi.getClinicalRecords()
+            // El backend devuelve { id, patientId } en camelCase
             clinicalRecordsRef.value = records
         } catch (e) {
             errors.value.push(e.message)
@@ -70,7 +69,10 @@ export const useClinicalStore = defineStore('clinical', () => {
     }
 
     function getRecordForPatient(patientId) {
-        return clinicalRecordsRef.value.find(r => r.patient_id === patientId) ?? null
+        return clinicalRecordsRef.value.find(
+            // Soporta tanto camelCase (backend real) como snake_case (mockapi legacy)
+            r => (r.patientId ?? r.patient_id) === patientId
+        ) ?? null
     }
 
     // ── Prescriptions ─────────────────────────────────────────────────────
@@ -90,8 +92,7 @@ export const useClinicalStore = defineStore('clinical', () => {
         loading.value = true
         try {
             const resources = await prescriptionApi.getPrescriptionsByRecordId(recordId)
-            // merge into the global list (avoid dupes)
-            const incoming = PrescriptionAssembler.toEntitiesFromResponse(resources)
+            const incoming  = PrescriptionAssembler.toEntitiesFromResponse(resources)
             incoming.forEach(p => {
                 if (!prescriptionsRef.value.find(e => e.id === p.id)) {
                     prescriptionsRef.value.push(p)
