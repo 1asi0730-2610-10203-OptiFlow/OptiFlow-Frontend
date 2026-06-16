@@ -199,15 +199,7 @@ const DONUT_COLORS = ['#00c1b0', '#a3e635', '#93c5fd', '#fbbf24', '#ef4444']
 
 const donutData = computed(() => {
   const orders = fulfillmentStore.workOrders
-  if (!orders.length) {
-    return [
-      { label: t('reports.products.progressive'),    value: 38, color: '#00c1b0' },
-      { label: t('reports.products.singleVision'),   value: 24, color: '#a3e635' },
-      { label: t('reports.products.contactLenses'),  value: 18, color: '#93c5fd' },
-      { label: t('reports.products.accessories'),    value: 12, color: '#fbbf24' },
-      { label: t('reports.products.others'),         value: 8,  color: '#ef4444' }
-    ]
-  }
+  if (!orders.length) return []
   const total = orders.length
   const byType = {}
   orders.forEach(wo => {
@@ -332,55 +324,85 @@ const productivityKpis = computed(() => {
   ]
 })
 
-// On-time delivery weekly trend — no per-week data in store, kept static
-const onTimeDeliveryChartData = computed(() => ({
-  labels: ['Sem 14', 'Sem 15', 'Sem 16', 'Sem 17', 'Sem 18'],
-  datasets: [{
-    label: '%',
-    data: [92, 95, 87, 93, 97],
-    fill: true,
-    borderColor: '#a3e635',
-    backgroundColor: 'rgba(163, 230, 53, 0.1)',
-    tension: 0.4,
-    pointBackgroundColor: '#a3e635',
-    pointBorderColor: '#fff',
-    pointBorderWidth: 2,
-    pointRadius: 4
-  }]
-}))
+const onTimeDeliveryChartData = computed(() => {
+  const now = new Date()
+  const weeks = Array.from({ length: 5 }, (_, i) => {
+    const anchor = new Date(now)
+    anchor.setDate(now.getDate() - (4 - i) * 7)
+    const start = new Date(anchor)
+    start.setDate(anchor.getDate() - anchor.getDay())
+    start.setHours(0, 0, 0, 0)
+    const end = new Date(start)
+    end.setDate(start.getDate() + 6)
+    end.setHours(23, 59, 59, 999)
+    const startOfYear = new Date(start.getFullYear(), 0, 1)
+    const weekNum = Math.ceil(((start - startOfYear) / 86400000 + startOfYear.getDay() + 1) / 7)
+    return { start, end, label: locale.value === 'es' ? `Sem ${weekNum}` : `Wk ${weekNum}` }
+  })
+  const data = weeks.map(({ start, end }) => {
+    const inWeek = fulfillmentStore.workOrders.filter(wo => {
+      if (!wo.deliveryDate) return false
+      const d = new Date(wo.deliveryDate)
+      return d >= start && d <= end
+    })
+    if (!inWeek.length) return null
+    const delivered = inWeek.filter(wo => wo.status === 'DELIVERED').length
+    return Math.round(delivered / inWeek.length * 100)
+  })
+  return {
+    labels: weeks.map(w => w.label),
+    datasets: [{
+      label: '%',
+      data,
+      fill: true,
+      borderColor: '#a3e635',
+      backgroundColor: 'rgba(163, 230, 53, 0.1)',
+      tension: 0.4,
+      pointBackgroundColor: '#a3e635',
+      pointBorderColor: '#fff',
+      pointBorderWidth: 2,
+      pointRadius: 4,
+      spanGaps: true
+    }]
+  }
+})
 
 const onTimeDeliveryChartOptions = ref({
   maintainAspectRatio: false,
   plugins: { legend: { display: false } },
   scales: {
     x: { grid: { display: true, color: '#f3f4f6', borderDash: [5, 5] }, ticks: { color: '#9ca3af' } },
-    y: { grid: { display: true, color: '#f3f4f6', borderDash: [5, 5] }, ticks: { color: '#9ca3af', callback: function(value) { return value + '%' } }, min: 80, max: 100 }
+    y: { grid: { display: true, color: '#f3f4f6', borderDash: [5, 5] }, ticks: { color: '#9ca3af', callback: v => v + '%' }, min: 0, max: 100 }
   }
 })
 
-// Rework causes breakdown — no cause field in work order, kept static
-const reworkCausesChartData = computed(() => ({
-  labels: [
-    t('reports.productivity.causes.wrongRecipe'),
-    t('reports.productivity.causes.frameMismatch'),
-    t('reports.productivity.causes.lensDefect'),
-    t('reports.productivity.causes.coatingProblem'),
-    t('reports.productivity.causes.customerChange')
-  ],
-  datasets: [{
-    label: 'Casos',
-    backgroundColor: '#ef4444',
-    data: [5, 3, 4, 2, 3],
-    borderRadius: 4
-  }]
-}))
+const reworkCausesChartData = computed(() => {
+  const reworks = fulfillmentStore.workOrders.filter(wo => wo.isRework)
+  const byLab = {}
+  reworks.forEach(wo => {
+    const lab = wo.laboratoryName || '—'
+    byLab[lab] = (byLab[lab] || 0) + 1
+  })
+  const entries = Object.entries(byLab).sort((a, b) => b[1] - a[1]).slice(0, 5)
+  const labels = entries.length ? entries.map(([lab]) => lab) : [t('reports.productivity.noReworkData')]
+  const values = entries.length ? entries.map(([, n]) => n) : [0]
+  return {
+    labels,
+    datasets: [{
+      label: t('reports.productivity.reworkCount'),
+      backgroundColor: '#ef4444',
+      data: values,
+      borderRadius: 4
+    }]
+  }
+})
 
 const reworkCausesChartOptions = ref({
   indexAxis: 'y',
   maintainAspectRatio: false,
   plugins: { legend: { display: false } },
   scales: {
-    x: { grid: { display: true, color: '#f3f4f6', borderDash: [5, 5] }, ticks: { color: '#9ca3af' }, min: 0, max: 8 },
+    x: { grid: { display: true, color: '#f3f4f6', borderDash: [5, 5] }, ticks: { color: '#9ca3af', precision: 0 }, min: 0 },
     y: { grid: { display: false }, ticks: { color: '#6b7280' } }
   }
 })
