@@ -6,11 +6,12 @@ import ContextMenu from 'primevue/contextmenu'
 import { useInventoryStore } from '../../application/inventory.store.js'
 import { eventBus } from '../../../shared/infrastructure/event-bus.js'
 import { InventoryEvents } from '../../domain/events/inventory-events.js'
-import ModalAddProduct  from '../components/modal-add-product.vue'
-import ModalRestock     from '../components/modal-restock.vue'
-import ModalBulkRestock from '../components/modal-bulk-restock.vue'
-import ModalAuditLog    from '../components/modal-audit-log.vue'
-import ModalEditProduct from '../components/modal-edit-product.vue'
+import ModalAddProduct        from '../components/modal-add-product.vue'
+import ModalRestock           from '../components/modal-restock.vue'
+import ModalBulkRestock       from '../components/modal-bulk-restock.vue'
+import ModalAuditLog          from '../components/modal-audit-log.vue'
+import ModalEditProduct       from '../components/modal-edit-product.vue'
+import RegisterSupplierModal  from '../components/register-supplier-modal.vue'
 
 const { t } = useI18n()
 const store = useInventoryStore()
@@ -24,6 +25,7 @@ const selectedProductRestock = ref(null)
 const showBulkRestock = ref(false)
 const showAuditLog = ref(false)
 const selectedProductEdit = ref(null)
+const showRegisterSupplier = ref(false)
 
 // Right-click context menu
 const contextMenuRef = ref(null)
@@ -216,6 +218,16 @@ async function onEditProduct(updatedProduct) {
   await store.updateProduct(updatedProduct)
   // PRODUCT_UPDATED event → event handler closes modal + shows toast
 }
+
+function onSupplierRegistered(supplier) {
+  store.loadSuppliers()
+  toast.add({
+    severity: 'success',
+    summary: t('inventory.supplierModal.title'),
+    detail: `${supplier.name} ${t('inventory.toast.itemAddedDetail')}`,
+    life: 2500
+  })
+}
 </script>
 
 <template>
@@ -235,6 +247,10 @@ async function onEditProduct(updatedProduct) {
         <button class="btn-secondary" @click="showBulkRestock = true">
           <i class="pi pi-box" />
           <span>{{ $t('inventory.restock') }}</span>
+        </button>
+        <button class="btn-secondary" @click="showRegisterSupplier = true">
+          <i class="pi pi-truck" />
+          <span>{{ $t('inventory.supplierModal.title') }}</span>
         </button>
         <button class="btn-primary" @click="showAddProduct = true">
           <i class="pi pi-plus" /> {{ $t('inventory.addItem') }}
@@ -411,6 +427,12 @@ async function onEditProduct(updatedProduct) {
         :product="selectedProductEdit"
         @save="onEditProduct"
         @close="selectedProductEdit = null"
+    />
+
+    <RegisterSupplierModal
+        v-if="showRegisterSupplier"
+        @register="onSupplierRegistered"
+        @close="showRegisterSupplier = false"
     />
 
     <ContextMenu ref="contextMenuRef" :model="contextMenuItems" />
