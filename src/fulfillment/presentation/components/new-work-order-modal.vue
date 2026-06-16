@@ -2,6 +2,8 @@
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { WorkOrder } from '../../domain/model/work-order.entity.js'
+import { useFulfillmentStore } from '../../application/fulfillment.store.js'
+import { useClinicalStore } from '../../../clinical/application/clinical.store.js'
 
 const { t } = useI18n()
 const emit = defineEmits(['save', 'close'])
@@ -10,11 +12,13 @@ const lensTypes = [
   'Lunas Progresivas', 'Lunas Monofocales', 'Lunas Bifocales',
   'Lunas con Filtro Azul', 'Lunas Polarizadas', 'Lunas Antireflejantes', 'Lentes de Contacto'
 ]
-const laboratories = ['Vision Labs Inc.', 'OpticalPro Lab', 'Premium Optics Lab']
-const patients = ['Sarah Johnson', 'Michael Chen', 'Emma Wilson', 'David Martínez', 'Lisa Anderson', 'Carlos Rivera']
+const fulfillmentStore = useFulfillmentStore()
+const clinicalStore = useClinicalStore()
+const laboratories = computed(() => fulfillmentStore.laboratories)
+const patients = computed(() => clinicalStore.patients)
 
 const form = ref({
-  patientName: '', laboratoryName: 'Vision Labs Inc.', lensType: 'Lunas Progresivas',
+  patientName: '', laboratoryName: '', lensType: 'Lunas Progresivas',
   odSphere: '', odCylinder: '', odAxis: '',
   osSphere: '', osCylinder: '', osAxis: '',
   frame: '', orderDate: new Date().toISOString().split('T')[0],
@@ -98,13 +102,17 @@ function onSubmit() {
               @change="errors.patientName = false"
             >
               <option value="">{{ $t('labOrders.newOrderModal.selectPatient') }}</option>
-              <option v-for="patient in patients" :key="patient" :value="patient">{{ patient }}</option>
+              <option v-for="patient in patients" :key="patient.id" :value="patient.firstName + ' ' + patient.lastName">
+                {{ patient.firstName }} {{ patient.lastName }}
+              </option>
             </select>
           </div>
           <div class="field">
             <label>{{ $t('labOrders.newOrderModal.laboratory') }}</label>
             <select v-model="form.laboratoryName" class="form-select">
-              <option v-for="laboratory in laboratories" :key="laboratory" :value="laboratory">{{ laboratory }}</option>
+              <option v-for="lab in laboratories" :key="lab.id" :value="lab.name">
+                {{ lab.name }}
+              </option>
             </select>
           </div>
         </div>
