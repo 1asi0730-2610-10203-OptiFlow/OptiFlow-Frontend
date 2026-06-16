@@ -12,10 +12,10 @@ onMounted(() => store.fetchAll())
 
 // Reactive date formatted in the active locale
 const today = computed(() =>
-  new Date().toLocaleDateString(
-    locale.value === 'es' ? 'es-PE' : 'en-US',
-    { day: 'numeric', month: 'long', year: 'numeric' }
-  )
+    new Date().toLocaleDateString(
+        locale.value === 'es' ? 'es-PE' : 'en-US',
+        { day: 'numeric', month: 'long', year: 'numeric' }
+    )
 )
 
 // ── Stat Cards (live data) ────────────────────────────────────────────────
@@ -36,8 +36,8 @@ const stats = computed(() => [
     icon: 'pi-chart-line',
     iconBg: '#f0fdf4', iconColor: '#22c55e',
     value: store.monthlyRevenue > 0
-      ? `S/ ${store.monthlyRevenue.toLocaleString('es-PE', { minimumFractionDigits: 2 })}`
-      : 'S/ 0.00',
+        ? `S/ ${store.monthlyRevenue.toLocaleString('es-PE', { minimumFractionDigits: 2 })}`
+        : 'S/ 0.00',
     labelKey: 'dashboard.stats.monthlyRevenue',
   },
   {
@@ -50,30 +50,35 @@ const stats = computed(() => [
 
 // ── Lab Orders Section ─────────────────────────────────────────────────────
 const labOrders = computed(() =>
-  store.recentWorkOrders.map(o => ({
-    name:     o.laboratory_name ?? '',
-    order:    `WO-${String(o.order_id).padStart(4, '0')} · ${o.status}`,
-    urgent:   o.priority === 'URGENT',
-    quality:  o.status   === 'QUALITY_CONTROL',
-    received: o.status   === 'RECEIVED',
-    delivery: o.estimated_date
-      ? new Date(o.estimated_date).toLocaleDateString(
-          locale.value === 'es' ? 'es-PE' : 'en-US',
-          { day: 'numeric', month: 'short' }
-        )
-      : '—',
-  }))
+    store.recentWorkOrders.map(o => ({
+      name:     o.laboratory_name ?? '',
+      order:    `WO-${String(o.order_id).padStart(4, '0')} · ${o.status}`,
+      urgent:   o.priority === 'URGENT',
+      quality:  o.status   === 'QUALITY_CONTROL',
+      received: o.status   === 'RECEIVED',
+      delivery: o.estimated_date
+          ? new Date(o.estimated_date).toLocaleDateString(
+              locale.value === 'es' ? 'es-PE' : 'en-US',
+              { day: 'numeric', month: 'short' }
+          )
+          : '—',
+    }))
 )
 
 // ── Stock Alerts Section ───────────────────────────────────────────────────
 const stockAlerts = computed(() => store.stockAlerts)
 
-// ── Line Chart Geometry ───────────────────────────────────────────────────
+// ── Line Chart: detectar si hay datos reales ──────────────────────────────
+const hasChartData = computed(() =>
+    store.recetasChartData.length > 0 &&
+    store.recetasChartData.some(v => v > 0)
+)
+
 const recetasData = computed(() =>
-  store.recetasChartData.length ? store.recetasChartData : [0]
+    store.recetasChartData.length ? store.recetasChartData : [0]
 )
 const ventasData = computed(() =>
-  store.ventasChartData.length ? store.ventasChartData : [0]
+    store.ventasChartData.length ? store.ventasChartData : [0]
 )
 
 const chartMax = computed(() => {
@@ -112,7 +117,7 @@ const recAreaPts = computed(() => `${recPts.value} ${LC.right},${LC.bottom} ${LC
 const venAreaPts = computed(() => `${venPts.value} ${LC.right},${LC.bottom} ${LC.left},${LC.bottom}`)
 
 const gridLines = computed(() =>
-  yTicks.value.map(v => ({ y: ly(v, chartMax.value).toFixed(1), label: v }))
+    yTicks.value.map(v => ({ y: ly(v, chartMax.value).toFixed(1), label: v }))
 )
 const recDots = computed(() => {
   const data = recetasData.value
@@ -134,8 +139,8 @@ const xLabels = computed(() => {
     return periods.map((p, i) => ({
       x:     lx(i, periods.length).toFixed(1),
       label: new Date(p + '-01').toLocaleDateString(
-        locale.value === 'es' ? 'es-PE' : 'en-US',
-        { month: 'short' }
+          locale.value === 'es' ? 'es-PE' : 'en-US',
+          { month: 'short' }
       ),
     }))
   }
@@ -144,7 +149,7 @@ const xLabels = computed(() => {
 
 // ── Bar Chart Geometry ───────────────────────────────────────────────────
 const weekRevenue = computed(() =>
-  store.weekRevenueData.length ? store.weekRevenueData : [0]
+    store.weekRevenueData.length ? store.weekRevenueData : [0]
 )
 
 const BC        = { left: 40, bottom: 165, top: 10 }
@@ -177,10 +182,10 @@ const barLabels = computed(() => {
   const periods = store.chartPeriodLabels
   if (periods.length) {
     return periods.map(p =>
-      new Date(p + '-01').toLocaleDateString(
-        locale.value === 'es' ? 'es-PE' : 'en-US',
-        { month: 'short' }
-      )
+        new Date(p + '-01').toLocaleDateString(
+            locale.value === 'es' ? 'es-PE' : 'en-US',
+            { month: 'short' }
+        )
     )
   }
   return tm('dashboard.charts.weekDays')
@@ -244,46 +249,61 @@ const bars = computed(() => {
           </div>
           <span class="period-badge">{{ $t('dashboard.charts.last6Months') }}</span>
         </div>
-        <svg class="line-svg" viewBox="0 0 780 215" preserveAspectRatio="xMidYMid meet">
-          <line
-            v-for="g in gridLines" :key="g.label"
-            :x1="LC.left" :y1="g.y" :x2="LC.right" :y2="g.y"
-            stroke="#f3f4f6" stroke-width="1"
-          />
-          <text
-            v-for="g in gridLines" :key="'y' + g.label"
-            :x="LC.left - 6" :y="+g.y + 4"
-            fill="#6b7280" font-size="11" text-anchor="end" font-family="Montserrat, sans-serif"
-          >{{ g.label }}</text>
-          <text
-            v-for="xl in xLabels" :key="xl.label"
-            :x="xl.x" :y="LC.bottom + 22"
-            fill="#6b7280" font-size="11" text-anchor="middle" font-family="Montserrat, sans-serif"
-          >{{ xl.label }}</text>
-          <polygon :points="recAreaPts" fill="#6ee7b7" opacity="0.18" />
-          <polygon :points="venAreaPts" fill="#00c1b0" opacity="0.12" />
-          <polyline :points="recPts" fill="none" stroke="#6ee7b7" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" />
-          <polyline :points="venPts" fill="none" stroke="#00c1b0" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" />
-          <circle
-            v-for="(d, i) in recDots" :key="'rd' + i"
-            :cx="d.cx" :cy="d.cy" r="4"
-            fill="white" stroke="#6ee7b7" stroke-width="2"
-          />
-          <circle
-            v-for="(d, i) in venDots" :key="'vd' + i"
-            :cx="d.cx" :cy="d.cy" r="4"
-            fill="white" stroke="#00c1b0" stroke-width="2"
-          />
-        </svg>
-        <div class="chart-legend">
-          <span class="legend-item">
-            <span class="legend-dot" style="background:#6ee7b7" />
-            {{ $t('dashboard.charts.legendPrescriptions') }}
-          </span>
-          <span class="legend-item">
-            <span class="legend-dot" style="background:#00c1b0" />
-            {{ $t('dashboard.charts.legendSales') }}
-          </span>
+
+        <!-- Empty state: sin datos -->
+        <div v-if="!store.loading && !hasChartData" class="chart-empty-state">
+          <i class="pi pi-calendar chart-empty-icon" />
+          <span class="chart-empty-text">Sin resultados</span>
+        </div>
+
+        <!-- Gráfico: solo cuando hay datos -->
+        <template v-else-if="hasChartData">
+          <svg class="line-svg" viewBox="0 0 780 215" preserveAspectRatio="xMidYMid meet">
+            <line
+                v-for="g in gridLines" :key="g.label"
+                :x1="LC.left" :y1="g.y" :x2="LC.right" :y2="g.y"
+                stroke="#f3f4f6" stroke-width="1"
+            />
+            <text
+                v-for="g in gridLines" :key="'y' + g.label"
+                :x="LC.left - 6" :y="+g.y + 4"
+                fill="#6b7280" font-size="11" text-anchor="end" font-family="Montserrat, sans-serif"
+            >{{ g.label }}</text>
+            <text
+                v-for="xl in xLabels" :key="xl.label"
+                :x="xl.x" :y="LC.bottom + 22"
+                fill="#6b7280" font-size="11" text-anchor="middle" font-family="Montserrat, sans-serif"
+            >{{ xl.label }}</text>
+            <polygon :points="recAreaPts" fill="#6ee7b7" opacity="0.18" />
+            <polygon :points="venAreaPts" fill="#00c1b0" opacity="0.12" />
+            <polyline :points="recPts" fill="none" stroke="#6ee7b7" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" />
+            <polyline :points="venPts" fill="none" stroke="#00c1b0" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" />
+            <circle
+                v-for="(d, i) in recDots" :key="'rd' + i"
+                :cx="d.cx" :cy="d.cy" r="4"
+                fill="white" stroke="#6ee7b7" stroke-width="2"
+            />
+            <circle
+                v-for="(d, i) in venDots" :key="'vd' + i"
+                :cx="d.cx" :cy="d.cy" r="4"
+                fill="white" stroke="#00c1b0" stroke-width="2"
+            />
+          </svg>
+          <div class="chart-legend">
+            <span class="legend-item">
+              <span class="legend-dot" style="background:#6ee7b7" />
+              {{ $t('dashboard.charts.legendPrescriptions') }}
+            </span>
+            <span class="legend-item">
+              <span class="legend-dot" style="background:#00c1b0" />
+              {{ $t('dashboard.charts.legendSales') }}
+            </span>
+          </div>
+        </template>
+
+        <!-- Skeleton mientras carga -->
+        <div v-else class="chart-empty-state">
+          <i class="pi pi-spin pi-spinner chart-empty-icon" style="opacity:0.3" />
         </div>
       </div>
 
@@ -297,24 +317,24 @@ const bars = computed(() => {
         </div>
         <svg class="bar-svg" viewBox="0 0 370 200" preserveAspectRatio="xMidYMid meet">
           <line
-            v-for="t in barYTicks" :key="'bg' + t.label"
-            :x1="BC.left" :y1="t.y" x2="355" :y2="t.y"
-            stroke="#f3f4f6" stroke-width="1"
+              v-for="t in barYTicks" :key="'bg' + t.label"
+              :x1="BC.left" :y1="t.y" x2="355" :y2="t.y"
+              stroke="#f3f4f6" stroke-width="1"
           />
           <text
-            v-for="t in barYTicks" :key="'by' + t.label"
-            :x="BC.left - 5" :y="+t.y + 4"
-            fill="#6b7280" font-size="10" text-anchor="end" font-family="Montserrat, sans-serif"
+              v-for="t in barYTicks" :key="'by' + t.label"
+              :x="BC.left - 5" :y="+t.y + 4"
+              fill="#6b7280" font-size="10" text-anchor="end" font-family="Montserrat, sans-serif"
           >{{ t.label }}</text>
           <rect
-            v-for="b in bars" :key="b.label"
-            :x="b.x" :y="b.y" :width="b.w" :height="b.h"
-            fill="#00c1b0" rx="4" opacity="0.85"
+              v-for="b in bars" :key="b.label"
+              :x="b.x" :y="b.y" :width="b.w" :height="b.h"
+              fill="#00c1b0" rx="4" opacity="0.85"
           />
           <text
-            v-for="b in bars" :key="'bl' + b.label"
-            :x="b.cx" :y="BC.bottom + 18"
-            fill="#6b7280" font-size="10" text-anchor="middle" font-family="Montserrat, sans-serif"
+              v-for="b in bars" :key="'bl' + b.label"
+              :x="b.cx" :y="BC.bottom + 18"
+              fill="#6b7280" font-size="10" text-anchor="middle" font-family="Montserrat, sans-serif"
           >{{ b.label }}</text>
         </svg>
       </div>
@@ -350,8 +370,8 @@ const bars = computed(() => {
               </div>
               <div class="lab-right">
                 <span
-                  class="lab-stage"
-                  :class="{ 'stage--urgent': o.urgent, 'stage--quality': o.quality, 'stage--received': o.received }"
+                    class="lab-stage"
+                    :class="{ 'stage--urgent': o.urgent, 'stage--quality': o.quality, 'stage--received': o.received }"
                 >
                   <template v-if="o.urgent">{{ $t('labOrders.priority.urgent') }}</template>
                   <template v-else-if="o.quality">{{ $t('labOrders.status.QUALITY_CONTROL') }}</template>
@@ -426,6 +446,29 @@ const bars = computed(() => {
 @keyframes shimmer {
   0%   { background-position: 200% 0; }
   100% { background-position: -200% 0; }
+}
+
+/* ── Chart empty state ───────────────────────────────────────────────────── */
+.chart-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  height: 215px;
+  color: #9ca3af;
+}
+
+.chart-empty-icon {
+  font-size: 40px;
+  opacity: 0.35;
+  color: #00c1b0;
+}
+
+.chart-empty-text {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  color: #9ca3af;
 }
 
 .empty-state {
