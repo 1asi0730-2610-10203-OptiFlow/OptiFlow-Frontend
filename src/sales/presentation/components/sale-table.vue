@@ -1,7 +1,8 @@
 <script setup>
 import SaleStatusBadge from './sale-status-badge.vue'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import ContextMenu from 'primevue/contextmenu'
 
 const props = defineProps({
   sales: { type: Array, required: true }
@@ -31,9 +32,13 @@ function formatCurrency(value) {
   return `S/ ${Number(value).toFixed(2)}`
 }
 
+function totalCollected(sale) {
+  return sale.totalAmount - sale.pendingBalance
+}
+
 function adelantoPercent(sale) {
   if (!sale.totalAmount) return 0
-  return Math.min(100, Math.round((sale.adelanto / sale.totalAmount) * 100))
+  return Math.min(100, Math.round((totalCollected(sale) / sale.totalAmount) * 100))
 }
 
 function isOpen(sale) {
@@ -42,6 +47,31 @@ function isOpen(sale) {
 
 function isDelivered(sale) {
   return sale.status === 'DELIVERED'
+}
+
+// Right-click context menu
+const contextMenuRef = ref(null)
+const contextSale = ref(null)
+
+const contextMenuItems = computed(() => {
+  const sale = contextSale.value
+  if (!sale) return []
+  const items = []
+  if (isOpen(sale)) {
+    items.push({ label: t('sales.table.collect'), icon: 'pi pi-dollar', command: () => emit('collect-payment', sale) })
+    items.push({ label: t('sales.table.cancel'), icon: 'pi pi-times-circle', command: () => emit('cancel-sale', sale.id) })
+  }
+  if (isDelivered(sale)) {
+    items.push({ label: t('sales.table.return'), icon: 'pi pi-undo', command: () => emit('return-sale', sale.id) })
+  }
+  items.push({ separator: true })
+  items.push({ label: t('sales.contextMenu.copyInvoice'), icon: 'pi pi-copy', command: () => navigator.clipboard.writeText(sale.invoiceNumber || '') })
+  return items
+})
+
+function onRowContextMenu(event) {
+  contextSale.value = event.data
+  contextMenuRef.value.show(event.originalEvent)
 }
 </script>
 
@@ -55,6 +85,7 @@ function isDelivered(sale) {
     paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
     responsive-layout="scroll"
     class="sale-table"
+    @row-contextmenu="onRowContextMenu"
   >
     <!-- Factura -->
     <pv-column field="invoiceNumber" :header="$t('sales.table.invoice')" sortable style="min-width: 140px">
@@ -106,7 +137,7 @@ function isDelivered(sale) {
     <pv-column field="adelanto" :header="$t('sales.table.deposit')" sortable style="min-width: 140px">
       <template #body="{ data }">
         <div class="col-adelanto">
-          <span class="adelanto-amount">{{ formatCurrency(data.adelanto) }}</span>
+          <span class="adelanto-amount">{{ formatCurrency(totalCollected(data)) }}</span>
           <div class="progress-track">
             <div class="progress-fill" :style="{ width: adelantoPercent(data) + '%' }" />
           </div>
@@ -166,6 +197,8 @@ function isDelivered(sale) {
       </template>
     </pv-column>
   </pv-data-table>
+
+  <ContextMenu ref="contextMenuRef" :model="contextMenuItems" />
 </template>
 
 <style scoped>

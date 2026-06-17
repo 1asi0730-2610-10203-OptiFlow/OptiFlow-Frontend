@@ -189,6 +189,9 @@
       "paid": "Paid",
       "cancel": "Cancel",
       "return": "Return"
+    },
+    "contextMenu": {
+      "copyInvoice": "Copy Invoice #"
     }
   },
   "labOrders": {
@@ -324,7 +327,12 @@
       }
     },
     "showing": "Showing",
-    "orders": "orders"
+    "orders": "orders",
+    "contextMenu": {
+      "viewDetails": "View details",
+      "advanceStatus": "Advance status",
+      "copyOrderId": "Copy Order #"
+    }
   },
   "dashboard": {
     "title": "Control Panel",
@@ -483,6 +491,11 @@
     },
     "success": {
       "next": "Next"
+    },
+    "contextMenu": {
+      "copyDni": "Copy ID",
+      "copyEmail": "Copy email",
+      "copyPhone": "Copy phone"
     }
   },
   "inventory": {
@@ -687,6 +700,11 @@
         "email": "name{'@'}opticspro.com",
         "phone": "(555) 000-0000"
       }
+    },
+    "contextMenu": {
+      "viewDetails": "View details",
+      "copyEmail": "Copy email",
+      "copyCode": "Copy code"
     }
   },
   "reports": {

@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import ContextMenu from 'primevue/contextmenu'
 import { useClinicalStore } from '../../application/clinical.store.js'
 import ModalAddPatient from '../components/modal-add-patient.vue'
 import ModalSuccess    from '../components/modal-success.vue'
@@ -97,6 +98,39 @@ function onSuccessNext() {
 function openHce(patient) {
     selectedPatient.value = patient
 }
+
+// Right-click context menu
+const contextMenuRef = ref(null)
+const contextPatient = ref(null)
+
+const contextMenuItems = computed(() => [
+    {
+        label: t('patients.table.viewHce'),
+        icon: 'pi pi-file-edit',
+        command: () => { openHce(contextPatient.value) }
+    },
+    { separator: true },
+    {
+        label: t('patients.contextMenu.copyDni'),
+        icon: 'pi pi-id-card',
+        command: () => { navigator.clipboard.writeText(contextPatient.value?.dni || '') }
+    },
+    {
+        label: t('patients.contextMenu.copyEmail'),
+        icon: 'pi pi-envelope',
+        command: () => { navigator.clipboard.writeText(contextPatient.value?.email || '') }
+    },
+    {
+        label: t('patients.contextMenu.copyPhone'),
+        icon: 'pi pi-phone',
+        command: () => { navigator.clipboard.writeText(contextPatient.value?.phone || '') }
+    }
+])
+
+function onRowContextMenu(event, patient) {
+    contextPatient.value = patient
+    contextMenuRef.value.show(event)
+}
 </script>
 
 <template>
@@ -186,6 +220,7 @@ function openHce(patient) {
                 v-for="patient in pagedPatients"
                 :key="patient.id"
                 class="table-row"
+                @contextmenu.prevent="onRowContextMenu($event, patient)"
             >
                 <!-- Patient -->
                 <div class="row-patient">
@@ -268,6 +303,8 @@ function openHce(patient) {
             </div>
         </div>
     </div>
+
+    <ContextMenu ref="contextMenuRef" :model="contextMenuItems" />
 </template>
 
 <style scoped>
