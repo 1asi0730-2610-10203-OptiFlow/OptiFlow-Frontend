@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useStaffStore } from '../../application/staff.store.js'
 import { useI18n } from 'vue-i18n'
+import ContextMenu from 'primevue/contextmenu'
 import StaffFormModal from '../components/staff-form-modal.vue'
 import StaffDetailModal from '../components/staff-detail-modal.vue'
 
@@ -88,6 +89,34 @@ const getStatusTagStyle = (status) => {
   }
   return { backgroundColor: '#f9fafb', color: '#6b7280' };
 }
+
+// Right-click context menu
+const contextMenuRef = ref(null)
+const contextEmployee = ref(null)
+
+const contextMenuItems = computed(() => [
+  {
+    label: t('staff.contextMenu.viewDetails'),
+    icon: 'pi pi-user',
+    command: () => { selectedEmployee.value = contextEmployee.value; showDetailModal.value = true }
+  },
+  { separator: true },
+  {
+    label: t('staff.contextMenu.copyEmail'),
+    icon: 'pi pi-envelope',
+    command: () => { navigator.clipboard.writeText(contextEmployee.value?.email || '') }
+  },
+  {
+    label: t('staff.contextMenu.copyCode'),
+    icon: 'pi pi-id-card',
+    command: () => { navigator.clipboard.writeText(contextEmployee.value?.employeeCode || '') }
+  }
+])
+
+function onRowContextMenu(event) {
+  contextEmployee.value = event.data
+  contextMenuRef.value.show(event.originalEvent)
+}
 </script>
 
 <template>
@@ -156,7 +185,7 @@ const getStatusTagStyle = (status) => {
     </div>
 
     <div class="table-card">
-      <pv-data-table :value="filteredStaff" :loading="store.loading" data-key="id" class="staff-table" @row-click="onRowClick" row-hover>
+      <pv-data-table :value="filteredStaff" :loading="store.loading" data-key="id" class="staff-table" @row-click="onRowClick" @row-contextmenu="onRowContextMenu" row-hover>
         <pv-column field="fullName" :header="t('staff.table.employee')" style="min-width: 400px">
           <template #body="{ data }">
             <div class="employee-info">
@@ -197,6 +226,7 @@ const getStatusTagStyle = (status) => {
 
     <staff-form-modal v-model:visible="showAddModal" @saved="onEmployeeSaved" />
     <staff-detail-modal v-model:visible="showDetailModal" :employee="selectedEmployee" />
+    <ContextMenu ref="contextMenuRef" :model="contextMenuItems" />
   </div>
 </template>
 

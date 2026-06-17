@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
+import ContextMenu from 'primevue/contextmenu'
 import { useFulfillmentStore } from '../../application/fulfillment.store.js'
 import KanbanBoard from '../components/kanban-board.vue'
 import WorkOrderDetailModal from '../components/work-order-detail-modal.vue'
@@ -148,6 +149,43 @@ async function onNewLaboratory(laboratory) {
     life: 2500
   })
 }
+
+// Right-click context menu (table view only)
+const contextMenuRef = ref(null)
+const contextOrder = ref(null)
+
+const contextMenuItems = computed(() => {
+  const order = contextOrder.value
+  if (!order) return []
+  const currentIdx = ORDER_FLOW.indexOf(order.status)
+  const nextSt = currentIdx >= 0 && currentIdx < ORDER_FLOW.length - 1 ? ORDER_FLOW[currentIdx + 1] : null
+  const items = [
+    {
+      label: t('labOrders.contextMenu.viewDetails'),
+      icon: 'pi pi-eye',
+      command: () => { selectedOrder.value = order }
+    }
+  ]
+  if (nextSt) {
+    items.push({
+      label: `${t('labOrders.contextMenu.advanceStatus')}: ${t(`labOrders.status.${nextSt}`)}`,
+      icon: 'pi pi-arrow-right',
+      command: () => { onStatusChanged({ workOrder: order, status: nextSt }) }
+    })
+  }
+  items.push({ separator: true })
+  items.push({
+    label: t('labOrders.contextMenu.copyOrderId'),
+    icon: 'pi pi-copy',
+    command: () => { navigator.clipboard.writeText(String(order.id)) }
+  })
+  return items
+})
+
+function onTableRowContextMenu(event, order) {
+  contextOrder.value = order
+  contextMenuRef.value.show(event)
+}
 </script>
 
 <template>
@@ -241,6 +279,7 @@ async function onNewLaboratory(laboratory) {
           :key="workOrder.id"
           class="table-row"
           @click="selectedOrder = workOrder"
+          @contextmenu.prevent="onTableRowContextMenu($event, workOrder)"
       >
         <div class="row-main">
           <div class="row-dot" :class="`row-dot--${workOrder.priority || 'normal'}`" />
@@ -311,6 +350,7 @@ async function onNewLaboratory(laboratory) {
         @close="showRegisterLabModal = false"
     />
 
+    <ContextMenu ref="contextMenuRef" :model="contextMenuItems" />
   </div>
 </template>
 
