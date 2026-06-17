@@ -17,7 +17,6 @@ export class LaboratoryAssembler {
 
     static toResourceFromEntity(entity) {
         return new LaboratoryResource({
-            id: entity.id,
             name: entity.name,
             phone: entity.phone,
             email: entity.email
