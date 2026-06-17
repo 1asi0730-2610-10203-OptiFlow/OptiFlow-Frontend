@@ -334,7 +334,8 @@
       "totalPatients": "Total Patients",
       "patientsToday": "Patients Seen Today",
       "monthlyRevenue": "Monthly Revenue",
-      "pendingLabOrders": "Active Lab Orders"
+      "pendingLabOrders": "Active Lab Orders",
+      "NoResults": "No Results"
     },
     "charts": {
       "conversionTitle": "Prescription to Sale Conversion",
@@ -360,7 +361,8 @@
         "Fri",
         "Sat",
         "Sun"
-      ]
+      ],
+      "NoResults": "No Results"
     },
     "appointments": {
       "title": "Today's Attended Patients",
@@ -370,13 +372,15 @@
     },
     "labOrders": {
       "title": "Active Lab Orders",
-      "deliveryLabel": "Delivery: {date}"
+      "deliveryLabel": "Delivery: {date}",
+      "NoResults": "No active orders"
     },
     "stockAlerts": {
       "title": "Low Stock Alerts",
       "itemCount": "{count} items",
       "remaining": "{count} remaining",
-      "reorderMin": "Min. reorder: {min} units"
+      "reorderMin": "Min. reorder: {min} units",
+      "NoResults": "Stock at a good level"
     }
   },
   "patients": {
