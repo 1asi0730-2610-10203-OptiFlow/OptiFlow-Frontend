@@ -147,6 +147,12 @@ const xLabels = computed(() => {
   return months.value.map((m, i) => ({ x: lx(i, data.length).toFixed(1), label: m }))
 })
 
+// ── Bar Chart: detectar si hay datos reales ───────────────────────────────
+const hasBarData = computed(() =>
+    store.weekRevenueData.length > 0 &&
+    store.weekRevenueData.some(v => v > 0)
+)
+
 // ── Bar Chart Geometry ───────────────────────────────────────────────────
 const weekRevenue = computed(() =>
     store.weekRevenueData.length ? store.weekRevenueData : [0]
@@ -253,7 +259,7 @@ const bars = computed(() => {
         <!-- Empty state: sin datos -->
         <div v-if="!store.loading && !hasChartData" class="chart-empty-state">
           <i class="pi pi-calendar chart-empty-icon" />
-          <span class="chart-empty-text">Sin resultados</span>
+          <span class="chart-empty-text">{{ $t('dashboard.stats.NoResults') }}</span>
         </div>
 
         <!-- Gráfico: solo cuando hay datos -->
@@ -315,7 +321,15 @@ const bars = computed(() => {
             <p class="card-subtitle">{{ $t('dashboard.charts.weeklyRevenueSubtitle') }}</p>
           </div>
         </div>
-        <svg class="bar-svg" viewBox="0 0 370 200" preserveAspectRatio="xMidYMid meet">
+
+        <!-- Empty state: sin ingresos -->
+        <div v-if="!store.loading && !hasBarData" class="chart-empty-state">
+          <i class="pi pi-chart-bar chart-empty-icon" />
+          <span class="chart-empty-text">{{ $t('dashboard.charts.NoResults') }}</span>
+        </div>
+
+        <!-- Gráfico: solo cuando hay datos -->
+        <svg v-else-if="hasBarData" class="bar-svg" viewBox="0 0 370 200" preserveAspectRatio="xMidYMid meet">
           <line
               v-for="t in barYTicks" :key="'bg' + t.label"
               :x1="BC.left" :y1="t.y" x2="355" :y2="t.y"
@@ -337,6 +351,11 @@ const bars = computed(() => {
               fill="#6b7280" font-size="10" text-anchor="middle" font-family="Montserrat, sans-serif"
           >{{ b.label }}</text>
         </svg>
+
+        <!-- Skeleton mientras carga -->
+        <div v-else class="chart-empty-state">
+          <i class="pi pi-spin pi-spinner chart-empty-icon" style="opacity:0.3" />
+        </div>
       </div>
 
     </div>
@@ -350,9 +369,11 @@ const bars = computed(() => {
           <h3 class="card-title">{{ $t('dashboard.appointments.title') }}</h3>
           <span class="meta-text">{{ $t('dashboard.appointments.attended', { attended: 0, total: 0 }) }}</span>
         </div>
-        <div class="empty-state">
-          <i class="pi pi-calendar empty-icon" />
-          <span>{{ $t('dashboard.appointments.statusPending') }}</span>
+        <div class="section-empty-state">
+          <div class="section-empty-icon-wrap section-empty-icon-wrap--blue">
+            <i class="pi pi-users section-empty-icon" />
+          </div>
+          <span class="section-empty-text">{{ $t('dashboard.appointments.statusPending') }}</span>
         </div>
       </div>
 
@@ -384,9 +405,11 @@ const bars = computed(() => {
               </div>
             </div>
           </template>
-          <div v-else class="empty-state">
-            <i class="pi pi-inbox empty-icon" />
-            <span>0</span>
+          <div v-else class="section-empty-state">
+            <div class="section-empty-icon-wrap section-empty-icon-wrap--teal">
+              <i class="pi pi-truck section-empty-icon" />
+            </div>
+            <span class="section-empty-text">{{ $t('dashboard.labOrders.NoResults') }}</span>
           </div>
         </div>
         <div class="card-footer">
@@ -415,9 +438,11 @@ const bars = computed(() => {
               <span class="stock-min">{{ $t('dashboard.stockAlerts.reorderMin', { min: s.min }) }}</span>
             </div>
           </template>
-          <div v-else class="empty-state">
-            <i class="pi pi-box empty-icon" />
-            <span>0</span>
+          <div v-else class="section-empty-state">
+            <div class="section-empty-icon-wrap section-empty-icon-wrap--green">
+              <i class="pi pi-check-circle section-empty-icon" />
+            </div>
+            <span class="section-empty-text">{{ $t('dashboard.stockAlerts.NoResults') }}</span>
           </div>
         </div>
       </div>
@@ -815,5 +840,45 @@ const bars = computed(() => {
   font-family: 'Montserrat', sans-serif;
   font-size: 12px;
   color: #99a1af;
+}
+
+/* ── Section empty states (Lab Orders, Stock, Appointments) ────────────── */
+.section-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 40px 16px;
+  flex: 1;
+}
+
+.section-empty-icon-wrap {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.section-empty-icon-wrap--teal  { background: rgba(0, 193, 176, 0.10); }
+.section-empty-icon-wrap--blue  { background: rgba(147, 193, 206, 0.18); }
+.section-empty-icon-wrap--green { background: rgba(34, 197, 94, 0.10); }
+
+.section-empty-icon {
+  font-size: 22px;
+}
+
+.section-empty-icon-wrap--teal  .section-empty-icon { color: #00c1b0; }
+.section-empty-icon-wrap--blue  .section-empty-icon { color: #93c1ce; }
+.section-empty-icon-wrap--green .section-empty-icon { color: #22c55e; }
+
+.section-empty-text {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  color: #9ca3af;
+  text-align: center;
 }
 </style>
