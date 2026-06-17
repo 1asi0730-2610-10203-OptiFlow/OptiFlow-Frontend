@@ -44,18 +44,18 @@ function onSubmit() {
     return
   }
   emit('save', {
-    category_id:             0,
-    supplier_id:             0,
-    brand:                   '',
-    model:                   '',
-    name:                    form.value.name,
-    category:                form.value.category,
-    sku:                     finalSku,
-    stock:                   parseInt(form.value.stock) || 0,
-    minimum_stock_threshold: parseInt(form.value.minimumStockThreshold) || 10,
-    price:                   parseFloat(form.value.price) || 0,
-    supplier_name:           form.value.supplierName,
-    last_restock_date:       form.value.lastRestockDate
+    categoryId:            0,
+    supplierId:            0,
+    brand:                 '',
+    model:                 '',
+    name:                  form.value.name,
+    category:              form.value.category,
+    sku:                   finalSku,
+    stock:                 parseInt(form.value.stock) || 0,
+    minimumStockThreshold: parseInt(form.value.minimumStockThreshold) || 10,
+    price:                 parseFloat(form.value.price) || 0,
+    supplierName:          form.value.supplierName,
+    lastRestockDate:       form.value.lastRestockDate
   })
 }
 </script>

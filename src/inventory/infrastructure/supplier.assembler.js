@@ -4,9 +4,9 @@ import { SupplierResource } from './supplier.resource.js'
 export class SupplierAssembler {
     static toEntityFromResource(r) {
         return new Supplier({
-            id: r.supplier_id,
+            id: r.id,
             name: r.name,
-            contactPerson: r.contact_person ?? '',
+            contactPerson: r.contactPerson ?? '',
             phone: r.phone ?? '',
             email: r.email ?? ''
         })
@@ -18,9 +18,8 @@ export class SupplierAssembler {
 
     static toResourceFromEntity(supplier) {
         return new SupplierResource({
-            supplier_id: supplier.id,
             name: supplier.name,
-            contact_person: supplier.contactPerson,
+            contactPerson: supplier.contactPerson,
             phone: supplier.phone,
             email: supplier.email
         })
