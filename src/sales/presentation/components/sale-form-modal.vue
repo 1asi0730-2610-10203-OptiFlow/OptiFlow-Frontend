@@ -46,9 +46,9 @@ const filteredOrders = computed(() => {
   if (!orderSearch.value) return orders.value
   const q = orderSearch.value.toLowerCase()
   return orders.value.filter(o =>
-    (o.patient_name || '').toLowerCase().includes(q) ||
+    (o.patientName || '').toLowerCase().includes(q) ||
     (o.frame || '').toLowerCase().includes(q) ||
-    (o.lens_type || '').toLowerCase().includes(q) ||
+    (o.lensType || '').toLowerCase().includes(q) ||
     String(o.id).includes(q)
   )
 })
@@ -87,7 +87,7 @@ onMounted(async () => {
     console.error('Error loading orders:', e)
   }
   try {
-    const res = await axios.get(`${baseUrl}/patients`)
+    const res = await axios.get(`${baseUrl}${import.meta.env.VITE_PATIENTS_ENDPOINT_PATH}`)
     patients.value = res.data
   } catch (e) {
     console.error('Error loading patients:', e)
@@ -121,18 +121,18 @@ function save() {
 
   const order = selectedOrder.value
   const matchedPatient = patients.value.find(p =>
-    `${p.first_name || ''} ${p.last_name || ''}`.trim().toLowerCase() === (order.patient_name || '').toLowerCase()
+    `${p.firstName || ''} ${p.lastName || ''}`.trim().toLowerCase() === (order.patientName || '').toLowerCase()
   )
 
   const articulos = []
   if (order.frame) articulos.push(`Armazón: ${order.frame}`)
-  if (order.lens_type) articulos.push(`Tipo de Luna: ${order.lens_type}`)
+  if (order.lensType) articulos.push(`Tipo de Luna: ${order.lensType}`)
 
   const sale = new Sale({
     invoiceNumber: generateCode('FAC'),
     labOrderNumber: `WO-${order.id}`,
-    patientId: matchedPatient?.patient_id ?? 0,
-    patientName: order.patient_name || '',
+    patientId: matchedPatient?.id ?? 0,
+    patientName: order.patientName || '',
     patientRx: '',
     userId: 1,
     userName: 'John Doe',
@@ -230,13 +230,13 @@ function close() {
             </div>
             <div class="order-card__body">
               <div class="order-card__top">
-                <span class="order-card__patient">{{ order.patient_name }}</span>
+                <span class="order-card__patient">{{ order.patientName }}</span>
                 <span class="order-card__id">#{{ order.id }}</span>
               </div>
               <div class="order-card__detail">
                 <span v-if="order.frame">{{ order.frame }}</span>
-                <span v-if="order.frame && order.lens_type"> · </span>
-                <span v-if="order.lens_type">{{ order.lens_type }}</span>
+                <span v-if="order.frame && order.lensType"> · </span>
+                <span v-if="order.lensType">{{ order.lensType }}</span>
               </div>
             </div>
             <div class="order-card__total">S/ {{ Number(order.total).toFixed(2) }}</div>
@@ -245,7 +245,7 @@ function close() {
 
         <div v-if="selectedOrder" class="selected-order-preview">
           <i class="pi pi-info-circle" style="color: #00c1b0; flex-shrink: 0;" />
-          <span>{{ $t('sales.form.orderSelected') }}: <strong>{{ selectedOrder.patient_name }}</strong> — S/ {{ Number(selectedOrder.total).toFixed(2) }}</span>
+          <span>{{ $t('sales.form.orderSelected') }}: <strong>{{ selectedOrder.patientName }}</strong> — S/ {{ Number(selectedOrder.total).toFixed(2) }}</span>
         </div>
       </div>
 
