@@ -26,8 +26,13 @@ export const useClinicalStore = defineStore('clinical', () => {
         loading.value = true
         try {
             const resources = await patientApi.getPatients()
-            patientsRef.value = PatientAssembler.toEntitiesFromResponse(resources)
+            // Solo reemplaza el array si la respuesta es válida
+            if (Array.isArray(resources)) {
+                patientsRef.value = PatientAssembler.toEntitiesFromResponse(resources)
+            }
         } catch (e) {
+            // No vaciar el array si el GET falla — conservar los datos anteriores
+            console.error('[clinical.store] loadPatients error:', e.message)
             errors.value.push(e.message)
         } finally {
             loading.value = false
@@ -41,13 +46,10 @@ export const useClinicalStore = defineStore('clinical', () => {
             const created  = await patientApi.createPatient(resource)
             const entity   = PatientAssembler.toEntityFromResource(created)
             patientsRef.value.unshift(entity)
-
-            // El backend auto-crea el clinical record al crear el paciente,
-            // pero lo recargamos para tenerlo en el store.
             await loadClinicalRecords()
-
             return entity
         } catch (e) {
+            console.error('[clinical.store] createPatient error:', e.message)
             errors.value.push(e.message)
         } finally {
             loading.value = false
@@ -59,9 +61,11 @@ export const useClinicalStore = defineStore('clinical', () => {
         loading.value = true
         try {
             const records = await clinicalRecordApi.getClinicalRecords()
-            // El backend devuelve { id, patientId } en camelCase
-            clinicalRecordsRef.value = records
+            if (Array.isArray(records)) {
+                clinicalRecordsRef.value = records
+            }
         } catch (e) {
+            console.error('[clinical.store] loadClinicalRecords error:', e.message)
             errors.value.push(e.message)
         } finally {
             loading.value = false
@@ -70,7 +74,6 @@ export const useClinicalStore = defineStore('clinical', () => {
 
     function getRecordForPatient(patientId) {
         return clinicalRecordsRef.value.find(
-            // Soporta tanto camelCase (backend real) como snake_case (mockapi legacy)
             r => (r.patientId ?? r.patient_id) === patientId
         ) ?? null
     }
@@ -80,8 +83,11 @@ export const useClinicalStore = defineStore('clinical', () => {
         loading.value = true
         try {
             const resources = await prescriptionApi.getPrescriptions()
-            prescriptionsRef.value = PrescriptionAssembler.toEntitiesFromResponse(resources)
+            if (Array.isArray(resources)) {
+                prescriptionsRef.value = PrescriptionAssembler.toEntitiesFromResponse(resources)
+            }
         } catch (e) {
+            console.error('[clinical.store] loadPrescriptions error:', e.message)
             errors.value.push(e.message)
         } finally {
             loading.value = false
@@ -100,6 +106,7 @@ export const useClinicalStore = defineStore('clinical', () => {
             })
             return incoming
         } catch (e) {
+            console.error('[clinical.store] loadPrescriptionsByRecord error:', e.message)
             errors.value.push(e.message)
             return []
         } finally {
@@ -116,6 +123,7 @@ export const useClinicalStore = defineStore('clinical', () => {
             prescriptionsRef.value.unshift(entity)
             return entity
         } catch (e) {
+            console.error('[clinical.store] createPrescription error:', e.message)
             errors.value.push(e.message)
         } finally {
             loading.value = false
