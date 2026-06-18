@@ -42,7 +42,7 @@ function adelantoPercent(sale) {
 }
 
 function isOpen(sale) {
-  return sale.status === 'PENDING' || sale.status === 'PARTIAL'
+  return sale.status === 'ACTIVE' || sale.status === 'PARTIAL'
 }
 
 function isDelivered(sale) {

@@ -30,4 +30,9 @@ export class SalesApi extends BaseApi {
   async getSaleDetailsBySaleId(saleId) {
     return await this.#saleDetails.getAllByParam('saleId', saleId)
   }
+
+  async cancelSale(id, labOrderStatus) {
+    const res = await this.http.post(`${import.meta.env.VITE_SALES_ENDPOINT_PATH}/${id}/cancel`, { labOrderStatus })
+    return res.data
+  }
 }

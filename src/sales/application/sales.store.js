@@ -22,11 +22,11 @@ export const useSalesStore = defineStore('sales', () => {
   const salesCount = computed(() => sales.value.length)
 
   const openSalesCount = computed(() =>
-    sales.value.filter(s => s.status === 'PENDING' || s.status === 'PARTIAL').length
+    sales.value.filter(s => s.status === 'ACTIVE' || s.status === 'PARTIAL').length
   )
 
   const completedSalesCount = computed(() =>
-    sales.value.filter(s => s.status === 'DELIVERED' || s.status === 'PAID').length
+    sales.value.filter(s => s.status === 'PAID' || s.status === 'CANCELLED').length
   )
 
   const totalIngresos = computed(() =>
@@ -93,9 +93,17 @@ export const useSalesStore = defineStore('sales', () => {
   }
 
   async function cancelSale(id) {
-    const sale = sales.value.find(s => s.id === id)
-    if (!sale) return
-    await updateSale(id, { ...sale, status: 'RETURNED' })
+    loading.value = true
+    try {
+      const updated = await salesApi.cancelSale(id, 'PENDING')
+      const entity = SaleAssembler.toEntityFromResource(updated)
+      const index = sales.value.findIndex(s => s.id === id)
+      if (index !== -1) sales.value[index] = entity
+    } catch (e) {
+      errors.value.push(e.message)
+    } finally {
+      loading.value = false
+    }
   }
 
   async function fetchPaymentsBySale(saleId) {

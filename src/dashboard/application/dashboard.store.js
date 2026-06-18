@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import DashboardApi       from '../infrastructure/dashboard-api.js'
 import { DashboardAssembler } from '../infrastructure/dashboard.assembler.js'
+import { SaleAssembler } from '../../sales/infrastructure/sale.assembler.js'
 
 const api = new DashboardApi()
 
@@ -24,7 +25,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
   /** Ventas de hoy */
   const salesToday = computed(() => {
     const today = new Date().toISOString().slice(0, 10)
-    return sales.value.filter(s => s.created_at?.startsWith(today)).length
+    return sales.value.filter(s => s.createdAt?.startsWith(today)).length
   })
 
   /** Ingreso mensual: suma del último analyticsReport */
@@ -73,20 +74,20 @@ export const useDashboardStore = defineStore('dashboard', () => {
   // ── Derived: work orders para la sección Lab Orders ──────────────────────
   const recentWorkOrders = computed(() =>
     [...workOrders.value]
-      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
       .slice(0, 5)
   )
 
   // ── Derived: stock alerts (productos con stock bajo) ─────────────────────
   const stockAlerts = computed(() =>
     products.value
-      .filter(p => p.quantity <= p.minimum_stock_threshold * 2)
+      .filter(p => p.stock <= p.minimumStockThreshold * 2)
       .map(p => ({
         name:      p.name,
-        remaining: p.quantity,
-        min:       p.minimum_stock_threshold,
-        pct:       p.minimum_stock_threshold > 0
-          ? Math.min(100, Math.round((p.quantity / (p.minimum_stock_threshold * 2)) * 100))
+        remaining: p.stock,
+        min:       p.minimumStockThreshold,
+        pct:       p.minimumStockThreshold > 0
+          ? Math.min(100, Math.round((p.stock / (p.minimumStockThreshold * 2)) * 100))
           : 0,
       }))
       .slice(0, 5)
@@ -126,7 +127,9 @@ export const useDashboardStore = defineStore('dashboard', () => {
 
     patients.value   = patientsRes.status   === 'fulfilled' ? patientsRes.value   : []
     workOrders.value = workOrdersRes.status === 'fulfilled' ? workOrdersRes.value : []
-    sales.value      = salesRes.status      === 'fulfilled' ? salesRes.value      : []
+    sales.value      = salesRes.status      === 'fulfilled'
+      ? SaleAssembler.toEntitiesFromResponse(salesRes.value)
+      : []
     products.value   = productsRes.status   === 'fulfilled' ? productsRes.value   : []
 
     // Mark error only if ALL requests failed
@@ -156,6 +159,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
     analyticsReports,
     staffMetrics,
     workOrders,
+    sales,
     products,
     // actions
     fetchAll,
