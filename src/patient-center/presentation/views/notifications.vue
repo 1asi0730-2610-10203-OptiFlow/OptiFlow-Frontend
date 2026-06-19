@@ -1,44 +1,35 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useNotificationStore } from '../../application/notification.store.js'
 
 const router = useRouter()
+const store = useNotificationStore()
 
-const notifications = ref([])
-const loading = ref(false)
+const patientId = 1
 
 onMounted(async () => {
-    loading.value = true
-    try {
-        const apiUrl = import.meta.env.VITE_OPTIFLOW_API_URL || 'http://localhost:3000'
-        const res = await fetch(`${apiUrl}/notifications`)
-        const data = await res.json()
-        
-        notifications.value = data.map(n => {
-            const isReady = n.message.toLowerCase().includes('ready') || n.message.toLowerCase().includes('listo');
-            
-            // Format relative time or date
-            let timeStr = 'Reciente'
-            if (n.sent_at) {
-              const date = new Date(n.sent_at)
-              timeStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-            }
-
-            return {
-                id: n.notification_id,
-                title: isReady ? '¡Tu pedido está listo!' : 'Actualización de Orden',
-                description: n.message,
-                time: timeStr,
-                type: isReady ? 'success' : 'warning',
-                unread: n.status === 'PENDING'
-            }
-        })
-    } catch (err) {
-        console.error("Error fetching notifications", err)
-    } finally {
-        loading.value = false
-    }
+    await store.fetchNotifications(patientId)
 })
+
+const notifications = computed(() => store.notifications.map(n => {
+    const isReady = n.message.toLowerCase().includes('ready') || n.message.toLowerCase().includes('listo')
+    let timeStr = 'Reciente'
+    if (n.sentAt) {
+        const date = new Date(n.sentAt)
+        timeStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+    }
+    return {
+        id: n.id,
+        title: isReady ? '¡Tu pedido está listo!' : 'Actualización de Orden',
+        description: n.message,
+        time: timeStr,
+        type: isReady ? 'success' : 'warning',
+        unread: n.status === 'PENDING'
+    }
+}))
+
+const loading = computed(() => store.loading)
 </script>
 
 <template>
