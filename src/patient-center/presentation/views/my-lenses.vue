@@ -6,17 +6,31 @@ import { useI18n } from 'vue-i18n'
 const store = useOrderStore()
 const { t } = useI18n()
 
-const today = computed(() => new Date().toLocaleDateString(undefined, { 
-    day: 'numeric', month: 'long', year: 'numeric' 
+const patientId = 1
+
+const today = computed(() => new Date().toLocaleDateString(undefined, {
+    day: 'numeric', month: 'long', year: 'numeric'
 }))
 
 onMounted(async () => {
-    await store.fetchAllPatientOrders()
+    await store.fetchAllPatientOrders(patientId)
 })
 
+const orders = computed(() => store.patientOrders.map(o => ({
+    id: o.workOrderId,
+    orderNumber: o.orderNumber,
+    productName: o.lensType,
+    status: o.status,
+    estimatedDate: o.deliveryDate,
+    createdAt: o.createdAt,
+    totalAmount: o.total,
+    paidAmount: o.deposit,
+    pendingBalance: o.pendingBalance
+})))
+
 const getPaymentPercentage = (order) => {
-    if (!order || !order.totalAmount) return 0;
-    return Math.round((order.paidAmount / order.totalAmount) * 100);
+    if (!order || !order.totalAmount) return 0
+    return Math.round((order.paidAmount / order.totalAmount) * 100)
 }
 </script>
 
@@ -34,11 +48,11 @@ const getPaymentPercentage = (order) => {
         <p style="font-family: 'Montserrat'; margin-top: 10px;">{{ $t('common.loading') }}...</p>
       </div>
       
-      <div v-else-if="store.patientOrders.length === 0" style="text-align: center; padding: 40px; color: #9ca3af;">
+      <div v-else-if="orders.length === 0" style="text-align: center; padding: 40px; color: #9ca3af;">
         <p style="font-family: 'Montserrat';">{{ $t('common.noResults') }}</p>
       </div>
 
-      <div v-for="order in store.patientOrders" :key="order.id" class="results-container">
+      <div v-for="order in orders" :key="order.id" class="results-container">
         
         <!-- Order Card -->
         <div class="order-card dark">

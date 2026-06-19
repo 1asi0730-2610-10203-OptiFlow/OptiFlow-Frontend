@@ -6,7 +6,7 @@ export class MaterialApi extends BaseApi {
 
     constructor() {
         super()
-        this.#endpoint = new BaseEndpoint(this.http, '/lens-materials') 
+        this.#endpoint = new BaseEndpoint(this.http, import.meta.env.VITE_LENS_MATERIALS_ENDPOINT_PATH)
     }
 
     async getMaterials() {
