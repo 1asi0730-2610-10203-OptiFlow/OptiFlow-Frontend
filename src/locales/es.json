@@ -319,7 +319,7 @@
       "phonePlaceholder": "Ej. +51 987 654 321",
       "phoneRequired": "El teléfono es obligatorio",
       "email": "Correo Electrónico",
-      "emailPlaceholder": "Ej. contacto@lab.com",
+      "emailPlaceholder": "Ej. contacto{'@'}lab.com",
       "emailRequired": "El correo es obligatorio",
       "emailInvalid": "Ingresa un correo válido",
       "preview": "Vista previa",
@@ -632,7 +632,7 @@
       "phone": "Teléfono",
       "phonePlaceholder": "Ej. +51 987 654 321",
       "email": "Correo Electrónico",
-      "emailPlaceholder": "Ej. contacto@proveedor.com",
+      "emailPlaceholder": "Ej. contacto{'@'}proveedor.com",
       "emailInvalid": "Ingresa un correo válido",
       "preview": "Vista previa",
       "register": "Registrar"
