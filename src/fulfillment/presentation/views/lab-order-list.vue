@@ -4,6 +4,8 @@ import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
 import ContextMenu from 'primevue/contextmenu'
 import { useFulfillmentStore } from '../../application/fulfillment.store.js'
+import { useClinicalStore } from '../../../clinical/application/clinical.store.js'
+import { useSalesStore } from '../../../sales/application/sales.store.js'
 import KanbanBoard from '../components/kanban-board.vue'
 import WorkOrderDetailModal from '../components/work-order-detail-modal.vue'
 import NewWorkOrderModal from '../components/new-work-order-modal.vue'
@@ -12,6 +14,8 @@ import RegisterLaboratoryModal from '../components/register-laboratory-modal.vue
 
 const { t } = useI18n()
 const store = useFulfillmentStore()
+const clinicalStore = useClinicalStore()
+const salesStore = useSalesStore()
 const toast = useToast()
 
 const currentView = ref('kanban')
@@ -63,6 +67,10 @@ const chipColor = {
 onMounted(() => {
   store.loadWorkOrders()
   store.loadLaboratories()
+  clinicalStore.loadPatients()
+  clinicalStore.loadClinicalRecords()
+  clinicalStore.loadPrescriptions()
+  salesStore.fetchSales()
 })
 
 async function onStatusChanged({ workOrder, status }) {
