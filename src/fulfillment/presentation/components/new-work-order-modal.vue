@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { WorkOrder } from '../../domain/model/work-order.entity.js'
 import { useFulfillmentStore } from '../../application/fulfillment.store.js'
 import { useClinicalStore } from '../../../clinical/application/clinical.store.js'
+import { useSalesStore } from '../../../sales/application/sales.store.js'
 
 const { t } = useI18n()
 const emit = defineEmits(['save', 'close'])
@@ -14,17 +15,41 @@ const lensTypes = [
 ]
 const fulfillmentStore = useFulfillmentStore()
 const clinicalStore = useClinicalStore()
+const salesStore = useSalesStore()
 const laboratories = computed(() => fulfillmentStore.laboratories)
 const patients = computed(() => clinicalStore.patients)
 
 const form = ref({
-  patientName: '', laboratoryName: '', lensType: 'Lunas Progresivas',
+  patientId: null, patientName: '',
+  saleId: 0, recipeId: 0,
+  labId: 0, laboratoryName: '',
+  lensType: 'Lunas Progresivas',
   odSphere: '', odCylinder: '', odAxis: '',
   osSphere: '', osCylinder: '', osAxis: '',
   frame: '', orderDate: new Date().toISOString().split('T')[0],
   deliveryDate: '', priority: 'normal',
   deposit: '', total: ''
 })
+
+function onPatientChange() {
+  const patient = patients.value.find(p => p.id === form.value.patientId)
+  if (!patient) { form.value.patientName = ''; form.value.saleId = 0; form.value.recipeId = 0; return }
+  form.value.patientName = `${patient.firstName} ${patient.lastName}`
+  const patientSales = salesStore.sales.filter(s => s.patientId === patient.id)
+  form.value.saleId = patientSales.length > 0 ? patientSales[patientSales.length - 1].id : 0
+  const record = clinicalStore.getRecordForPatient(patient.id)
+  if (record) {
+    const rxs = clinicalStore.getPrescriptionsForRecord(record.id)
+    form.value.recipeId = rxs.length > 0 ? rxs[rxs.length - 1].id : 0
+  } else {
+    form.value.recipeId = 0
+  }
+}
+
+function onLabChange() {
+  const lab = laboratories.value.find(l => l.id === form.value.labId)
+  form.value.laboratoryName = lab ? lab.name : ''
+}
 
 const totalNum = computed(() => parseFloat(form.value.total) || 0)
 const depositNum = computed(() => parseFloat(form.value.deposit) || 0)
@@ -45,7 +70,7 @@ const submitted = ref(false)
 
 function validate() {
   const e = {}
-  if (!form.value.patientName) e.patientName = true
+  if (!form.value.patientId) e.patientName = true
   if (!form.value.deliveryDate) e.deliveryDate = true
   errors.value = e
   return Object.keys(e).length === 0
@@ -58,9 +83,9 @@ function onSubmit() {
   if (!validate()) return
   const workOrder = new WorkOrder({
     id: 0,
-    saleId: 0,
-    recipeId: 0,
-    labId: 0,
+    saleId: form.value.saleId,
+    recipeId: form.value.recipeId,
+    labId: form.value.labId,
     status: 'PENDING',
     deliveryDate:   form.value.deliveryDate,
     patientName:    form.value.patientName,
@@ -95,22 +120,23 @@ function onSubmit() {
         <div class="form-row">
           <div class="field">
             <label>{{ $t('labOrders.newOrderModal.patient') }} *</label>
-            <select 
-              v-model="form.patientName" 
-              class="form-select" 
+            <select
+              v-model="form.patientId"
+              class="form-select"
               :class="{ 'form-select--error': errors.patientName }"
-              @change="errors.patientName = false"
+              @change="onPatientChange(); errors.patientName = false"
             >
-              <option value="">{{ $t('labOrders.newOrderModal.selectPatient') }}</option>
-              <option v-for="patient in patients" :key="patient.id" :value="patient.firstName + ' ' + patient.lastName">
+              <option :value="null">{{ $t('labOrders.newOrderModal.selectPatient') }}</option>
+              <option v-for="patient in patients" :key="patient.id" :value="patient.id">
                 {{ patient.firstName }} {{ patient.lastName }}
               </option>
             </select>
           </div>
           <div class="field">
             <label>{{ $t('labOrders.newOrderModal.laboratory') }}</label>
-            <select v-model="form.laboratoryName" class="form-select">
-              <option v-for="lab in laboratories" :key="lab.id" :value="lab.name">
+            <select v-model="form.labId" class="form-select" @change="onLabChange">
+              <option :value="0">{{ $t('labOrders.newOrderModal.selectPatient') }}</option>
+              <option v-for="lab in laboratories" :key="lab.id" :value="lab.id">
                 {{ lab.name }}
               </option>
             </select>
