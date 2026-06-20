@@ -4,7 +4,7 @@ import { MaterialApi } from '../infrastructure/material-api.js'
 import { MaterialAssembler } from '../infrastructure/material.assembler.js'
 
 const materialApi = new MaterialApi()
-
+//use  calculator function
 export const useCalculatorStore = defineStore('calculator', () => {
     const materials = ref([])
     const loading = ref(false)
