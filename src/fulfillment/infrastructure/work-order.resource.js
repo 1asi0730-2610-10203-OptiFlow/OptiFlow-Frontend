@@ -8,7 +8,7 @@ export class WorkOrderResource {
                 } = {}) {
         this.saleId         = saleId
         this.recipeId       = recipeId
-        this.laboratoryId   = laboratoryId
+        this.labId          = laboratoryId
         this.status         = status
         this.deliveryDate   = deliveryDate
         this.patientName    = patientName
