@@ -18,6 +18,10 @@ export class WorkOrderApi extends BaseApi {
     }
 
     async updateOrderStatus(id, status) {
-        return await this.#endpoint.patch(id, { status })
+        const response = await this.http.patch(
+            `${import.meta.env.VITE_WORK_ORDERS_ENDPOINT_PATH}/${id}/status`,
+            { status }
+        )
+        return response.data
     }
 }
