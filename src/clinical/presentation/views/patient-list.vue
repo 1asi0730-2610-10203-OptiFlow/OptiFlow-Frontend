@@ -1,8 +1,9 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ContextMenu from 'primevue/contextmenu'
 import { useClinicalStore } from '../../application/clinical.store.js'
+import { eventBus } from '../../../shared/infrastructure/event-bus.js'
 import ModalAddPatient from '../components/modal-add-patient.vue'
 import ModalSuccess    from '../components/modal-success.vue'
 import ModalHce        from '../components/modal-hce.vue'
@@ -77,11 +78,14 @@ const pagedPatients = computed(() => {
 })
 
 // ── Lifecycle ───────────────────────────────────────────────────────────
+let unsubAddPatient
 onMounted(async () => {
     await store.loadPatients()
     await store.loadClinicalRecords()
     await store.loadPrescriptions()
+    unsubAddPatient = eventBus.on('ui:open:add-patient', () => { showAddPatient.value = true })
 })
+onUnmounted(() => { unsubAddPatient?.() })
 
 // ── Actions ─────────────────────────────────────────────────────────────
 async function onAddPatient(data) {

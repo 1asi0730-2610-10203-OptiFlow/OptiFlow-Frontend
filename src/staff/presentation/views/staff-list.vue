@@ -1,8 +1,9 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useStaffStore } from '../../application/staff.store.js'
 import { useI18n } from 'vue-i18n'
 import ContextMenu from 'primevue/contextmenu'
+import { eventBus } from '../../../shared/infrastructure/event-bus.js'
 import StaffFormModal from '../components/staff-form-modal.vue'
 import StaffDetailModal from '../components/staff-detail-modal.vue'
 
@@ -64,9 +65,12 @@ function onRowClick(event) {
   showDetailModal.value = true
 }
 
+let unsubAddStaff
 onMounted(() => {
   store.fetchStaff()
+  unsubAddStaff = eventBus.on('ui:open:add-staff', () => { showAddModal.value = true })
 })
+onUnmounted(() => { unsubAddStaff?.() })
 
 const getInitials = (name) => {
   if (!name) return ''
