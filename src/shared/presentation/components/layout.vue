@@ -15,7 +15,7 @@ import GlobalSearch    from './global-search.vue'
       </div>
       <div class="page-wrapper">
         <router-view v-slot="{ Component }">
-          <transition name="page" mode="out-in">
+          <transition name="page">
             <component :is="Component" />
           </transition>
         </router-view>
@@ -44,5 +44,5 @@ import GlobalSearch    from './global-search.vue'
   border-bottom: 1px solid #f3f4f6; flex-shrink: 0;
 }
 
-.page-wrapper { flex: 1; overflow-y: auto; }
+.page-wrapper { flex: 1; overflow-y: auto; position: relative; }
 </style>
