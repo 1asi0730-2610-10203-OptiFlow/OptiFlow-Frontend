@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useModalAnimation } from '../../../shared/presentation/composables/use-modal-animation.js'
 
 const { t } = useI18n()
 
@@ -9,6 +10,7 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['approved', 'rejected', 'close'])
+const { isClosing, requestClose, onOverlayAnimEnd } = useModalAnimation(emit)
 
 const checks = ref({
   sphereMatch:  false,
@@ -26,7 +28,7 @@ const allChecked = computed(() => Object.values(checks.value).every(Boolean))
 </script>
 
 <template>
-  <div class="overlay" @click="emit('close')">
+  <div class="overlay" :class="{ 'overlay--closing': isClosing }" @click="requestClose" @animationend.self="onOverlayAnimEnd">
     <div class="modal" @click.stop>
 
       <!-- Header -->
@@ -40,7 +42,7 @@ const allChecked = computed(() => Object.values(checks.value).every(Boolean))
             <span class="order-patient">{{ workOrder.patientName }}</span>
           </p>
         </div>
-        <button class="close-btn" @click="emit('close')">
+        <button class="close-btn" @click="requestClose">
           <i class="pi pi-times" />
         </button>
       </div>
@@ -115,7 +117,7 @@ const allChecked = computed(() => Object.values(checks.value).every(Boolean))
 
       <!-- Footer -->
       <div class="modal-footer">
-        <button class="btn-cancel" @click="emit('close')">
+        <button class="btn-cancel" @click="requestClose">
           {{ $t('common.cancel') }}
         </button>
         <button class="btn-reject" @click="emit('rejected')">

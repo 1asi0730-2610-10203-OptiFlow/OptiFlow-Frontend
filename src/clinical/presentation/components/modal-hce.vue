@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { useClinicalStore } from '../../application/clinical.store.js'
 import ModalNewExam from './modal-new-exam.vue'
 import ModalSuccess from './modal-success.vue'
+import { useModalAnimation } from '../../../shared/presentation/composables/use-modal-animation.js'
 
 const { t } = useI18n()
 
@@ -11,6 +12,7 @@ const props = defineProps({
     patient: { type: Object, required: true }
 })
 const emit = defineEmits(['close'])
+const { isClosing, requestClose, onOverlayAnimEnd } = useModalAnimation(emit)
 
 const store = useClinicalStore()
 
@@ -89,7 +91,7 @@ function onSuccessNext() {
     />
 
     <!-- HCE Modal -->
-    <div v-if="!showSuccess && !showNewExam" class="overlay" @click="emit('close')">
+    <div v-if="!showSuccess && !showNewExam" class="overlay" :class="{ 'overlay--closing': isClosing }" @click="requestClose" @animationend.self="onOverlayAnimEnd">
         <div class="modal" @click.stop>
             <!-- Header -->
             <div class="modal-header">
@@ -103,7 +105,7 @@ function onSuccessNext() {
                         </p>
                     </div>
                 </div>
-                <button class="close-btn" @click="emit('close')"><i class="pi pi-times" /></button>
+                <button class="close-btn" @click="requestClose"><i class="pi pi-times" /></button>
             </div>
 
             <!-- Tabs -->

@@ -110,3 +110,24 @@ body {
   color: #00c1b0;
   transform: scale(1.1);
 }
+
+/* ── Modal open / close animations ───────────────────────────────────────── */
+@keyframes overlay-in  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes overlay-out { from { opacity: 1; } to { opacity: 0; } }
+
+@keyframes modal-rise {
+  from { opacity: 0; transform: translateY(22px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+@keyframes modal-drop {
+  from { opacity: 1; transform: translateY(0)    scale(1);    }
+  to   { opacity: 0; transform: translateY(14px) scale(0.97); }
+}
+
+/* Entrance — applies to every .overlay/.modal pair not already animated */
+.overlay                { animation: overlay-in  0.20s ease; }
+.overlay > .modal       { animation: modal-rise  0.26s cubic-bezier(0.34, 1.2, 0.64, 1); }
+
+/* Exit — triggered by adding .overlay--closing from useModalAnimation */
+.overlay--closing              { animation: overlay-out 0.18s ease forwards; pointer-events: none; }
+.overlay--closing > .modal     { animation: modal-drop  0.16s ease forwards; }

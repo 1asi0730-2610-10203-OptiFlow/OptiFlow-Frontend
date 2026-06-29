@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import axios from 'axios'
+import { useModalAnimation } from '../../../shared/presentation/composables/use-modal-animation.js'
 
 const { t } = useI18n()
 
@@ -10,6 +11,7 @@ const props = defineProps({
     recordId: { type: Number, required: true }
 })
 const emit = defineEmits(['save', 'close'])
+const { isClosing, requestClose, onOverlayAnimEnd } = useModalAnimation(emit)
 
 const activeTab = ref('manual') // 'manual' | 'upload'
 
@@ -104,7 +106,7 @@ function triggerFileInput() {
 </script>
 
 <template>
-    <div class="overlay" @click="emit('close')">
+    <div class="overlay" :class="{ 'overlay--closing': isClosing }" @click="requestClose" @animationend.self="onOverlayAnimEnd">
         <div class="modal" @click.stop>
             <!-- Header -->
             <div class="modal-header">
@@ -112,7 +114,7 @@ function triggerFileInput() {
                     <h3 class="modal-title">{{ $t('patients.newExam.title') }}</h3>
                     <p class="modal-subtitle">{{ $t('patients.newExam.patientLabel') }}: {{ patient.fullName }}</p>
                 </div>
-                <button class="close-btn" @click="emit('close')"><i class="pi pi-times" /></button>
+                <button class="close-btn" @click="requestClose"><i class="pi pi-times" /></button>
             </div>
 
             <!-- Tabs -->
