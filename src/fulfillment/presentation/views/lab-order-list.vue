@@ -1,11 +1,12 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
 import ContextMenu from 'primevue/contextmenu'
 import { useFulfillmentStore } from '../../application/fulfillment.store.js'
 import { useClinicalStore } from '../../../clinical/application/clinical.store.js'
 import { useSalesStore } from '../../../sales/application/sales.store.js'
+import { eventBus } from '../../../shared/infrastructure/event-bus.js'
 import KanbanBoard from '../components/kanban-board.vue'
 import WorkOrderDetailModal from '../components/work-order-detail-modal.vue'
 import NewWorkOrderModal from '../components/new-work-order-modal.vue'
@@ -64,6 +65,7 @@ const chipColor = {
   yellow: 'chip--yellow', teal: 'chip--teal', purple: 'chip--purple', green: 'chip--green'
 }
 
+let unsubNewLabOrder
 onMounted(() => {
   store.loadWorkOrders()
   store.loadLaboratories()
@@ -71,7 +73,9 @@ onMounted(() => {
   clinicalStore.loadClinicalRecords()
   clinicalStore.loadPrescriptions()
   salesStore.fetchSales()
+  unsubNewLabOrder = eventBus.on('ui:open:new-lab-order', () => { showNewOrderModal.value = true })
 })
+onUnmounted(() => { unsubNewLabOrder?.() })
 
 async function onStatusChanged({ workOrder, status }) {
   // Regla de negocio: QC → READY requiere pasar el formulario de QA

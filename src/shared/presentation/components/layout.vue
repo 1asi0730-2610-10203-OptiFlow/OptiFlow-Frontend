@@ -1,10 +1,7 @@
 <script setup>
-import { useRoute } from 'vue-router'
 import AppSidebar      from './app-sidebar.vue'
 import LanguageSwitcher from './language-switcher.vue'
 import GlobalSearch    from './global-search.vue'
-
-const route = useRoute()
 </script>
 
 <template>
@@ -18,8 +15,8 @@ const route = useRoute()
       </div>
       <div class="page-wrapper">
         <router-view v-slot="{ Component }">
-          <transition name="page" mode="out-in">
-            <component :is="Component" :key="route.fullPath" />
+          <transition name="page">
+            <component :is="Component" />
           </transition>
         </router-view>
       </div>
@@ -47,5 +44,5 @@ const route = useRoute()
   border-bottom: 1px solid #f3f4f6; flex-shrink: 0;
 }
 
-.page-wrapper { flex: 1; overflow-y: auto; }
+.page-wrapper { flex: 1; overflow-y: auto; position: relative; }
 </style>

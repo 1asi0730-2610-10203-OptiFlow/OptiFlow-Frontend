@@ -1,9 +1,10 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 import { useSalesStore } from '../../application/sales.store.js'
+import { eventBus } from '../../../shared/infrastructure/event-bus.js'
 import SaleTable from '../components/sale-table.vue'
 import SaleFormModal from '../components/sale-form-modal.vue'
 import PaymentForm from '../components/payment-form.vue'
@@ -45,9 +46,12 @@ const filteredSales = computed(() => {
   return list
 })
 
+let unsubNewSale
 onMounted(() => {
   store.fetchSales()
+  unsubNewSale = eventBus.on('ui:open:new-sale', () => { showNewSaleModal.value = true })
 })
+onUnmounted(() => { unsubNewSale?.() })
 
 async function onSaleCreated(sale) {
   await store.createSale(sale)

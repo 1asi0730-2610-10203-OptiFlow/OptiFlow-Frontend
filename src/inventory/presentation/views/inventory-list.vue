@@ -144,7 +144,7 @@ const existingSkus = computed(() =>
     store.products.map(product => (product.sku || '').toUpperCase())
 )
 
-let unsubCreated, unsubUpdated, unsubRestocked, unsubLowAlert
+let unsubCreated, unsubUpdated, unsubRestocked, unsubLowAlert, unsubAddProduct, unsubBulkRestock, unsubAuditLog
 
 onMounted(async () => {
   store.loadProducts()
@@ -189,6 +189,10 @@ onMounted(async () => {
       life: 4000
     })
   })
+
+  unsubAddProduct   = eventBus.on('ui:open:add-product',   () => { showAddProduct.value = true })
+  unsubBulkRestock  = eventBus.on('ui:open:bulk-restock',  () => { showBulkRestock.value = true })
+  unsubAuditLog     = eventBus.on('ui:open:audit-log',     () => { showAuditLog.value = true })
 })
 
 onUnmounted(() => {
@@ -196,6 +200,9 @@ onUnmounted(() => {
   unsubUpdated?.()
   unsubRestocked?.()
   unsubLowAlert?.()
+  unsubAddProduct?.()
+  unsubBulkRestock?.()
+  unsubAuditLog?.()
 })
 
 function clearFilters() {

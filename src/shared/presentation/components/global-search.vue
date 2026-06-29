@@ -2,6 +2,7 @@
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { eventBus } from '../../../shared/infrastructure/event-bus.js'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -59,42 +60,49 @@ const allActions = computed(() => [
   {
     id: 'action-new-sale', category: 'actions',
     label: t('sales.newSale'), icon: 'pi pi-receipt', route: '/sales',
+    action: 'ui:open:new-sale',
     description: t('nav.sales'),
     keywords: ['new sale', 'create sale', 'nueva venta', 'pos', 'cobrar', 'facturar'],
   },
   {
     id: 'action-add-patient', category: 'actions',
     label: t('patients.addPatient'), icon: 'pi pi-user-plus', route: '/patients',
+    action: 'ui:open:add-patient',
     description: t('nav.patients'),
     keywords: ['add patient', 'new patient', 'agregar paciente', 'registrar paciente'],
   },
   {
     id: 'action-new-lab-order', category: 'actions',
     label: t('labOrders.newOrder'), icon: 'pi pi-file-edit', route: '/lab-orders',
+    action: 'ui:open:new-lab-order',
     description: t('nav.labOrders'),
     keywords: ['new order', 'lab order', 'nueva orden', 'crear orden', 'trabajo lab'],
   },
   {
     id: 'action-add-inventory', category: 'actions',
     label: t('inventory.addItem'), icon: 'pi pi-plus-circle', route: '/inventory',
+    action: 'ui:open:add-product',
     description: t('nav.inventory'),
     keywords: ['add item', 'new product', 'agregar artículo', 'nuevo producto'],
   },
   {
     id: 'action-restock', category: 'actions',
     label: t('inventory.restock'), icon: 'pi pi-refresh', route: '/inventory',
+    action: 'ui:open:bulk-restock',
     description: t('nav.inventory'),
     keywords: ['restock', 'replenish', 'reabastecer', 'reponer', 'stock bajo'],
   },
   {
     id: 'action-add-staff', category: 'actions',
     label: t('staff.addEmployee'), icon: 'pi pi-user-plus', route: '/staff',
+    action: 'ui:open:add-staff',
     description: t('nav.staff'),
     keywords: ['add employee', 'new staff', 'agregar empleado', 'nuevo personal'],
   },
   {
     id: 'action-view-audit', category: 'actions',
     label: t('inventory.viewAudit'), icon: 'pi pi-history', route: '/inventory',
+    action: 'ui:open:audit-log',
     description: t('nav.inventory'),
     keywords: ['audit', 'history', 'auditoría', 'historial', 'registro stock'],
   },
@@ -107,24 +115,28 @@ const allActions = computed(() => [
   {
     id: 'action-add-role', category: 'actions',
     label: t('settings.roles.addRole'), icon: 'pi pi-shield', route: '/settings',
+    action: 'ui:open:add-role',
     description: t('settings.roles.subtitle'),
     keywords: ['add role', 'new role', 'agregar rol', 'nuevo rol', 'permissions', 'permisos', 'roles'],
   },
   {
     id: 'action-business-info', category: 'actions',
     label: t('settings.business.title'), icon: 'pi pi-building', route: '/settings',
+    action: 'ui:open:business-info',
     description: t('settings.business.subtitle'),
     keywords: ['business', 'company', 'empresa', 'negocio', 'información negocio', 'business info'],
   },
   {
     id: 'action-security', category: 'actions',
     label: t('settings.security.title'), icon: 'pi pi-lock', route: '/settings',
+    action: 'ui:open:security',
     description: t('settings.security.subtitle'),
     keywords: ['security', 'seguridad', '2fa', 'password', 'contraseña', 'encryption', 'cifrado', 'logout'],
   },
   {
     id: 'action-backup', category: 'actions',
     label: t('settings.backup.title'), icon: 'pi pi-database', route: '/settings',
+    action: 'ui:open:backup',
     description: t('settings.backup.subtitle'),
     keywords: ['backup', 'backups', 'data', 'datos', 'copias', 'respaldo', 'storage', 'almacenamiento'],
   },
@@ -164,9 +176,10 @@ function close() {
   activeIndex.value = -1
 }
 
-function select(action) {
-  router.push(action.route)
+async function select(action) {
   close()
+  await router.push(action.route).catch(() => {})
+  if (action.action) eventBus.emit(action.action)
 }
 
 function onKey(e) {

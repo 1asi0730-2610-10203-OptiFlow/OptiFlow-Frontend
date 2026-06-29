@@ -1,7 +1,8 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { RolesApi } from '../../infrastructure/roles-api.js';
+import { eventBus } from '../../../shared/infrastructure/event-bus.js';
 import { RoleAssembler } from '../../infrastructure/role.assembler.js';
 import RoleListItem from '../components/role-list-item.vue';
 import RolesSummary from '../components/roles-summary.vue';
@@ -262,9 +263,17 @@ const handleSaveRole = async (newRoleData) => {
   }
 };
 
+let unsubAddRole, unsubBusiness, unsubSecurity, unsubBackup
 onMounted(() => {
   fetchData();
-});
+  unsubAddRole  = eventBus.on('ui:open:add-role',       () => { showAddDialog.value = true })
+  unsubBusiness = eventBus.on('ui:open:business-info',  () => openEditBusinessDialog())
+  unsubSecurity = eventBus.on('ui:open:security',       () => openEditSecurityDialog())
+  unsubBackup   = eventBus.on('ui:open:backup',         () => openEditBackupDialog())
+})
+onUnmounted(() => {
+  unsubAddRole?.(); unsubBusiness?.(); unsubSecurity?.(); unsubBackup?.()
+})
 </script>
 
 <template>
