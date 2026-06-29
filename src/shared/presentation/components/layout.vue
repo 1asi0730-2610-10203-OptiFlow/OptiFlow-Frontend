@@ -1,6 +1,7 @@
 <script setup>
 import AppSidebar      from './app-sidebar.vue'
 import LanguageSwitcher from './language-switcher.vue'
+import GlobalSearch    from './global-search.vue'
 </script>
 
 <template>
@@ -9,6 +10,7 @@ import LanguageSwitcher from './language-switcher.vue'
 
     <main class="main-content">
       <div class="topbar">
+        <GlobalSearch />
         <LanguageSwitcher />
       </div>
       <div class="page-wrapper">
@@ -33,7 +35,7 @@ import LanguageSwitcher from './language-switcher.vue'
 }
 
 .topbar {
-  display: flex; justify-content: flex-end; align-items: center;
+  display: flex; justify-content: space-between; align-items: center;
   padding: 10px 28px; background: #fff;
   border-bottom: 1px solid #f3f4f6; flex-shrink: 0;
 }
