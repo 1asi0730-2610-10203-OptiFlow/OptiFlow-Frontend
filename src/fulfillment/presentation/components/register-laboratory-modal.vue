@@ -2,9 +2,11 @@
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Laboratory } from '../../domain/model/laboratory.entity.js'
+import { useModalAnimation } from '../../../shared/presentation/composables/use-modal-animation.js'
 
 const { t } = useI18n()
 const emit = defineEmits(['save', 'close'])
+const { isClosing, requestClose, onOverlayAnimEnd } = useModalAnimation(emit)
 
 const form = ref({ name: '', phone: '', email: '' })
 const errors = ref({})
@@ -35,13 +37,13 @@ function onRegister() {
   submitted.value = true
   if (!validate()) return
   emit('save', buildLab())
-  emit('close')
+  requestClose()
 }
 
 </script>
 
 <template>
-  <div class="overlay" @click="emit('close')">
+  <div class="overlay" :class="{ 'overlay--closing': isClosing }" @click="requestClose" @animationend.self="onOverlayAnimEnd">
     <div class="modal" @click.stop>
 
       <!-- Header -->
@@ -55,7 +57,7 @@ function onRegister() {
           <h3 class="modal-title">{{ $t('labOrders.registerLabModal.title') }}</h3>
           <p class="modal-subtitle">{{ $t('labOrders.registerLabModal.subtitle') }}</p>
         </div>
-        <button class="close-btn" @click="emit('close')">
+        <button class="close-btn" @click="requestClose">
           <i class="pi pi-times" />
         </button>
       </div>
@@ -159,7 +161,7 @@ function onRegister() {
 
       <!-- Footer -->
       <div class="modal-footer">
-        <button class="btn-cancel" @click="emit('close')">
+        <button class="btn-cancel" @click="requestClose">
           <i class="pi pi-times" />
           {{ $t('common.cancel') }}
         </button>

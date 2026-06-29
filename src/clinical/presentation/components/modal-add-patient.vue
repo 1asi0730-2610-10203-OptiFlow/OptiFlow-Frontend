@@ -1,9 +1,11 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useModalAnimation } from '../../../shared/presentation/composables/use-modal-animation.js'
 
 const { t } = useI18n()
 const emit = defineEmits(['save', 'close'])
+const { isClosing, requestClose, onOverlayAnimEnd } = useModalAnimation(emit)
 
 const form = ref({
     fullName:  '',
@@ -60,14 +62,14 @@ function onSubmit() {
 </script>
 
 <template>
-    <div class="overlay" @click="emit('close')">
+    <div class="overlay" :class="{ 'overlay--closing': isClosing }" @click="requestClose" @animationend.self="onOverlayAnimEnd">
         <div class="modal" @click.stop>
             <div class="modal-header">
                 <div>
                     <h3 class="modal-title">{{ $t('patients.addModal.title') }}</h3>
                     <p class="modal-subtitle">{{ $t('patients.addModal.subtitle') }}</p>
                 </div>
-                <button class="close-btn" @click="emit('close')"><i class="pi pi-times" /></button>
+                <button class="close-btn" @click="requestClose"><i class="pi pi-times" /></button>
             </div>
 
             <div class="modal-body">
@@ -141,7 +143,7 @@ function onSubmit() {
             </div>
 
             <div class="modal-footer">
-                <button class="btn-cancel" @click="emit('close')">{{ $t('common.cancel') }}</button>
+                <button class="btn-cancel" @click="requestClose">{{ $t('common.cancel') }}</button>
                 <button class="btn-save" @click="onSubmit">{{ $t('patients.addModal.register') }}</button>
             </div>
         </div>

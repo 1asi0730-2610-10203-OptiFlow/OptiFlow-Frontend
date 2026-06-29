@@ -4,9 +4,11 @@ import { useI18n } from 'vue-i18n'
 import { Supplier } from '../../domain/model/supplier.entity.js'
 import { SupplierAssembler } from '../../infrastructure/supplier.assembler.js'
 import { SupplierApi } from '../../infrastructure/supplier-api.js'
+import { useModalAnimation } from '../../../shared/presentation/composables/use-modal-animation.js'
 
 const { t } = useI18n()
 const emit = defineEmits(['register', 'close'])
+const { isClosing, requestClose, onOverlayAnimEnd } = useModalAnimation(emit)
 
 const supplierApi = new SupplierApi()
 
@@ -41,12 +43,12 @@ async function onRegister() {
   const resource = SupplierAssembler.toResourceFromEntity(supplier)
   await supplierApi.createSupplier(resource)
   emit('register', supplier)
-  emit('close')
+  requestClose()
 }
 </script>
 
 <template>
-  <div class="overlay" @click="emit('close')">
+  <div class="overlay" :class="{ 'overlay--closing': isClosing }" @click="requestClose" @animationend.self="onOverlayAnimEnd">
     <div class="modal" @click.stop>
 
       <!-- Header -->
@@ -60,7 +62,7 @@ async function onRegister() {
           <h3 class="modal-title">{{ $t('inventory.supplierModal.title') }}</h3>
           <p class="modal-subtitle">{{ $t('inventory.supplierModal.subtitle') }}</p>
         </div>
-        <button class="close-btn" @click="emit('close')">
+        <button class="close-btn" @click="requestClose">
           <i class="pi pi-times" />
         </button>
       </div>
@@ -171,7 +173,7 @@ async function onRegister() {
 
       <!-- Footer -->
       <div class="modal-footer">
-        <button class="btn-cancel" @click="emit('close')">
+        <button class="btn-cancel" @click="requestClose">
           <i class="pi pi-times" />
           {{ $t('common.cancel') }}
         </button>

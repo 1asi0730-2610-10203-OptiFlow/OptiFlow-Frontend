@@ -5,9 +5,11 @@ import { WorkOrder } from '../../domain/model/work-order.entity.js'
 import { useFulfillmentStore } from '../../application/fulfillment.store.js'
 import { useClinicalStore } from '../../../clinical/application/clinical.store.js'
 import { useSalesStore } from '../../../sales/application/sales.store.js'
+import { useModalAnimation } from '../../../shared/presentation/composables/use-modal-animation.js'
 
 const { t } = useI18n()
 const emit = defineEmits(['save', 'close'])
+const { isClosing, requestClose, onOverlayAnimEnd } = useModalAnimation(emit)
 
 const lensTypes = [
   'Lunas Progresivas', 'Lunas Monofocales', 'Lunas Bifocales',
@@ -103,14 +105,14 @@ function onSubmit() {
 </script>
 
 <template>
-  <div class="overlay" @click="emit('close')">
+  <div class="overlay" :class="{ 'overlay--closing': isClosing }" @click="requestClose" @animationend.self="onOverlayAnimEnd">
     <div class="modal" @click.stop>
       <div class="modal-header">
         <div>
           <h3 class="modal-title">{{ $t('labOrders.newOrderModal.title') }}</h3>
           <p class="modal-subtitle">{{ $t('labOrders.newOrderModal.subtitle') }}</p>
         </div>
-        <button class="close-btn" @click="emit('close')">
+        <button class="close-btn" @click="requestClose">
           <i class="pi pi-times" />
         </button>
       </div>
@@ -237,7 +239,7 @@ function onSubmit() {
       </div>
 
       <div class="modal-footer">
-        <button class="btn-cancel" @click="emit('close')">{{ $t('common.cancel') }}</button>
+        <button class="btn-cancel" @click="requestClose">{{ $t('common.cancel') }}</button>
         <button class="btn-save" @click="onSubmit">{{ $t('labOrders.newOrderModal.createOrder') }}</button>
       </div>
     </div>

@@ -1,7 +1,10 @@
 <script setup>
+import { useRoute } from 'vue-router'
 import AppSidebar      from './app-sidebar.vue'
 import LanguageSwitcher from './language-switcher.vue'
 import GlobalSearch    from './global-search.vue'
+
+const route = useRoute()
 </script>
 
 <template>
@@ -14,7 +17,11 @@ import GlobalSearch    from './global-search.vue'
         <LanguageSwitcher />
       </div>
       <div class="page-wrapper">
-        <router-view />
+        <router-view v-slot="{ Component }">
+          <transition name="page" mode="out-in">
+            <component :is="Component" :key="route.fullPath" />
+          </transition>
+        </router-view>
       </div>
     </main>
 

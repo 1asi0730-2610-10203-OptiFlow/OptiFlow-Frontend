@@ -1,10 +1,12 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useModalAnimation } from '../../../shared/presentation/composables/use-modal-animation.js'
 
 const props = defineProps({
   products: { type: Array, default: () => [] }
 })
 const emit = defineEmits(['close'])
+const { isClosing, requestClose, onOverlayAnimEnd } = useModalAnimation(emit)
 
 const BASE = import.meta.env.VITE_OPTIFLOW_API_URL
 
@@ -88,7 +90,7 @@ function docLabel(t) {
 </script>
 
 <template>
-  <div class="overlay" @click="emit('close')">
+  <div class="overlay" :class="{ 'overlay--closing': isClosing }" @click="requestClose" @animationend.self="onOverlayAnimEnd">
     <div class="modal" @click.stop>
 
       <div class="modal-header">
@@ -99,7 +101,7 @@ function docLabel(t) {
             <p class="modal-subtitle">Registro de entradas y salidas por producto</p>
           </div>
         </div>
-        <button class="close-btn" @click="emit('close')"><i class="pi pi-times" /></button>
+        <button class="close-btn" @click="requestClose"><i class="pi pi-times" /></button>
       </div>
 
       <div class="filters-bar">
@@ -168,7 +170,7 @@ function docLabel(t) {
       </div>
 
       <div class="modal-footer">
-        <button class="btn-close" @click="emit('close')">Cerrar</button>
+        <button class="btn-close" @click="requestClose">Cerrar</button>
       </div>
 
     </div>

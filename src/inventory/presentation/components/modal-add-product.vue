@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useInventoryStore } from '../../application/inventory.store.js'
+import { useModalAnimation } from '../../../shared/presentation/composables/use-modal-animation.js'
 
 const inventoryStore = useInventoryStore()
 const suppliers = computed(() => inventoryStore.suppliers)
@@ -11,6 +12,7 @@ const props = defineProps({
   existingSkus: { type: Array, default: () => [] }
 })
 const emit = defineEmits(['save', 'close'])
+const { isClosing, requestClose, onOverlayAnimEnd } = useModalAnimation(emit)
 
 const categories = ['Lunas', 'Armazones', 'Accesorios', 'Lentes de Contacto', 'Lentes de Sol', 'Equipos']
 
@@ -61,14 +63,14 @@ function onSubmit() {
 </script>
 
 <template>
-  <div class="overlay" @click="emit('close')">
+  <div class="overlay" :class="{ 'overlay--closing': isClosing }" @click="requestClose" @animationend.self="onOverlayAnimEnd">
     <div class="modal" @click.stop>
       <div class="modal-header">
         <div>
           <h3 class="modal-title">{{ $t('inventory.addModal.title') }}</h3>
           <p class="modal-subtitle">{{ $t('inventory.addModal.subtitle') }}</p>
         </div>
-        <button class="close-btn" @click="emit('close')">
+        <button class="close-btn" @click="requestClose">
           <i class="pi pi-times" />
         </button>
       </div>
@@ -156,7 +158,7 @@ function onSubmit() {
       </div>
 
       <div class="modal-footer">
-        <button class="btn-cancel" @click="emit('close')">{{ $t('common.cancel') }}</button>
+        <button class="btn-cancel" @click="requestClose">{{ $t('common.cancel') }}</button>
         <button class="btn-save" @click="onSubmit">{{ $t('inventory.addModal.addItem') }}</button>
       </div>
     </div>

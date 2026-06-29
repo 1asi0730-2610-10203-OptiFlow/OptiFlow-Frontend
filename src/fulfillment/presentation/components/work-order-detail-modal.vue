@@ -1,5 +1,6 @@
 <script setup>
 import { useI18n } from 'vue-i18n'
+import { useModalAnimation } from '../../../shared/presentation/composables/use-modal-animation.js'
 
 const { t } = useI18n()
 
@@ -7,6 +8,7 @@ const props = defineProps({
   workOrder: { type: Object, required: true }
 })
 const emit = defineEmits(['close', 'statusChanged'])
+const { isClosing, requestClose, onOverlayAnimEnd } = useModalAnimation(emit)
 
 const ORDER_FLOW = ['PENDING', 'IN_PRODUCTION', 'QUALITY_CONTROL', 'READY', 'DELIVERED']
 
@@ -39,12 +41,12 @@ function currentIndex() {
 
 function onAdvance() {
   const next = nextStatus[props.workOrder.status]
-  if (next) { emit('statusChanged', next); emit('close') }
+  if (next) { emit('statusChanged', next); requestClose() }
 }
 
 function onGoBack() {
   const previous = previousStatus[props.workOrder.status]
-  if (previous) { emit('statusChanged', previous); emit('close') }
+  if (previous) { emit('statusChanged', previous); requestClose() }
 }
 
 function priorityChipClass() {
@@ -56,7 +58,7 @@ function priorityChipClass() {
 </script>
 
 <template>
-  <div class="overlay" @click="emit('close')">
+  <div class="overlay" :class="{ 'overlay--closing': isClosing }" @click="requestClose" @animationend.self="onOverlayAnimEnd">
     <div class="modal" @click.stop>
 
       <div class="modal-header">
@@ -64,7 +66,7 @@ function priorityChipClass() {
           <p class="order-id-small">{{ workOrder.id }}</p>
           <h3 class="order-patient">{{ workOrder.patientName }}</h3>
         </div>
-        <button class="close-btn" @click="emit('close')">
+        <button class="close-btn" @click="requestClose">
           <i class="pi pi-times" />
         </button>
       </div>
