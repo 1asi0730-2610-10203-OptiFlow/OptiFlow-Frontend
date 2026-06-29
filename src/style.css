@@ -49,3 +49,18 @@ body {
 .mb-4 {
   margin-bottom: 16px;
 }
+
+/* ── Page transitions ─────────────────────────────────────────────────────── */
+.page-enter-active {
+  transition: opacity 0.24s ease, transform 0.24s ease;
+}
+.page-leave-active {
+  transition: opacity 0.16s ease;
+}
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.page-leave-to {
+  opacity: 0;
+}
