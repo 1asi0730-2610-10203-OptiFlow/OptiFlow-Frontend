@@ -638,6 +638,21 @@
       "register": "Registrar"
     }
   },
+  "search": {
+    "placeholder": "Buscar en OptiFlow...",
+    "inputPlaceholder": "Buscar acciones y páginas...",
+    "shortcutHint": "Buscar (Ctrl+K)",
+    "noResults": "Sin resultados para",
+    "categories": {
+      "navigation": "Navegación",
+      "actions": "Acciones Rápidas"
+    },
+    "hint": {
+      "navigate": "navegar",
+      "select": "seleccionar",
+      "close": "cerrar"
+    }
+  },
   "staff": {
     "pageTitle": "Gestión de Personal",
     "pageSubtitle": "Administra al personal y sus permisos de acceso",
