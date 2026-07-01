@@ -178,15 +178,15 @@ function onSubmit() {
             </div>
             <div class="recipe-data-row">
               <span class="eye-label">{{ $t('labOrders.newOrderModal.rightEye') }}</span>
-              <input v-model="form.odSphere"   class="recipe-input" placeholder="-2.50" />
-              <input v-model="form.odCylinder" class="recipe-input" placeholder="-0.75" />
-              <input v-model="form.odAxis"     class="recipe-input" placeholder="90" />
+              <input v-model="form.odSphere"   class="recipe-input" :placeholder="$t('labOrders.newOrderModal.spherePlaceholder')" />
+              <input v-model="form.odCylinder" class="recipe-input" :placeholder="$t('labOrders.newOrderModal.cylinderPlaceholder')" />
+              <input v-model="form.odAxis"     class="recipe-input" :placeholder="$t('labOrders.newOrderModal.axisPlaceholder')" />
             </div>
             <div class="recipe-data-row">
               <span class="eye-label">{{ $t('labOrders.newOrderModal.leftEye') }}</span>
-              <input v-model="form.osSphere"   class="recipe-input" placeholder="-2.75" />
-              <input v-model="form.osCylinder" class="recipe-input" placeholder="-0.50" />
-              <input v-model="form.osAxis"     class="recipe-input" placeholder="85" />
+              <input v-model="form.osSphere"   class="recipe-input" :placeholder="$t('labOrders.newOrderModal.spherePlaceholder')" />
+              <input v-model="form.osCylinder" class="recipe-input" :placeholder="$t('labOrders.newOrderModal.cylinderPlaceholder')" />
+              <input v-model="form.osAxis"     class="recipe-input" :placeholder="$t('labOrders.newOrderModal.axisPlaceholder')" />
             </div>
           </div>
         </div>
@@ -195,7 +195,7 @@ function onSubmit() {
         <div class="form-row form-row--3">
           <div class="field">
             <label>{{ $t('labOrders.newOrderModal.frame') }}</label>
-            <input v-model="form.frame" class="form-input" placeholder="Ej. Ray-Ban RB5228" />
+            <input v-model="form.frame" class="form-input" :placeholder="$t('labOrders.newOrderModal.framePlaceholder')" />
           </div>
           <div class="field">
             <label>{{ $t('labOrders.newOrderModal.orderDate') }}</label>
@@ -217,11 +217,11 @@ function onSubmit() {
         <div class="form-row">
           <div class="field">
             <label>{{ $t('labOrders.newOrderModal.totalAmount') }}</label>
-            <input v-model="form.total" type="number" min="0" step="0.01" class="form-input" placeholder="0.00" />
+            <input v-model="form.total" type="number" min="0" step="0.01" class="form-input" :placeholder="$t('labOrders.newOrderModal.amountPlaceholder')" />
           </div>
           <div class="field">
             <label>{{ $t('labOrders.newOrderModal.deposit') }}</label>
-            <input v-model="form.deposit" type="number" min="0" step="0.01" class="form-input" placeholder="0.00" />
+            <input v-model="form.deposit" type="number" min="0" step="0.01" class="form-input" :placeholder="$t('labOrders.newOrderModal.amountPlaceholder')" />
           </div>
         </div>
 
