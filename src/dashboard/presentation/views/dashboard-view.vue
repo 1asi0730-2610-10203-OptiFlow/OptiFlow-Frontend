@@ -182,6 +182,10 @@ const hasBarData = computed(() =>
     store.weekRevenueData.some(v => v > 0)
 )
 
+const weeklyRevenueTotal = computed(() =>
+    store.weekRevenueData.reduce((sum, v) => sum + v, 0)
+)
+
 // ── Bar Chart Geometry ───────────────────────────────────────────────────
 const weekRevenue = computed(() =>
     store.weekRevenueData.length ? store.weekRevenueData : [0]
@@ -347,7 +351,7 @@ const bars = computed(() => {
         <div class="card-header">
           <div>
             <h3 class="card-title">{{ $t('dashboard.charts.weeklyRevenueTitle') }}</h3>
-            <p class="card-subtitle">{{ $t('dashboard.charts.weeklyRevenueSubtitle') }}</p>
+            <p class="card-subtitle">{{ $t('dashboard.charts.weeklyRevenueSubtitle', { amount: weeklyRevenueTotal.toLocaleString('es-PE', { minimumFractionDigits: 2 }) }) }}</p>
           </div>
         </div>
 

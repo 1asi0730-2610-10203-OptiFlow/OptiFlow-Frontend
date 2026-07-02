@@ -36,7 +36,22 @@
       "PowerShell(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('src/locales/es.json','utf8'\\)\\); console.log\\('es.json OK'\\)\")",
       "PowerShell(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('src/locales/en.json','utf8'\\)\\); console.log\\('en.json OK'\\)\")",
       "Bash(git add *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(node *)",
+      "Read(//tmp/**)",
+      "Bash(npx vue-tsc *)",
+      "Bash(dotnet --version)",
+      "Bash(dotnet tool *)",
+      "Bash(dotnet build *)",
+      "Bash(dotnet ef *)",
+      "Bash(tasklist //FI \"PID eq 28944\")",
+      "Bash(tasklist //FI \"IMAGENAME eq optiflow-platform.exe\")",
+      "Bash(curl -s -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJqdWFucGFuQGdtYWlsLmNvbSIsIm5iZiI6MTc4Mjk0Nzc1OSwiZXhwIjoxNzgzNTUyNTU5LCJpYXQiOjE3ODI5NDc3NTl9.nxsH1bYzDWUID4f_wkUGjvQQJcHP0_I3MBpJJX9rWdY' http://localhost:5238/products)",
+      "Bash(curl -s -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJqdWFucGFuQGdtYWlsLmNvbSIsIm5iZiI6MTc4Mjk0Nzc1OSwiZXhwIjoxNzgzNTUyNTU5LCJpYXQiOjE3ODI5NDc3NTl9.nxsH1bYzDWUID4f_wkUGjvQQJcHP0_I3MBpJJX9rWdY' http://localhost:5238/stock-audit-logs)",
+      "Bash(curl -s -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJqdWFucGFuQGdtYWlsLmNvbSIsIm5iZiI6MTc4Mjk0Nzc1OSwiZXhwIjoxNzgzNTUyNTU5LCJpYXQiOjE3ODI5NDc3NTl9.nxsH1bYzDWUID4f_wkUGjvQQJcHP0_I3MBpJJX9rWdY' http://localhost:5238/work-orders)",
+      "Bash(curl *)",
+      "Bash(taskkill *)",
+      "Bash(dotnet run *)"
     ]
   }
 }

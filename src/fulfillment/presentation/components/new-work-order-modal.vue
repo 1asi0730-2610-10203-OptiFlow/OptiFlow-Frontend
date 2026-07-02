@@ -5,33 +5,43 @@ import { WorkOrder } from '../../domain/model/work-order.entity.js'
 import { useFulfillmentStore } from '../../application/fulfillment.store.js'
 import { useClinicalStore } from '../../../clinical/application/clinical.store.js'
 import { useSalesStore } from '../../../sales/application/sales.store.js'
+import { useInventoryStore } from '../../../inventory/application/inventory.store.js'
 import { useModalAnimation } from '../../../shared/presentation/composables/use-modal-animation.js'
 
 const { t } = useI18n()
 const emit = defineEmits(['save', 'close'])
 const { isClosing, requestClose, onOverlayAnimEnd } = useModalAnimation(emit)
 
-const lensTypes = [
-  'Lunas Progresivas', 'Lunas Monofocales', 'Lunas Bifocales',
-  'Lunas con Filtro Azul', 'Lunas Polarizadas', 'Lunas Antireflejantes', 'Lentes de Contacto'
-]
 const fulfillmentStore = useFulfillmentStore()
 const clinicalStore = useClinicalStore()
 const salesStore = useSalesStore()
+const inventoryStore = useInventoryStore()
 const laboratories = computed(() => fulfillmentStore.laboratories)
 const patients = computed(() => clinicalStore.patients)
+const lensProducts = computed(() => inventoryStore.products.filter(p => p.category === 'Lenses'))
+const frameProducts = computed(() => inventoryStore.products.filter(p => p.category === 'Frames'))
 
 const form = ref({
   patientId: null, patientName: '',
   saleId: 0, recipeId: 0,
   labId: 0, laboratoryName: '',
-  lensType: 'Lunas Progresivas',
+  lensType: '', lensProductId: '',
   odSphere: '', odCylinder: '', odAxis: '',
   osSphere: '', osCylinder: '', osAxis: '',
-  frame: '', orderDate: new Date().toISOString().split('T')[0],
+  frame: '', frameProductId: '', orderDate: new Date().toISOString().split('T')[0],
   deliveryDate: '', priority: 'normal',
   deposit: '', total: ''
 })
+
+function onLensChange() {
+  const product = lensProducts.value.find(p => p.id === form.value.lensProductId)
+  form.value.lensType = product ? product.name : ''
+}
+
+function onFrameChange() {
+  const product = frameProducts.value.find(p => p.id === form.value.frameProductId)
+  form.value.frame = product ? product.name : ''
+}
 
 function onPatientChange() {
   const patient = patients.value.find(p => p.id === form.value.patientId)
@@ -93,7 +103,9 @@ function onSubmit() {
     patientName:    form.value.patientName,
     laboratoryName: form.value.laboratoryName,
     lensType:       form.value.lensType,
+    lensProductId:  form.value.lensProductId || null,
     frame:          form.value.frame || t('labOrders.newOrderModal.noFrame'),
+    frameProductId: form.value.frameProductId || null,
     prescription:   buildPrescription(),
     priority:       form.value.priority,
     deposit:        depositNum.value,
@@ -149,9 +161,13 @@ function onSubmit() {
         <div class="form-row">
           <div class="field">
             <label>{{ $t('labOrders.newOrderModal.lensType') }}</label>
-            <select v-model="form.lensType" class="form-select">
-              <option v-for="lensType in lensTypes" :key="lensType" :value="lensType">{{ lensType }}</option>
+            <select v-model="form.lensProductId" class="form-select" @change="onLensChange">
+              <option value="">{{ $t('labOrders.newOrderModal.selectLensType') }}</option>
+              <option v-for="product in lensProducts" :key="product.id" :value="product.id">{{ product.name }}</option>
             </select>
+            <span v-if="lensProducts.length === 0" class="field-hint">
+              {{ $t('labOrders.newOrderModal.noLensProducts') }}
+            </span>
           </div>
           <div class="field">
             <label>{{ $t('labOrders.newOrderModal.priority') }}</label>
@@ -195,7 +211,13 @@ function onSubmit() {
         <div class="form-row form-row--3">
           <div class="field">
             <label>{{ $t('labOrders.newOrderModal.frame') }}</label>
-            <input v-model="form.frame" class="form-input" :placeholder="$t('labOrders.newOrderModal.framePlaceholder')" />
+            <select v-model="form.frameProductId" class="form-select" @change="onFrameChange">
+              <option value="">{{ $t('labOrders.newOrderModal.selectFrame') }}</option>
+              <option v-for="product in frameProducts" :key="product.id" :value="product.id">{{ product.name }}</option>
+            </select>
+            <span v-if="frameProducts.length === 0" class="field-hint">
+              {{ $t('labOrders.newOrderModal.noFrameProducts') }}
+            </span>
           </div>
           <div class="field">
             <label>{{ $t('labOrders.newOrderModal.orderDate') }}</label>
@@ -262,6 +284,7 @@ function onSubmit() {
 .form-select, .form-input { padding: 9px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 0.84rem; color: #111827; outline: none; background: #fff; transition: border-color 0.15s; }
 .form-select:focus, .form-input:focus { border-color: #00c1b0; }
 .form-input--error, .form-select--error { border-color: #f87171 !important; background-color: #fff5f5 !important; }
+.field-hint { font-family: 'Montserrat', sans-serif; font-size: 0.74rem; color: #9ca3af; margin-top: 1px; }
 .recipe-section { display: flex; flex-direction: column; gap: 8px; }
 .recipe-label { display: flex; align-items: center; gap: 6px; font-family: 'Montserrat', sans-serif; font-size: 0.82rem; font-weight: 700; color: #374151; }
 .recipe-grid-wrapper { background: rgba(150,246,238,0.2); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }

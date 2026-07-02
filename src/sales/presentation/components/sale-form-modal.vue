@@ -3,7 +3,13 @@ import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Sale } from '../../../sales/domain/model/sale.entity.js'
 import { PaymentMethod } from '../../../sales/domain/model/payment.entity.js'
-import axios from 'axios'
+import { WorkOrderApi } from '../../../fulfillment/infrastructure/work-order-api.js'
+import { WorkOrderAssembler } from '../../../fulfillment/infrastructure/work-order.assembler.js'
+import { PatientApi } from '../../../clinical/infrastructure/patient-api.js'
+import { PatientAssembler } from '../../../clinical/infrastructure/patient.assembler.js'
+
+const workOrderApi = new WorkOrderApi()
+const patientApi = new PatientApi()
 
 defineProps({
   visible: { type: Boolean, required: true }
@@ -79,16 +85,15 @@ function applyDiscount() {
 }
 
 onMounted(async () => {
-  const baseUrl = import.meta.env.VITE_OPTIFLOW_API_URL
   try {
-    const res = await axios.get(`${baseUrl}${import.meta.env.VITE_WORK_ORDERS_ENDPOINT_PATH}`)
-    orders.value = res.data
+    const resources = await workOrderApi.getWorkOrders()
+    orders.value = WorkOrderAssembler.toEntitiesFromResponse(resources)
   } catch (e) {
     console.error('Error loading orders:', e)
   }
   try {
-    const res = await axios.get(`${baseUrl}${import.meta.env.VITE_PATIENTS_ENDPOINT_PATH}`)
-    patients.value = res.data
+    const resources = await patientApi.getPatients()
+    patients.value = PatientAssembler.toEntitiesFromResponse(resources)
   } catch (e) {
     console.error('Error loading patients:', e)
   }

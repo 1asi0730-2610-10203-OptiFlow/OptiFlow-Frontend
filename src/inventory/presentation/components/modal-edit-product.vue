@@ -2,6 +2,7 @@
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useModalAnimation } from '../../../shared/presentation/composables/use-modal-animation.js'
+import { PRODUCT_CATEGORIES } from '../../domain/model/product-categories.js'
 
 const { t } = useI18n()
 
@@ -10,8 +11,6 @@ const props = defineProps({
 })
 const emit = defineEmits(['save', 'close'])
 const { isClosing, requestClose, onOverlayAnimEnd } = useModalAnimation(emit)
-
-const categories = ['Lunas', 'Armazones', 'Accesorios', 'Lentes de Contacto', 'Lentes de Sol', 'Equipos']
 
 const form = ref({
   name:                   '',
@@ -25,7 +24,7 @@ watch(() => props.product, (p) => {
   form.value = {
     name:                  p.name                 || '',
     sku:                   p.sku                  || '',
-    category:              p.category             || 'Lunas',
+    category:              p.category             || 'Lenses',
     minimumStockThreshold: p.minimumStockThreshold || '',
     price:                 p.price                || ''
   }
@@ -76,7 +75,7 @@ function onSubmit() {
             <label>{{ $t('inventory.editModal.category') }}</label>
             <div class="select-wrapper">
               <select v-model="form.category" class="form-select">
-                <option v-for="cat in categories" :key="cat">{{ cat }}</option>
+                <option v-for="cat in PRODUCT_CATEGORIES" :key="cat.value" :value="cat.value">{{ $t(cat.labelKey) }}</option>
               </select>
               <i class="pi pi-chevron-down select-arrow" />
             </div>
