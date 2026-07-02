@@ -11,6 +11,14 @@ export class ProductApi extends BaseApi {
 
     async getProducts()              { return await this.#endpoint.getAll() }
     async createProduct(resource)    { return await this.#endpoint.create(resource) }
-    async updateProduct(p)           { return await this.#endpoint.update(p.product_id, p) }
+    async updateProduct(id, payload) { return await this.#endpoint.update(id, payload) }
     async deleteProduct(id)          { return await this.#endpoint.delete(id) }
+
+    async restockProduct(id, quantity, author) {
+        const response = await this.http.post(
+            `${import.meta.env.VITE_PRODUCTS_ENDPOINT_PATH}/${id}/restock`,
+            { quantity, author }
+        )
+        return response.data
+    }
 }

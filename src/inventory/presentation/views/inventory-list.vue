@@ -6,6 +6,7 @@ import ContextMenu from 'primevue/contextmenu'
 import { useInventoryStore } from '../../application/inventory.store.js'
 import { eventBus } from '../../../shared/infrastructure/event-bus.js'
 import { InventoryEvents } from '../../domain/events/inventory-events.js'
+import { PRODUCT_CATEGORIES } from '../../domain/model/product-categories.js'
 import ModalAddProduct        from '../components/modal-add-product.vue'
 import ModalRestock           from '../components/modal-restock.vue'
 import ModalBulkRestock       from '../components/modal-bulk-restock.vue'
@@ -61,14 +62,14 @@ function onRowContextMenu(event, product) {
 }
 
 const categories = computed(() => [
-  { label: t('inventory.allCategories'),              value: 'all' },
-  { label: t('inventory.categories.lenses'),          value: 'Lunas' },
-  { label: t('inventory.categories.frames'),          value: 'Armazones' },
-  { label: t('inventory.categories.accessories'),     value: 'Accesorios' },
-  { label: t('inventory.categories.contactLenses'),   value: 'Lentes de Contacto' },
-  { label: t('inventory.categories.sunLenses'),       value: 'Lentes de Sol' },
-  { label: t('inventory.categories.equipment'),       value: 'Equipos' }
+  { label: t('inventory.allCategories'), value: 'all' },
+  ...PRODUCT_CATEGORIES.map(cat => ({ label: t(cat.labelKey), value: cat.value }))
 ])
+
+function categoryLabel(value) {
+  const cat = PRODUCT_CATEGORIES.find(c => c.value === value)
+  return cat ? t(cat.labelKey) : value
+}
 
 const stockLevels = computed(() => [
   { label: t('inventory.allLevels'),        value: 'all' },
@@ -148,7 +149,6 @@ let unsubCreated, unsubUpdated, unsubRestocked, unsubLowAlert, unsubAddProduct, 
 
 onMounted(async () => {
   store.loadProducts()
-  store.loadCategories()
   store.loadSuppliers()
 
   // Event-driven reactions: store emits, view reacts
@@ -354,7 +354,7 @@ function onSupplierRegistered(supplier) {
           </div>
         </div>
 
-        <span class="category-chip">{{ product.category }}</span>
+        <span class="category-chip">{{ categoryLabel(product.category) }}</span>
 
         <div class="stock-cell">
           <div class="stock-top">
@@ -425,7 +425,6 @@ function onSupplierRegistered(supplier) {
     />
     <ModalAuditLog
         v-if="showAuditLog"
-        :products="store.products"
         @close="showAuditLog = false"
     />
 

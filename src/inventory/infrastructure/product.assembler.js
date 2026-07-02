@@ -5,7 +5,6 @@ export class ProductAssembler {
     static toEntityFromResource(resource) {
         return new Product({
             id:                    resource.id,
-            categoryId:            resource.categoryId,
             supplierId:            resource.supplierId,
             brand:                 resource.brand ?? '',
             model:                 resource.model ?? '',
@@ -27,7 +26,6 @@ export class ProductAssembler {
     static toResourceFromEntity(product) {
         return new ProductResource({
             product_id:              product.id,
-            category_id:             product.categoryId,
             supplier_id:             product.supplierId,
             brand:                   product.brand,
             model:                   product.model,

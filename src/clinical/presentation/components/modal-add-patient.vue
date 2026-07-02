@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useModalAnimation } from '../../../shared/presentation/composables/use-modal-animation.js'
+import { isValidEmail, isValidPhone } from '../../../shared/presentation/utils/validators.js'
 
 const { t } = useI18n()
 const emit = defineEmits(['save', 'close'])
@@ -28,12 +29,16 @@ const minBirthDate = computed(() => {
 
 function validate() {
     const e = {}
-    if (!form.value.fullName.trim()) e.fullName = true
+    const trimmedName = form.value.fullName.trim()
+    if (!trimmedName) e.fullName = true
+    else if (trimmedName.split(/\s+/).length < 2) e.lastNameMissing = true
     if (!form.value.dni.trim())      e.dni = true
     if (form.value.birthDate) {
         const bd = form.value.birthDate
         if (bd < minBirthDate.value || bd > maxBirthDate.value) e.birthDate = true
     }
+    if (form.value.email.trim() && !isValidEmail(form.value.email)) e.emailFormat = true
+    if (form.value.phone.trim() && !isValidPhone(form.value.phone)) e.phoneFormat = true
     errors.value = e
     return Object.keys(e).length === 0
 }
@@ -79,10 +84,16 @@ function onSubmit() {
                     <input
                         v-model="form.fullName"
                         class="form-input"
-                        :class="{ 'form-input--error': errors.fullName }"
+                        :class="{ 'form-input--error': errors.fullName || errors.lastNameMissing }"
                         :placeholder="$t('patients.addModal.fullNamePlaceholder')"
-                        @input="errors.fullName = false"
+                        @input="errors.fullName = false; errors.lastNameMissing = false"
                     />
+                    <span v-if="errors.fullName" class="field-error">
+                        {{ $t('patients.addModal.fullNameRequired') }}
+                    </span>
+                    <span v-else-if="errors.lastNameMissing" class="field-error">
+                        {{ $t('patients.addModal.lastNameRequired') }}
+                    </span>
                 </div>
 
                 <div class="form-row">
@@ -123,8 +134,13 @@ function onSubmit() {
                             v-model="form.email"
                             type="email"
                             class="form-input"
+                            :class="{ 'form-input--error': errors.emailFormat }"
                             :placeholder="$t('patients.addModal.emailPlaceholder')"
+                            @input="errors.emailFormat = false"
                         />
+                        <span v-if="errors.emailFormat" class="field-error">
+                            {{ $t('patients.addModal.emailInvalid') }}
+                        </span>
                     </div>
                     <!-- Phone -->
                     <div class="field">
@@ -132,8 +148,13 @@ function onSubmit() {
                         <input
                             v-model="form.phone"
                             class="form-input"
+                            :class="{ 'form-input--error': errors.phoneFormat }"
                             :placeholder="$t('patients.addModal.phonePlaceholder')"
+                            @input="errors.phoneFormat = false"
                         />
+                        <span v-if="errors.phoneFormat" class="field-error">
+                            {{ $t('patients.addModal.phoneInvalid') }}
+                        </span>
                     </div>
                 </div>
 

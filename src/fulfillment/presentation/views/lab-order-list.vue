@@ -6,6 +6,7 @@ import ContextMenu from 'primevue/contextmenu'
 import { useFulfillmentStore } from '../../application/fulfillment.store.js'
 import { useClinicalStore } from '../../../clinical/application/clinical.store.js'
 import { useSalesStore } from '../../../sales/application/sales.store.js'
+import { useInventoryStore } from '../../../inventory/application/inventory.store.js'
 import { eventBus } from '../../../shared/infrastructure/event-bus.js'
 import KanbanBoard from '../components/kanban-board.vue'
 import WorkOrderDetailModal from '../components/work-order-detail-modal.vue'
@@ -17,6 +18,7 @@ const { t } = useI18n()
 const store = useFulfillmentStore()
 const clinicalStore = useClinicalStore()
 const salesStore = useSalesStore()
+const inventoryStore = useInventoryStore()
 const toast = useToast()
 
 const currentView = ref('kanban')
@@ -73,6 +75,7 @@ onMounted(() => {
   clinicalStore.loadClinicalRecords()
   clinicalStore.loadPrescriptions()
   salesStore.fetchSales()
+  inventoryStore.loadProducts()
   unsubNewLabOrder = eventBus.on('ui:open:new-lab-order', () => { showNewOrderModal.value = true })
 })
 onUnmounted(() => { unsubNewLabOrder?.() })
