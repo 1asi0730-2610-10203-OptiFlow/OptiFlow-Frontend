@@ -3,18 +3,20 @@ export class WorkOrderResource {
                     saleId = 0, recipeId = 0, laboratoryId = 0,
                     status = 'PENDING', deliveryDate = '',
                     patientName = '', laboratoryName = '',
-                    lensType = '', frame = '', prescription = '',
+                    lensType = '', lensProductId = null, frame = '', frameProductId = null, prescription = '',
                     priority = 'normal', deposit = 0, total = 0, isRework = false
                 } = {}) {
         this.saleId         = saleId
         this.recipeId       = recipeId
-        this.laboratoryId   = laboratoryId
+        this.labId          = laboratoryId
         this.status         = status
         this.deliveryDate   = deliveryDate
         this.patientName    = patientName
         this.laboratoryName = laboratoryName
         this.lensType       = lensType
+        this.lensProductId  = lensProductId
         this.frame          = frame
+        this.frameProductId = frameProductId
         this.prescription   = prescription
         this.priority       = priority
         this.deposit        = deposit

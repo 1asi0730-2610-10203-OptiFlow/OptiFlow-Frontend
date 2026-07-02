@@ -2,6 +2,8 @@
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useInventoryStore } from '../../application/inventory.store.js'
+import { useModalAnimation } from '../../../shared/presentation/composables/use-modal-animation.js'
+import { PRODUCT_CATEGORIES } from '../../domain/model/product-categories.js'
 
 const inventoryStore = useInventoryStore()
 const suppliers = computed(() => inventoryStore.suppliers)
@@ -11,11 +13,10 @@ const props = defineProps({
   existingSkus: { type: Array, default: () => [] }
 })
 const emit = defineEmits(['save', 'close'])
-
-const categories = ['Lunas', 'Armazones', 'Accesorios', 'Lentes de Contacto', 'Lentes de Sol', 'Equipos']
+const { isClosing, requestClose, onOverlayAnimEnd } = useModalAnimation(emit)
 
 const form = ref({
-  name: '', category: 'Lunas', sku: '',
+  name: '', category: 'Lenses', sku: '',
   stock: '', minimumStockThreshold: '', price: '',
   supplierName: '', lastRestockDate: new Date().toISOString().split('T')[0]
 })
@@ -44,7 +45,6 @@ function onSubmit() {
     return
   }
   emit('save', {
-    categoryId:            0,
     supplierId:            0,
     brand:                 '',
     model:                 '',
@@ -61,14 +61,14 @@ function onSubmit() {
 </script>
 
 <template>
-  <div class="overlay" @click="emit('close')">
+  <div class="overlay" :class="{ 'overlay--closing': isClosing }" @click="requestClose" @animationend.self="onOverlayAnimEnd">
     <div class="modal" @click.stop>
       <div class="modal-header">
         <div>
           <h3 class="modal-title">{{ $t('inventory.addModal.title') }}</h3>
           <p class="modal-subtitle">{{ $t('inventory.addModal.subtitle') }}</p>
         </div>
-        <button class="close-btn" @click="emit('close')">
+        <button class="close-btn" @click="requestClose">
           <i class="pi pi-times" />
         </button>
       </div>
@@ -90,7 +90,7 @@ function onSubmit() {
             <label>{{ $t('inventory.addModal.category') }}</label>
             <div class="select-wrapper">
               <select v-model="form.category" class="form-select">
-                <option v-for="category in categories" :key="category">{{ category }}</option>
+                <option v-for="cat in PRODUCT_CATEGORIES" :key="cat.value" :value="cat.value">{{ $t(cat.labelKey) }}</option>
               </select>
               <i class="pi pi-chevron-down select-arrow" />
             </div>
@@ -156,7 +156,7 @@ function onSubmit() {
       </div>
 
       <div class="modal-footer">
-        <button class="btn-cancel" @click="emit('close')">{{ $t('common.cancel') }}</button>
+        <button class="btn-cancel" @click="requestClose">{{ $t('common.cancel') }}</button>
         <button class="btn-save" @click="onSubmit">{{ $t('inventory.addModal.addItem') }}</button>
       </div>
     </div>

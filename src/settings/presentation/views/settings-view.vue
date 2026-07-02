@@ -1,7 +1,9 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { RolesApi } from '../../infrastructure/roles-api.js';
+import { eventBus } from '../../../shared/infrastructure/event-bus.js';
+import { isValidEmail, isValidPhone } from '../../../shared/presentation/utils/validators.js';
 import { RoleAssembler } from '../../infrastructure/role.assembler.js';
 import RoleListItem from '../components/role-list-item.vue';
 import RolesSummary from '../components/roles-summary.vue';
@@ -60,11 +62,21 @@ const showSecurityDialog = ref(false);
 const showBackupDialog = ref(false);
 
 const businessForm = ref({ name: '', address: '', phone: '', email: '' });
+const businessErrors = ref({});
+
+const validateBusinessForm = () => {
+  const e = {};
+  if (businessForm.value.phone.trim() && !isValidPhone(businessForm.value.phone)) e.phoneFormat = true;
+  if (businessForm.value.email.trim() && !isValidEmail(businessForm.value.email)) e.emailFormat = true;
+  businessErrors.value = e;
+  return Object.keys(e).length === 0;
+};
 const securityForm = ref({ twoFactor: '', autoLogout: '', passwordPolicy: '', dataEncryption: '' });
 const backupsForm = ref({ frequency: '', time: '', retention: 90 });
 
 const openEditBusinessDialog = () => {
   businessForm.value = { ...businessData.value };
+  businessErrors.value = {};
   showBusinessDialog.value = true;
 };
 
@@ -98,6 +110,7 @@ const fetchSettingsData = async () => {
 };
 
 const handleUpdateBusiness = async () => {
+  if (!validateBusinessForm()) return;
   try {
     loading.value = true;
     await rolesApi.http.put('/business/1', businessForm.value);
@@ -262,9 +275,17 @@ const handleSaveRole = async (newRoleData) => {
   }
 };
 
+let unsubAddRole, unsubBusiness, unsubSecurity, unsubBackup
 onMounted(() => {
   fetchData();
-});
+  unsubAddRole  = eventBus.on('ui:open:add-role',       () => { showAddDialog.value = true })
+  unsubBusiness = eventBus.on('ui:open:business-info',  () => openEditBusinessDialog())
+  unsubSecurity = eventBus.on('ui:open:security',       () => openEditSecurityDialog())
+  unsubBackup   = eventBus.on('ui:open:backup',         () => openEditBackupDialog())
+})
+onUnmounted(() => {
+  unsubAddRole?.(); unsubBusiness?.(); unsubSecurity?.(); unsubBackup?.()
+})
 </script>
 
 <template>
@@ -431,11 +452,27 @@ onMounted(() => {
         </div>
         <div class="mb-4">
           <label class="block text-900 font-medium mb-2 font-josefin">{{ $t('settings.business.phoneLabel') }}</label>
-          <pv-input-text v-model="businessForm.phone" class="w-full border-round-lg p-3" />
+          <pv-input-text
+            v-model="businessForm.phone"
+            class="w-full border-round-lg p-3"
+            :class="{ 'p-invalid': businessErrors.phoneFormat }"
+            @input="businessErrors.phoneFormat = false"
+          />
+          <span v-if="businessErrors.phoneFormat" class="field-error">
+            {{ $t('settings.business.phoneInvalid') }}
+          </span>
         </div>
         <div class="mb-4">
           <label class="block text-900 font-medium mb-2 font-josefin">{{ $t('settings.business.emailLabel') }}</label>
-          <pv-input-text v-model="businessForm.email" class="w-full border-round-lg p-3" />
+          <pv-input-text
+            v-model="businessForm.email"
+            class="w-full border-round-lg p-3"
+            :class="{ 'p-invalid': businessErrors.emailFormat }"
+            @input="businessErrors.emailFormat = false"
+          />
+          <span v-if="businessErrors.emailFormat" class="field-error">
+            {{ $t('settings.business.emailInvalid') }}
+          </span>
         </div>
         <div class="flex justify-content-end gap-3 mt-5">
           <pv-button :label="$t('settings.business.cancel')" variant="text" class="p-button-secondary font-bold px-5" @click="showBusinessDialog = false" />
@@ -534,6 +571,14 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.field-error {
+  display: block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.78rem;
+  color: #dc2626;
+  margin-top: 6px;
+}
+
 .settings-container {
   max-width: 1400px;
   margin: 0 auto;

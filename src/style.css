@@ -49,3 +49,89 @@ body {
 .mb-4 {
   margin-bottom: 16px;
 }
+
+/* ── Page transitions ─────────────────────────────────────────────────────── */
+.page-enter-active {
+  transition: opacity 0.2s ease;
+}
+.page-leave-active {
+  transition: opacity 0.15s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+}
+.page-enter-from {
+  opacity: 0;
+}
+.page-leave-to {
+  opacity: 0;
+}
+
+/* ── Card entrance animations ─────────────────────────────────────────────── */
+@keyframes card-rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* Stat / KPI / Summary grids — staggered by position */
+.stat-card    { animation: card-rise 0.36s ease both; }
+.kpi-card     { animation: card-rise 0.36s ease both; }
+.summary-card { animation: card-rise 0.36s ease both; }
+
+.stat-card:nth-child(2),
+.kpi-card:nth-child(2),
+.summary-card:nth-child(2) { animation-delay: 65ms; }
+
+.stat-card:nth-child(3),
+.kpi-card:nth-child(3),
+.summary-card:nth-child(3) { animation-delay: 130ms; }
+
+.stat-card:nth-child(4),
+.kpi-card:nth-child(4),
+.summary-card:nth-child(4) { animation-delay: 195ms; }
+
+/* Single-instance card sections */
+.chart-main    { animation: card-rise 0.38s 0.05s  ease both; }
+.chart-side    { animation: card-rise 0.38s 0.12s  ease both; }
+.search-card   { animation: card-rise 0.36s 0.04s  ease both; }
+.filters-card  { animation: card-rise 0.36s 0.04s  ease both; }
+.table-card    { animation: card-rise 0.36s 0.08s  ease both; }
+.table-wrapper { animation: card-rise 0.36s 0.10s  ease both; }
+
+/* ── Search bar animations ────────────────────────────────────────────────── */
+.search-input {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+.search-input:focus {
+  box-shadow: 0 0 0 3px rgba(0, 193, 176, 0.14) !important;
+}
+.search-wrapper .search-icon {
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+.search-wrapper:focus-within .search-icon {
+  color: #00c1b0;
+  transform: scale(1.1);
+}
+
+/* ── Modal open / close animations ───────────────────────────────────────── */
+@keyframes overlay-in  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes overlay-out { from { opacity: 1; } to { opacity: 0; } }
+
+@keyframes modal-rise {
+  from { opacity: 0; transform: translateY(22px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+@keyframes modal-drop {
+  from { opacity: 1; transform: translateY(0)    scale(1);    }
+  to   { opacity: 0; transform: translateY(14px) scale(0.97); }
+}
+
+/* Entrance — applies to every .overlay/.modal pair not already animated */
+.overlay                { animation: overlay-in  0.20s ease; }
+.overlay > .modal       { animation: modal-rise  0.26s cubic-bezier(0.34, 1.2, 0.64, 1); }
+
+/* Exit — triggered by adding .overlay--closing from useModalAnimation */
+.overlay--closing              { animation: overlay-out 0.18s ease forwards; pointer-events: none; }
+.overlay--closing > .modal     { animation: modal-drop  0.16s ease forwards; }

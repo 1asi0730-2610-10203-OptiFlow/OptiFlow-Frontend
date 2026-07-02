@@ -1,6 +1,7 @@
 <script setup>
 import { reactive, computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { isValidEmail, isValidPhone } from '../../../shared/presentation/utils/validators.js'
 
 const { t } = useI18n()
 
@@ -50,6 +51,8 @@ function validate() {
   const e = {}
   if (!form.fullName.trim()) e.fullName = true
   if (!form.email.trim()) e.email = true
+  else if (!isValidEmail(form.email)) e.emailFormat = true
+  if (form.phone.trim() && !isValidPhone(form.phone)) e.phoneFormat = true
   errors.value = e
   return Object.keys(e).length === 0
 }
@@ -117,21 +120,32 @@ function onSave() {
       <div class="form-row">
         <div class="form-field">
           <label>{{ t('staff.addModal.email') }} *</label>
-          <pv-input-text 
-            v-model="form.email" 
-            :placeholder="t('staff.addModal.placeholders.email')" 
+          <pv-input-text
+            v-model="form.email"
+            :placeholder="t('staff.addModal.placeholders.email')"
             class="w-full"
-            :class="{ 'p-invalid': errors.email }"
-            @input="errors.email = false"
+            :class="{ 'p-invalid': errors.email || errors.emailFormat }"
+            @input="errors.email = false; errors.emailFormat = false"
           />
+          <span v-if="errors.email" class="field-error">
+            {{ $t('common.requiredError') }}
+          </span>
+          <span v-else-if="errors.emailFormat" class="field-error">
+            {{ $t('staff.addModal.emailInvalid') }}
+          </span>
         </div>
         <div class="form-field">
           <label>{{ t('staff.addModal.phone') }}</label>
-          <pv-input-text 
-            v-model="form.phone" 
-            :placeholder="t('staff.addModal.placeholders.phone')" 
+          <pv-input-text
+            v-model="form.phone"
+            :placeholder="t('staff.addModal.placeholders.phone')"
             class="w-full"
+            :class="{ 'p-invalid': errors.phoneFormat }"
+            @input="errors.phoneFormat = false"
           />
+          <span v-if="errors.phoneFormat" class="field-error">
+            {{ $t('staff.addModal.phoneInvalid') }}
+          </span>
         </div>
       </div>
 
@@ -250,6 +264,12 @@ function onSave() {
   font-size: 0.85rem;
   font-weight: 600;
   color: #475569;
+}
+
+.field-error {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.74rem;
+  color: #dc2626;
 }
 
 .w-full {

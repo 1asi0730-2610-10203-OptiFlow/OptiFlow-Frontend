@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { isValidEmail, isValidPhone } from '../../../shared/presentation/utils/validators.js'
 
 const showSuccess = ref(false)
 const submitted = ref(false)
@@ -42,7 +43,9 @@ function validate() {
   if (!profile.value.firstName) e.firstName = true
   if (!profile.value.lastName) e.lastName = true
   if (!profile.value.email) e.email = true
+  else if (!isValidEmail(profile.value.email)) e.emailFormat = true
   if (!profile.value.phone) e.phone = true
+  else if (!isValidPhone(profile.value.phone)) e.phoneFormat = true
   if (!profile.value.address) e.address = true
   errors.value = e
   return Object.keys(e).length === 0
@@ -123,15 +126,17 @@ function saveChanges() {
               <label>{{ $t('patientCenter.profile.email') }} <span class="required">*</span></label>
               <div class="input-icon-wrapper">
                 <i class="pi pi-envelope input-icon"></i>
-                <input v-model="profile.email" type="email" class="form-input with-icon" :class="{ 'form-input--error': errors.email }" @input="errors.email = false" />
+                <input v-model="profile.email" type="email" class="form-input with-icon" :class="{ 'form-input--error': errors.email || errors.emailFormat }" @input="errors.email = false; errors.emailFormat = false" />
               </div>
+              <span v-if="errors.emailFormat" class="field-error">{{ $t('patientCenter.profile.emailInvalid') }}</span>
             </div>
             <div class="field">
               <label>{{ $t('patientCenter.profile.phone') }} <span class="required">*</span></label>
               <div class="input-icon-wrapper">
                 <i class="pi pi-phone input-icon"></i>
-                <input v-model="profile.phone" type="text" class="form-input with-icon" :class="{ 'form-input--error': errors.phone }" @input="errors.phone = false" />
+                <input v-model="profile.phone" type="text" class="form-input with-icon" :class="{ 'form-input--error': errors.phone || errors.phoneFormat }" @input="errors.phone = false; errors.phoneFormat = false" />
               </div>
+              <span v-if="errors.phoneFormat" class="field-error">{{ $t('patientCenter.profile.phoneInvalid') }}</span>
             </div>
           </div>
 
@@ -247,6 +252,7 @@ function saveChanges() {
 
 .field label { font-family: 'Montserrat', sans-serif; font-size: 0.8rem; font-weight: 600; color: #4b5563; margin-bottom: 8px; display: block; }
 .required { color: #ef4444; }
+.field-error { display: block; font-family: 'Montserrat', sans-serif; font-size: 0.76rem; color: #dc2626; margin-top: 4px; }
 
 .input-icon-wrapper { position: relative; }
 .input-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #9ca3af; }

@@ -1,94 +1,56 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useModalAnimation } from '../../../shared/presentation/composables/use-modal-animation.js'
+import { StockAuditLogApi } from '../../infrastructure/stock-audit-log-api.js'
 
-const props = defineProps({
-  products: { type: Array, default: () => [] }
-})
 const emit = defineEmits(['close'])
+const { isClosing, requestClose, onOverlayAnimEnd } = useModalAnimation(emit)
 
-const BASE = import.meta.env.VITE_OPTIFLOW_API_URL
+const stockAuditLogApi = new StockAuditLogApi()
 
-const transactions = ref([])
-const loading      = ref(false)
-const startDate    = ref('')
-const endDate      = ref('')
-const productFilter = ref('all')
+const logs          = ref([])
+const loading        = ref(false)
+const startDate      = ref('')
+const endDate        = ref('')
+const productFilter  = ref('all')
 
 onMounted(async () => {
   loading.value = true
   try {
-    const res  = await fetch(`${BASE}/inventoryTransactions`)
-    const data = await res.json()
-    transactions.value = Array.isArray(data) ? data : []
+    const data = await stockAuditLogApi.getAuditLogs()
+    logs.value = Array.isArray(data) ? data : []
   } finally {
     loading.value = false
   }
 })
 
-function productName(id) {
-  const p = props.products.find(p => p.id === id || p.product_id === id)
-  return p?.name ?? `Producto #${id}`
-}
-
-// Per-product running balance calculated backwards from current stock
-function withBalances(rows) {
-  const productId = rows[0]?.product_id
-  const product   = props.products.find(p => p.id === productId || p.product_id === productId)
-  let balance     = product?.stock ?? 0
-
-  const sorted = [...rows].sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-  const result = sorted.map(t => {
-    const balanceAfter = balance
-    if (t.transaction_type === 'IN')  balance -= t.quantity
-    else                              balance += t.quantity
-    return { ...t, saldo: balanceAfter }
-  })
-  return result.reverse()
-}
-
 const filteredRows = computed(() => {
-  let list = transactions.value
+  let list = logs.value
 
   if (productFilter.value !== 'all')
-    list = list.filter(t => String(t.product_id) === String(productFilter.value))
+    list = list.filter(l => String(l.productId) === String(productFilter.value))
 
   if (startDate.value)
-    list = list.filter(t => t.created_at >= startDate.value)
+    list = list.filter(l => l.date >= startDate.value)
   if (endDate.value)
-    list = list.filter(t => t.created_at <= endDate.value + 'T23:59:59')
+    list = list.filter(l => l.date <= endDate.value)
 
-  list = [...list].sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
-
-  // Group by product and compute running balances
-  if (productFilter.value !== 'all') return withBalances(list)
-
-  const byProduct = {}
-  list.forEach(t => {
-    ;(byProduct[t.product_id] = byProduct[t.product_id] || []).push(t)
-  })
-  return Object.values(byProduct).flatMap(rows => withBalances(rows))
-    .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+  return [...list].sort((a, b) => `${b.date}T${b.time}`.localeCompare(`${a.date}T${a.time}`))
 })
 
 const distinctProducts = computed(() => {
-  const ids = [...new Set(transactions.value.map(t => t.product_id))]
-  return ids.map(id => ({ id, name: productName(id) }))
+  const seen = new Map()
+  logs.value.forEach(l => { if (!seen.has(l.productId)) seen.set(l.productId, l.productName) })
+  return [...seen.entries()].map(([id, name]) => ({ id, name }))
 })
 
-function formatDate(iso) {
-  return iso ? iso.slice(0, 10) : ''
-}
-function formatTime(iso) {
-  return iso ? iso.slice(11, 16) : ''
-}
-function docLabel(t) {
-  if (!t.reference_id) return t.reference_type || '—'
-  return `${t.reference_type}-${t.reference_id}`
+function formatTime(time) {
+  return time ? time.slice(0, 5) : ''
 }
 </script>
 
 <template>
-  <div class="overlay" @click="emit('close')">
+  <div class="overlay" :class="{ 'overlay--closing': isClosing }" @click="requestClose" @animationend.self="onOverlayAnimEnd">
     <div class="modal" @click.stop>
 
       <div class="modal-header">
@@ -99,7 +61,7 @@ function docLabel(t) {
             <p class="modal-subtitle">Registro de entradas y salidas por producto</p>
           </div>
         </div>
-        <button class="close-btn" @click="emit('close')"><i class="pi pi-times" /></button>
+        <button class="close-btn" @click="requestClose"><i class="pi pi-times" /></button>
       </div>
 
       <div class="filters-bar">
@@ -142,33 +104,35 @@ function docLabel(t) {
           <div class="table-header">
             <span>Fecha</span>
             <span>Hora</span>
-            <span>Documento</span>
+            <span>Operación</span>
             <span>Producto</span>
+            <span>Autor</span>
             <span class="text-center">Tipo</span>
             <span class="text-right">Entrada</span>
             <span class="text-right">Salida</span>
             <span class="text-right">Saldo</span>
           </div>
 
-          <div v-for="row in filteredRows" :key="row.transaction_id ?? row.id" class="table-row">
-            <span class="cell-muted">{{ formatDate(row.created_at) }}</span>
-            <span class="cell-muted">{{ formatTime(row.created_at) }}</span>
-            <span class="cell-doc">{{ docLabel(row) }}</span>
-            <span class="cell-name">{{ productName(row.product_id) }}</span>
+          <div v-for="row in filteredRows" :key="row.id" class="table-row">
+            <span class="cell-muted">{{ row.date }}</span>
+            <span class="cell-muted">{{ formatTime(row.time) }}</span>
+            <span class="cell-doc">{{ row.operation }}</span>
+            <span class="cell-name">{{ row.productName }}</span>
+            <span class="cell-muted">{{ row.author }}</span>
             <span class="text-center">
-              <span class="badge" :class="row.transaction_type === 'IN' ? 'badge--in' : 'badge--out'">
-                {{ row.transaction_type === 'IN' ? 'Entrada' : 'Salida' }}
+              <span class="badge" :class="row.quantity >= 0 ? 'badge--in' : 'badge--out'">
+                {{ row.quantity >= 0 ? 'Entrada' : 'Salida' }}
               </span>
             </span>
-            <span class="text-right cell-in">{{ row.transaction_type === 'IN' ? `+${row.quantity}` : '—' }}</span>
-            <span class="text-right cell-out">{{ row.transaction_type === 'OUT' ? `-${row.quantity}` : '—' }}</span>
-            <span class="text-right cell-bold">{{ row.saldo }}</span>
+            <span class="text-right cell-in">{{ row.quantity > 0 ? `+${row.quantity}` : '—' }}</span>
+            <span class="text-right cell-out">{{ row.quantity < 0 ? row.quantity : '—' }}</span>
+            <span class="text-right cell-bold">{{ row.newStock }}</span>
           </div>
         </div>
       </div>
 
       <div class="modal-footer">
-        <button class="btn-close" @click="emit('close')">Cerrar</button>
+        <button class="btn-close" @click="requestClose">Cerrar</button>
       </div>
 
     </div>
@@ -177,7 +141,7 @@ function docLabel(t) {
 
 <style scoped>
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 50; display: flex; align-items: center; justify-content: center; padding: 16px; }
-.modal { background: #fff; border-radius: 16px; width: 100%; max-width: 960px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+.modal { background: #fff; border-radius: 16px; width: 100%; max-width: 1080px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
 .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid #f3f4f6; flex-shrink: 0; }
 .header-left { display: flex; align-items: center; gap: 12px; }
 .header-icon { width: 40px; height: 40px; border-radius: 10px; background: rgba(0,193,176,0.1); color: #00c1b0; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
@@ -207,8 +171,8 @@ function docLabel(t) {
 .empty-desc { font-family: 'Montserrat', sans-serif; font-size: 0.82rem; color: #6b7280; text-align: center; margin: 0; max-width: 340px; }
 
 .table-wrapper { border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; }
-.table-header { display: grid; grid-template-columns: 90px 60px 130px 1fr 90px 80px 80px 80px; gap: 8px; padding: 10px 16px; background: #f9fafb; border-bottom: 1px solid #e5e7eb; font-family: 'Montserrat', sans-serif; font-size: 0.7rem; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.06em; }
-.table-row { display: grid; grid-template-columns: 90px 60px 130px 1fr 90px 80px 80px 80px; gap: 8px; padding: 12px 16px; border-bottom: 1px solid #f9fafb; align-items: center; font-family: 'Montserrat', sans-serif; font-size: 0.8rem; color: #374151; }
+.table-header { display: grid; grid-template-columns: 90px 60px 120px 1fr 100px 80px 70px 70px 70px; gap: 8px; padding: 10px 16px; background: #f9fafb; border-bottom: 1px solid #e5e7eb; font-family: 'Montserrat', sans-serif; font-size: 0.7rem; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.06em; }
+.table-row { display: grid; grid-template-columns: 90px 60px 120px 1fr 100px 80px 70px 70px 70px; gap: 8px; padding: 12px 16px; border-bottom: 1px solid #f9fafb; align-items: center; font-family: 'Montserrat', sans-serif; font-size: 0.8rem; color: #374151; }
 .table-row:hover { background: #f9fafb; }
 .table-row:last-child { border-bottom: none; }
 

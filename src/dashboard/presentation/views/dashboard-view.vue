@@ -49,21 +49,50 @@ const stats = computed(() => [
 ])
 
 // ── Lab Orders Section ─────────────────────────────────────────────────────
+function parseLocalDate(str) {
+  if (!str) return null
+  const [y, m, d] = str.split('T')[0].split('-').map(Number)
+  return new Date(y, m - 1, d)
+}
+
 const labOrders = computed(() =>
     store.recentWorkOrders.map(o => ({
-      name:     o.laboratory_name ?? '',
-      order:    `WO-${String(o.order_id).padStart(4, '0')} · ${o.status}`,
-      urgent:   o.priority === 'URGENT',
-      quality:  o.status   === 'QUALITY_CONTROL',
-      received: o.status   === 'RECEIVED',
-      delivery: o.estimated_date
-          ? new Date(o.estimated_date).toLocaleDateString(
-              locale.value === 'es' ? 'es-PE' : 'en-US',
-              { day: 'numeric', month: 'short' }
-          )
-          : '—',
+      patientName: o.patientName ?? '—',
+      lensType:    o.lensType    || null,
+      status:      o.status      ?? 'PENDING',
+      urgent:      (o.priority   ?? '').toLowerCase() === 'urgent',
+      isRework:    !!o.isRework,
+      delivery:    (() => {
+        const d = parseLocalDate(o.deliveryDate)
+        return d ? d.toLocaleDateString(
+            locale.value === 'es' ? 'es-PE' : 'en-US',
+            { day: 'numeric', month: 'short' }
+        ) : '—'
+      })(),
     }))
 )
+
+function labOrderStatusClass(o) {
+  if (o.urgent) return 'urgent'
+  switch (o.status) {
+    case 'IN_PRODUCTION':   return 'in-production'
+    case 'QUALITY_CONTROL': return 'quality'
+    case 'READY':           return 'ready'
+    case 'DELIVERED':       return 'delivered'
+    default:                return 'pending'
+  }
+}
+
+function labOrderStatusKey(o) {
+  if (o.urgent) return 'labOrders.priority.urgent'
+  switch (o.status) {
+    case 'IN_PRODUCTION':   return 'labOrders.status.IN_PRODUCTION'
+    case 'QUALITY_CONTROL': return 'labOrders.status.QUALITY_CONTROL'
+    case 'READY':           return 'labOrders.status.READY'
+    case 'DELIVERED':       return 'labOrders.status.DELIVERED'
+    default:                return 'labOrders.status.PENDING'
+  }
+}
 
 // ── Stock Alerts Section ───────────────────────────────────────────────────
 const stockAlerts = computed(() => store.stockAlerts)
@@ -151,6 +180,10 @@ const xLabels = computed(() => {
 const hasBarData = computed(() =>
     store.weekRevenueData.length > 0 &&
     store.weekRevenueData.some(v => v > 0)
+)
+
+const weeklyRevenueTotal = computed(() =>
+    store.weekRevenueData.reduce((sum, v) => sum + v, 0)
 )
 
 // ── Bar Chart Geometry ───────────────────────────────────────────────────
@@ -318,7 +351,7 @@ const bars = computed(() => {
         <div class="card-header">
           <div>
             <h3 class="card-title">{{ $t('dashboard.charts.weeklyRevenueTitle') }}</h3>
-            <p class="card-subtitle">{{ $t('dashboard.charts.weeklyRevenueSubtitle') }}</p>
+            <p class="card-subtitle">{{ $t('dashboard.charts.weeklyRevenueSubtitle', { amount: weeklyRevenueTotal.toLocaleString('es-PE', { minimumFractionDigits: 2 }) }) }}</p>
           </div>
         </div>
 
@@ -381,30 +414,35 @@ const bars = computed(() => {
       <div class="card">
         <div class="card-header card-header--border">
           <h3 class="card-title">{{ $t('dashboard.labOrders.title') }}</h3>
+          <span class="period-badge">{{ labOrders.length }}</span>
         </div>
-        <div class="lab-list">
-          <template v-if="labOrders.length">
-            <div v-for="o in labOrders" :key="o.order" class="lab-row">
-              <div class="lab-info">
-                <span class="lab-name">{{ o.name }}</span>
-                <span class="lab-order">{{ o.order }}</span>
+        <div class="lab-cards-wrap">
+          <div v-if="labOrders.length" class="lab-cards">
+            <div
+                v-for="o in labOrders"
+                :key="o.patientName + o.status"
+                class="lab-mini-card"
+                :class="`lab-mini-card--${labOrderStatusClass(o)}`"
+            >
+              <div class="lab-mini-card__top">
+                <span class="lab-mini-badge" :class="`lab-badge--${labOrderStatusClass(o)}`">
+                  {{ $t(labOrderStatusKey(o)) }}
+                </span>
+                <span v-if="o.isRework" class="lab-mini-rework">
+                  <i class="pi pi-refresh" /> {{ $t('labOrders.card.rework') }}
+                </span>
               </div>
-              <div class="lab-right">
-                <span
-                    class="lab-stage"
-                    :class="{ 'stage--urgent': o.urgent, 'stage--quality': o.quality, 'stage--received': o.received }"
-                >
-                  <template v-if="o.urgent">{{ $t('labOrders.priority.urgent') }}</template>
-                  <template v-else-if="o.quality">{{ $t('labOrders.status.QUALITY_CONTROL') }}</template>
-                  <template v-else-if="o.received">{{ $t('labOrders.status.RECEIVED') }}</template>
-                  <template v-else>{{ $t('labOrders.status.PENDING') }}</template>
-                </span>
-                <span class="lab-delivery">
-                  {{ $t('dashboard.labOrders.deliveryLabel', { date: o.delivery }) }}
-                </span>
+              <div class="lab-mini-patient">{{ o.patientName }}</div>
+              <div v-if="o.lensType" class="lab-mini-lens">
+                <i class="pi pi-eye" />
+                {{ o.lensType }}
+              </div>
+              <div class="lab-mini-footer">
+                <i class="pi pi-calendar" />
+                {{ o.delivery }}
               </div>
             </div>
-          </template>
+          </div>
           <div v-else class="section-empty-state">
             <div class="section-empty-icon-wrap section-empty-icon-wrap--teal">
               <i class="pi pi-truck section-empty-icon" />
@@ -721,62 +759,107 @@ const bars = computed(() => {
   gap: 16px;
 }
 
-.lab-list { display: flex; flex-direction: column; flex: 1; }
-
-.lab-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+.lab-cards-wrap {
+  flex: 1;
   padding: 14px 16px;
-  border-bottom: 1px solid #f9fafb;
-  gap: 8px;
 }
 
-.lab-row:last-child { border-bottom: none; }
-
-.lab-info { display: flex; flex-direction: column; gap: 3px; }
-
-.lab-name {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  color: #101828;
+.lab-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
 
-.lab-order {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 12px;
-  color: #6a7282;
-}
-
-.lab-right {
+.lab-mini-card {
+  border-radius: 10px;
+  padding: 12px;
+  background: #fafafa;
+  border: 1px solid #f3f4f6;
+  border-left: 3px solid #d1d5db;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
-  flex-shrink: 0;
+  gap: 5px;
 }
 
-.lab-stage {
+.lab-mini-card--pending      { border-left-color: #f59e0b; background: #fffbeb; }
+.lab-mini-card--in-production { border-left-color: #3b82f6; background: #eff6ff; }
+.lab-mini-card--quality      { border-left-color: #8200db; background: #faf5ff; }
+.lab-mini-card--ready        { border-left-color: #22c55e; background: #f0fdf4; }
+.lab-mini-card--delivered    { border-left-color: #9ca3af; background: #f9fafb; }
+.lab-mini-card--urgent       { border-left-color: #e7000b; background: #fff1f2; }
+
+.lab-mini-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.lab-mini-badge {
   font-family: 'Montserrat', sans-serif;
-  font-size: 12px;
-  font-weight: 500;
-  padding: 2px 6px;
-  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 999px;
   white-space: nowrap;
   background: #f3f4f6;
   color: #4a5565;
 }
 
-.stage--urgent   { background: #c10007; color: #f3e8ff; }
-.stage--quality  { background: #8200db; color: #f3e8ff; }
-.stage--received { background: #f3f4f6; color: #4a5565; }
+.lab-badge--pending       { background: #fef3c7; color: #92400e; }
+.lab-badge--in-production { background: #dbeafe; color: #1d4ed8; }
+.lab-badge--quality       { background: #f3e8ff; color: #6b21a8; }
+.lab-badge--ready         { background: #dcfce7; color: #166534; }
+.lab-badge--delivered     { background: #f3f4f6; color: #4a5565; }
+.lab-badge--urgent        { background: #fee2e2; color: #b91c1c; }
 
-.lab-delivery {
+.lab-mini-patient {
   font-family: 'Montserrat', sans-serif;
-  font-size: 12px;
-  color: #99a1af;
+  font-size: 13px;
+  font-weight: 600;
+  color: #101828;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+
+.lab-mini-rework {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  color: #b45309;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.lab-mini-rework .pi { font-size: 9px; }
+
+.lab-mini-lens {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  color: #6a7282;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lab-mini-lens .pi { font-size: 10px; flex-shrink: 0; }
+
+.lab-mini-footer {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  color: #99a1af;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.lab-mini-footer .pi { font-size: 10px; }
 
 .alert-badge {
   background: #c10007;

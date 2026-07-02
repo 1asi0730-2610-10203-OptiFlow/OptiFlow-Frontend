@@ -2,9 +2,12 @@
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Laboratory } from '../../domain/model/laboratory.entity.js'
+import { useModalAnimation } from '../../../shared/presentation/composables/use-modal-animation.js'
+import { isValidEmail, isValidPhone } from '../../../shared/presentation/utils/validators.js'
 
 const { t } = useI18n()
 const emit = defineEmits(['save', 'close'])
+const { isClosing, requestClose, onOverlayAnimEnd } = useModalAnimation(emit)
 
 const form = ref({ name: '', phone: '', email: '' })
 const errors = ref({})
@@ -16,8 +19,9 @@ function validate() {
   const e = {}
   if (!form.value.name.trim())  e.name  = true
   if (!form.value.phone.trim()) e.phone = true
+  else if (!isValidPhone(form.value.phone)) e.phoneFormat = true
   if (!form.value.email.trim()) e.email = true
-  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.value.email)) e.emailFormat = true
+  else if (!isValidEmail(form.value.email)) e.emailFormat = true
   errors.value = e
   return Object.keys(e).length === 0
 }
@@ -35,13 +39,13 @@ function onRegister() {
   submitted.value = true
   if (!validate()) return
   emit('save', buildLab())
-  emit('close')
+  requestClose()
 }
 
 </script>
 
 <template>
-  <div class="overlay" @click="emit('close')">
+  <div class="overlay" :class="{ 'overlay--closing': isClosing }" @click="requestClose" @animationend.self="onOverlayAnimEnd">
     <div class="modal" @click.stop>
 
       <!-- Header -->
@@ -55,7 +59,7 @@ function onRegister() {
           <h3 class="modal-title">{{ $t('labOrders.registerLabModal.title') }}</h3>
           <p class="modal-subtitle">{{ $t('labOrders.registerLabModal.subtitle') }}</p>
         </div>
-        <button class="close-btn" @click="emit('close')">
+        <button class="close-btn" @click="requestClose">
           <i class="pi pi-times" />
         </button>
       </div>
@@ -95,12 +99,15 @@ function onRegister() {
               v-model="form.phone"
               type="tel"
               class="form-input"
-              :class="{ 'form-input--error': errors.phone }"
+              :class="{ 'form-input--error': errors.phone || errors.phoneFormat }"
               :placeholder="$t('labOrders.registerLabModal.phonePlaceholder')"
-              @input="errors.phone = false"
+              @input="errors.phone = false; errors.phoneFormat = false"
             />
             <span v-if="errors.phone" class="field-error">
               {{ $t('labOrders.registerLabModal.phoneRequired') }}
+            </span>
+            <span v-else-if="errors.phoneFormat" class="field-error">
+              {{ $t('labOrders.registerLabModal.phoneInvalid') }}
             </span>
           </div>
 
@@ -159,7 +166,7 @@ function onRegister() {
 
       <!-- Footer -->
       <div class="modal-footer">
-        <button class="btn-cancel" @click="emit('close')">
+        <button class="btn-cancel" @click="requestClose">
           <i class="pi pi-times" />
           {{ $t('common.cancel') }}
         </button>

@@ -4,27 +4,64 @@ import { useI18n } from 'vue-i18n'
 import { WorkOrder } from '../../domain/model/work-order.entity.js'
 import { useFulfillmentStore } from '../../application/fulfillment.store.js'
 import { useClinicalStore } from '../../../clinical/application/clinical.store.js'
+import { useSalesStore } from '../../../sales/application/sales.store.js'
+import { useInventoryStore } from '../../../inventory/application/inventory.store.js'
+import { useModalAnimation } from '../../../shared/presentation/composables/use-modal-animation.js'
 
 const { t } = useI18n()
 const emit = defineEmits(['save', 'close'])
+const { isClosing, requestClose, onOverlayAnimEnd } = useModalAnimation(emit)
 
-const lensTypes = [
-  'Lunas Progresivas', 'Lunas Monofocales', 'Lunas Bifocales',
-  'Lunas con Filtro Azul', 'Lunas Polarizadas', 'Lunas Antireflejantes', 'Lentes de Contacto'
-]
 const fulfillmentStore = useFulfillmentStore()
 const clinicalStore = useClinicalStore()
+const salesStore = useSalesStore()
+const inventoryStore = useInventoryStore()
 const laboratories = computed(() => fulfillmentStore.laboratories)
 const patients = computed(() => clinicalStore.patients)
+const lensProducts = computed(() => inventoryStore.products.filter(p => p.category === 'Lenses'))
+const frameProducts = computed(() => inventoryStore.products.filter(p => p.category === 'Frames'))
 
 const form = ref({
-  patientName: '', laboratoryName: '', lensType: 'Lunas Progresivas',
+  patientId: null, patientName: '',
+  saleId: 0, recipeId: 0,
+  labId: 0, laboratoryName: '',
+  lensType: '', lensProductId: '',
   odSphere: '', odCylinder: '', odAxis: '',
   osSphere: '', osCylinder: '', osAxis: '',
-  frame: '', orderDate: new Date().toISOString().split('T')[0],
+  frame: '', frameProductId: '', orderDate: new Date().toISOString().split('T')[0],
   deliveryDate: '', priority: 'normal',
   deposit: '', total: ''
 })
+
+function onLensChange() {
+  const product = lensProducts.value.find(p => p.id === form.value.lensProductId)
+  form.value.lensType = product ? product.name : ''
+}
+
+function onFrameChange() {
+  const product = frameProducts.value.find(p => p.id === form.value.frameProductId)
+  form.value.frame = product ? product.name : ''
+}
+
+function onPatientChange() {
+  const patient = patients.value.find(p => p.id === form.value.patientId)
+  if (!patient) { form.value.patientName = ''; form.value.saleId = 0; form.value.recipeId = 0; return }
+  form.value.patientName = `${patient.firstName} ${patient.lastName}`
+  const patientSales = salesStore.sales.filter(s => s.patientId === patient.id)
+  form.value.saleId = patientSales.length > 0 ? patientSales[patientSales.length - 1].id : 0
+  const record = clinicalStore.getRecordForPatient(patient.id)
+  if (record) {
+    const rxs = clinicalStore.getPrescriptionsForRecord(record.id)
+    form.value.recipeId = rxs.length > 0 ? rxs[rxs.length - 1].id : 0
+  } else {
+    form.value.recipeId = 0
+  }
+}
+
+function onLabChange() {
+  const lab = laboratories.value.find(l => l.id === form.value.labId)
+  form.value.laboratoryName = lab ? lab.name : ''
+}
 
 const totalNum = computed(() => parseFloat(form.value.total) || 0)
 const depositNum = computed(() => parseFloat(form.value.deposit) || 0)
@@ -45,7 +82,7 @@ const submitted = ref(false)
 
 function validate() {
   const e = {}
-  if (!form.value.patientName) e.patientName = true
+  if (!form.value.patientId) e.patientName = true
   if (!form.value.deliveryDate) e.deliveryDate = true
   errors.value = e
   return Object.keys(e).length === 0
@@ -58,15 +95,17 @@ function onSubmit() {
   if (!validate()) return
   const workOrder = new WorkOrder({
     id: 0,
-    saleId: 0,
-    recipeId: 0,
-    labId: 0,
+    saleId: form.value.saleId,
+    recipeId: form.value.recipeId,
+    labId: form.value.labId,
     status: 'PENDING',
     deliveryDate:   form.value.deliveryDate,
     patientName:    form.value.patientName,
     laboratoryName: form.value.laboratoryName,
     lensType:       form.value.lensType,
+    lensProductId:  form.value.lensProductId || null,
     frame:          form.value.frame || t('labOrders.newOrderModal.noFrame'),
+    frameProductId: form.value.frameProductId || null,
     prescription:   buildPrescription(),
     priority:       form.value.priority,
     deposit:        depositNum.value,
@@ -78,14 +117,14 @@ function onSubmit() {
 </script>
 
 <template>
-  <div class="overlay" @click="emit('close')">
+  <div class="overlay" :class="{ 'overlay--closing': isClosing }" @click="requestClose" @animationend.self="onOverlayAnimEnd">
     <div class="modal" @click.stop>
       <div class="modal-header">
         <div>
           <h3 class="modal-title">{{ $t('labOrders.newOrderModal.title') }}</h3>
           <p class="modal-subtitle">{{ $t('labOrders.newOrderModal.subtitle') }}</p>
         </div>
-        <button class="close-btn" @click="emit('close')">
+        <button class="close-btn" @click="requestClose">
           <i class="pi pi-times" />
         </button>
       </div>
@@ -95,22 +134,23 @@ function onSubmit() {
         <div class="form-row">
           <div class="field">
             <label>{{ $t('labOrders.newOrderModal.patient') }} *</label>
-            <select 
-              v-model="form.patientName" 
-              class="form-select" 
+            <select
+              v-model="form.patientId"
+              class="form-select"
               :class="{ 'form-select--error': errors.patientName }"
-              @change="errors.patientName = false"
+              @change="onPatientChange(); errors.patientName = false"
             >
-              <option value="">{{ $t('labOrders.newOrderModal.selectPatient') }}</option>
-              <option v-for="patient in patients" :key="patient.id" :value="patient.firstName + ' ' + patient.lastName">
+              <option :value="null">{{ $t('labOrders.newOrderModal.selectPatient') }}</option>
+              <option v-for="patient in patients" :key="patient.id" :value="patient.id">
                 {{ patient.firstName }} {{ patient.lastName }}
               </option>
             </select>
           </div>
           <div class="field">
             <label>{{ $t('labOrders.newOrderModal.laboratory') }}</label>
-            <select v-model="form.laboratoryName" class="form-select">
-              <option v-for="lab in laboratories" :key="lab.id" :value="lab.name">
+            <select v-model="form.labId" class="form-select" @change="onLabChange">
+              <option :value="0">{{ $t('labOrders.newOrderModal.selectPatient') }}</option>
+              <option v-for="lab in laboratories" :key="lab.id" :value="lab.id">
                 {{ lab.name }}
               </option>
             </select>
@@ -121,9 +161,13 @@ function onSubmit() {
         <div class="form-row">
           <div class="field">
             <label>{{ $t('labOrders.newOrderModal.lensType') }}</label>
-            <select v-model="form.lensType" class="form-select">
-              <option v-for="lensType in lensTypes" :key="lensType" :value="lensType">{{ lensType }}</option>
+            <select v-model="form.lensProductId" class="form-select" @change="onLensChange">
+              <option value="">{{ $t('labOrders.newOrderModal.selectLensType') }}</option>
+              <option v-for="product in lensProducts" :key="product.id" :value="product.id">{{ product.name }}</option>
             </select>
+            <span v-if="lensProducts.length === 0" class="field-hint">
+              {{ $t('labOrders.newOrderModal.noLensProducts') }}
+            </span>
           </div>
           <div class="field">
             <label>{{ $t('labOrders.newOrderModal.priority') }}</label>
@@ -150,15 +194,15 @@ function onSubmit() {
             </div>
             <div class="recipe-data-row">
               <span class="eye-label">{{ $t('labOrders.newOrderModal.rightEye') }}</span>
-              <input v-model="form.odSphere"   class="recipe-input" placeholder="-2.50" />
-              <input v-model="form.odCylinder" class="recipe-input" placeholder="-0.75" />
-              <input v-model="form.odAxis"     class="recipe-input" placeholder="90" />
+              <input v-model="form.odSphere"   class="recipe-input" :placeholder="$t('labOrders.newOrderModal.spherePlaceholder')" />
+              <input v-model="form.odCylinder" class="recipe-input" :placeholder="$t('labOrders.newOrderModal.cylinderPlaceholder')" />
+              <input v-model="form.odAxis"     class="recipe-input" :placeholder="$t('labOrders.newOrderModal.axisPlaceholder')" />
             </div>
             <div class="recipe-data-row">
               <span class="eye-label">{{ $t('labOrders.newOrderModal.leftEye') }}</span>
-              <input v-model="form.osSphere"   class="recipe-input" placeholder="-2.75" />
-              <input v-model="form.osCylinder" class="recipe-input" placeholder="-0.50" />
-              <input v-model="form.osAxis"     class="recipe-input" placeholder="85" />
+              <input v-model="form.osSphere"   class="recipe-input" :placeholder="$t('labOrders.newOrderModal.spherePlaceholder')" />
+              <input v-model="form.osCylinder" class="recipe-input" :placeholder="$t('labOrders.newOrderModal.cylinderPlaceholder')" />
+              <input v-model="form.osAxis"     class="recipe-input" :placeholder="$t('labOrders.newOrderModal.axisPlaceholder')" />
             </div>
           </div>
         </div>
@@ -167,7 +211,13 @@ function onSubmit() {
         <div class="form-row form-row--3">
           <div class="field">
             <label>{{ $t('labOrders.newOrderModal.frame') }}</label>
-            <input v-model="form.frame" class="form-input" placeholder="Ej. Ray-Ban RB5228" />
+            <select v-model="form.frameProductId" class="form-select" @change="onFrameChange">
+              <option value="">{{ $t('labOrders.newOrderModal.selectFrame') }}</option>
+              <option v-for="product in frameProducts" :key="product.id" :value="product.id">{{ product.name }}</option>
+            </select>
+            <span v-if="frameProducts.length === 0" class="field-hint">
+              {{ $t('labOrders.newOrderModal.noFrameProducts') }}
+            </span>
           </div>
           <div class="field">
             <label>{{ $t('labOrders.newOrderModal.orderDate') }}</label>
@@ -189,11 +239,11 @@ function onSubmit() {
         <div class="form-row">
           <div class="field">
             <label>{{ $t('labOrders.newOrderModal.totalAmount') }}</label>
-            <input v-model="form.total" type="number" min="0" step="0.01" class="form-input" placeholder="0.00" />
+            <input v-model="form.total" type="number" min="0" step="0.01" class="form-input" :placeholder="$t('labOrders.newOrderModal.amountPlaceholder')" />
           </div>
           <div class="field">
             <label>{{ $t('labOrders.newOrderModal.deposit') }}</label>
-            <input v-model="form.deposit" type="number" min="0" step="0.01" class="form-input" placeholder="0.00" />
+            <input v-model="form.deposit" type="number" min="0" step="0.01" class="form-input" :placeholder="$t('labOrders.newOrderModal.amountPlaceholder')" />
           </div>
         </div>
 
@@ -211,7 +261,7 @@ function onSubmit() {
       </div>
 
       <div class="modal-footer">
-        <button class="btn-cancel" @click="emit('close')">{{ $t('common.cancel') }}</button>
+        <button class="btn-cancel" @click="requestClose">{{ $t('common.cancel') }}</button>
         <button class="btn-save" @click="onSubmit">{{ $t('labOrders.newOrderModal.createOrder') }}</button>
       </div>
     </div>
@@ -234,6 +284,7 @@ function onSubmit() {
 .form-select, .form-input { padding: 9px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 0.84rem; color: #111827; outline: none; background: #fff; transition: border-color 0.15s; }
 .form-select:focus, .form-input:focus { border-color: #00c1b0; }
 .form-input--error, .form-select--error { border-color: #f87171 !important; background-color: #fff5f5 !important; }
+.field-hint { font-family: 'Montserrat', sans-serif; font-size: 0.74rem; color: #9ca3af; margin-top: 1px; }
 .recipe-section { display: flex; flex-direction: column; gap: 8px; }
 .recipe-label { display: flex; align-items: center; gap: 6px; font-family: 'Montserrat', sans-serif; font-size: 0.82rem; font-weight: 700; color: #374151; }
 .recipe-grid-wrapper { background: rgba(150,246,238,0.2); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }

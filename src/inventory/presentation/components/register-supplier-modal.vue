@@ -4,9 +4,12 @@ import { useI18n } from 'vue-i18n'
 import { Supplier } from '../../domain/model/supplier.entity.js'
 import { SupplierAssembler } from '../../infrastructure/supplier.assembler.js'
 import { SupplierApi } from '../../infrastructure/supplier-api.js'
+import { useModalAnimation } from '../../../shared/presentation/composables/use-modal-animation.js'
+import { isValidEmail, isValidPhone } from '../../../shared/presentation/utils/validators.js'
 
 const { t } = useI18n()
 const emit = defineEmits(['register', 'close'])
+const { isClosing, requestClose, onOverlayAnimEnd } = useModalAnimation(emit)
 
 const supplierApi = new SupplierApi()
 
@@ -19,7 +22,8 @@ const hasErrors = computed(() => Object.keys(errors.value).length > 0)
 function validate() {
   const e = {}
   if (!form.value.name.trim()) e.name = true
-  if (form.value.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.value.email)) e.emailFormat = true
+  if (form.value.phone.trim() && !isValidPhone(form.value.phone)) e.phoneFormat = true
+  if (form.value.email.trim() && !isValidEmail(form.value.email)) e.emailFormat = true
   errors.value = e
   return Object.keys(e).length === 0
 }
@@ -41,12 +45,12 @@ async function onRegister() {
   const resource = SupplierAssembler.toResourceFromEntity(supplier)
   await supplierApi.createSupplier(resource)
   emit('register', supplier)
-  emit('close')
+  requestClose()
 }
 </script>
 
 <template>
-  <div class="overlay" @click="emit('close')">
+  <div class="overlay" :class="{ 'overlay--closing': isClosing }" @click="requestClose" @animationend.self="onOverlayAnimEnd">
     <div class="modal" @click.stop>
 
       <!-- Header -->
@@ -60,7 +64,7 @@ async function onRegister() {
           <h3 class="modal-title">{{ $t('inventory.supplierModal.title') }}</h3>
           <p class="modal-subtitle">{{ $t('inventory.supplierModal.subtitle') }}</p>
         </div>
-        <button class="close-btn" @click="emit('close')">
+        <button class="close-btn" @click="requestClose">
           <i class="pi pi-times" />
         </button>
       </div>
@@ -113,8 +117,13 @@ async function onRegister() {
               v-model="form.phone"
               type="tel"
               class="form-input"
+              :class="{ 'form-input--error': errors.phoneFormat }"
               :placeholder="$t('inventory.supplierModal.phonePlaceholder')"
+              @input="errors.phoneFormat = false"
             />
+            <span v-if="errors.phoneFormat" class="field-error">
+              {{ $t('inventory.supplierModal.phoneInvalid') }}
+            </span>
           </div>
 
           <div class="field">
@@ -171,7 +180,7 @@ async function onRegister() {
 
       <!-- Footer -->
       <div class="modal-footer">
-        <button class="btn-cancel" @click="emit('close')">
+        <button class="btn-cancel" @click="requestClose">
           <i class="pi pi-times" />
           {{ $t('common.cancel') }}
         </button>
