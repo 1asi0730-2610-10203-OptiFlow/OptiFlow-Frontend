@@ -7,7 +7,10 @@ import PatientLayout from './shared/presentation/components/patient-layout.vue'
 const route = useRoute()
 
 const isPatient = computed(() => route.path.startsWith('/patient/'))
-const isAdmin   = computed(() => !isPatient.value && route.path !== '/login' && route.path !== '/')
+const isAdmin   = computed(() => {
+  const publicPaths = ['/login', '/register', '/forgot-password', '/reset-password', '/']
+  return !isPatient.value && !publicPaths.includes(route.path)
+})
 </script>
 
 <template>

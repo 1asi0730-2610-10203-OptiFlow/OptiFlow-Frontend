@@ -2,10 +2,25 @@
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n }             from 'vue-i18n'
 import { ref, computed } from "vue";
+import { useAuthStore } from '../../../iam/application/auth.store.js'
 
 const router = useRouter()
 const route  = useRoute()
 const { t }  = useI18n()
+const authStore = useAuthStore()
+
+const userEmail = computed(() => authStore.currentUser?.email || 'user@example.com')
+const userInitials = computed(() => {
+  const email = userEmail.value
+  if (!email) return 'U'
+  const prefix = email.split('@')[0]
+  return prefix.slice(0, 2).toUpperCase()
+})
+
+function handleLogout() {
+  authStore.logout()
+  router.push('/login')
+}
 
   const isMobileOpen = ref(false)
   isMobileOpen.value = false
@@ -86,12 +101,12 @@ const currentSectionLabel = computed(() => {
       </nav>
 
       <div class="sidebar-user">
-        <div class="user-avatar" aria-hidden="true">JD</div>
+        <div class="user-avatar" aria-hidden="true">{{ userInitials }}</div>
         <div class="user-info">
-          <span class="user-name">John Doe</span>
+          <span class="user-name">{{ userEmail }}</span>
           <span class="user-role">{{ $t('user.role') }}</span>
         </div>
-        <button class="btn-logout" @click="navigate('/')" :title="$t('common.close')" aria-label="Cerrar sesión">
+        <button class="btn-logout" @click="handleLogout" :title="$t('common.close')" aria-label="Cerrar sesión">
           <i class="pi pi-sign-out"></i>
         </button>
       </div>
