@@ -23,8 +23,8 @@ async function submit() {
   showSuccessMsg.value = false
   const ok = await authStore.signIn(email.value, password.value)
   if (ok) {
-    const userRole = localStorage.getItem(`role_${email.value}`) || (email.value.includes('patient') || email.value.includes('paciente') ? 'Paciente' : 'Administrador')
-    const redirectPath = userRole === 'Paciente' ? '/patient/my-lenses' : '/panel'
+    const userRole = localStorage.getItem(`role_${email.value}`) || 'admin'
+    const redirectPath = userRole === 'client' ? '/patient/my-lenses' : '/panel'
     router.push(redirectPath)
   }
 }
@@ -46,8 +46,8 @@ function handleGoogleSignIn() {
       const ok = await authStore.googleSignIn(credential)
       if (ok) {
         const userEmail = authStore.currentUser?.email || ''
-        const userRole = localStorage.getItem(`role_${userEmail}`) || (userEmail.includes('patient') || userEmail.includes('paciente') ? 'Paciente' : 'Administrador')
-        const redirectPath = userRole === 'Paciente' ? '/patient/my-lenses' : '/panel'
+        const userRole = localStorage.getItem(`role_${userEmail}`) || 'admin'
+        const redirectPath = userRole === 'client' ? '/patient/my-lenses' : '/panel'
         router.push(redirectPath)
       }
     },
