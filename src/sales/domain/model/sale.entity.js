@@ -9,6 +9,7 @@ export class Sale {
     userId = 0,
     userName = '',
     articulos = [],
+    items = [],
     totalAmount = 0,
     adelanto = 0,
     pendingBalance = 0,
@@ -29,6 +30,7 @@ export class Sale {
     this.userId = userId
     this.userName = userName
     this.articulos = articulos
+    this.items = items
     this.totalAmount = totalAmount
     this.adelanto = adelanto
     this.pendingBalance = pendingBalance

@@ -7,9 +7,11 @@ import { WorkOrderApi } from '../../../fulfillment/infrastructure/work-order-api
 import { WorkOrderAssembler } from '../../../fulfillment/infrastructure/work-order.assembler.js'
 import { PatientApi } from '../../../clinical/infrastructure/patient-api.js'
 import { PatientAssembler } from '../../../clinical/infrastructure/patient.assembler.js'
+import { useInventoryStore } from '../../../inventory/application/inventory.store.js'
 
 const workOrderApi = new WorkOrderApi()
 const patientApi = new PatientApi()
+const inventoryStore = useInventoryStore()
 
 defineProps({
   visible: { type: Boolean, required: true }
@@ -32,6 +34,32 @@ const selectedOrder = ref(null)
 const orderSearch = ref('')
 const patients = ref([])
 const showValidationErrors = ref(false)
+
+// Step 0 — products sold as part of this sale
+const items = ref([])
+
+const itemsValid = computed(() =>
+  items.value.length > 0 && items.value.every(i => i.productId && i.quantity > 0)
+)
+
+function prefillItemsFromOrder(order) {
+  items.value = [order.frameProductId, order.lensProductId]
+    .filter(id => id !== null && id !== undefined && id !== '')
+    .map(productId => ({ productId, quantity: 1 }))
+}
+
+function selectOrder(order) {
+  selectedOrder.value = order
+  prefillItemsFromOrder(order)
+}
+
+function addItemRow() {
+  items.value.push({ productId: null, quantity: 1 })
+}
+
+function removeItemRow(index) {
+  items.value.splice(index, 1)
+}
 
 // Step 1 — payment
 const adelanto = ref(0)
@@ -74,7 +102,7 @@ const adelantoPercent = computed(() => {
   return Math.round(((adelanto.value || 0) / finalAmount.value) * 100)
 })
 
-const canSave = computed(() => !!selectedOrder.value && finalAmount.value > 0)
+const canSave = computed(() => !!selectedOrder.value && itemsValid.value && finalAmount.value > 0)
 
 function applyDiscount() {
   if (discountCode.value.toUpperCase() === 'PROMO15') {
@@ -97,10 +125,13 @@ onMounted(async () => {
   } catch (e) {
     console.error('Error loading patients:', e)
   }
+  if (inventoryStore.products.length === 0) {
+    await inventoryStore.loadProducts()
+  }
 })
 
 function nextStep() {
-  if (step.value === 0 && !selectedOrder.value) {
+  if (step.value === 0 && (!selectedOrder.value || !itemsValid.value)) {
     showValidationErrors.value = true
     return
   }
@@ -142,6 +173,7 @@ function save() {
     userId: 1,
     userName: 'John Doe',
     articulos,
+    items: items.value.map(i => ({ productId: i.productId, quantity: i.quantity })),
     totalAmount: finalAmount.value,
     adelanto: adelanto.value || 0,
     discountCode: discountCode.value,
@@ -159,6 +191,7 @@ function close() {
   step.value = 0
   selectedOrder.value = null
   orderSearch.value = ''
+  items.value = []
   adelanto.value = 0
   discountCode.value = ''
   discountAmount.value = 0
@@ -227,7 +260,7 @@ function close() {
             :key="order.id"
             class="order-card"
             :class="{ 'order-card--selected': selectedOrder?.id === order.id }"
-            @click="selectedOrder = order"
+            @click="selectOrder(order)"
           >
             <div class="order-card__check">
               <i v-if="selectedOrder?.id === order.id" class="pi pi-check-circle" style="color: #00c1b0;" />
@@ -251,6 +284,34 @@ function close() {
         <div v-if="selectedOrder" class="selected-order-preview">
           <i class="pi pi-info-circle" style="color: #00c1b0; flex-shrink: 0;" />
           <span>{{ $t('sales.form.orderSelected') }}: <strong>{{ selectedOrder.patientName }}</strong> — S/ {{ Number(selectedOrder.total).toFixed(2) }}</span>
+        </div>
+
+        <div v-if="selectedOrder" class="form-field">
+          <label>{{ $t('sales.form.itemsLabel') }} <span class="required">*</span></label>
+          <div class="items-list">
+            <div v-for="(item, index) in items" :key="index" class="item-row">
+              <select v-model="item.productId" class="item-select">
+                <option :value="null">{{ $t('sales.form.product') }}</option>
+                <option v-for="product in inventoryStore.products" :key="product.id" :value="product.id">
+                  {{ product.name }}
+                </option>
+              </select>
+              <input
+                v-model.number="item.quantity"
+                type="number"
+                min="1"
+                class="item-qty"
+                :placeholder="$t('sales.form.quantity')"
+              />
+              <button type="button" class="item-remove" @click="removeItemRow(index)">
+                <i class="pi pi-trash" />
+              </button>
+            </div>
+          </div>
+          <button type="button" class="add-item-btn" @click="addItemRow">
+            <i class="pi pi-plus" /> {{ $t('sales.form.addItem') }}
+          </button>
+          <span v-if="showValidationErrors && !itemsValid" class="field-hint">{{ $t('sales.form.itemsRequiredError') }}</span>
         </div>
       </div>
 
@@ -585,6 +646,83 @@ function close() {
 }
 
 .discount-row { display: flex; gap: 8px; }
+
+/* ── Sale items (products + quantities) ── */
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.item-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.item-select {
+  flex: 1;
+  min-width: 0;
+  padding: 9px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.845rem;
+  color: #101828;
+  background: #fff;
+  outline: none;
+}
+
+.item-select:focus { border-color: #00c1b0; }
+
+.item-qty {
+  width: 72px;
+  padding: 9px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.845rem;
+  color: #101828;
+  outline: none;
+  text-align: center;
+}
+
+.item-qty:focus { border-color: #00c1b0; }
+
+.item-remove {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border: 1px solid #f3f4f6;
+  border-radius: 8px;
+  background: #fff;
+  color: #e7000b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.item-remove:hover { background: #fff5f5; }
+
+.add-item-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  margin-top: 4px;
+  padding: 7px 12px;
+  border: 1px dashed #00c1b0;
+  border-radius: 8px;
+  background: none;
+  color: #00c1b0;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.add-item-btn:hover { background: #f0fdfb; }
 
 .summary-box {
   background: #f9fafb;
