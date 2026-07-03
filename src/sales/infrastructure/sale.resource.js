@@ -1,7 +1,7 @@
 export class SaleResource {
   constructor({
     id, invoiceNumber, labOrderNumber, patientId, patientName, patientRx,
-    userId, userName, articulos, totalAmount, advance, pendingBalance,
+    userId, userName, articulos, items, totalAmount, advance, pendingBalance,
     discountCode, discountAmount, status, paymentMethod, createdAt, deliveredAt, notes
   }) {
     this.id = id
@@ -13,6 +13,7 @@ export class SaleResource {
     this.userId = userId
     this.userName = userName
     this.articulos = articulos
+    this.items = items
     this.totalAmount = totalAmount
     this.advance = advance
     this.pendingBalance = pendingBalance
