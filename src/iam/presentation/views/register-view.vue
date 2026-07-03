@@ -6,7 +6,7 @@ import { useAuthStore } from '../../application/auth.store.js'
 const authStore = useAuthStore()
 const router = useRouter()
 
-const form = reactive({ email: '', password: '', confirmPassword: '', userType: 'administrador' })
+const form = reactive({ email: '', password: '', confirmPassword: '', userType: 'client' })
 const localError = ref(null)
 const successMsg = ref(null)
 
@@ -28,9 +28,8 @@ async function handleSubmit() {
   const ok = await authStore.signUp(form.email, form.password)
   if (ok) {
     localStorage.setItem(`role_${form.email}`, form.userType)
-    successMsg.value = 'Registro exitoso. Redirigiendo...'
-    const redirectPath = form.userType === 'Paciente' ? '/patient/my-lenses' : '/panel'
-    setTimeout(() => router.push(redirectPath), 1500)
+    successMsg.value = 'Registro exitoso. Redirigiendo al login...'
+    setTimeout(() => router.push('/login'), 1500)
   }
 }
 </script>
@@ -62,12 +61,8 @@ async function handleSubmit() {
                 class="field-input select-input"
                 required
             >
-              <option value="optometrista">Optometrista</option>
-              <option value="administrador">Administrador</option>
-              <option value="asesor de ventas">Asesor de Ventas</option>
-              <option value="recepcionista">Recepcionista</option>
-              <option value="técnico de laboratorio">Técnico de Laboratorio</option>
-              <option value="Paciente">Paciente</option>
+              <option value="admin">Administrador</option>
+              <option value="client">Cliente</option>
             </select>
           </div>
         </div>

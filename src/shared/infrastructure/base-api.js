@@ -1,8 +1,17 @@
 import axios from 'axios'
 
-// Token temporal obtenido de Swagger (sign-in)
-// Reemplázalo cuando expire (dura 7 días)
-const TEMP_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJqdWFucGFuQGdtYWlsLmNvbSIsIm5iZiI6MTc4Mjk0Nzc1OSwiZXhwIjoxNzgzNTUyNTU5LCJpYXQiOjE3ODI5NDc3NTl9.nxsH1bYzDWUID4f_wkUGjvQQJcHP0_I3MBpJJX9rWdY'
+
+// Token temporal obtenido de Swagger (sign-in). Reemplázalo cuando expire (dura 7 días).
+// IMPORTANTE: renovar haciendo sign-in en http://localhost:5238/swagger
+const TEMP_TOKEN = 'REEMPLAZA_ESTE_TOKEN';
+
+// Rutas públicas que NO necesitan Authorization header
+const PUBLIC_PATHS = [
+  '/api/v1/authentication/sign-up',
+  '/api/v1/authentication/sign-in',
+  '/api/v1/authentication/password-recoveries',
+  '/api/v1/authentication/password-resets',
+];
 
 export class BaseApi {
   #http
@@ -10,23 +19,21 @@ export class BaseApi {
   constructor() {
     this.#http = axios.create({
       baseURL: import.meta.env.VITE_OPTIFLOW_API_URL,
-      headers: {
-        'Authorization': `Bearer ${TEMP_TOKEN}`
-      }
     })
 
     this.#http.interceptors.request.use(
       (config) => {
-        const token = localStorage.getItem('token')
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`
+        const isPublic = PUBLIC_PATHS.some(p => config.url?.includes(p));
+        if (!isPublic) {
+          const token = localStorage.getItem('token') || TEMP_TOKEN;
+          config.headers.Authorization = `Bearer ${token}`;
         }
-        return config
+        return config;
       },
       (error) => {
-        return Promise.reject(error)
+        return Promise.reject(error);
       }
-    )
+    );
   }
 
   get http() {

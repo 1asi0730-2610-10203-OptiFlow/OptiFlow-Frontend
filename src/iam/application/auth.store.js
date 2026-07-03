@@ -57,9 +57,7 @@ export const useAuthStore = defineStore('auth', () => {
     loading.value = true
     error.value = null
     try {
-      const data = await iamApi.signUp(email, password)
-      const userEntity = UserAssembler.toEntity({ id: data.id, email: data.email })
-      _persistSession(userEntity, data.token)
+      await iamApi.signUp(email, password)
       return true
     } catch (err) {
       error.value = err.response?.data?.message || err.response?.data?.detail || err.response?.data?.title || err.message
