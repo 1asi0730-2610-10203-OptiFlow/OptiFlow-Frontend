@@ -54,7 +54,8 @@ onMounted(() => {
 onUnmounted(() => { unsubNewSale?.() })
 
 async function onSaleCreated(sale) {
-  await store.createSale(sale)
+  const success = await store.createSale(sale)
+  if (!success) return
   showNewSaleModal.value = false
   toast.add({ severity: 'success', summary: t('sales.toast.saleCreated'), detail: `${sale.invoiceNumber} ${t('sales.toast.saleCreatedDetail')}`, life: 3000 })
 }

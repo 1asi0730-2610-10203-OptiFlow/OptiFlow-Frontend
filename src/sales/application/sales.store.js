@@ -12,6 +12,14 @@ const salesApi = new SalesApi()
 const paymentApi = new PaymentApi()
 const feedbackApi = new FeedbackApi()
 
+function extractErrorMessage(e) {
+  const data = e.response?.data
+  if (!data) return e.message
+  if (typeof data === 'string') return data
+  if (data.errors) return Object.values(data.errors).flat().join(' ')
+  return data.title || data.detail || e.message
+}
+
 export const useSalesStore = defineStore('sales', () => {
   const sales = ref([])
   const payments = ref([])
@@ -64,8 +72,10 @@ export const useSalesStore = defineStore('sales', () => {
       const created = await salesApi.createSale(resource)
       const saleEntity = SaleAssembler.toEntityFromResource(created)
       sales.value.unshift(saleEntity)
+      return true
     } catch (e) {
-      errors.value.push(e.message)
+      errors.value.push(extractErrorMessage(e))
+      return false
     } finally {
       loading.value = false
     }
