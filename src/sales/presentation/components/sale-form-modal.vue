@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Sale } from '../../../sales/domain/model/sale.entity.js'
 import { PaymentMethod } from '../../../sales/domain/model/payment.entity.js'
@@ -14,7 +14,7 @@ const workOrderApi = new WorkOrderApi()
 const patientApi = new PatientApi()
 const inventoryStore = useInventoryStore()
 
-defineProps({
+const props = defineProps({
   visible: { type: Boolean, required: true }
 })
 
@@ -87,7 +87,7 @@ const paymentMethodOptions = computed(() => [
 ])
 
 const sellableOrders = computed(() =>
-  orders.value.filter(o => o.status !== OrderStatus.DELIVERED)
+  orders.value.filter(o => o.status !== OrderStatus.DELIVERED && !o.saleId)
 )
 
 const filteredOrders = computed(() => {
@@ -126,13 +126,17 @@ function applyDiscount() {
   }
 }
 
-onMounted(async () => {
+async function loadOrders() {
   try {
     const resources = await workOrderApi.getWorkOrders()
     orders.value = WorkOrderAssembler.toEntitiesFromResponse(resources)
   } catch (e) {
     console.error('Error loading orders:', e)
   }
+}
+
+onMounted(async () => {
+  await loadOrders()
   try {
     const resources = await patientApi.getPatients()
     patients.value = PatientAssembler.toEntitiesFromResponse(resources)
@@ -142,6 +146,12 @@ onMounted(async () => {
   if (inventoryStore.products.length === 0) {
     await inventoryStore.loadProducts()
   }
+})
+
+// Re-fetch orders each time the modal opens, so an order that just got a sale
+// (created in a previous open of this same modal instance) drops out of the list.
+watch(() => props.visible, (visible) => {
+  if (visible) loadOrders()
 })
 
 function nextStep() {
@@ -193,7 +203,7 @@ function save() {
     createdAt: new Date().toISOString().split('T')[0],
     notes: notes.value
   })
-  emit('saved', sale)
+  emit('saved', sale, order.id)
 }
 
 function close() {

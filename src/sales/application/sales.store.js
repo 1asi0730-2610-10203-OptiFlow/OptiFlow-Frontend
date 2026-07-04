@@ -72,7 +72,7 @@ export const useSalesStore = defineStore('sales', () => {
       const created = await salesApi.createSale(resource)
       const saleEntity = SaleAssembler.toEntityFromResource(created)
       sales.value.unshift(saleEntity)
-      return true
+      return saleEntity
     } catch (e) {
       errors.value.push(extractErrorMessage(e))
       return false
@@ -140,8 +140,10 @@ export const useSalesStore = defineStore('sales', () => {
       if (saleIndex !== -1 && updatedSale) {
         sales.value[saleIndex] = SaleAssembler.toEntityFromResource(updatedSale)
       }
+      return true
     } catch (e) {
-      errors.value.push(e.message)
+      errors.value.push(extractErrorMessage(e))
+      return false
     } finally {
       loading.value = false
     }
