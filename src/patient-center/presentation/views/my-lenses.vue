@@ -1,19 +1,20 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useOrderStore } from '../../application/order.store.js'
+import { useAuthStore } from '../../../iam/application/auth.store.js'
 import { useI18n } from 'vue-i18n'
 
 const store = useOrderStore()
+const authStore = useAuthStore()
 const { t } = useI18n()
-
-const patientId = 1
 
 const today = computed(() => new Date().toLocaleDateString(undefined, {
     day: 'numeric', month: 'long', year: 'numeric'
 }))
 
 onMounted(async () => {
-    await store.fetchAllPatientOrders(patientId)
+    const email = authStore.currentUser?.email
+    if (email) await store.fetchAllPatientOrders(email)
 })
 
 const orders = computed(() => store.patientOrders.map(o => ({

@@ -3,7 +3,7 @@ import axios from 'axios'
 
 // Token temporal obtenido de Swagger (sign-in). Reemplázalo cuando expire (dura 7 días).
 // IMPORTANTE: renovar haciendo sign-in en http://localhost:5238/swagger
-const TEMP_TOKEN = 'REEMPLAZA_ESTE_TOKEN';
+const TEMP_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJ0ZXN0QG9wdGlmbG93LmNvbSIsIm5iZiI6MTc4MzEyMDUxNCwiZXhwIjoxNzgzNzI1MzE0LCJpYXQiOjE3ODMxMjA1MTR9.xsRUf4f2wWUgchHMaCguzmHSWaJXyq1dNW0bbpJpBI8';
 
 // Rutas públicas que NO necesitan Authorization header
 const PUBLIC_PATHS = [
