@@ -5,6 +5,7 @@ import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 import { useSalesStore } from '../../application/sales.store.js'
 import { eventBus } from '../../../shared/infrastructure/event-bus.js'
+import { WorkOrderApi } from '../../../fulfillment/infrastructure/work-order-api.js'
 import SaleTable from '../components/sale-table.vue'
 import SaleFormModal from '../components/sale-form-modal.vue'
 import PaymentForm from '../components/payment-form.vue'
@@ -14,6 +15,7 @@ const { t } = useI18n()
 const store = useSalesStore()
 const confirm = useConfirm()
 const toast = useToast()
+const workOrderApi = new WorkOrderApi()
 
 const search = ref('')
 const statusFilter = ref(null)
@@ -53,9 +55,18 @@ onMounted(() => {
 })
 onUnmounted(() => { unsubNewSale?.() })
 
-async function onSaleCreated(sale) {
-  const success = await store.createSale(sale)
-  if (!success) return
+async function onSaleCreated(sale, workOrderId) {
+  const created = await store.createSale(sale)
+  if (!created) return
+
+  if (workOrderId) {
+    try {
+      await workOrderApi.linkSale(workOrderId, created.id)
+    } catch (e) {
+      console.error('Error linking work order to sale:', e)
+    }
+  }
+
   showNewSaleModal.value = false
   toast.add({ severity: 'success', summary: t('sales.toast.saleCreated'), detail: `${sale.invoiceNumber} ${t('sales.toast.saleCreatedDetail')}`, life: 3000 })
 }

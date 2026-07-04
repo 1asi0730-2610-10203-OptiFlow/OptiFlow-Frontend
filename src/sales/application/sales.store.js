@@ -72,7 +72,7 @@ export const useSalesStore = defineStore('sales', () => {
       const created = await salesApi.createSale(resource)
       const saleEntity = SaleAssembler.toEntityFromResource(created)
       sales.value.unshift(saleEntity)
-      return true
+      return saleEntity
     } catch (e) {
       errors.value.push(extractErrorMessage(e))
       return false

@@ -24,4 +24,12 @@ export class WorkOrderApi extends BaseApi {
         )
         return response.data
     }
+
+    async linkSale(id, saleId) {
+        const response = await this.http.patch(
+            `${import.meta.env.VITE_WORK_ORDERS_ENDPOINT_PATH}/${id}/sale`,
+            { saleId }
+        )
+        return response.data
+    }
 }
