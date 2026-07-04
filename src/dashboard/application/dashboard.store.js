@@ -22,17 +22,28 @@ export const useDashboardStore = defineStore('dashboard', () => {
   /** Total de pacientes registrados */
   const totalPatients = computed(() => patients.value.length)
 
-  /** Ventas de hoy */
-  const salesToday = computed(() => {
+  /** Pacientes distintos con una venta registrada hoy */
+  const todaysAttendedPatients = computed(() => {
     const today = new Date().toISOString().slice(0, 10)
-    return sales.value.filter(s => s.createdAt?.startsWith(today)).length
+    const seen = new Map()
+    sales.value
+      .filter(s => s.createdAt?.startsWith(today))
+      .forEach(s => {
+        if (!seen.has(s.patientId)) {
+          seen.set(s.patientId, { patientId: s.patientId, patientName: s.patientName })
+        }
+      })
+    return [...seen.values()]
   })
 
-  /** Ingreso mensual: suma del último analyticsReport */
+  /** Pacientes atendidos hoy (conteo) */
+  const patientsSeenToday = computed(() => todaysAttendedPatients.value.length)
+
+  /** Ingreso mensual: suma del reporte del periodo más reciente */
   const monthlyRevenue = computed(() => {
     if (!analyticsReports.value.length) return 0
     const sorted = [...analyticsReports.value].sort((a, b) =>
-      b.reportId - a.reportId
+      b.period.localeCompare(a.period)
     )
     return sorted[0].totalRevenue
   })
@@ -51,7 +62,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
     [...analyticsReports.value].sort((a, b) => a.period.localeCompare(b.period))
   )
 
-  /** Valores para la línea de "Recetas" (total_orders como proxy) */
+  /** Valores para la línea de "Órdenes de Laboratorio" (total_orders) */
   const recetasChartData = computed(() =>
     sortedReports.value.map(r => r.totalOrders)
   )
@@ -147,7 +158,8 @@ export const useDashboardStore = defineStore('dashboard', () => {
     error,
     // computed
     totalPatients,
-    salesToday,
+    patientsSeenToday,
+    todaysAttendedPatients,
     monthlyRevenue,
     pendingLabOrders,
     recetasChartData,

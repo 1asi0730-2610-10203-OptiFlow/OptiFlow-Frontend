@@ -29,7 +29,7 @@ const stats = computed(() => [
   {
     icon: 'pi-calendar',
     iconBg: 'rgba(147,193,206,0.2)', iconColor: '#93c1ce',
-    value: store.salesToday,
+    value: store.patientsSeenToday,
     labelKey: 'dashboard.stats.patientsToday',
   },
   {
@@ -396,17 +396,29 @@ const bars = computed(() => {
     <!-- Bottom Row -->
     <div class="bottom-row">
 
-      <!-- Appointments placeholder -->
+      <!-- Today's Attended Patients -->
       <div class="card">
         <div class="card-header card-header--border">
           <h3 class="card-title">{{ $t('dashboard.appointments.title') }}</h3>
-          <span class="meta-text">{{ $t('dashboard.appointments.attended', { attended: 0, total: 0 }) }}</span>
+          <span class="meta-text">
+            {{ $t('dashboard.appointments.attended', { attended: store.todaysAttendedPatients.length, total: store.todaysAttendedPatients.length }) }}
+          </span>
         </div>
-        <div class="section-empty-state">
-          <div class="section-empty-icon-wrap section-empty-icon-wrap--blue">
-            <i class="pi pi-users section-empty-icon" />
+        <div class="stock-list">
+          <template v-if="store.todaysAttendedPatients.length">
+            <div v-for="p in store.todaysAttendedPatients" :key="p.patientId" class="stock-row">
+              <div class="stock-top">
+                <span class="stock-name">{{ p.patientName }}</span>
+                <span class="appointment-status">{{ $t('dashboard.appointments.statusConfirmed') }}</span>
+              </div>
+            </div>
+          </template>
+          <div v-else class="section-empty-state">
+            <div class="section-empty-icon-wrap section-empty-icon-wrap--blue">
+              <i class="pi pi-users section-empty-icon" />
+            </div>
+            <span class="section-empty-text">{{ $t('dashboard.appointments.statusPending') }}</span>
           </div>
-          <span class="section-empty-text">{{ $t('dashboard.appointments.statusPending') }}</span>
         </div>
       </div>
 
@@ -903,6 +915,16 @@ const bars = computed(() => {
   font-size: 14px;
   font-weight: 600;
   color: #e7000b;
+}
+
+.appointment-status {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #00a63e;
+  background: #f0fdf4;
+  padding: 3px 10px;
+  border-radius: 20px;
 }
 
 .stock-track {
