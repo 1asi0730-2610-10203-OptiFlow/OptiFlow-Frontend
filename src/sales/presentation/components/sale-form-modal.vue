@@ -53,6 +53,15 @@ function selectOrder(order) {
   prefillItemsFromOrder(order)
 }
 
+const missingLinkedProducts = computed(() => {
+  const order = selectedOrder.value
+  if (!order) return []
+  const missing = []
+  if (order.frame && !order.frameProductId) missing.push(order.frame)
+  if (order.lensType && !order.lensProductId) missing.push(order.lensType)
+  return missing
+})
+
 function addItemRow() {
   items.value.push({ productId: null, quantity: 1 })
 }
@@ -160,10 +169,6 @@ function save() {
     `${p.firstName || ''} ${p.lastName || ''}`.trim().toLowerCase() === (order.patientName || '').toLowerCase()
   )
 
-  const articulos = []
-  if (order.frame) articulos.push(`Armazón: ${order.frame}`)
-  if (order.lensType) articulos.push(`Tipo de Luna: ${order.lensType}`)
-
   const sale = new Sale({
     invoiceNumber: generateCode('FAC'),
     labOrderNumber: `WO-${order.id}`,
@@ -172,7 +177,6 @@ function save() {
     patientRx: '',
     userId: 1,
     userName: 'John Doe',
-    articulos,
     items: items.value.map(i => ({ productId: i.productId, quantity: i.quantity })),
     totalAmount: finalAmount.value,
     adelanto: adelanto.value || 0,
@@ -284,6 +288,11 @@ function close() {
         <div v-if="selectedOrder" class="selected-order-preview">
           <i class="pi pi-info-circle" style="color: #00c1b0; flex-shrink: 0;" />
           <span>{{ $t('sales.form.orderSelected') }}: <strong>{{ selectedOrder.patientName }}</strong> — S/ {{ Number(selectedOrder.total).toFixed(2) }}</span>
+        </div>
+
+        <div v-if="missingLinkedProducts.length" class="missing-products-warning">
+          <i class="pi pi-exclamation-triangle" />
+          <span>{{ $t('sales.form.missingProductWarning', { items: missingLinkedProducts.join(', ') }) }}</span>
         </div>
 
         <div v-if="selectedOrder" class="form-field">
@@ -643,6 +652,19 @@ function close() {
   font-family: 'Montserrat', sans-serif;
   font-size: 0.82rem;
   color: #166534;
+}
+
+.missing-products-warning {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.82rem;
+  color: #9a3412;
 }
 
 .discount-row { display: flex; gap: 8px; }
