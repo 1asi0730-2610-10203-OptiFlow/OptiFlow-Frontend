@@ -1,8 +1,9 @@
 <script setup>
 import SaleStatusBadge from './sale-status-badge.vue'
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ContextMenu from 'primevue/contextmenu'
+import { useInventoryStore } from '../../../inventory/application/inventory.store.js'
 
 const props = defineProps({
   sales: { type: Array, required: true }
@@ -11,6 +12,21 @@ const props = defineProps({
 const emit = defineEmits(['return-sale', 'collect-payment', 'cancel-sale'])
 
 const { t } = useI18n()
+const inventoryStore = useInventoryStore()
+
+onMounted(() => {
+  if (inventoryStore.products.length === 0) inventoryStore.loadProducts()
+})
+
+const productNameById = computed(() => {
+  const map = new Map()
+  inventoryStore.products.forEach(p => map.set(p.id, p.name))
+  return map
+})
+
+function productLabel(item) {
+  return productNameById.value.get(item.productId) ?? `#${item.productId}`
+}
 
 const paymentMethodLabel = computed(() => ({
   CASH:        t('sales.form.paymentMethods.cash'),
@@ -108,10 +124,12 @@ function onRowContextMenu(event) {
     </pv-column>
 
     <!-- Productos -->
-    <pv-column field="articulos" :header="$t('sales.table.products')" style="min-width: 180px">
+    <pv-column field="items" :header="$t('sales.table.products')" style="min-width: 180px">
       <template #body="{ data }">
         <ul class="articulos-list">
-          <li v-for="(art, i) in (data.articulos || [])" :key="i">{{ art }}</li>
+          <li v-for="item in (data.items || [])" :key="item.productId">
+            {{ productLabel(item) }}<span v-if="item.quantity > 1"> × {{ item.quantity }}</span>
+          </li>
         </ul>
       </template>
     </pv-column>
