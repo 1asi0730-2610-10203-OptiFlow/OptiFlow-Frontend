@@ -362,10 +362,10 @@
       "NoResults": "Sin resultados"
     },
     "charts": {
-      "conversionTitle": "Conversión Receta → Venta",
-      "conversionSubtitle": "Recetas emitidas vs. ventas cerradas por mes",
+      "conversionTitle": "Conversión Órdenes → Venta",
+      "conversionSubtitle": "Órdenes de laboratorio vs. ventas cerradas por mes",
       "last6Months": "Últ. 6 meses",
-      "legendPrescriptions": "Recetas",
+      "legendPrescriptions": "Órdenes de Laboratorio",
       "legendSales": "Ventas Cerradas",
       "weeklyRevenueTitle": "Ingresos Semanales",
       "weeklyRevenueSubtitle": "Semana actual · S/ {amount} total",
