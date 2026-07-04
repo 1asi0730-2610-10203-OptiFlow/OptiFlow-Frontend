@@ -363,10 +363,10 @@
       "NoResults": "No Results"
     },
     "charts": {
-      "conversionTitle": "Prescription to Sale Conversion",
-      "conversionSubtitle": "Issued prescriptions vs. closed sales per month",
+      "conversionTitle": "Lab Orders to Sale Conversion",
+      "conversionSubtitle": "Lab orders vs. closed sales per month",
       "last6Months": "Last 6 Months",
-      "legendPrescriptions": "Prescriptions",
+      "legendPrescriptions": "Lab Orders",
       "legendSales": "Closed Sales",
       "weeklyRevenueTitle": "Weekly Revenue",
       "weeklyRevenueSubtitle": "Current week · S/ {amount} total",
