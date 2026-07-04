@@ -78,7 +78,8 @@ function onCollectPayment(sale) {
 }
 
 async function onPaymentRegistered(payment) {
-  await store.registerPayment(payment)
+  const success = await store.registerPayment(payment)
+  if (!success) return
   showPaymentDialog.value = false
   selectedSale.value = null
   toast.add({ severity: 'success', summary: t('sales.toast.paymentRegistered'), detail: t('sales.toast.paymentRegisteredDetail'), life: 3000 })

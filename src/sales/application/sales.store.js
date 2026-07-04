@@ -140,8 +140,10 @@ export const useSalesStore = defineStore('sales', () => {
       if (saleIndex !== -1 && updatedSale) {
         sales.value[saleIndex] = SaleAssembler.toEntityFromResource(updatedSale)
       }
+      return true
     } catch (e) {
-      errors.value.push(e.message)
+      errors.value.push(extractErrorMessage(e))
+      return false
     } finally {
       loading.value = false
     }
