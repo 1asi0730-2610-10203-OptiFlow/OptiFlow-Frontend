@@ -2,14 +2,15 @@
 import { onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useNotificationStore } from '../../application/notification.store.js'
+import { useAuthStore } from '../../../iam/application/auth.store.js'
 
 const router = useRouter()
 const store = useNotificationStore()
-
-const patientId = 1
+const authStore = useAuthStore()
 
 onMounted(async () => {
-    await store.fetchNotifications(patientId)
+    const email = authStore.currentUser?.email
+    if (email) await store.fetchNotifications(email)
 })
 
 const notifications = computed(() => store.notifications.map(n => {

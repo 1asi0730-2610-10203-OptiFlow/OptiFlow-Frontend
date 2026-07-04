@@ -1,17 +1,29 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { NotificationApi } from '../infrastructure/notification-api.js'
+import { PatientApi } from '../infrastructure/patient-api.js'
 
 const notificationApi = new NotificationApi()
+const patientApi = new PatientApi()
 
 export const useNotificationStore = defineStore('notifications', () => {
     const notifications = ref([])
     const loading = ref(false)
+    const patientId = ref(null)
 
-    async function fetchNotifications(patientId) {
+    async function resolvePatientId(email) {
+        if (patientId.value) return patientId.value
+        const patient = await patientApi.getByEmail(email)
+        if (patient) patientId.value = patient.id
+        return patientId.value
+    }
+
+    async function fetchNotifications(email) {
         loading.value = true
         try {
-            notifications.value = await notificationApi.getByPatientId(patientId)
+            const id = await resolvePatientId(email)
+            if (!id) { notifications.value = []; return }
+            notifications.value = await notificationApi.getByPatientId(id)
         } catch (e) {
             console.error("Error cargando notificaciones:", e)
             notifications.value = []
@@ -20,18 +32,22 @@ export const useNotificationStore = defineStore('notifications', () => {
         }
     }
 
-    async function createNotification(patientId, resource) {
+    async function createNotification(email, resource) {
         try {
-            const created = await notificationApi.create(patientId, resource)
+            const id = await resolvePatientId(email)
+            if (!id) return
+            const created = await notificationApi.create(id, resource)
             notifications.value.push(created)
         } catch (e) {
             console.error("Error creando notificación:", e)
         }
     }
 
-    async function markAsRead(patientId, notificationId) {
+    async function markAsRead(notificationId) {
         try {
-            await notificationApi.markAsRead(patientId, notificationId)
+            const id = patientId.value
+            if (!id) return
+            await notificationApi.markAsRead(id, notificationId)
             const notification = notifications.value.find(n => n.id === notificationId)
             if (notification) notification.status = 'READ'
         } catch (e) {
@@ -39,5 +55,5 @@ export const useNotificationStore = defineStore('notifications', () => {
         }
     }
 
-    return { notifications, loading, fetchNotifications, createNotification, markAsRead }
+    return { notifications, loading, patientId, fetchNotifications, createNotification, markAsRead }
 })
