@@ -91,6 +91,7 @@
       "product": "Producto",
       "quantity": "Cantidad",
       "itemsRequiredError": "Agregue al menos un producto con una cantidad válida",
+      "missingProductWarning": "Esta orden no tiene un producto de inventario vinculado para: {items}. No se descontará stock para ese ítem.",
       "paymentMethod": "Método de Pago",
       "discountCode": "Código de Descuento (opcional)",
       "discountPlaceholder": "Ej. PROMO15",

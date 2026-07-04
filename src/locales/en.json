@@ -92,6 +92,7 @@
       "product": "Product",
       "quantity": "Quantity",
       "itemsRequiredError": "Add at least one product with a valid quantity",
+      "missingProductWarning": "This order has no linked inventory product for: {items}. Stock won't be depleted for it.",
       "paymentMethod": "Payment Method",
       "discountCode": "Discount Code (optional)",
       "discountPlaceholder": "e.g. PROMO15",
