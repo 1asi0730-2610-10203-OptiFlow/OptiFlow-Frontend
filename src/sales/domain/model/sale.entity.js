@@ -8,7 +8,6 @@ export class Sale {
     patientRx = '',
     userId = 0,
     userName = '',
-    articulos = [],
     items = [],
     totalAmount = 0,
     adelanto = 0,
@@ -29,7 +28,6 @@ export class Sale {
     this.patientRx = patientRx
     this.userId = userId
     this.userName = userName
-    this.articulos = articulos
     this.items = items
     this.totalAmount = totalAmount
     this.adelanto = adelanto
