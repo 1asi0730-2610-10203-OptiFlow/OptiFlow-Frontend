@@ -1,15 +1,11 @@
 import { BaseApi } from '../../shared/infrastructure/base-api.js'
 
 export class PatientApi extends BaseApi {
-    async getAll() {
+    async getByEmail(email) {
         const response = await this.http.get(
-            import.meta.env.VITE_PATIENTS_ENDPOINT_PATH
+            `/api/v1/patient-center/patients/by-email`,
+            { params: { email } }
         )
         return response.data
-    }
-
-    async getByEmail(email) {
-        const all = await this.getAll()
-        return all.find(p => p.email === email) || null
     }
 }
