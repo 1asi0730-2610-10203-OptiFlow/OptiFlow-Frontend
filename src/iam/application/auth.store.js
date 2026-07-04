@@ -28,6 +28,19 @@ export const useAuthStore = defineStore('auth', () => {
     error.value = null
   }
 
+  // localStorage is shared across every tab of the same browser. Without this,
+  // logging in as a different user in another tab silently overwrites this
+  // tab's session in storage while its in-memory state (and UI) keeps showing
+  // the old user — so this tab would still LOOK logged in as user A while every
+  // request it sends is actually authenticated as user B. Syncing on the native
+  // `storage` event (which only fires in tabs OTHER than the one that wrote the
+  // change) keeps every tab's session state truthful.
+  window.addEventListener('storage', (event) => {
+    if (event.key !== 'token' && event.key !== 'user') return
+    token.value = localStorage.getItem('token') || null
+    user.value = JSON.parse(localStorage.getItem('user') || 'null')
+  })
+
   // ─── Actions ────────────────────────────────────────────────────────────────
 
   /**
