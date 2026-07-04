@@ -38,6 +38,7 @@ const navItems = [
 
 function navigate(to) { router.push(to) }
 function isActive(to)  { return route.path.startsWith(to) }
+function goToPlans()   { router.push('/select-plan') }
 
 const currentSectionLabel = computed(() => {
   const activeItem = navItems.find(item => isActive(item.to))
@@ -99,6 +100,11 @@ const currentSectionLabel = computed(() => {
           <span class="nav-item__label">{{ $t(`nav.${item.key}`) }}</span>
         </button>
       </nav>
+
+      <button class="btn-upgrade-plan" @click="goToPlans">
+        <i class="pi pi-arrow-circle-up" aria-hidden="true" />
+        <span>Mejorar plan</span>
+      </button>
 
       <div class="sidebar-user">
         <div class="user-avatar" aria-hidden="true">{{ userInitials }}</div>
@@ -203,6 +209,22 @@ const currentSectionLabel = computed(() => {
 }
 
 .nav-item__icon { font-size: 0.95rem; width: 17px; text-align: center; flex-shrink: 0; }
+
+.btn-upgrade-plan {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin: 0 16px 12px;
+  padding: 9px 12px;
+  background: rgba(0,193,176,0.12);
+  border: 1px solid rgba(0,193,176,0.4);
+  border-radius: 8px;
+  color: #00c1b0;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.82rem; font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.btn-upgrade-plan i { font-size: 0.95rem; }
+.btn-upgrade-plan:hover { background: #00c1b0; color: #03070a; }
 
 .sidebar-user {
   display: flex; align-items: center; gap: 10px;

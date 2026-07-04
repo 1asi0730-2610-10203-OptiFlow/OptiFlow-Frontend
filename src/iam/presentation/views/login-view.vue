@@ -23,10 +23,16 @@ async function submit() {
   showSuccessMsg.value = false
   const ok = await authStore.signIn(email.value, password.value)
   if (ok) {
-    const userRole = localStorage.getItem(`role_${email.value}`) || 'admin'
-    const redirectPath = userRole === 'client' ? '/patient/my-lenses' : '/panel'
-    router.push(redirectPath)
+    router.push(resolveRedirectPath(email.value))
   }
+}
+
+function resolveRedirectPath(userEmail) {
+  const userRole = localStorage.getItem(`role_${userEmail}`) || 'admin'
+  if (userRole === 'client') return '/patient/my-lenses'
+  // Administradores que se registraron y aún no eligieron un plan van primero al selector de planes.
+  if (localStorage.getItem(`needsPlanSelection_${userEmail}`) === 'true') return '/select-plan'
+  return '/panel'
 }
 
 function handleGoogleSignIn() {
@@ -46,9 +52,7 @@ function handleGoogleSignIn() {
       const ok = await authStore.googleSignIn(credential)
       if (ok) {
         const userEmail = authStore.currentUser?.email || ''
-        const userRole = localStorage.getItem(`role_${userEmail}`) || 'admin'
-        const redirectPath = userRole === 'client' ? '/patient/my-lenses' : '/panel'
-        router.push(redirectPath)
+        router.push(resolveRedirectPath(userEmail))
       }
     },
   })
