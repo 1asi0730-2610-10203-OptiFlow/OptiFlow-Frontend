@@ -5,6 +5,7 @@ import { Sale } from '../../../sales/domain/model/sale.entity.js'
 import { PaymentMethod } from '../../../sales/domain/model/payment.entity.js'
 import { WorkOrderApi } from '../../../fulfillment/infrastructure/work-order-api.js'
 import { WorkOrderAssembler } from '../../../fulfillment/infrastructure/work-order.assembler.js'
+import { OrderStatus } from '../../../fulfillment/domain/model/work-order.entity.js'
 import { PatientApi } from '../../../clinical/infrastructure/patient-api.js'
 import { PatientAssembler } from '../../../clinical/infrastructure/patient.assembler.js'
 import { useInventoryStore } from '../../../inventory/application/inventory.store.js'
@@ -85,10 +86,14 @@ const paymentMethodOptions = computed(() => [
   { label: t('sales.form.paymentMethods.insurance'),value: PaymentMethod.INSURANCE }
 ])
 
+const sellableOrders = computed(() =>
+  orders.value.filter(o => o.status !== OrderStatus.DELIVERED)
+)
+
 const filteredOrders = computed(() => {
-  if (!orderSearch.value) return orders.value
+  if (!orderSearch.value) return sellableOrders.value
   const q = orderSearch.value.toLowerCase()
-  return orders.value.filter(o =>
+  return sellableOrders.value.filter(o =>
     (o.patientName || '').toLowerCase().includes(q) ||
     (o.frame || '').toLowerCase().includes(q) ||
     (o.lensType || '').toLowerCase().includes(q) ||
