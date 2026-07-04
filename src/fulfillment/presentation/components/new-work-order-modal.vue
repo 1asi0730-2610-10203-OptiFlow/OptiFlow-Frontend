@@ -4,7 +4,6 @@ import { useI18n } from 'vue-i18n'
 import { WorkOrder } from '../../domain/model/work-order.entity.js'
 import { useFulfillmentStore } from '../../application/fulfillment.store.js'
 import { useClinicalStore } from '../../../clinical/application/clinical.store.js'
-import { useSalesStore } from '../../../sales/application/sales.store.js'
 import { useInventoryStore } from '../../../inventory/application/inventory.store.js'
 import { useModalAnimation } from '../../../shared/presentation/composables/use-modal-animation.js'
 
@@ -14,7 +13,6 @@ const { isClosing, requestClose, onOverlayAnimEnd } = useModalAnimation(emit)
 
 const fulfillmentStore = useFulfillmentStore()
 const clinicalStore = useClinicalStore()
-const salesStore = useSalesStore()
 const inventoryStore = useInventoryStore()
 const laboratories = computed(() => fulfillmentStore.laboratories)
 const patients = computed(() => clinicalStore.patients)
@@ -45,10 +43,11 @@ function onFrameChange() {
 
 function onPatientChange() {
   const patient = patients.value.find(p => p.id === form.value.patientId)
-  if (!patient) { form.value.patientName = ''; form.value.saleId = 0; form.value.recipeId = 0; return }
+  if (!patient) { form.value.patientName = ''; form.value.recipeId = 0; return }
   form.value.patientName = `${patient.firstName} ${patient.lastName}`
-  const patientSales = salesStore.sales.filter(s => s.patientId === patient.id)
-  form.value.saleId = patientSales.length > 0 ? patientSales[patientSales.length - 1].id : 0
+  // saleId stays 0 here — the sale for this order doesn't exist yet. It gets
+  // linked back to this work order once a sale is created for it (see
+  // sale-list.vue's onSaleCreated -> workOrderApi.linkSale).
   const record = clinicalStore.getRecordForPatient(patient.id)
   if (record) {
     const rxs = clinicalStore.getPrescriptionsForRecord(record.id)
