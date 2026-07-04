@@ -11,6 +11,7 @@ import staffRoutes        from './staff/presentation/staff-routes.js'
 import patientRoutes     from './patient-center/presentation/patient-routes.js'
 import reportRoutes      from './report/presentation/report-routes.js'
 import settingsRoutes    from './settings/presentation/settings-routes.js'
+import subscriptionRoutes from './subscription/presentation/subscription-routes.js'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +27,7 @@ const router = createRouter({
     ...patientRoutes,
     ...reportRoutes,
     ...settingsRoutes,
+    ...subscriptionRoutes,
     {
       path:      '/:pathMatch(.*)*',
       name:      'not-found',
