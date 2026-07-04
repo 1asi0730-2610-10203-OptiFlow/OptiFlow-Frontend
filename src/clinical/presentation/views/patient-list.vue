@@ -135,6 +135,54 @@ function onRowContextMenu(event, patient) {
     contextPatient.value = patient
     contextMenuRef.value.show(event)
 }
+
+// ── Export ──────────────────────────────────────────────────────────────
+function escapeCsvValue(value) {
+    const str = String(value ?? '')
+    return /[",;\n]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str
+}
+
+function exportPatients() {
+    if (!filteredPatients.value.length) return
+
+    const headers = [
+        'ID', 'Nombre completo', 'DNI', 'Email', 'Teléfono',
+        'Última receta OD', 'Última receta OS', 'Última visita'
+    ]
+
+    const rows = filteredPatients.value.map(patient => {
+        const rx = latestPrescriptionFor(patient)
+        const odRx = rx ? `SPH ${formatVal(rx.odSphere)} CYL ${formatVal(rx.odCylinder)}` : '—'
+        const osRx = rx ? `SPH ${formatVal(rx.oiSphere)} CYL ${formatVal(rx.oiCylinder)}` : '—'
+        return [
+            patient.id,
+            patient.fullName,
+            patient.dni,
+            patient.email || '',
+            patient.phone || '',
+            odRx,
+            osRx,
+            rx?.formattedDate || ''
+        ]
+    })
+
+    const csvContent = [headers, ...rows]
+        .map(row => row.map(escapeCsvValue).join(','))
+        .join('\r\n')
+
+    // BOM al inicio para que Excel detecte UTF-8 y muestre tildes/ñ correctamente
+    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    const today = new Date().toISOString().slice(0, 10)
+
+    link.href = url
+    link.setAttribute('download', `pacientes_${today}.csv`)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+}
 </script>
 
 <template>
@@ -192,7 +240,7 @@ function onRowContextMenu(event, patient) {
                     @input="currentPage = 1"
                 />
             </div>
-            <button class="btn-export">
+            <button class="btn-export" :disabled="!filteredPatients.length" @click="exportPatients">
                 <i class="pi pi-download" /> {{ $t('common.export') }}
             </button>
         </div>
@@ -334,6 +382,7 @@ function onRowContextMenu(event, patient) {
 .search-input:focus { border-color: #00c1b0; }
 .btn-export { display: flex; align-items: center; gap: 6px; padding: 8px 14px; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff; font-family: 'Montserrat', sans-serif; font-size: 0.82rem; font-weight: 500; color: #374151; cursor: pointer; white-space: nowrap; }
 .btn-export:hover { background: #f9fafb; }
+.btn-export:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* Table */
 .table-wrapper { background: #fff; border-radius: 14px; border: 1px solid #f3f4f6; box-shadow: 0 1px 4px rgba(0,0,0,0.05); overflow: hidden; }
