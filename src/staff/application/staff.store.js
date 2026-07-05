@@ -47,6 +47,36 @@ export const useStaffStore = defineStore('staff', {
       } finally {
         this.loading = false
       }
+    },
+
+    async updateEmployee(id, employeeData) {
+      this.loading = true
+      try {
+        const resource = StaffAssembler.toResourceFromEntity(employeeData)
+        const response = await staffApi.updateEmployee(id, resource)
+        const updated = StaffAssembler.toEntityFromResource(response)
+        const index = this.staff.findIndex(s => s.id === id)
+        if (index !== -1) this.staff[index] = updated
+        return updated
+      } catch (error) {
+        this.errors.push('Error al actualizar el empleado')
+        throw error
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async deleteEmployee(id) {
+      this.loading = true
+      try {
+        await staffApi.deleteEmployee(id)
+        this.staff = this.staff.filter(s => s.id !== id)
+      } catch (error) {
+        this.errors.push('Error al eliminar el empleado')
+        throw error
+      } finally {
+        this.loading = false
+      }
     }
   }
 })

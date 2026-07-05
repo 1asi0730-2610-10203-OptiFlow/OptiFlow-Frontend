@@ -4,11 +4,15 @@ import { useStaffStore } from '../../application/staff.store.js'
 import { useI18n } from 'vue-i18n'
 import ContextMenu from 'primevue/contextmenu'
 import { eventBus } from '../../../shared/infrastructure/event-bus.js'
+import { useToast } from 'primevue/usetoast'
+import { useConfirm } from 'primevue/useconfirm'
 import StaffFormModal from '../components/staff-form-modal.vue'
 import StaffDetailModal from '../components/staff-detail-modal.vue'
 
 const store = useStaffStore()
 const { t } = useI18n()
+const toast = useToast()
+const confirm = useConfirm()
 
 const search = ref('')
 const departmentFilter = ref(null)
@@ -16,6 +20,7 @@ const roleFilter = ref(null)
 const showAddModal = ref(false)
 const showDetailModal = ref(false)
 const selectedEmployee = ref(null)
+const editingEmployee = ref(null)
 
 const departmentOptions = computed(() => [
   { label: t('staff.allDepartments'), value: null },
@@ -56,8 +61,45 @@ const filteredStaff = computed(() => {
 })
 
 async function onEmployeeSaved(employee) {
-  await store.createEmployee(employee)
-  showAddModal.value = false
+  try {
+    if (employee.id) {
+      await store.updateEmployee(employee.id, employee)
+      toast.add({ severity: 'success', summary: t('staff.toast.success'), detail: t('staff.toast.employeeUpdated'), life: 3000 })
+    } else {
+      await store.createEmployee(employee)
+      toast.add({ severity: 'success', summary: t('staff.toast.success'), detail: t('staff.toast.employeeCreated'), life: 3000 })
+    }
+    showAddModal.value = false
+    editingEmployee.value = null
+  } catch (error) {
+    toast.add({ severity: 'error', summary: t('staff.toast.error'), detail: t('staff.toast.saveFailed'), life: 3000 })
+  }
+}
+
+function onEditEmployee(employee) {
+  editingEmployee.value = employee
+  showDetailModal.value = false
+  showAddModal.value = true
+}
+
+function onDeleteEmployee(employee) {
+  showDetailModal.value = false
+  confirm.require({
+    message: t('staff.confirm.deleteMessage', { name: employee.fullName }),
+    header: t('staff.confirm.deleteHeader'),
+    icon: 'pi pi-exclamation-triangle',
+    acceptLabel: t('staff.confirm.deleteAccept'),
+    rejectLabel: t('common.cancel'),
+    acceptClass: 'p-button-danger',
+    accept: async () => {
+      try {
+        await store.deleteEmployee(employee.id)
+        toast.add({ severity: 'success', summary: t('staff.toast.success'), detail: t('staff.toast.employeeDeleted'), life: 3000 })
+      } catch (error) {
+        toast.add({ severity: 'error', summary: t('staff.toast.error'), detail: t('staff.toast.deleteFailed'), life: 3000 })
+      }
+    }
+  })
 }
 
 function onRowClick(event) {
@@ -228,8 +270,10 @@ function onRowContextMenu(event) {
       </pv-data-table>
     </div>
 
-    <staff-form-modal v-model:visible="showAddModal" @saved="onEmployeeSaved" />
-    <staff-detail-modal v-model:visible="showDetailModal" :employee="selectedEmployee" />
+    <pv-toast />
+    <pv-confirm-dialog />
+    <staff-form-modal v-model:visible="showAddModal" :employee="editingEmployee" @saved="onEmployeeSaved" @update:visible="(val) => { if (!val) editingEmployee = null }" />
+    <staff-detail-modal v-model:visible="showDetailModal" :employee="selectedEmployee" @edit="onEditEmployee" @delete="onDeleteEmployee" />
     <ContextMenu ref="contextMenuRef" :model="contextMenuItems" />
   </div>
 </template>
