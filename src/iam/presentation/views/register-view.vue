@@ -25,13 +25,9 @@ async function handleSubmit() {
     return
   }
 
-  const ok = await authStore.signUp(form.email, form.password)
+  const ok = await authStore.signUp(form.email, form.password, form.userType)
   if (ok) {
-    localStorage.setItem(`role_${form.email}`, form.userType)
-    // Los administradores nuevos deben elegir un plan la primera vez que inician sesión.
-    if (form.userType === 'admin') {
-      localStorage.setItem(`needsPlanSelection_${form.email}`, 'true')
-    }
+    // Role is now persisted by the backend; the redirect after login is driven by it.
     successMsg.value = 'Registro exitoso. Redirigiendo al login...'
     setTimeout(() => router.push('/login'), 1500)
   }
