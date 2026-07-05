@@ -1,52 +1,76 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { useAuthStore } from '../../../iam/application/auth.store.js'
+import { PatientApi } from '../../infrastructure/patient-api.js'
 import { isValidEmail, isValidPhone } from '../../../shared/presentation/utils/validators.js'
+
+const authStore = useAuthStore()
+const patientApi = new PatientApi()
 
 const showSuccess = ref(false)
 const submitted = ref(false)
 const errors = ref({})
+const loading = ref(true)
+const patientId = ref(null)
 
 const hasErrors = computed(() => Object.keys(errors.value).length > 0)
 
 const profile = ref({
-  firstName: 'John',
-  lastName: 'Doe',
-  email: 'john.doe@ejemplo.com',
-  phone: '+51 987 654 321',
-  address: 'Av. Javier Prado Este 4200',
-  city: 'Lima',
+  firstName: '',
+  lastName: '',
+  email: '',
+  phone: '',
   birthDate: ''
 })
 
-onMounted(() => {
-  const saved = localStorage.getItem('optiflow_patient_profile')
-  if (saved) {
-    profile.value = JSON.parse(saved)
+onMounted(async () => {
+  try {
+    const email = authStore.currentUser?.email
+    if (email) {
+      const patient = await patientApi.getByEmail(email)
+      if (patient) {
+        patientId.value = patient.id
+        profile.value = {
+          firstName: patient.firstName || '',
+          lastName:  patient.lastName  || '',
+          email:     patient.email     || '',
+          phone:     patient.phone     || '',
+          birthDate: patient.birthDate || ''
+        }
+        const savedAddress = localStorage.getItem('optiflow_patient_address')
+        if (savedAddress) profile.value.address = savedAddress
+        const savedCity = localStorage.getItem('optiflow_patient_city')
+        if (savedCity) profile.value.city = savedCity 
+      }
+    }
+  } catch (e) {
+    console.error("Error cargando perfil:", e)
+  } finally {
+    loading.value = false
   }
 })
 
 const initials = computed(() => {
   const f = profile.value.firstName ? profile.value.firstName.charAt(0).toUpperCase() : ''
-  const l = profile.value.lastName ? profile.value.lastName.charAt(0).toUpperCase() : ''
+  const l = profile.value.lastName  ? profile.value.lastName.charAt(0).toUpperCase()  : ''
   return f + l || 'JD'
 })
 
 const medicalInfo = ref({
-  recordNumber: 'HC-2850',
-  lastVisit: '15 Mar 2026',
-  optometrist: 'Dr. Smith',
+  recordNumber:    'HC-2850',
+  lastVisit:       '15 Mar 2026',
+  optometrist:     'Dr. Smith',
   nextAppointment: '15 Sep 2026'
 })
 
 function validate() {
   const e = {}
   if (!profile.value.firstName) e.firstName = true
-  if (!profile.value.lastName) e.lastName = true
-  if (!profile.value.email) e.email = true
+  if (!profile.value.lastName)  e.lastName  = true
+  if (!profile.value.email)     e.email     = true
   else if (!isValidEmail(profile.value.email)) e.emailFormat = true
   if (!profile.value.phone) e.phone = true
   else if (!isValidPhone(profile.value.phone)) e.phoneFormat = true
-  if (!profile.value.address) e.address = true
   errors.value = e
   return Object.keys(e).length === 0
 }
@@ -54,9 +78,8 @@ function validate() {
 function saveChanges() {
   submitted.value = true
   if (!validate()) return
-
-  localStorage.setItem('optiflow_patient_profile', JSON.stringify(profile.value))
-
+  localStorage.setItem('optiflow_patient_address', profile.value.address || '')
+  localStorage.setItem('optiflow_patient_city', profile.value.city || '')
   showSuccess.value = true
   setTimeout(() => showSuccess.value = false, 3000)
 }
@@ -142,7 +165,7 @@ function saveChanges() {
 
           <div class="form-row">
             <div class="field">
-              <label>{{ $t('patientCenter.profile.address') }} <span class="required">*</span></label>
+              <label>{{ $t('patientCenter.profile.address') }}</label>
               <div class="input-icon-wrapper">
                 <i class="pi pi-map-marker input-icon"></i>
                 <input v-model="profile.address" type="text" class="form-input with-icon" :class="{ 'form-input--error': errors.address }" @input="errors.address = false" />
