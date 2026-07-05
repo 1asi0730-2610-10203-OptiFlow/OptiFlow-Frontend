@@ -25,13 +25,16 @@ const orders = computed(() => store.patientOrders.map(o => ({
     estimatedDate: o.deliveryDate,
     createdAt: o.createdAt,
     totalAmount: o.total,
-    paidAmount: o.deposit,
+    // Actual amount paid so far = total - pending (not the fixed initial deposit), so the bar
+    // reaches 100% once the balance is settled.
+    paidAmount: (o.total ?? 0) - (o.pendingBalance ?? 0),
     pendingBalance: o.pendingBalance
 })))
 
 const getPaymentPercentage = (order) => {
     if (!order || !order.totalAmount) return 0
-    return Math.round((order.paidAmount / order.totalAmount) * 100)
+    const percent = Math.round((order.paidAmount / order.totalAmount) * 100)
+    return Math.min(100, Math.max(0, percent))
 }
 </script>
 
