@@ -1,19 +1,39 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { SubscriptionApi } from '../../infrastructure/subscription-api.js'
 import { useAuthStore } from '../../../iam/application/auth.store.js'
 
 const subscriptionApi = new SubscriptionApi()
 const router = useRouter()
+const route = useRoute()
 const authStore = useAuthStore()
 
 const plans = ref([])
 const loadingPlans = ref(true)
 const checkingOutPlanId = ref(null)
+const confirmingPayment = ref(false)
 const error = ref(null)
 
+// Coming back from Stripe: the webhook may still be activating the subscription, so poll briefly.
+async function confirmPaymentReturn() {
+  confirmingPayment.value = true
+  for (let attempt = 0; attempt < 6; attempt++) {
+    await authStore.refreshSubscription()
+    if (authStore.subscriptionActive) {
+      router.push('/panel')
+      return
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1500))
+  }
+  confirmingPayment.value = false
+  error.value = 'Estamos confirmando tu pago. Si ya pagaste, recarga en unos segundos.'
+}
+
 onMounted(async () => {
+  if (route.query.status === 'success') {
+    await confirmPaymentReturn()
+  }
   try {
     plans.value = await subscriptionApi.getPlans()
   } catch (err) {
