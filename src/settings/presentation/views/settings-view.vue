@@ -9,12 +9,14 @@ import RoleListItem from '../components/role-list-item.vue';
 import RolesSummary from '../components/roles-summary.vue';
 import SystemStatus from '../components/system-status.vue';
 import { useToast } from 'primevue/usetoast';
+import { useConfirm } from 'primevue/useconfirm';
 import RoleForm from '../components/role-form.vue';
 
 const roles = ref([]);
 const rolesApi = new RolesApi();
 const loading = ref(true);
 const toast = useToast();
+const confirm = useConfirm();
 const showEditDialog = ref(false);
 const showAddDialog = ref(false);
 const selectedRoleToEdit = ref(null);
@@ -41,10 +43,10 @@ const handleUpdateRole = async (updatedRoleData) => {
     
     await rolesApi.update(selectedRoleToEdit.value.id, roleToSave);
     showEditDialog.value = false;
-    toast.add({ severity: 'success', summary: 'Éxito', detail: 'Rol actualizado correctamente', life: 3000 });
+    toast.add({ severity: 'success', summary: t('settings.toast.success'), detail: t('settings.toast.roleUpdated'), life: 3000 });
     await fetchData();
   } catch (error) {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'No se pudo actualizar el rol', life: 3000 });
+    toast.add({ severity: 'error', summary: t('settings.toast.error'), detail: t('settings.toast.roleUpdateFailed'), life: 3000 });
     console.error('Error updating role:', error);
   } finally {
     loading.value = false;
@@ -265,14 +267,38 @@ const handleSaveRole = async (newRoleData) => {
     
     await rolesApi.create(roleToSave);
     showAddDialog.value = false;
-    toast.add({ severity: 'success', summary: 'Éxito', detail: 'Rol creado correctamente', life: 3000 });
+    toast.add({ severity: 'success', summary: t('settings.toast.success'), detail: t('settings.toast.roleCreated'), life: 3000 });
     await fetchData();
   } catch (error) {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'No se pudo crear el rol', life: 3000 });
+    toast.add({ severity: 'error', summary: t('settings.toast.error'), detail: t('settings.toast.roleCreateFailed'), life: 3000 });
     console.error('Error saving role:', error);
   } finally {
     loading.value = false;
   }
+};
+
+const handleDeleteRoleClick = (role) => {
+  confirm.require({
+    message: t('settings.roles.confirm.deleteMessage', { name: role.name }),
+    header: t('settings.roles.confirm.deleteHeader'),
+    icon: 'pi pi-exclamation-triangle',
+    acceptLabel: t('settings.roles.confirm.deleteAccept'),
+    rejectLabel: t('common.cancel'),
+    acceptClass: 'p-button-danger',
+    accept: async () => {
+      try {
+        loading.value = true;
+        await rolesApi.delete(role.id);
+        toast.add({ severity: 'success', summary: t('settings.toast.success'), detail: t('settings.toast.roleDeleted'), life: 3000 });
+        await fetchData();
+      } catch (error) {
+        toast.add({ severity: 'error', summary: t('settings.toast.error'), detail: t('settings.toast.roleDeleteFailed'), life: 3000 });
+        console.error('Error deleting role:', error);
+      } finally {
+        loading.value = false;
+      }
+    }
+  });
 };
 
 let unsubAddRole, unsubBusiness, unsubSecurity, unsubBackup
@@ -291,6 +317,7 @@ onUnmounted(() => {
 <template>
   <div class="settings-container p-4 lg:p-6">
     <pv-toast />
+    <pv-confirm-dialog />
     <header class="mb-6">
       <h1 class="text-900 font-bold text-3xl lg:text-4xl mb-2 mt-0 font-josefin">{{ $t('settings.pageTitle') }}</h1>
       <p class="text-600 text-lg m-0">{{ $t('settings.pageSubtitle') }}</p>
@@ -320,7 +347,7 @@ onUnmounted(() => {
               <pv-progress-spinner style="width: 50px; height: 50px" />
             </div>
             <div v-else class="roles-list">
-              <RoleListItem v-for="role in roles" :key="role.id" :role="role" @edit="handleEditRoleClick" />
+              <RoleListItem v-for="role in roles" :key="role.id" :role="role" @edit="handleEditRoleClick" @delete="handleDeleteRoleClick" />
             </div>
           </template>
         </pv-card>
