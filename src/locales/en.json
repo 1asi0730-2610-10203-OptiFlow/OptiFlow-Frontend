@@ -738,6 +738,38 @@
       "viewDetails": "View details",
       "copyEmail": "Copy email",
       "copyCode": "Copy code"
+    },
+    "editModal": {
+      "title": "Edit Employee",
+      "subtitle": "Modify employee details",
+      "save": "Save Changes"
+    },
+    "detailModal": {
+      "personalInfo": "Personal Information",
+      "email": "Email:",
+      "phone": "Phone:",
+      "notRegistered": "Not registered",
+      "workDetails": "Work Details",
+      "code": "Code:",
+      "department": "Department:",
+      "entryDate": "Entry Date:",
+      "status": "Status:",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "confirm": {
+      "deleteMessage": "Are you sure you want to delete the employee \"{name}\"?",
+      "deleteHeader": "Confirm deletion",
+      "deleteAccept": "Yes, delete"
+    },
+    "toast": {
+      "success": "Success",
+      "error": "Error",
+      "employeeCreated": "Employee created successfully",
+      "employeeUpdated": "Employee updated successfully",
+      "employeeDeleted": "Employee deleted successfully",
+      "saveFailed": "Could not save employee",
+      "deleteFailed": "Could not delete employee"
     }
   },
   "reports": {
@@ -809,7 +841,9 @@
         "lensDefect": "Lens defect",
         "coatingProblem": "Coating problem",
         "customerChange": "Customer change"
-      }
+      },
+      "reworkCount": "Rework Count",
+      "noReworkData": "No rework data available"
     },
     "personal": {
       "table": {
@@ -954,6 +988,11 @@
       "title": "Role Management",
       "subtitle": "Define and manage user roles and permissions",
       "addRole": "Add Role",
+      "confirm": {
+        "deleteMessage": "Are you sure you want to delete the role \"{name}\"?",
+        "deleteHeader": "Confirm deletion",
+        "deleteAccept": "Yes, delete"
+      },
       "dialog": {
         "title": "Add New Role",
         "subtitle": "Define a new user role and its permissions",
@@ -1025,7 +1064,8 @@
       },
       "listItem": {
         "usersAssigned": "{count} assigned user(s)",
-        "edit": "Edit"
+        "edit": "Edit",
+        "delete": "Delete"
       }
     },
     "systemStatus": {
@@ -1044,7 +1084,13 @@
       "updateFailed": "Could not update settings",
       "businessUpdated": "Business information updated successfully",
       "securityUpdated": "Security settings updated successfully",
-      "backupUpdated": "Backup settings updated successfully"
+      "backupUpdated": "Backup settings updated successfully",
+      "roleCreated": "Role created successfully",
+      "roleCreateFailed": "Could not create role",
+      "roleUpdated": "Role updated successfully",
+      "roleUpdateFailed": "Could not update role",
+      "roleDeleted": "Role deleted successfully",
+      "roleDeleteFailed": "Could not delete role"
     },
     "business": {
       "title": "Business Information",

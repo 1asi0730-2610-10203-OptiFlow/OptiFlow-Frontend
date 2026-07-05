@@ -731,6 +731,38 @@
       "viewDetails": "Ver detalles",
       "copyEmail": "Copiar correo",
       "copyCode": "Copiar código"
+    },
+    "editModal": {
+      "title": "Editar Empleado",
+      "subtitle": "Modificar los datos del empleado",
+      "save": "Guardar Cambios"
+    },
+    "detailModal": {
+      "personalInfo": "Información Personal",
+      "email": "Email:",
+      "phone": "Teléfono:",
+      "notRegistered": "No registrado",
+      "workDetails": "Detalles Laborales",
+      "code": "Código:",
+      "department": "Departamento:",
+      "entryDate": "Fecha Ingreso:",
+      "status": "Estado:",
+      "edit": "Editar",
+      "delete": "Eliminar"
+    },
+    "confirm": {
+      "deleteMessage": "¿Está seguro que desea eliminar al empleado \"{name}\"?",
+      "deleteHeader": "Confirmar eliminación",
+      "deleteAccept": "Sí, eliminar"
+    },
+    "toast": {
+      "success": "Éxito",
+      "error": "Error",
+      "employeeCreated": "Empleado creado correctamente",
+      "employeeUpdated": "Empleado actualizado correctamente",
+      "employeeDeleted": "Empleado eliminado correctamente",
+      "saveFailed": "No se pudo guardar el empleado",
+      "deleteFailed": "No se pudo eliminar el empleado"
     }
   },
   "reports": {
@@ -802,7 +834,9 @@
         "lensDefect": "Defecto en luna",
         "coatingProblem": "Problema de recubrimiento",
         "customerChange": "Cambio del cliente"
-      }
+      },
+      "reworkCount": "Cantidad de Reprocesos",
+      "noReworkData": "No hay datos de reprocesos disponibles"
     },
     "personal": {
       "table": {
@@ -947,6 +981,11 @@
       "title": "Gestión de Roles",
       "subtitle": "Definir y gestionar roles y permisos de usuario",
       "addRole": "Agregar Rol",
+      "confirm": {
+        "deleteMessage": "¿Está seguro que desea eliminar el rol \"{name}\"?",
+        "deleteHeader": "Confirmar eliminación",
+        "deleteAccept": "Sí, eliminar"
+      },
       "dialog": {
         "title": "Agregar Nuevo Rol",
         "subtitle": "Definir un nuevo rol de usuario y sus permisos",
@@ -1018,7 +1057,8 @@
       },
       "listItem": {
         "usersAssigned": "{count} usuario(s) asignado(s)",
-        "edit": "Editar"
+        "edit": "Editar",
+        "delete": "Eliminar"
       }
     },
     "systemStatus": {
@@ -1037,7 +1077,13 @@
       "updateFailed": "No se pudieron actualizar los ajustes",
       "businessUpdated": "Información del negocio actualizada correctamente",
       "securityUpdated": "Configuración de seguridad actualizada correctamente",
-      "backupUpdated": "Configuración de copias de seguridad actualizada correctamente"
+      "backupUpdated": "Configuración de copias de seguridad actualizada correctamente",
+      "roleCreated": "Rol creado correctamente",
+      "roleCreateFailed": "No se pudo crear el rol",
+      "roleUpdated": "Rol actualizado correctamente",
+      "roleUpdateFailed": "No se pudo actualizar el rol",
+      "roleDeleted": "Rol eliminado correctamente",
+      "roleDeleteFailed": "No se pudo eliminar el rol"
     },
     "business": {
       "title": "Información del Negocio",
