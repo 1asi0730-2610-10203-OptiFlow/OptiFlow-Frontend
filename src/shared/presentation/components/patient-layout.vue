@@ -2,35 +2,44 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { useAuthStore } from '../../../iam/application/auth.store.js'
+import { PatientApi } from '../../../patient-center/infrastructure/patient-api.js'
 import LanguageSwitcher from './language-switcher.vue'
 
-const router = useRouter()
-const route  = useRoute()
-const { t }  = useI18n()
+const router    = useRouter()
+const route     = useRoute()
+const { t }     = useI18n()
+const authStore = useAuthStore()
+const patientApi = new PatientApi()
 const isMobileOpen = ref(false)
 
-const userProfile = ref({ firstName: 'John', lastName: 'Doe' })
+const userProfile = ref({ firstName: '', lastName: '' })
 
-function loadProfile() {
-  const saved = localStorage.getItem('optiflow_patient_profile')
-  if (saved) {
-    userProfile.value = JSON.parse(saved)
+async function loadProfile() {
+  try {
+    const email = authStore.currentUser?.email
+    if (email) {
+      const patient = await patientApi.getByEmail(email)
+      if (patient) {
+        userProfile.value = {
+          firstName: patient.firstName || '',
+          lastName:  patient.lastName  || ''
+        }
+      }
+    }
+  } catch (e) {
+    console.error("Error cargando perfil en sidebar:", e)
   }
 }
 
-onMounted(() => {
-  loadProfile()
-  window.addEventListener('profileUpdated', loadProfile)
-})
-
-onUnmounted(() => {
-  window.removeEventListener('profileUpdated', loadProfile)
+onMounted(async () => {
+  await loadProfile()
 })
 
 const fullName = computed(() => `${userProfile.value.firstName} ${userProfile.value.lastName}`)
 const initials = computed(() => {
   const f = userProfile.value.firstName ? userProfile.value.firstName.charAt(0).toUpperCase() : ''
-  const l = userProfile.value.lastName ? userProfile.value.lastName.charAt(0).toUpperCase() : ''
+  const l = userProfile.value.lastName  ? userProfile.value.lastName.charAt(0).toUpperCase()  : ''
   return f + l || 'JD'
 })
 
