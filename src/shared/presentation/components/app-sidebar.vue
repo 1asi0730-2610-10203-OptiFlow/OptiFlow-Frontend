@@ -10,6 +10,9 @@ const { t }  = useI18n()
 const authStore = useAuthStore()
 
 const userEmail = computed(() => authStore.currentUser?.email || 'user@example.com')
+// Show just the local part of the email so the sidebar footer stays compact and the logout button
+// is always visible; the full email is kept as a tooltip.
+const userName = computed(() => userEmail.value.split('@')[0] || 'Usuario')
 const userInitials = computed(() => {
   const email = userEmail.value
   if (!email) return 'U'
@@ -109,7 +112,7 @@ const currentSectionLabel = computed(() => {
       <div class="sidebar-user">
         <div class="user-avatar" aria-hidden="true">{{ userInitials }}</div>
         <div class="user-info">
-          <span class="user-name">{{ userEmail }}</span>
+          <span class="user-name" :title="userEmail">{{ userName }}</span>
           <span class="user-role">{{ $t('user.role') }}</span>
         </div>
         <button class="btn-logout" @click="handleLogout" :title="$t('common.close')" aria-label="Cerrar sesión">
@@ -240,12 +243,19 @@ const currentSectionLabel = computed(() => {
   font-size: 0.78rem; font-weight: 700; color: #00c1b0; flex-shrink: 0;
 }
 
-.user-info { display: flex; flex-direction: column; gap: 1px; }
-.user-name { font-family: 'Montserrat', sans-serif; font-size: 0.82rem; font-weight: 600; color: #ffffff; }
-.user-role { font-family: 'Montserrat', sans-serif; font-size: 0.7rem; color: #93c1ce; }
+.user-info { display: flex; flex-direction: column; gap: 1px; flex: 1 1 auto; min-width: 0; }
+.user-name {
+  font-family: 'Montserrat', sans-serif; font-size: 0.82rem; font-weight: 600; color: #ffffff;
+  max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.user-role {
+  font-family: 'Montserrat', sans-serif; font-size: 0.7rem; color: #93c1ce;
+  max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
 
 .btn-logout {
   margin-left: auto;
+  flex-shrink: 0;
   background: transparent;
   border: none;
   color: #ef4444;
