@@ -23,16 +23,15 @@ async function submit() {
   showSuccessMsg.value = false
   const ok = await authStore.signIn(email.value, password.value)
   if (ok) {
-    router.push(resolveRedirectPath(email.value))
+    router.push(await resolveRedirectPath())
   }
 }
 
-function resolveRedirectPath(userEmail) {
-  const userRole = localStorage.getItem(`role_${userEmail}`) || 'admin'
-  if (userRole === 'client') return '/patient/my-lenses'
-  // Administradores que se registraron y aún no eligieron un plan van primero al selector de planes.
-  if (localStorage.getItem(`needsPlanSelection_${userEmail}`) === 'true') return '/select-plan'
-  return '/panel'
+async function resolveRedirectPath() {
+  // Clients go to the patient portal; admins need an active subscription before the dashboard.
+  if (authStore.isClient) return '/patient/my-lenses'
+  await authStore.refreshSubscription()
+  return authStore.subscriptionActive ? '/panel' : '/select-plan'
 }
 
 function handleGoogleSignIn() {
@@ -51,8 +50,7 @@ function handleGoogleSignIn() {
     callback: async ({ credential }) => {
       const ok = await authStore.googleSignIn(credential)
       if (ok) {
-        const userEmail = authStore.currentUser?.email || ''
-        router.push(resolveRedirectPath(userEmail))
+        router.push(await resolveRedirectPath())
       }
     },
   })

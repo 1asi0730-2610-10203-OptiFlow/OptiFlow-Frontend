@@ -8,11 +8,6 @@ const subscriptionApi = new SubscriptionApi()
 const router = useRouter()
 const authStore = useAuthStore()
 
-function clearPlanSelectionFlag() {
-  const email = authStore.currentUser?.email
-  if (email) localStorage.removeItem(`needsPlanSelection_${email}`)
-}
-
 const plans = ref([])
 const loadingPlans = ref(true)
 const checkingOutPlanId = ref(null)
@@ -33,17 +28,14 @@ async function selectPlan(plan) {
   checkingOutPlanId.value = plan.id
   try {
     const { checkoutUrl } = await subscriptionApi.createCheckoutSession(plan.id, plan.name, plan.price)
-    clearPlanSelectionFlag()
+    // Dev-activate returns a relative app path with the subscription already active; real Stripe
+    // returns an absolute hosted-checkout URL where activation happens on return.
+    if (checkoutUrl.startsWith('/')) authStore.setSubscriptionActive(true)
     window.location.href = checkoutUrl
   } catch (err) {
     error.value = err.response?.data?.detail || err.response?.data?.message || 'No se pudo iniciar el pago. Intenta de nuevo.'
     checkingOutPlanId.value = null
   }
-}
-
-function skipForNow() {
-  clearPlanSelectionFlag()
-  router.push('/panel')
 }
 </script>
 
@@ -80,8 +72,6 @@ function skipForNow() {
         </button>
       </div>
     </div>
-
-    <span class="link-skip" @click="skipForNow">Lo haré más tarde</span>
 
     <p class="page-footer">© 2026 OptiFlow · Gestión integral para ópticas</p>
 

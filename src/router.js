@@ -36,7 +36,13 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach((to) => {
+async function homePath(authStore) {
+  if (authStore.isClient) return '/patient/my-lenses'
+  if (authStore.subscriptionActive === null) await authStore.refreshSubscription()
+  return authStore.subscriptionActive ? '/panel' : '/select-plan'
+}
+
+router.beforeEach(async (to) => {
   document.title = to.meta.title ? `${to.meta.title} — OptiFlow` : 'OptiFlow'
 
   // Pasar la instancia de pinia explícitamente para evitar errores de "no active Pinia"
@@ -50,8 +56,25 @@ router.beforeEach((to) => {
     return { name: 'login', query: { redirect: to.fullPath } }
   }
 
-  if (to.meta.guestOnly && authStore.isAuthenticated) {
-    return { path: '/panel' }
+  if (!authStore.isAuthenticated) return
+
+  if (to.meta.guestOnly) {
+    return { path: await homePath(authStore) }
+  }
+
+  // Clients live in the patient portal only (plus their own profile).
+  if (authStore.isClient) {
+    if (!isPatientRoute && to.path !== '/profile') {
+      return { path: '/patient/my-lenses' }
+    }
+    return
+  }
+
+  // Admins must have an active subscription before reaching the dashboard.
+  const subscriptionExempt = isPatientRoute || to.path === '/select-plan' || to.path === '/profile'
+  if (!subscriptionExempt) {
+    if (authStore.subscriptionActive === null) await authStore.refreshSubscription()
+    if (!authStore.subscriptionActive) return { path: '/select-plan' }
   }
 })
 

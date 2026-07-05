@@ -11,6 +11,12 @@ export class SubscriptionApi extends BaseApi {
     return response.data
   }
 
+  /** Estado de la suscripción de la cuenta actual: { hasActiveSubscription, status, subscription }. */
+  async getMySubscription() {
+    const response = await this.http.get('/api/v1/subscriptions/me')
+    return response.data
+  }
+
   /**
    * Crea una Stripe Checkout Session para el plan elegido.
    * El backend obtiene el usuario desde el JWT, no hace falta enviarlo.
