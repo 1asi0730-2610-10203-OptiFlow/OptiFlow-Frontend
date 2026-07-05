@@ -58,7 +58,7 @@ const currentSectionLabel = computed(() => {
 
 function navigate(to) { router.push(to); isMobileOpen.value = false }
 function isActive(to)  { return route.path.startsWith(to) }
-function logout()      { router.push('/login') }
+function logout()      { authStore.logout(); router.push('/login') }
 </script>
 
 <template>
