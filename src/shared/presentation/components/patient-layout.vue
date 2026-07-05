@@ -36,11 +36,18 @@ onMounted(async () => {
   await loadProfile()
 })
 
-const fullName = computed(() => `${userProfile.value.firstName} ${userProfile.value.lastName}`)
+// Clients often have no matching patient record (getByEmail 404s), so fall back to the
+// account email's local-part instead of showing a blank name — same as the admin sidebar.
+const emailName = computed(() => authStore.currentUser?.email?.split('@')[0] || 'Usuario')
+const fullName = computed(() => {
+  const name = `${userProfile.value.firstName} ${userProfile.value.lastName}`.trim()
+  return name || emailName.value
+})
 const initials = computed(() => {
   const f = userProfile.value.firstName ? userProfile.value.firstName.charAt(0).toUpperCase() : ''
   const l = userProfile.value.lastName  ? userProfile.value.lastName.charAt(0).toUpperCase()  : ''
-  return f + l || 'JD'
+  if (f || l) return f + l
+  return emailName.value.slice(0, 2).toUpperCase()
 })
 
 const navItems = [
