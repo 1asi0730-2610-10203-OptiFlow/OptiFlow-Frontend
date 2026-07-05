@@ -24,4 +24,8 @@ export class RolesApi extends BaseApi {
         const response = await this.http.put(`/roles/${id}`, role);
         return response.data;
     }
+
+    async delete(id) {
+        await this.http.delete(`/roles/${id}`);
+    }
 }

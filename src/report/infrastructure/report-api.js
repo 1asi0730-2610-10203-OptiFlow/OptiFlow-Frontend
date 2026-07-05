@@ -1,17 +1,19 @@
-import axios from 'axios'
+import { BaseApi } from '../../shared/infrastructure/base-api.js'
+import { BaseEndpoint } from '../../shared/infrastructure/base-endpoint.js'
 
-export class ReportApi {
+export class ReportApi extends BaseApi {
+  #reports
+
   constructor() {
-    this.baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+    super()
+    this.#reports = new BaseEndpoint(this.http, import.meta.env.VITE_REPORTS_ENDPOINT_PATH || '/reports')
   }
 
   async getAll() {
-    const response = await axios.get(`${this.baseUrl}/reports`)
-    return response.data
+    return await this.#reports.getAll()
   }
 
   async getById(id) {
-    const response = await axios.get(`${this.baseUrl}/reports/${id}`)
-    return response.data
+    return await this.#reports.getById(id)
   }
 }

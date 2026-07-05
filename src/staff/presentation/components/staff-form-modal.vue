@@ -1,13 +1,19 @@
 <script setup>
-import { reactive, computed, ref } from 'vue'
+import { reactive, computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { isValidEmail, isValidPhone } from '../../../shared/presentation/utils/validators.js'
 
 const { t } = useI18n()
 
 const props = defineProps({
-  visible: Boolean
+  visible: Boolean,
+  employee: {
+    type: Object,
+    default: null
+  }
 })
+
+const isEditMode = computed(() => !!props.employee)
 
 const emit = defineEmits(['update:visible', 'close', 'saved'])
 
@@ -67,17 +73,25 @@ function onSave() {
   const firstName = names[0] || ''
   const lastName = names.slice(1).join(' ') || ''
   
-  emit('saved', {
+  const payload = {
     firstName,
     lastName,
     email: form.email,
+    phone: form.phone,
     role: form.role,
     department: form.department,
-    employeeCode: 'EMP-' + Math.floor(1000 + Math.random() * 9000),
-    status: 'Activo',
-    activeToday: true,
-    photo: ''
-  })
+    entryDate: form.entryDate,
+    employeeCode: isEditMode.value ? props.employee.employeeCode : 'EMP-' + Math.floor(1000 + Math.random() * 9000),
+    status: isEditMode.value ? props.employee.status : 'Activo',
+    activeToday: isEditMode.value ? props.employee.activeToday : true,
+    photo: isEditMode.value ? props.employee.photo : ''
+  }
+
+  if (isEditMode.value) {
+    payload.id = props.employee.id
+  }
+
+  emit('saved', payload)
   
   // Reset form
   form.fullName = ''
@@ -86,6 +100,26 @@ function onSave() {
   form.role = 'Optometrista'
   form.department = 'Clínica'
 }
+
+watch(() => props.employee, (emp) => {
+  if (emp) {
+    form.fullName = emp.fullName || ''
+    form.email = emp.email || ''
+    form.phone = emp.phone || ''
+    form.role = emp.role || 'Optometrista'
+    form.department = emp.department || 'Clínica'
+    form.entryDate = emp.entryDate || new Date().toLocaleDateString('es-PE')
+  } else {
+    form.fullName = ''
+    form.email = ''
+    form.phone = ''
+    form.role = 'Optometrista'
+    form.department = 'Clínica'
+    form.entryDate = new Date().toLocaleDateString('es-PE')
+  }
+  errors.value = {}
+  submitted.value = false
+}, { immediate: true })
 </script>
 
 <template>
@@ -96,12 +130,12 @@ function onSave() {
     :style="{ width: '500px' }"
     class="staff-modal"
     :closable="true"
-    :header="t('staff.addModal.title')"
+    :header="isEditMode ? t('staff.editModal.title') : t('staff.addModal.title')"
   >
     <template #header>
       <div class="modal-header">
-        <h2 class="modal-title">{{ t('staff.addModal.title') }}</h2>
-        <p class="modal-subtitle">{{ t('staff.addModal.subtitle') }}</p>
+        <h2 class="modal-title">{{ isEditMode ? t('staff.editModal.title') : t('staff.addModal.title') }}</h2>
+        <p class="modal-subtitle">{{ isEditMode ? t('staff.editModal.subtitle') : t('staff.addModal.subtitle') }}</p>
       </div>
     </template>
 
@@ -201,7 +235,7 @@ function onSave() {
           @click="emit('update:visible', false)" 
         />
         <pv-button 
-          :label="t('staff.addModal.title')" 
+          :label="isEditMode ? t('staff.editModal.save') : t('staff.addModal.title')" 
           class="btn-save" 
           @click="onSave" 
         />

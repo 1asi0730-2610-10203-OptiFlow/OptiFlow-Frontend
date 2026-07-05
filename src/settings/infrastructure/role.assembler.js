@@ -62,8 +62,13 @@ export class RoleAssembler {
     static toEntities(roles, employees = []) {
         return roles.map(role => {
             const roleId = role.role_id || role.id;
-            const count = employees.filter(emp => emp.role_id === roleId).length;
-            return this.toEntity(role, count);
+            const entity = this.toEntity(role, 0);
+            let count = employees.filter(emp => emp.role_id === roleId).length;
+            if (count === 0) {
+                count = employees.filter(emp => emp.role === entity.name).length;
+            }
+            entity.userCount = count;
+            return entity;
         });
     }
 }

@@ -9,7 +9,7 @@ const props = defineProps({
   employee: Object
 })
 
-const emit = defineEmits(['update:visible'])
+const emit = defineEmits(['update:visible', 'edit', 'delete'])
 
 const initials = computed(() => {
   if (!props.employee) return ''
@@ -53,33 +53,33 @@ const getRoleTagStyle = (role) => {
 
       <div class="detail-sections">
         <div class="detail-section">
-          <h3 class="section-title">Información Personal</h3>
+          <h3 class="section-title">{{ t('staff.detailModal.personalInfo') }}</h3>
           <div class="detail-row">
-            <span class="detail-label">Email:</span>
+            <span class="detail-label">{{ t('staff.detailModal.email') }}</span>
             <span class="detail-value">{{ employee.email }}</span>
           </div>
           <div class="detail-row">
-            <span class="detail-label">Teléfono:</span>
-            <span class="detail-value">{{ employee.phone || 'No registrado' }}</span>
+            <span class="detail-label">{{ t('staff.detailModal.phone') }}</span>
+            <span class="detail-value">{{ employee.phone || t('staff.detailModal.notRegistered') }}</span>
           </div>
         </div>
 
         <div class="detail-section">
-          <h3 class="section-title">Detalles Laborales</h3>
+          <h3 class="section-title">{{ t('staff.detailModal.workDetails') }}</h3>
           <div class="detail-row">
-            <span class="detail-label">Código:</span>
+            <span class="detail-label">{{ t('staff.detailModal.code') }}</span>
             <span class="detail-value font-mono">{{ employee.employeeCode }}</span>
           </div>
           <div class="detail-row">
-            <span class="detail-label">Departamento:</span>
+            <span class="detail-label">{{ t('staff.detailModal.department') }}</span>
             <span class="detail-value">{{ employee.department }}</span>
           </div>
           <div class="detail-row">
-            <span class="detail-label">Fecha Ingreso:</span>
-            <span class="detail-value">{{ employee.entryDate || 'No registrada' }}</span>
+            <span class="detail-label">{{ t('staff.detailModal.entryDate') }}</span>
+            <span class="detail-value">{{ employee.entryDate || t('staff.detailModal.notRegistered') }}</span>
           </div>
           <div class="detail-row">
-            <span class="detail-label">Estado:</span>
+            <span class="detail-label">{{ t('staff.detailModal.status') }}</span>
             <div class="status-badge">
               <span class="status-dot"></span>
               {{ employee.status }}
@@ -92,8 +92,20 @@ const getRoleTagStyle = (role) => {
     <template #footer>
       <div class="detail-footer">
         <pv-button 
-          label="Cerrar" 
-          class="w-full btn-close" 
+          :label="t('staff.detailModal.edit')" 
+          icon="pi pi-pencil"
+          class="btn-edit" 
+          @click="emit('edit', employee)" 
+        />
+        <pv-button 
+          :label="t('staff.detailModal.delete')" 
+          icon="pi pi-trash"
+          class="btn-delete" 
+          @click="emit('delete', employee)" 
+        />
+        <pv-button 
+          :label="t('common.close')" 
+          class="btn-close" 
           @click="emit('update:visible', false)" 
         />
       </div>
@@ -206,12 +218,37 @@ const getRoleTagStyle = (role) => {
   border-radius: 50%;
 }
 
+.btn-edit {
+  flex: 1;
+  background-color: #00c1b0 !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.btn-delete {
+  flex: 1;
+  background-color: #fee2e2 !important;
+  color: #dc2626 !important;
+  border: none !important;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
 .btn-close {
+  flex: 1;
   background-color: #f1f5f9 !important;
   color: #475569 !important;
   border: none !important;
   border-radius: 10px;
   font-weight: 600;
+}
+
+.detail-footer {
+  display: flex;
+  gap: 12px;
+  width: 100%;
 }
 
 .w-full {
