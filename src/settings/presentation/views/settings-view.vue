@@ -97,17 +97,15 @@ const openEditBackupDialog = () => {
 };
 
 const fetchSettingsData = async () => {
+  // Business info comes from the real optic account; security/backup are informational defaults
+  // (the app doesn't manage those on the backend).
   try {
-    const [businessRes, securityRes, backupsRes] = await Promise.all([
-      rolesApi.http.get('/business/1'),
-      rolesApi.http.get('/security/1'),
-      rolesApi.http.get('/backups/1')
-    ]);
-    businessData.value = businessRes.data;
-    securityData.value = securityRes.data;
-    backupsData.value = backupsRes.data;
+    const account = await rolesApi.getBusiness();
+    if (account && account.name) {
+      businessData.value = { ...businessData.value, name: account.name };
+    }
   } catch (error) {
-    console.error('Error fetching settings info from API:', error);
+    console.error('Error fetching optic info:', error);
   }
 };
 
@@ -237,14 +235,30 @@ const backupFrequencyOptions = computed(() => [
   { label: t('settings.backup.options.annually'), value: 'ANNUALLY' }
 ]);
 
+// Roles are derived from the real staff's job roles (the backend has no RBAC — the actual user
+// role model is just Admin/Client), so this shows real people grouped by their role.
+function deriveRolesFromStaff(staff) {
+  const palette = ['#00c1b0', '#6366f1', '#f59e0b', '#ef4444', '#10b981', '#8b5cf6'];
+  const counts = {};
+  for (const s of (staff || [])) {
+    const name = (s.role && s.role.trim()) ? s.role.trim() : 'Sin rol asignado';
+    counts[name] = (counts[name] || 0) + 1;
+  }
+  return Object.entries(counts).map(([name, userCount], i) => ({
+    id: i + 1,
+    name,
+    description: `${userCount} ${userCount === 1 ? 'miembro' : 'miembros'} del personal`,
+    userCount,
+    color: palette[i % palette.length],
+    permissions: []
+  }));
+}
+
 const fetchData = async () => {
   try {
     loading.value = true;
-    const [rolesData, employeesData] = await Promise.all([
-      rolesApi.getAll(),
-      rolesApi.getEmployees()
-    ]);
-    roles.value = RoleAssembler.toEntities(rolesData, employeesData);
+    const staff = await rolesApi.getEmployees().catch(() => []);
+    roles.value = deriveRolesFromStaff(staff);
     await fetchSettingsData();
   } catch (error) {
     console.error('Error fetching settings data:', error);
