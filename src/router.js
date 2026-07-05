@@ -71,7 +71,8 @@ router.beforeEach(async (to) => {
   }
 
   // Admins must have an active subscription before reaching the dashboard.
-  const subscriptionExempt = isPatientRoute || to.path === '/select-plan' || to.path === '/profile'
+  const subscriptionExempt =
+    isPatientRoute || to.path === '/select-plan' || to.path === '/payment-success' || to.path === '/profile'
   if (!subscriptionExempt) {
     if (authStore.subscriptionActive === null) await authStore.refreshSubscription()
     if (!authStore.subscriptionActive) return { path: '/select-plan' }
