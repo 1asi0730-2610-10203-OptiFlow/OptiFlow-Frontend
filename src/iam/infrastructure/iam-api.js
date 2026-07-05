@@ -15,6 +15,11 @@ export class IamApi extends BaseApi {
     return response.data;
   }
 
+  async clientSignIn(username) {
+    const response = await this.http.post('/api/v1/authentication/sign-in/client', { username });
+    return response.data;
+  }
+
   async googleSignIn(idToken) {
     const response = await this.http.post('/api/v1/authentication/sign-in/google', { idToken });
     return response.data;

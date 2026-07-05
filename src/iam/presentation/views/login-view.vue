@@ -9,7 +9,13 @@ const route = useRoute()
 
 const email    = ref('')
 const password = ref('')
+const mode     = ref('admin') // 'admin' | 'client'
 const showSuccessMsg = ref(false)
+
+function setMode(next) {
+  mode.value = next
+  authStore.clearError()
+}
 
 onMounted(() => {
   authStore.clearError()
@@ -19,8 +25,14 @@ onMounted(() => {
 })
 
 async function submit() {
-  if (!email.value || !password.value) return
   showSuccessMsg.value = false
+  if (mode.value === 'client') {
+    if (!email.value) return
+    const ok = await authStore.clientSignIn(email.value)
+    if (ok) router.push('/patient/my-lenses')
+    return
+  }
+  if (!email.value || !password.value) return
   const ok = await authStore.signIn(email.value, password.value)
   if (ok) {
     router.push(await resolveRedirectPath())
@@ -72,12 +84,17 @@ function handleGoogleSignIn() {
 
       <div class="card-fields">
 
+        <div class="mode-toggle">
+          <button type="button" class="mode-btn" :class="{ active: mode === 'admin' }" @click="setMode('admin')">Óptica</button>
+          <button type="button" class="mode-btn" :class="{ active: mode === 'client' }" @click="setMode('client')">Cliente</button>
+        </div>
+
         <div v-if="showSuccessMsg" class="form-success-top">
           Registro exitoso.<br />Inicia sesión
         </div>
 
         <div class="field">
-          <label class="field-label">Email</label>
+          <label class="field-label">{{ mode === 'client' ? 'Usuario' : 'Email' }}</label>
           <div class="input-wrap">
             <i class="pi pi-envelope input-icon" />
             <input
@@ -90,7 +107,7 @@ function handleGoogleSignIn() {
           </div>
         </div>
 
-        <div class="field">
+        <div class="field" v-if="mode === 'admin'">
           <label class="field-label">Contraseña</label>
           <div class="input-wrap">
             <i class="pi pi-lock input-icon" />
@@ -104,6 +121,8 @@ function handleGoogleSignIn() {
           </div>
         </div>
 
+        <p v-if="mode === 'client'" class="client-hint">Los clientes ingresan solo con su usuario.</p>
+
         <p v-if="authStore.error" class="field-error">{{ authStore.error }}</p>
 
         <div class="btn-wrap">
@@ -112,12 +131,14 @@ function handleGoogleSignIn() {
             <span v-else>Continuar</span>
           </button>
 
-          <div class="divider"><span>o</span></div>
+          <template v-if="mode === 'admin'">
+            <div class="divider"><span>o</span></div>
 
-          <button class="btn-google" :disabled="authStore.loading" @click="handleGoogleSignIn">
-            <img src="https://www.google.com/favicon.ico" alt="Google" width="16" />
-            <span>Continuar con Google</span>
-          </button>
+            <button class="btn-google" :disabled="authStore.loading" @click="handleGoogleSignIn">
+              <img src="https://www.google.com/favicon.ico" alt="Google" width="16" />
+              <span>Continuar con Google</span>
+            </button>
+          </template>
         </div>
 
       </div>
@@ -251,6 +272,38 @@ function handleGoogleSignIn() {
   font-size: 12px;
   color: #f87171;
   margin: -8px 0 0;
+}
+
+.mode-toggle {
+  display: flex;
+  gap: 6px;
+  background: rgba(147, 193, 206, 0.08);
+  border-radius: 10px;
+  padding: 4px;
+  margin-bottom: 4px;
+}
+.mode-btn {
+  flex: 1;
+  padding: 8px 10px;
+  border: none;
+  background: transparent;
+  color: #93c1ce;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.mode-btn.active {
+  background: #00c1b0;
+  color: #04231f;
+}
+.client-hint {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  color: #93c1ce;
+  margin: -4px 0 0;
 }
 
 .form-success-top {

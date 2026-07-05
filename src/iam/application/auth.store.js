@@ -105,6 +105,26 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   /**
+   * Login de cliente (paciente) solo con nombre de usuario (email), sin contraseña.
+   */
+  async function clientSignIn(username) {
+    loading.value = true
+    error.value = null
+    try {
+      const data = await iamApi.clientSignIn(username)
+      const userEntity = UserAssembler.toEntity(data)
+      _persistSession(userEntity, data.token)
+      setSubscriptionActive(null)
+      return true
+    } catch (err) {
+      error.value = err.response?.data?.error || err.response?.data?.message || err.response?.data?.detail || err.response?.data?.title || err.message
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
+
+  /**
    * Login con Google
    * @param {string} idToken — token de Google OAuth
    */
@@ -225,6 +245,7 @@ export const useAuthStore = defineStore('auth', () => {
     refreshSubscription,
     setSubscriptionActive,
     signIn,
+    clientSignIn,
     signUp,
     googleSignIn,
     forgotPassword,
