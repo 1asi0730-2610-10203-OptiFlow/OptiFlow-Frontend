@@ -2,19 +2,24 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { IamApi } from '../infrastructure/iam-api.js'
 import { UserAssembler } from '../infrastructure/user.assembler.js'
+import { SubscriptionApi } from '../../subscription/infrastructure/subscription-api.js'
 
 const iamApi = new IamApi()
+const subscriptionApi = new SubscriptionApi()
 
 export const useAuthStore = defineStore('auth', () => {
   // ─── State ─────────────────────────────────────────────────────────────────
   const user = ref(JSON.parse(localStorage.getItem('user') || 'null'))
   const token = ref(localStorage.getItem('token') || null)
+  // null = unknown (needs a refresh), true/false = last known account subscription state.
+  const subscriptionActive = ref(JSON.parse(localStorage.getItem('subscriptionActive') || 'null'))
   const loading = ref(false)
   const error = ref(null)
 
   // ─── Getters ────────────────────────────────────────────────────────────────
   const isAuthenticated = computed(() => !!token.value && !!user.value)
   const currentUser = computed(() => user.value)
+  const isClient = computed(() => user.value?.role === 'CLIENT')
 
   // ─── Helpers ────────────────────────────────────────────────────────────────
   function _persistSession(userData, jwtToken) {
@@ -28,6 +33,23 @@ export const useAuthStore = defineStore('auth', () => {
     error.value = null
   }
 
+  function setSubscriptionActive(value) {
+    subscriptionActive.value = value
+    localStorage.setItem('subscriptionActive', JSON.stringify(value))
+  }
+
+  /** Re-reads the current account's subscription state from the backend. */
+  async function refreshSubscription() {
+    if (!token.value) return false
+    try {
+      const status = await subscriptionApi.getMySubscription()
+      setSubscriptionActive(!!status?.hasActiveSubscription)
+    } catch {
+      setSubscriptionActive(false)
+    }
+    return subscriptionActive.value
+  }
+
   // localStorage is shared across every tab of the same browser. Without this,
   // logging in as a different user in another tab silently overwrites this
   // tab's session in storage while its in-memory state (and UI) keeps showing
@@ -36,9 +58,10 @@ export const useAuthStore = defineStore('auth', () => {
   // `storage` event (which only fires in tabs OTHER than the one that wrote the
   // change) keeps every tab's session state truthful.
   window.addEventListener('storage', (event) => {
-    if (event.key !== 'token' && event.key !== 'user') return
+    if (event.key !== 'token' && event.key !== 'user' && event.key !== 'subscriptionActive') return
     token.value = localStorage.getItem('token') || null
     user.value = JSON.parse(localStorage.getItem('user') || 'null')
+    subscriptionActive.value = JSON.parse(localStorage.getItem('subscriptionActive') || 'null')
   })
 
   // ─── Actions ────────────────────────────────────────────────────────────────
@@ -51,9 +74,10 @@ export const useAuthStore = defineStore('auth', () => {
     error.value = null
     try {
       const data = await iamApi.signIn(email, password)
-      // data = { id, email, token }
-      const userEntity = UserAssembler.toEntity({ id: data.id, email: data.email })
+      // data = { id, email, token, accountId, role }
+      const userEntity = UserAssembler.toEntity(data)
       _persistSession(userEntity, data.token)
+      setSubscriptionActive(null) // unknown until refreshed
       return true
     } catch (err) {
       error.value = err.response?.data?.message || err.response?.data?.detail || err.response?.data?.title || err.message
@@ -66,11 +90,11 @@ export const useAuthStore = defineStore('auth', () => {
   /**
    * Registro de nuevo usuario
    */
-  async function signUp(email, password) {
+  async function signUp(email, password, userType) {
     loading.value = true
     error.value = null
     try {
-      await iamApi.signUp(email, password)
+      await iamApi.signUp(email, password, userType)
       return true
     } catch (err) {
       error.value = err.response?.data?.message || err.response?.data?.detail || err.response?.data?.title || err.message
@@ -89,8 +113,9 @@ export const useAuthStore = defineStore('auth', () => {
     error.value = null
     try {
       const data = await iamApi.googleSignIn(idToken)
-      const userEntity = UserAssembler.toEntity({ id: data.id, email: data.email })
+      const userEntity = UserAssembler.toEntity(data)
       _persistSession(userEntity, data.token)
+      setSubscriptionActive(null)
       return true
     } catch (err) {
       error.value = err.response?.data?.message || err.response?.data?.detail || err.response?.data?.title || err.message
@@ -143,7 +168,7 @@ export const useAuthStore = defineStore('auth', () => {
     error.value = null
     try {
       const data = await iamApi.updateUserEmail(user.value.id, newEmail)
-      const userEntity = UserAssembler.toEntity({ id: data.id, email: data.email })
+      const userEntity = UserAssembler.toEntity(data)
       _persistSession(userEntity, data.token)
       return true
     } catch (err) {
@@ -179,20 +204,26 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = null
     token.value = null
     error.value = null
+    subscriptionActive.value = null
     localStorage.removeItem('user')
     localStorage.removeItem('token')
+    localStorage.removeItem('subscriptionActive')
   }
 
   return {
     // state
     user,
     token,
+    subscriptionActive,
     loading,
     error,
     // getters
     isAuthenticated,
     currentUser,
+    isClient,
     // actions
+    refreshSubscription,
+    setSubscriptionActive,
     signIn,
     signUp,
     googleSignIn,

@@ -10,8 +10,8 @@ export class IamApi extends BaseApi {
     return response.data;
   }
 
-  async signUp(email, password) {
-    const response = await this.http.post('/api/v1/authentication/sign-up', { email, password });
+  async signUp(email, password, userType) {
+    const response = await this.http.post('/api/v1/authentication/sign-up', { email, password, userType });
     return response.data;
   }
 
