@@ -1075,7 +1075,9 @@
       "database": "Base de Datos",
       "connected": "Conectada",
       "lastUpdate": "Última Actualización",
-      "version": "Versión"
+      "version": "Versión",
+      "plan": "Plan",
+      "noPlan": "Sin plan"
     },
     "modifySettings": "Modificar Ajustes",
     "toast": {
