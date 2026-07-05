@@ -46,8 +46,14 @@ export class BaseApi {
             localStorage.removeItem('subscriptionActive');
             if (path !== '/login') window.location.assign('/login');
           } else if (status === 403 && (code === 'SUBSCRIPTION_REQUIRED' || code === 'ACCOUNT_SETUP_REQUIRED')) {
-            if (code === 'SUBSCRIPTION_REQUIRED') localStorage.setItem('subscriptionActive', 'false');
-            if (path !== '/select-plan') window.location.assign('/select-plan');
+            // The plan gate is an admin concept. Never send a client to /select-plan — that route
+            // bounces them back to the portal and creates a redirect loop.
+            let role = null;
+            try { role = JSON.parse(localStorage.getItem('user') || 'null')?.role; } catch { role = null; }
+            if (role !== 'CLIENT') {
+              if (code === 'SUBSCRIPTION_REQUIRED') localStorage.setItem('subscriptionActive', 'false');
+              if (path !== '/select-plan') window.location.assign('/select-plan');
+            }
           }
         }
         return Promise.reject(error);
