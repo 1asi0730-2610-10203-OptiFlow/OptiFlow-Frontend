@@ -17,6 +17,13 @@ export class SubscriptionApi extends BaseApi {
     return response.data
   }
 
+  /** Confirma el pago tras volver de Stripe y activa la suscripción. Devuelve { active }. */
+  async confirmCheckout(sessionId) {
+    const query = sessionId ? `?sessionId=${encodeURIComponent(sessionId)}` : ''
+    const response = await this.http.post(`/api/v1/checkout/confirm${query}`)
+    return response.data
+  }
+
   /**
    * Crea una Stripe Checkout Session para el plan elegido.
    * El backend obtiene el usuario desde el JWT, no hace falta enviarlo.
