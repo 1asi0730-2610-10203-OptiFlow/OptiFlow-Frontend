@@ -1082,7 +1082,9 @@
       "database": "Database",
       "connected": "Connected",
       "lastUpdate": "Last Update",
-      "version": "Version"
+      "version": "Version",
+      "plan": "Plan",
+      "noPlan": "No plan"
     },
     "modifySettings": "Modify Settings",
     "toast": {
