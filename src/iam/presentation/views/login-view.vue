@@ -12,29 +12,33 @@ const password = ref('')
 const mode     = ref('admin') // 'admin' | 'client'
 const showSuccessMsg = ref(false)
 const googleButtonContainer = ref(null)
-let googleReady = false
+let gsiInitialized = false
 
 function setMode(next) {
   mode.value = next
   authStore.clearError()
-  // The container only exists while in admin mode, so (re)render the button after the DOM updates.
-  if (next === 'admin') nextTick(mountGoogleButton)
+  // The button's container only exists in admin mode, so re-render into it after the DOM updates —
+  // otherwise switching client → admin leaves an empty container until a full page reload.
+  if (next === 'admin') nextTick(renderGoogleButton)
 }
 
-// Renders Google's official Sign-In button once the GSI script and a client id are both available.
-// Returns true when the button was rendered so callers can stop polling.
-function mountGoogleButton() {
-  if (googleReady) return true
+// Initializes Google Identity Services once, then renders the official button into the current
+// container. Returns true once rendered so the initial poll can stop; safe to call again whenever the
+// admin tab (and its container) is re-created.
+function renderGoogleButton() {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
   if (!clientId || !window.google?.accounts?.id || !googleButtonContainer.value) return false
 
-  window.google.accounts.id.initialize({
-    client_id: clientId,
-    callback: async ({ credential }) => {
-      const ok = await authStore.googleSignIn(credential)
-      if (ok) router.push(await resolveRedirectPath())
-    },
-  })
+  if (!gsiInitialized) {
+    window.google.accounts.id.initialize({
+      client_id: clientId,
+      callback: async ({ credential }) => {
+        const ok = await authStore.googleSignIn(credential)
+        if (ok) router.push(await resolveRedirectPath())
+      },
+    })
+    gsiInitialized = true
+  }
   window.google.accounts.id.renderButton(googleButtonContainer.value, {
     type: 'standard',
     theme: 'outline',
@@ -45,7 +49,6 @@ function mountGoogleButton() {
     locale: 'es',
     width: 331,
   })
-  googleReady = true
   return true
 }
 
@@ -55,10 +58,10 @@ onMounted(() => {
     showSuccessMsg.value = true
   }
   // The GSI script is loaded async in index.html, so it may not be ready yet — retry briefly.
-  if (!mountGoogleButton()) {
+  if (!renderGoogleButton()) {
     let tries = 0
     const timer = setInterval(() => {
-      if (mountGoogleButton() || ++tries >= 25) clearInterval(timer)
+      if (renderGoogleButton() || ++tries >= 25) clearInterval(timer)
     }, 200)
   }
 })
