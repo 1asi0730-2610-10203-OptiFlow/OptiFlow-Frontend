@@ -51,10 +51,15 @@ async function selectPlan(plan) {
   checkingOutPlanId.value = plan.id
   try {
     const { checkoutUrl } = await subscriptionApi.createCheckoutSession(plan.id, plan.name, plan.price)
-    // Dev-activate returns a relative app path with the subscription already active; real Stripe
-    // returns an absolute hosted-checkout URL where activation happens on return.
-    if (checkoutUrl.startsWith('/')) authStore.setSubscriptionActive(true)
-    window.location.href = checkoutUrl
+    // Real Stripe returns an absolute hosted-checkout URL — redirect the browser to actually pay.
+    if (/^https?:\/\//i.test(checkoutUrl)) {
+      window.location.href = checkoutUrl
+      return
+    }
+    // A relative URL only comes from local dev-activate. Never optimistically unlock the app; reflect the
+    // real backend subscription state so access is granted only when the subscription is truly active.
+    await authStore.refreshSubscription()
+    router.push(checkoutUrl)
   } catch (err) {
     error.value = err.response?.data?.detail || err.response?.data?.message || 'No se pudo iniciar el pago. Intenta de nuevo.'
     checkingOutPlanId.value = null
