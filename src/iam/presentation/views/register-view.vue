@@ -1,10 +1,18 @@
 <script setup>
-import { reactive, ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { reactive, ref, computed, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../../application/auth.store.js'
+import { SubscriptionApi } from '../../../subscription/infrastructure/subscription-api.js'
 
 const authStore = useAuthStore()
+const subscriptionApi = new SubscriptionApi()
 const router = useRouter()
+const route = useRoute()
+
+// When a plan is passed (from the pricing page), this is an admin-only purchase: register → Stripe → login.
+const buyTier = (route.query.plan || '').toString().toUpperCase()
+const buyPeriod = route.query.period === 'yearly' ? 'yearly' : 'monthly'
+const isBuyMode = computed(() => !!buyTier)
 
 const form = reactive({ email: '', password: '', confirmPassword: '', userType: 'client' })
 const localError = ref(null)
@@ -12,16 +20,28 @@ const successMsg = ref(null)
 
 onMounted(() => authStore.clearError())
 
-async function handleSubmit() {
-  localError.value = null
-  successMsg.value = null
-
+function validate() {
   if (form.password !== form.confirmPassword) {
     localError.value = 'Las contraseñas no coinciden.'
-    return
+    return false
   }
   if (form.password.length < 8) {
     localError.value = 'La contraseña debe tener al menos 8 caracteres.'
+    return false
+  }
+  return true
+}
+
+async function handleSubmit() {
+  localError.value = null
+  successMsg.value = null
+  if (!validate()) return
+
+  if (isBuyMode.value) {
+    // Register the administrator, keep the session just long enough to open Stripe, then (post-payment) login.
+    const registered = await authStore.signUpAdminForCheckout(form.email, form.password)
+    if (!registered) return
+    await startCheckout()
     return
   }
 
@@ -30,6 +50,33 @@ async function handleSubmit() {
     // Role is now persisted by the backend; the redirect after login is driven by it.
     successMsg.value = 'Registro exitoso. Redirigiendo al login...'
     setTimeout(() => router.push('/login'), 1500)
+  }
+}
+
+async function startCheckout() {
+  try {
+    const plans = await subscriptionApi.getPlans()
+    const wantYearly = buyPeriod === 'yearly'
+    const plan =
+      plans.find((p) => (p.tier || '').toUpperCase() === buyTier &&
+        (wantYearly ? /anual/i.test(p.name ?? '') : /mensual/i.test(p.name ?? ''))) ||
+      plans.find((p) => (p.tier || '').toUpperCase() === buyTier)
+    if (!plan) {
+      localError.value = 'No encontramos el plan seleccionado. Intenta desde la página de planes.'
+      return
+    }
+    const { checkoutUrl } = await subscriptionApi.createCheckoutSession(plan.id, plan.name, plan.price)
+    // After paying, the new admin should sign in fresh.
+    sessionStorage.setItem('postPurchaseRedirect', 'login')
+    if (/^https?:\/\//i.test(checkoutUrl)) {
+      window.location.href = checkoutUrl
+      return
+    }
+    // Dev-activate (relative URL): the subscription is already active — go straight to login as requested.
+    authStore.logout()
+    router.push('/login')
+  } catch (err) {
+    localError.value = err.response?.data?.detail || err.response?.data?.message || 'No se pudo iniciar el pago. Intenta de nuevo.'
   }
 }
 </script>
@@ -42,17 +89,21 @@ async function handleSubmit() {
       <span class="brand-sub">ERP / CRM Óptico</span>
     </div>
 
-    <h1 class="login-title">Crear Cuenta</h1>
+    <h1 class="login-title">{{ isBuyMode ? 'Crea tu óptica' : 'Crear Cuenta' }}</h1>
 
     <div class="login-card">
 
       <form @submit.prevent="handleSubmit" class="card-fields" novalidate>
 
+        <p v-if="isBuyMode" class="form-success-top">
+          Registra tu cuenta de administrador para continuar con el pago del plan {{ buyTier }} ({{ buyPeriod === 'yearly' ? 'anual' : 'mensual' }}).
+        </p>
+
         <p v-if="localError" class="form-error-top">{{ localError }}</p>
         <p v-if="authStore.error" class="form-error-top">{{ authStore.error }}</p>
         <p v-if="successMsg" class="form-success-top">{{ successMsg }}</p>
 
-        <div class="field">
+        <div class="field" v-if="!isBuyMode">
           <label class="field-label">Tipo de Usuario</label>
           <div class="input-wrap">
             <i class="pi pi-user input-icon" />
@@ -113,7 +164,7 @@ async function handleSubmit() {
         <div class="btn-wrap">
           <button type="submit" class="btn-continue" :disabled="authStore.loading || !!successMsg">
             <i v-if="authStore.loading" class="pi pi-spin pi-spinner" />
-            <span v-else>Registrarse</span>
+            <span v-else>{{ isBuyMode ? 'Continuar al pago' : 'Registrarse' }}</span>
           </button>
         </div>
 
