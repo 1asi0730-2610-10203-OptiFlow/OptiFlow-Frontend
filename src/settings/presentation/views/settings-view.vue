@@ -235,30 +235,15 @@ const backupFrequencyOptions = computed(() => [
   { label: t('settings.backup.options.annually'), value: 'ANNUALLY' }
 ]);
 
-// Roles are derived from the real staff's job roles (the backend has no RBAC — the actual user
-// role model is just Admin/Client), so this shows real people grouped by their role.
-function deriveRolesFromStaff(staff) {
-  const palette = ['#00c1b0', '#6366f1', '#f59e0b', '#ef4444', '#10b981', '#8b5cf6'];
-  const counts = {};
-  for (const s of (staff || [])) {
-    const name = (s.role && s.role.trim()) ? s.role.trim() : 'Sin rol asignado';
-    counts[name] = (counts[name] || 0) + 1;
-  }
-  return Object.entries(counts).map(([name, userCount], i) => ({
-    id: i + 1,
-    name,
-    description: `${userCount} ${userCount === 1 ? 'miembro' : 'miembros'} del personal`,
-    userCount,
-    color: palette[i % palette.length],
-    permissions: []
-  }));
-}
-
 const fetchData = async () => {
   try {
     loading.value = true;
-    const staff = await rolesApi.getEmployees().catch(() => []);
-    roles.value = deriveRolesFromStaff(staff);
+    // Real roles of the optic, with member counts from the real staff (matched by role name).
+    const [rolesData, staff] = await Promise.all([
+      rolesApi.getAll().catch(() => []),
+      rolesApi.getEmployees().catch(() => [])
+    ]);
+    roles.value = RoleAssembler.toEntities(rolesData || [], staff || []);
     await fetchSettingsData();
   } catch (error) {
     console.error('Error fetching settings data:', error);
