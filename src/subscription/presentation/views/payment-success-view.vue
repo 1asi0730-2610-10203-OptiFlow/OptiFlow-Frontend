@@ -20,7 +20,15 @@ async function confirm() {
       if (active) {
         authStore.setSubscriptionActive(true)
         state.value = 'success'
-        setTimeout(() => router.push('/panel'), 1600)
+        // A purchase made from the pricing/registration funnel ends at the login screen; otherwise
+        // (an already-signed-in admin) go straight to the dashboard.
+        if (sessionStorage.getItem('postPurchaseRedirect') === 'login') {
+          sessionStorage.removeItem('postPurchaseRedirect')
+          authStore.logout()
+          setTimeout(() => router.push('/login'), 1600)
+        } else {
+          setTimeout(() => router.push('/panel'), 1600)
+        }
         return
       }
     } catch {

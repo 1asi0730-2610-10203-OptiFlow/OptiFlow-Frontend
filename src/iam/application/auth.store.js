@@ -105,6 +105,27 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   /**
+   * Registra un administrador y deja la sesión iniciada para poder crear el checkout de Stripe
+   * inmediatamente (a diferencia de signUp, que no autentica). La cuenta queda sin suscripción hasta pagar.
+   */
+  async function signUpAdminForCheckout(email, password) {
+    loading.value = true
+    error.value = null
+    try {
+      const data = await iamApi.signUp(email, password, 'admin')
+      const userEntity = UserAssembler.toEntity(data)
+      _persistSession(userEntity, data.token)
+      setSubscriptionActive(false)
+      return true
+    } catch (err) {
+      error.value = err.response?.data?.message || err.response?.data?.detail || err.response?.data?.title || err.message
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
+
+  /**
    * Login de cliente (paciente) solo con nombre de usuario (email), sin contraseña.
    */
   async function clientSignIn(username) {
@@ -247,6 +268,7 @@ export const useAuthStore = defineStore('auth', () => {
     signIn,
     clientSignIn,
     signUp,
+    signUpAdminForCheckout,
     googleSignIn,
     forgotPassword,
     resetPassword,
