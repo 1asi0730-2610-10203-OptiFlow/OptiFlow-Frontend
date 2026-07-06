@@ -5,7 +5,13 @@ export class RolesApi extends BaseApi {
         super();
     }
 
-    // Real staff of the current optic (roles are derived from these on the client).
+    // Roles defined for the current optic.
+    async getAll() {
+        const response = await this.http.get('/roles');
+        return response.data;
+    }
+
+    // Real staff of the current optic (used to count members per role).
     async getEmployees() {
         const response = await this.http.get('/staff');
         return response.data;
