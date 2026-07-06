@@ -36,10 +36,13 @@ function mountGoogleButton() {
     },
   })
   window.google.accounts.id.renderButton(googleButtonContainer.value, {
-    theme: 'filled_black',
+    type: 'standard',
+    theme: 'outline',
     size: 'large',
     text: 'continue_with',
     shape: 'pill',
+    logo_alignment: 'center',
+    locale: 'es',
     width: 331,
   })
   googleReady = true
