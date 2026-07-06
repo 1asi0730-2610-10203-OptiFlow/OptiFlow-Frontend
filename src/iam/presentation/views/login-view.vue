@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../../application/auth.store.js'
 
@@ -11,16 +11,52 @@ const email    = ref('')
 const password = ref('')
 const mode     = ref('admin') // 'admin' | 'client'
 const showSuccessMsg = ref(false)
+const googleButtonContainer = ref(null)
+let googleReady = false
 
 function setMode(next) {
   mode.value = next
   authStore.clearError()
+  // The container only exists while in admin mode, so (re)render the button after the DOM updates.
+  if (next === 'admin') nextTick(mountGoogleButton)
+}
+
+// Renders Google's official Sign-In button once the GSI script and a client id are both available.
+// Returns true when the button was rendered so callers can stop polling.
+function mountGoogleButton() {
+  if (googleReady) return true
+  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
+  if (!clientId || !window.google?.accounts?.id || !googleButtonContainer.value) return false
+
+  window.google.accounts.id.initialize({
+    client_id: clientId,
+    callback: async ({ credential }) => {
+      const ok = await authStore.googleSignIn(credential)
+      if (ok) router.push(await resolveRedirectPath())
+    },
+  })
+  window.google.accounts.id.renderButton(googleButtonContainer.value, {
+    theme: 'filled_black',
+    size: 'large',
+    text: 'continue_with',
+    shape: 'pill',
+    width: 331,
+  })
+  googleReady = true
+  return true
 }
 
 onMounted(() => {
   authStore.clearError()
   if (route.query.registered === 'true') {
     showSuccessMsg.value = true
+  }
+  // The GSI script is loaded async in index.html, so it may not be ready yet — retry briefly.
+  if (!mountGoogleButton()) {
+    let tries = 0
+    const timer = setInterval(() => {
+      if (mountGoogleButton() || ++tries >= 25) clearInterval(timer)
+    }, 200)
   }
 })
 
@@ -44,29 +80,6 @@ async function resolveRedirectPath() {
   if (authStore.isClient) return '/patient/my-lenses'
   await authStore.refreshSubscription()
   return authStore.subscriptionActive ? '/panel' : '/select-plan'
-}
-
-function handleGoogleSignIn() {
-  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
-  if (!clientId) {
-    authStore.error = 'Google Sign-In no configurado.'
-    return
-  }
-  if (!window.google) {
-    authStore.error = 'El script de Google no está cargado. Verifica tu conexión.'
-    return
-  }
-
-  window.google.accounts.id.initialize({
-    client_id: clientId,
-    callback: async ({ credential }) => {
-      const ok = await authStore.googleSignIn(credential)
-      if (ok) {
-        router.push(await resolveRedirectPath())
-      }
-    },
-  })
-  window.google.accounts.id.prompt()
 }
 </script>
 
@@ -134,10 +147,7 @@ function handleGoogleSignIn() {
           <template v-if="mode === 'admin'">
             <div class="divider"><span>o</span></div>
 
-            <button class="btn-google" :disabled="authStore.loading" @click="handleGoogleSignIn">
-              <img src="https://www.google.com/favicon.ico" alt="Google" width="16" />
-              <span>Continuar con Google</span>
-            </button>
+            <div ref="googleButtonContainer" class="google-btn-container"></div>
           </template>
         </div>
 
@@ -387,6 +397,12 @@ function handleGoogleSignIn() {
 .btn-google:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.google-btn-container {
+  display: flex;
+  justify-content: center;
+  min-height: 44px;
 }
 
 .card-footer {
