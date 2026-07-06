@@ -42,6 +42,10 @@ async function homePath(authStore) {
   return authStore.subscriptionActive ? '/panel' : '/select-plan'
 }
 
+// Resets on every full page load (module re-evaluation) so a refresh always re-validates the
+// subscription against the backend, never trusting a stale cached "active" flag from localStorage.
+let subscriptionCheckedThisLoad = false
+
 router.beforeEach(async (to) => {
   document.title = to.meta.title ? `${to.meta.title} — OptiFlow` : 'OptiFlow'
 
@@ -74,7 +78,12 @@ router.beforeEach(async (to) => {
   const subscriptionExempt =
     isPatientRoute || to.path === '/select-plan' || to.path === '/payment-success' || to.path === '/profile'
   if (!subscriptionExempt) {
-    if (authStore.subscriptionActive === null) await authStore.refreshSubscription()
+    // Re-validate with the backend once per page load (and whenever unknown) so an abandoned/expired
+    // checkout can't keep the app unlocked via a stale cached flag after a refresh.
+    if (!subscriptionCheckedThisLoad || authStore.subscriptionActive === null) {
+      await authStore.refreshSubscription()
+      subscriptionCheckedThisLoad = true
+    }
     if (!authStore.subscriptionActive) return { path: '/select-plan' }
   }
 })
