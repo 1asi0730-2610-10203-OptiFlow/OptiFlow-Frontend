@@ -35,7 +35,10 @@ onMounted(async () => {
     await confirmPaymentReturn()
   }
   try {
-    plans.value = await subscriptionApi.getPlans()
+    // Older seed runs left stale "Anual" plans in the DB and there's no delete endpoint to remove them,
+    // so only surface the intended monthly catalog until those rows are purged from the database.
+    const catalog = await subscriptionApi.getPlans()
+    plans.value = catalog.filter((p) => !/anual/i.test(p.name ?? ''))
   } catch (err) {
     error.value = 'No se pudieron cargar los planes. Intenta de nuevo en unos segundos.'
   } finally {
