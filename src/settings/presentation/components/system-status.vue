@@ -1,9 +1,16 @@
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { SubscriptionApi } from '../../../subscription/infrastructure/subscription-api.js';
 
 const subscriptionApi = new SubscriptionApi();
+const router = useRouter();
 const planName = ref(null);
+
+// Send the user to plan selection to buy or upgrade; picking a different plan starts a fresh payment.
+function changePlan() {
+  router.push('/select-plan');
+}
 
 const statusItems = [
   { labelKey: 'settings.systemStatus.server', valueKey: 'settings.systemStatus.online', status: 'success', literalValue: false },
@@ -38,10 +45,13 @@ onMounted(loadPlan);
       <h3 class="text-900 font-bold text-xl m-0 font-josefin">{{ $t('settings.systemStatus.title') }}</h3>
     </template>
     <template #content>
-      <div class="flex align-items-center justify-content-between mb-3">
+      <div class="flex align-items-center justify-content-between mb-2">
         <span class="text-700 font-medium">{{ $t('settings.systemStatus.plan') }}</span>
         <span class="font-bold" style="color: #00c1b0">{{ planName || $t('settings.systemStatus.noPlan') }}</span>
       </div>
+      <button type="button" class="change-plan-btn mb-3" @click="changePlan">
+        {{ planName ? 'Cambiar plan' : 'Elegir plan' }}
+      </button>
       <div v-for="item in statusItems" :key="item.labelKey" class="flex align-items-center justify-content-between mb-3 last:mb-0">
         <span class="text-700 font-medium">{{ $t(item.labelKey) }}</span>
         <div class="flex align-items-center gap-2">
@@ -58,6 +68,22 @@ onMounted(loadPlan);
 <style scoped>
 .w-2 { width: 0.5rem; }
 .h-2 { height: 0.5rem; }
+.change-plan-btn {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background: transparent;
+  border: 1px solid rgba(0, 193, 176, 0.4);
+  border-radius: 8px;
+  color: #00c1b0;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.change-plan-btn:hover {
+  background: rgba(0, 193, 176, 0.08);
+  border-color: #00c1b0;
+}
 :deep(.p-card-body) {
   padding: 1.5rem;
 }
