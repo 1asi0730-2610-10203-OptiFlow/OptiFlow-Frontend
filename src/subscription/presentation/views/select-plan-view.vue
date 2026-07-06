@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { SubscriptionApi } from '../../infrastructure/subscription-api.js'
 import { useAuthStore } from '../../../iam/application/auth.store.js'
@@ -10,10 +10,27 @@ const route = useRoute()
 const authStore = useAuthStore()
 
 const plans = ref([])
+const period = ref('monthly') // 'monthly' | 'yearly'
 const loadingPlans = ref(true)
 const checkingOutPlanId = ref(null)
 const confirmingPayment = ref(false)
 const error = ref(null)
+
+// Plans are distinguished by name suffix ("Mensual" vs "Anual"); show the set for the chosen period,
+// cheapest tier first. Falls back to all plans if none match the naming convention.
+const visiblePlans = computed(() => {
+  const match = period.value === 'yearly' ? /anual/i : /mensual/i
+  const forPeriod = plans.value.filter((p) => match.test(p.name ?? ''))
+  return (forPeriod.length ? forPeriod : plans.value).slice().sort((a, b) => (a.price ?? 0) - (b.price ?? 0))
+})
+
+const hasYearlyPlans = computed(() => plans.value.some((p) => /anual/i.test(p.name ?? '')))
+
+// Yearly plans store the full annual amount; show the equivalent monthly figure like the pricing page.
+function monthlyPrice(plan) {
+  const value = period.value === 'yearly' ? (plan.price ?? 0) / 12 : (plan.price ?? 0)
+  return Number.isInteger(value) ? String(value) : value.toFixed(2)
+}
 
 // Coming back from Stripe: the webhook may still be activating the subscription, so poll briefly.
 async function confirmPaymentReturn() {
@@ -35,10 +52,7 @@ onMounted(async () => {
     await confirmPaymentReturn()
   }
   try {
-    // Older seed runs left stale "Anual" plans in the DB and there's no delete endpoint to remove them,
-    // so only surface the intended monthly catalog until those rows are purged from the database.
-    const catalog = await subscriptionApi.getPlans()
-    plans.value = catalog.filter((p) => !/anual/i.test(p.name ?? ''))
+    plans.value = await subscriptionApi.getPlans()
   } catch (err) {
     error.value = 'No se pudieron cargar los planes. Intenta de nuevo en unos segundos.'
   } finally {
@@ -80,15 +94,21 @@ async function selectPlan(plan) {
 
     <p v-if="error" class="form-error-top">{{ error }}</p>
 
+    <div v-if="hasYearlyPlans" class="period-toggle">
+      <button type="button" class="period-btn" :class="{ active: period === 'monthly' }" @click="period = 'monthly'">Mensual</button>
+      <button type="button" class="period-btn" :class="{ active: period === 'yearly' }" @click="period = 'yearly'">Anual · Ahorra 17%</button>
+    </div>
+
     <div v-if="loadingPlans" class="plan-loading">
       <i class="pi pi-spin pi-spinner" />
     </div>
 
     <div v-else class="plan-grid">
-      <div v-for="plan in plans" :key="plan.id" class="plan-card">
+      <div v-for="plan in visiblePlans" :key="plan.id" class="plan-card">
         <span class="plan-tier">{{ plan.tier }}</span>
         <h2 class="plan-name">{{ plan.name }}</h2>
-        <p class="plan-price">${{ plan.price }}<span class="plan-price-period">/mes</span></p>
+        <p class="plan-price">S/.{{ monthlyPrice(plan) }}<span class="plan-price-period">/mes</span></p>
+        <p v-if="period === 'yearly'" class="plan-billed">Facturado anualmente: S/.{{ plan.price }}</p>
         <p class="plan-description">{{ plan.description }}</p>
         <button
             class="btn-select"
@@ -164,6 +184,37 @@ async function selectPlan(plan) {
   color: #f87171;
   text-align: center;
   margin: 0;
+}
+
+.period-toggle {
+  display: flex;
+  gap: 6px;
+  background: rgba(147, 193, 206, 0.08);
+  border-radius: 10px;
+  padding: 4px;
+}
+.period-btn {
+  padding: 8px 16px;
+  border: none;
+  background: transparent;
+  color: #93c1ce;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.period-btn.active {
+  background: #00c1b0;
+  color: #04231f;
+}
+
+.plan-billed {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  color: #93c1ce;
+  margin: -4px 0 0;
 }
 
 .plan-loading {
