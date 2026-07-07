@@ -5,7 +5,10 @@ export function isValidEmail(email) {
 }
 
 export function isValidPhone(phone) {
-  const cleaned = phone.replace(/[\s\-().]/g, '')
+  const trimmed = phone.trim()
+  // Cap total length to match the backend column/StringLength(50); the digit count (7-15) is the real rule.
+  if (trimmed.length > 50) return false
+  const cleaned = trimmed.replace(/[\s\-().]/g, '')
   return /^\+?\d{7,15}$/.test(cleaned)
 }
 
