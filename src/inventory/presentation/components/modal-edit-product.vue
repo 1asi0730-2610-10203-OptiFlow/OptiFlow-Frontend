@@ -19,6 +19,7 @@ const form = ref({
   minimumStockThreshold:  '',
   price:                  ''
 })
+const errors = ref({})
 
 watch(() => props.product, (p) => {
   form.value = {
@@ -31,7 +32,12 @@ watch(() => props.product, (p) => {
 }, { immediate: true })
 
 function onSubmit() {
-  if (!form.value.name) return
+  const e = {}
+  if (!form.value.name) e.name = true
+  const priceNum = parseFloat(form.value.price)
+  if (!form.value.price || isNaN(priceNum) || priceNum <= 0 || priceNum > 1000000) e.price = true
+  errors.value = e
+  if (Object.keys(e).length > 0) return
   emit('save', {
     ...props.product,
     name:                  form.value.name,
@@ -89,7 +95,18 @@ function onSubmit() {
           </div>
           <div class="field">
             <label>{{ $t('inventory.editModal.price') }}</label>
-            <input v-model="form.price" type="number" min="0" step="0.01" class="form-input" placeholder="0.00" />
+            <input
+              v-model="form.price"
+              type="number"
+              min="0.01"
+              max="1000000"
+              step="0.01"
+              class="form-input"
+              :class="{ 'form-input--error': errors.price }"
+              placeholder="0.00"
+              @input="errors.price = false"
+            />
+            <p v-if="errors.price" class="field-error">{{ $t('inventory.editModal.priceError') }}</p>
           </div>
         </div>
       </div>
@@ -116,6 +133,8 @@ function onSubmit() {
 .field label { font-family: 'Montserrat', sans-serif; font-size: 0.72rem; font-weight: 700; color: #6b7280; letter-spacing: 0.05em; }
 .form-input { padding: 10px 14px; border: 1px solid #e5e7eb; border-radius: 10px; font-family: 'Montserrat', sans-serif; font-size: 0.9rem; color: #111827; outline: none; transition: border-color 0.15s; }
 .form-input:focus { border-color: #00c1b0; }
+.form-input--error { border-color: #f87171; background: #fff5f5; }
+.field-error { font-family: 'Montserrat', sans-serif; font-size: 0.74rem; color: #dc2626; margin: 0; }
 .select-wrapper { position: relative; }
 .form-select { width: 100%; padding: 10px 32px 10px 14px; border: 1px solid #e5e7eb; border-radius: 10px; font-family: 'Montserrat', sans-serif; font-size: 0.9rem; color: #111827; background: #fff; outline: none; appearance: none; cursor: pointer; }
 .form-select:focus { border-color: #00c1b0; }
