@@ -40,7 +40,7 @@ const showValidationErrors = ref(false)
 const items = ref([])
 
 const itemsValid = computed(() =>
-  items.value.length > 0 && items.value.every(i => i.productId && i.quantity > 0)
+  items.value.length > 0 && items.value.every(i => i.productId && i.quantity > 0 && i.quantity <= 1000000)
 )
 
 function prefillItemsFromOrder(order) {
@@ -324,6 +324,7 @@ function close() {
                 v-model.number="item.quantity"
                 type="number"
                 min="1"
+                max="1000000"
                 class="item-qty"
                 :placeholder="$t('sales.form.quantity')"
               />
