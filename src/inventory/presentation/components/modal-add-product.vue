@@ -27,7 +27,10 @@ const submitted = ref(false)
 function validate() {
   const e = {}
   if (!form.value.name.trim()) e.name = true
-  if (!form.value.stock) e.stock = true
+  const stockNum = parseInt(form.value.stock)
+  if (form.value.stock === '' || isNaN(stockNum) || stockNum < 0 || stockNum > 1000000) e.stock = true
+  const thresholdNum = parseInt(form.value.minimumStockThreshold)
+  if (form.value.minimumStockThreshold !== '' && (isNaN(thresholdNum) || thresholdNum < 0 || thresholdNum > 1000000)) e.threshold = true
   const priceNum = parseFloat(form.value.price)
   if (!form.value.price || isNaN(priceNum) || priceNum <= 0 || priceNum > 1000000) e.price = true
   errors.value = e
@@ -113,19 +116,29 @@ function onSubmit() {
         <div class="form-row">
           <div class="field">
             <label>{{ $t('inventory.addModal.initialStock') }} *</label>
-            <input 
-              v-model="form.stock" 
-              type="number" 
-              min="0" 
-              class="form-input" 
+            <input
+              v-model="form.stock"
+              type="number"
+              min="0"
+              max="1000000"
+              class="form-input"
               :class="{ 'form-input--error': errors.stock }"
-              placeholder="0" 
+              placeholder="0"
               @input="errors.stock = false"
             />
           </div>
           <div class="field">
             <label>{{ $t('inventory.addModal.reorderLevel') }}</label>
-            <input v-model="form.minimumStockThreshold" type="number" min="0" class="form-input" placeholder="10" />
+            <input
+              v-model="form.minimumStockThreshold"
+              type="number"
+              min="0"
+              max="1000000"
+              class="form-input"
+              :class="{ 'form-input--error': errors.threshold }"
+              placeholder="10"
+              @input="errors.threshold = false"
+            />
           </div>
         </div>
 
