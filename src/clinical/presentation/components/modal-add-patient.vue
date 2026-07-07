@@ -34,10 +34,8 @@ function validate() {
     else if (trimmedName.split(/\s+/).length < 2) e.lastNameMissing = true
     if (!form.value.dni.trim())      e.dni = true
     else if (!isValidDni(form.value.dni)) e.dniFormat = true
-    if (form.value.birthDate) {
-        const bd = form.value.birthDate
-        if (bd < minBirthDate.value || bd > maxBirthDate.value) e.birthDate = true
-    }
+    if (!form.value.birthDate) e.birthDate = true
+    else if (form.value.birthDate < minBirthDate.value || form.value.birthDate > maxBirthDate.value) e.birthDate = true
     if (form.value.email.trim() && !isValidEmail(form.value.email)) e.emailFormat = true
     if (form.value.phone.trim() && !isValidPhone(form.value.phone)) e.phoneFormat = true
     errors.value = e
@@ -114,7 +112,7 @@ function onSubmit() {
                     </div>
                     <!-- Birth date -->
                     <div class="field">
-                        <label>{{ $t('patients.addModal.birthDate') }}</label>
+                        <label>{{ $t('patients.addModal.birthDate') }} *</label>
                         <input
                             v-model="form.birthDate"
                             type="date"
