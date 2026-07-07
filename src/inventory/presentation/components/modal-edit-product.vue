@@ -33,7 +33,10 @@ watch(() => props.product, (p) => {
 
 function onSubmit() {
   const e = {}
-  if (!form.value.name) e.name = true
+  if (!form.value.name || !form.value.name.trim()) e.name = true
+  if (!form.value.sku || !String(form.value.sku).trim()) e.sku = true
+  const thresholdNum = parseInt(form.value.minimumStockThreshold)
+  if (form.value.minimumStockThreshold === '' || isNaN(thresholdNum) || thresholdNum < 0 || thresholdNum > 1000000) e.threshold = true
   const priceNum = parseFloat(form.value.price)
   if (!form.value.price || isNaN(priceNum) || priceNum <= 0 || priceNum > 1000000) e.price = true
   errors.value = e
@@ -68,14 +71,16 @@ function onSubmit() {
 
       <div class="modal-body">
         <div class="field">
-          <label>{{ $t('inventory.editModal.productName') }}</label>
-          <input v-model="form.name" class="form-input" placeholder="Nombre del producto" />
+          <label>{{ $t('inventory.editModal.productName') }} *</label>
+          <input v-model="form.name" class="form-input" :class="{ 'form-input--error': errors.name }" placeholder="Nombre del producto" @input="errors.name = false" />
+          <span v-if="errors.name" class="field-error">{{ $t('common.fieldRequired') }}</span>
         </div>
 
         <div class="form-row">
           <div class="field">
-            <label>{{ $t('inventory.editModal.sku') }}</label>
-            <input v-model="form.sku" class="form-input" placeholder="SKU" />
+            <label>{{ $t('inventory.editModal.sku') }} *</label>
+            <input v-model="form.sku" class="form-input" :class="{ 'form-input--error': errors.sku }" placeholder="SKU" @input="errors.sku = false" />
+            <span v-if="errors.sku" class="field-error">{{ $t('common.fieldRequired') }}</span>
           </div>
           <div class="field">
             <label>{{ $t('inventory.editModal.category') }}</label>
@@ -90,8 +95,9 @@ function onSubmit() {
 
         <div class="form-row">
           <div class="field">
-            <label>{{ $t('inventory.editModal.threshold') }}</label>
-            <input v-model="form.minimumStockThreshold" type="number" min="0" max="1000000" class="form-input" placeholder="0" />
+            <label>{{ $t('inventory.editModal.threshold') }} *</label>
+            <input v-model="form.minimumStockThreshold" type="number" min="0" max="1000000" class="form-input" :class="{ 'form-input--error': errors.threshold }" placeholder="0" @input="errors.threshold = false" />
+            <span v-if="errors.threshold" class="field-error">{{ $t('common.fieldRequired') }}</span>
           </div>
           <div class="field">
             <label>{{ $t('inventory.editModal.price') }}</label>

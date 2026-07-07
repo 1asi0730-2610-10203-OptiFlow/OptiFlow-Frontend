@@ -36,8 +36,10 @@ function validate() {
     else if (!isValidDni(form.value.dni)) e.dniFormat = true
     if (!form.value.birthDate) e.birthDate = true
     else if (form.value.birthDate < minBirthDate.value || form.value.birthDate > maxBirthDate.value) e.birthDate = true
-    if (form.value.email.trim() && !isValidEmail(form.value.email)) e.emailFormat = true
-    if (form.value.phone.trim() && !isValidPhone(form.value.phone)) e.phoneFormat = true
+    if (!form.value.email.trim()) e.email = true
+    else if (!isValidEmail(form.value.email)) e.emailFormat = true
+    if (!form.value.phone.trim()) e.phone = true
+    else if (!isValidPhone(form.value.phone)) e.phoneFormat = true
     errors.value = e
     return Object.keys(e).length === 0
 }
@@ -106,7 +108,10 @@ function onSubmit() {
                             :placeholder="$t('patients.addModal.dniPlaceholder')"
                             @input="errors.dni = false; errors.dniFormat = false"
                         />
-                        <span v-if="errors.dniFormat" class="field-error">
+                        <span v-if="errors.dni" class="field-error">
+                            {{ $t('common.fieldRequired') }}
+                        </span>
+                        <span v-else-if="errors.dniFormat" class="field-error">
                             {{ $t('patients.addModal.dniInvalid') }}
                         </span>
                     </div>
@@ -131,30 +136,36 @@ function onSubmit() {
                 <div class="form-row">
                     <!-- Email -->
                     <div class="field">
-                        <label>{{ $t('patients.addModal.email') }}</label>
+                        <label>{{ $t('patients.addModal.email') }} *</label>
                         <input
                             v-model="form.email"
                             type="email"
                             class="form-input"
-                            :class="{ 'form-input--error': errors.emailFormat }"
+                            :class="{ 'form-input--error': errors.email || errors.emailFormat }"
                             :placeholder="$t('patients.addModal.emailPlaceholder')"
-                            @input="errors.emailFormat = false"
+                            @input="errors.email = false; errors.emailFormat = false"
                         />
-                        <span v-if="errors.emailFormat" class="field-error">
+                        <span v-if="errors.email" class="field-error">
+                            {{ $t('common.fieldRequired') }}
+                        </span>
+                        <span v-else-if="errors.emailFormat" class="field-error">
                             {{ $t('patients.addModal.emailInvalid') }}
                         </span>
                     </div>
                     <!-- Phone -->
                     <div class="field">
-                        <label>{{ $t('patients.addModal.phone') }}</label>
+                        <label>{{ $t('patients.addModal.phone') }} *</label>
                         <input
                             v-model="form.phone"
                             class="form-input"
-                            :class="{ 'form-input--error': errors.phoneFormat }"
+                            :class="{ 'form-input--error': errors.phone || errors.phoneFormat }"
                             :placeholder="$t('patients.addModal.phonePlaceholder')"
-                            @input="errors.phoneFormat = false"
+                            @input="errors.phone = false; errors.phoneFormat = false"
                         />
-                        <span v-if="errors.phoneFormat" class="field-error">
+                        <span v-if="errors.phone" class="field-error">
+                            {{ $t('common.fieldRequired') }}
+                        </span>
+                        <span v-else-if="errors.phoneFormat" class="field-error">
                             {{ $t('patients.addModal.phoneInvalid') }}
                         </span>
                     </div>

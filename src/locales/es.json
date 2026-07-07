@@ -62,7 +62,8 @@
     "name": "Nombre",
     "total": "Total",
     "records": "registros",
-    "requiredError": "Por favor rellene los campos obligatorios"
+    "requiredError": "Por favor rellene los campos obligatorios",
+    "fieldRequired": "Este campo es obligatorio"
   },
   "sales": {
     "pageTitle": "Gestión de Ventas",

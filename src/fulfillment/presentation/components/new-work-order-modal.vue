@@ -91,7 +91,9 @@ function validate() {
   if (!form.value.patientId) e.patientName = true
   if (!form.value.deliveryDate) e.deliveryDate = true
   else if (form.value.deliveryDate < minDeliveryDate.value) e.deliveryDateInvalid = true
-  if (totalNum.value < 0 || totalNum.value > 1000000) e.totalRange = true
+  if (!form.value.labId) e.labId = true
+  if (!form.value.total || totalNum.value <= 0) e.total = true
+  else if (totalNum.value > 1000000) e.totalRange = true
   if (depositNum.value < 0 || depositNum.value > 1000000) e.depositRange = true
   else if (depositNum.value > totalNum.value) e.deposit = true
   errors.value = e
@@ -155,15 +157,22 @@ function onSubmit() {
                 {{ patient.firstName }} {{ patient.lastName }}
               </option>
             </select>
+            <span v-if="errors.patientName" class="field-error">{{ $t('common.fieldRequired') }}</span>
           </div>
           <div class="field">
-            <label>{{ $t('labOrders.newOrderModal.laboratory') }}</label>
-            <select v-model="form.labId" class="form-select" @change="onLabChange">
+            <label>{{ $t('labOrders.newOrderModal.laboratory') }} *</label>
+            <select
+              v-model="form.labId"
+              class="form-select"
+              :class="{ 'form-select--error': errors.labId }"
+              @change="onLabChange(); errors.labId = false"
+            >
               <option :value="0">{{ $t('labOrders.newOrderModal.selectPatient') }}</option>
               <option v-for="lab in laboratories" :key="lab.id" :value="lab.id">
                 {{ lab.name }}
               </option>
             </select>
+            <span v-if="errors.labId" class="field-error">{{ $t('common.fieldRequired') }}</span>
           </div>
         </div>
 
@@ -252,7 +261,7 @@ function onSubmit() {
         <!-- Totals -->
         <div class="form-row">
           <div class="field">
-            <label>{{ $t('labOrders.newOrderModal.totalAmount') }}</label>
+            <label>{{ $t('labOrders.newOrderModal.totalAmount') }} *</label>
             <input
               v-model="form.total"
               type="number"
@@ -260,11 +269,14 @@ function onSubmit() {
               max="1000000"
               step="0.01"
               class="form-input"
-              :class="{ 'form-input--error': errors.totalRange }"
+              :class="{ 'form-input--error': errors.total || errors.totalRange }"
               :placeholder="$t('labOrders.newOrderModal.amountPlaceholder')"
-              @input="errors.totalRange = false"
+              @input="errors.total = false; errors.totalRange = false"
             />
-            <span v-if="errors.totalRange" class="field-error">
+            <span v-if="errors.total" class="field-error">
+              {{ $t('common.fieldRequired') }}
+            </span>
+            <span v-else-if="errors.totalRange" class="field-error">
               {{ $t('labOrders.newOrderModal.amountRange') }}
             </span>
           </div>
