@@ -8,3 +8,7 @@ export function isValidPhone(phone) {
   const cleaned = phone.replace(/[\s\-().]/g, '')
   return /^\+?\d{7,15}$/.test(cleaned)
 }
+
+export function isValidDni(dni) {
+  return /^[A-Za-z0-9]{8,12}$/.test(dni.trim())
+}

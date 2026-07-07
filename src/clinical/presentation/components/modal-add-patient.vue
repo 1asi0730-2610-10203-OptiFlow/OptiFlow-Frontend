@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useModalAnimation } from '../../../shared/presentation/composables/use-modal-animation.js'
-import { isValidEmail, isValidPhone } from '../../../shared/presentation/utils/validators.js'
+import { isValidEmail, isValidPhone, isValidDni } from '../../../shared/presentation/utils/validators.js'
 
 const { t } = useI18n()
 const emit = defineEmits(['save', 'close'])
@@ -33,6 +33,7 @@ function validate() {
     if (!trimmedName) e.fullName = true
     else if (trimmedName.split(/\s+/).length < 2) e.lastNameMissing = true
     if (!form.value.dni.trim())      e.dni = true
+    else if (!isValidDni(form.value.dni)) e.dniFormat = true
     if (form.value.birthDate) {
         const bd = form.value.birthDate
         if (bd < minBirthDate.value || bd > maxBirthDate.value) e.birthDate = true
@@ -103,10 +104,13 @@ function onSubmit() {
                         <input
                             v-model="form.dni"
                             class="form-input"
-                            :class="{ 'form-input--error': errors.dni }"
+                            :class="{ 'form-input--error': errors.dni || errors.dniFormat }"
                             :placeholder="$t('patients.addModal.dniPlaceholder')"
-                            @input="errors.dni = false"
+                            @input="errors.dni = false; errors.dniFormat = false"
                         />
+                        <span v-if="errors.dniFormat" class="field-error">
+                            {{ $t('patients.addModal.dniInvalid') }}
+                        </span>
                     </div>
                     <!-- Birth date -->
                     <div class="field">
