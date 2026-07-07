@@ -176,21 +176,21 @@ function triggerFileInput() {
                         <!-- OD -->
                         <div class="refraction-row">
                             <span class="eye-label">{{ $t('patients.hce.rx.od') }}</span>
-                            <input v-model="form.odSphere"   type="number" step="0.25" class="refr-input" />
-                            <input v-model="form.odCylinder" type="number" step="0.25" class="refr-input" />
+                            <input v-model="form.odSphere"   type="number" step="0.25" min="-20" max="20" class="refr-input" />
+                            <input v-model="form.odCylinder" type="number" step="0.25" min="-10" max="10" class="refr-input" />
                             <input v-model="form.odAxis"     type="number" min="0" max="180" class="refr-input" />
                         </div>
                         <!-- OS -->
                         <div class="refraction-row">
                             <span class="eye-label">{{ $t('patients.hce.rx.os') }}</span>
-                            <input v-model="form.oiSphere"   type="number" step="0.25" class="refr-input" />
-                            <input v-model="form.oiCylinder" type="number" step="0.25" class="refr-input" />
+                            <input v-model="form.oiSphere"   type="number" step="0.25" min="-20" max="20" class="refr-input" />
+                            <input v-model="form.oiCylinder" type="number" step="0.25" min="-10" max="10" class="refr-input" />
                             <input v-model="form.oiAxis"     type="number" min="0" max="180" class="refr-input" />
                         </div>
                         <!-- Addition -->
                         <div class="refraction-row">
                             <span class="eye-label">{{ $t('patients.newExam.addition') }}</span>
-                            <input v-model="form.addition" type="number" step="0.25" class="refr-input" placeholder="+2.00" />
+                            <input v-model="form.addition" type="number" step="0.25" min="0" max="4" class="refr-input" placeholder="+2.00" />
                             <span class="refr-input refr-optional">{{ $t('patients.newExam.optional') }}</span>
                             <span></span>
                         </div>

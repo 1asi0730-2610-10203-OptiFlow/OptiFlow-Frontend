@@ -28,6 +28,8 @@ function validate() {
   const e = {}
   if (!form.value.name.trim()) e.name = true
   if (!form.value.stock) e.stock = true
+  const priceNum = parseFloat(form.value.price)
+  if (!form.value.price || isNaN(priceNum) || priceNum <= 0 || priceNum > 1000000) e.price = true
   errors.value = e
   return Object.keys(e).length === 0
 }
@@ -129,8 +131,19 @@ function onSubmit() {
 
         <div class="form-row">
           <div class="field">
-            <label>{{ $t('inventory.addModal.unitPrice') }}</label>
-            <input v-model="form.price" type="number" min="0" step="0.01" class="form-input" placeholder="0.00" />
+            <label>{{ $t('inventory.addModal.unitPrice') }} *</label>
+            <input
+              v-model="form.price"
+              type="number"
+              min="0.01"
+              max="1000000"
+              step="0.01"
+              class="form-input"
+              :class="{ 'form-input--error': errors.price }"
+              placeholder="0.00"
+              @input="errors.price = false"
+            />
+            <p v-if="errors.price" class="field-error">{{ $t('inventory.addModal.priceError') }}</p>
           </div>
           <div class="field">
             <label>{{ $t('inventory.addModal.receptionDate') }}</label>
