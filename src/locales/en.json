@@ -290,6 +290,7 @@
       "deliveryDateError": "Delivery date cannot be before the order date or in the past",
       "totalAmount": "Total (S/)",
       "deposit": "Deposit (S/)",
+      "depositError": "Deposit cannot exceed the total amount",
       "amountPlaceholder": "0.00",
       "pendingAfterDeposit": "Balance after deposit",
       "createOrder": "Create Lab Order"
@@ -580,6 +581,7 @@
       "initialStock": "Initial Stock",
       "reorderLevel": "Reorder Level",
       "unitPrice": "Unit Price (S/)",
+      "priceError": "Price must be greater than 0",
       "supplier": "Supplier",
       "selectSupplier": "Select supplier...",
       "receptionDate": "Reception Date",
@@ -644,6 +646,7 @@
       "category": "CATEGORY",
       "threshold": "ALERT THRESHOLD",
       "price": "UNIT PRICE (S/)",
+      "priceError": "Price must be greater than 0",
       "save": "Save Changes"
     },
     "supplierModal": {

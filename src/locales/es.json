@@ -289,6 +289,7 @@
       "deliveryDateError": "La fecha de entrega no puede ser anterior a la fecha de orden ni estar en el pasado",
       "totalAmount": "Total (S/)",
       "deposit": "Adelanto (S/)",
+      "depositError": "El adelanto no puede superar el monto total",
       "amountPlaceholder": "0.00",
       "pendingAfterDeposit": "Saldo pendiente tras adelanto",
       "createOrder": "Crear Orden de Lab"
@@ -579,6 +580,7 @@
       "initialStock": "Stock Inicial",
       "reorderLevel": "Nivel de Reorden",
       "unitPrice": "Precio Unit. (S/)",
+      "priceError": "El precio debe ser mayor que 0",
       "supplier": "Proveedor",
       "selectSupplier": "Seleccionar proveedor...",
       "receptionDate": "Fecha de Recepción",
@@ -643,6 +645,7 @@
       "category": "CATEGORÍA",
       "threshold": "UMBRAL DE ALERTA",
       "price": "PRECIO UNITARIO (S/)",
+      "priceError": "El precio debe ser mayor que 0",
       "save": "Guardar Cambios"
     },
     "supplierModal": {
