@@ -75,11 +75,11 @@ function formatTime(time) {
         <div class="filter-group">
           <i class="pi pi-calendar filter-icon" />
           <label>Desde:</label>
-          <input v-model="startDate" type="date" class="date-input" />
+          <input v-model="startDate" type="date" class="date-input" :max="endDate || undefined" />
         </div>
         <div class="filter-group">
           <label>Hasta:</label>
-          <input v-model="endDate" type="date" class="date-input" />
+          <input v-model="endDate" type="date" class="date-input" :min="startDate || undefined" />
         </div>
         <button v-if="startDate || endDate || productFilter !== 'all'" class="btn-clear"
           @click="startDate = ''; endDate = ''; productFilter = 'all'">
