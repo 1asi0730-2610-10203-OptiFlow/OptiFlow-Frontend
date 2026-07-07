@@ -32,7 +32,7 @@ function validate() {
   const e = {}
   Object.entries(quantities.value).forEach(([id, qty]) => {
     const quantity = parseInt(qty)
-    if (!qty || isNaN(quantity) || quantity <= 0) {
+    if (!qty || isNaN(quantity) || quantity <= 0 || quantity > 1000000) {
       e[id] = true
     }
   })
@@ -87,6 +87,7 @@ function onSubmit() {
                 v-model="quantities[product.id]"
                 type="number"
                 min="1"
+                max="1000000"
                 class="qty-input"
                 :class="{ 'qty-input--error': errors[product.id] }"
                 @input="errors[product.id] = false"

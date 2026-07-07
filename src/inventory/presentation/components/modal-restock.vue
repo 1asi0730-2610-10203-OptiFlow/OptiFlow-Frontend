@@ -24,7 +24,8 @@ const submitted = ref(false)
 
 function validate() {
   const e = {}
-  if (!quantity.value || parseInt(quantity.value) <= 0) e.quantity = true
+  const qty = parseInt(quantity.value)
+  if (!quantity.value || qty <= 0 || qty > 1000000) e.quantity = true
   errors.value = e
   return Object.keys(e).length === 0
 }
@@ -76,6 +77,7 @@ function onSubmit() {
               v-model="quantity"
               type="number"
               min="1"
+              max="1000000"
               class="form-input"
               :class="{ 'form-input--error': errors.quantity }"
               :placeholder="$t('inventory.restockModal.quantityPlaceholder')"
