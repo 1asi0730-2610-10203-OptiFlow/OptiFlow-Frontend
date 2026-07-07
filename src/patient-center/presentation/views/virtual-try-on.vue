@@ -5,10 +5,10 @@ import * as faceapi from 'face-api.js'
 const MODEL_URL = 'https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js@0.22.2/weights'
 
 const frames = ref([
-  { id: 1, name: 'Aviator Classic',  material: 'Metal · Dorado',   price: '299', color: '#B8962E' },
-  { id: 2, name: 'Wayfarer Bold',    material: 'Acetato · Negro',  price: '349', color: '#1a1a1a' },
-  { id: 3, name: 'Round Vintage',    material: 'Metal · Plata',    price: '279', color: '#9ca3af' },
-  { id: 4, name: 'Cat-Eye Modern',   material: 'Acetato · Rojo',   price: '329', color: '#dc2626' },
+  { id: 1, name: 'Aviator Classic',  material: 'Metal · Dorado',  price: '299', color: '#B8962E', image: '/src/assets/aviator_classic.jpg' },
+  { id: 2, name: 'Wayfarer Bold',    material: 'Acetato · Negro', price: '349', color: '#1a1a1a', image: '/src/assets/wayfarer_bold.jpg' },
+  { id: 3, name: 'Round Vintage',    material: 'Metal · Miel',    price: '279', color: '#C68642', image: '/src/assets/round_vintage.jpg' },
+  { id: 4, name: 'Cat-Eye Modern',   material: 'Acetato · Rojo',  price: '329', color: '#dc2626', image: '/src/assets/cat_eye_modern.png' },
 ])
 
 const selectedFrameId = ref(1)
@@ -253,7 +253,7 @@ onBeforeUnmount(() => stopCamera())
           :class="{ 'frame-card--active': selectedFrameId === frame.id }"
           @click="selectFrame(frame.id)"
         >
-          <div class="frame-swatch" :style="{ background: frame.color }" />
+          <img :src="frame.image" :alt="frame.name" class="frame-preview" />
           <div class="frame-info">
             <span class="frame-name">{{ frame.name }}</span>
             <span class="frame-material">{{ frame.material }}</span>
@@ -261,7 +261,7 @@ onBeforeUnmount(() => stopCamera())
           </div>
           <i v-if="selectedFrameId === frame.id" class="pi pi-check-circle check-icon" />
         </div>
-      </div>
+</div>
 
     </div>
 
@@ -283,7 +283,7 @@ onBeforeUnmount(() => stopCamera())
 .page-title { font-family: 'Josefin Sans', sans-serif; font-size: 1.5rem; font-weight: 700; color: #03070a; margin: 0; }
 .page-subtitle { font-family: 'Montserrat', sans-serif; font-size: 0.84rem; color: #6b7280; margin: 4px 0 0; }
 
-.tryon-container { display: grid; grid-template-columns: 1fr 300px; gap: 24px; }
+.tryon-container { display: grid; grid-template-columns: 1.2fr 380px; gap: 24px; }
 
 .card { background: #fff; border-radius: 14px; border: 1px solid #f3f4f6; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
 
@@ -345,7 +345,14 @@ onBeforeUnmount(() => stopCamera())
   transition: all 0.2s;
 }
 .frame-card--active { border-color: #00c1b0; box-shadow: 0 0 0 1px #00c1b0; }
-.frame-swatch { width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0; border: 2px solid rgba(0,0,0,0.08); }
+.frame-preview {
+  width: 80px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+  border: 1px solid #f3f4f6;
+}
 .frame-info { flex: 1; }
 .frame-name { display: block; font-family: 'Josefin Sans', sans-serif; font-weight: 700; font-size: 0.9rem; }
 .frame-material { display: block; font-size: 0.72rem; color: #9ca3af; margin: 2px 0; }
