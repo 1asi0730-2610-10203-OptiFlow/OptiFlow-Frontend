@@ -162,7 +162,7 @@ async function resolveRedirectPath() {
       <div class="card-footer">
         <div class="footer-links">
           <span class="link-text">¿No tienes cuenta?</span>
-          <span class="link-text link-highlight" @click="router.push('/register')">Regístrate!</span>
+          <span class="link-text link-highlight" @click="router.push({ path: '/register', query: { role: mode } })">Regístrate!</span>
         </div>
         <span class="link-muted" @click="router.push('/forgot-password')">Olvidé mi contraseña</span>
       </div>
