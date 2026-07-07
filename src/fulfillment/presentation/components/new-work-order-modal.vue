@@ -91,6 +91,7 @@ function validate() {
   if (!form.value.patientId) e.patientName = true
   if (!form.value.deliveryDate) e.deliveryDate = true
   else if (form.value.deliveryDate < minDeliveryDate.value) e.deliveryDateInvalid = true
+  if (depositNum.value > totalNum.value) e.deposit = true
   errors.value = e
   return Object.keys(e).length === 0
 }
@@ -250,11 +251,24 @@ function onSubmit() {
         <div class="form-row">
           <div class="field">
             <label>{{ $t('labOrders.newOrderModal.totalAmount') }}</label>
-            <input v-model="form.total" type="number" min="0" step="0.01" class="form-input" :placeholder="$t('labOrders.newOrderModal.amountPlaceholder')" />
+            <input v-model="form.total" type="number" min="0" max="1000000" step="0.01" class="form-input" :placeholder="$t('labOrders.newOrderModal.amountPlaceholder')" />
           </div>
           <div class="field">
             <label>{{ $t('labOrders.newOrderModal.deposit') }}</label>
-            <input v-model="form.deposit" type="number" min="0" step="0.01" class="form-input" :placeholder="$t('labOrders.newOrderModal.amountPlaceholder')" />
+            <input
+              v-model="form.deposit"
+              type="number"
+              min="0"
+              max="1000000"
+              step="0.01"
+              class="form-input"
+              :class="{ 'form-input--error': errors.deposit }"
+              :placeholder="$t('labOrders.newOrderModal.amountPlaceholder')"
+              @input="errors.deposit = false"
+            />
+            <span v-if="errors.deposit" class="field-error">
+              {{ $t('labOrders.newOrderModal.depositError') }}
+            </span>
           </div>
         </div>
 
