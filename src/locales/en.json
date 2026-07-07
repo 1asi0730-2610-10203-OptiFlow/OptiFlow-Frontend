@@ -934,7 +934,12 @@
       "cardSubtitle": "Simulate thickness based on your prescription",
       "sphere": "Sphere (Diopters) *",
       "cylinder": "Cylinder (Diopters)",
-      "materials": "Lens Material (From API)",
+      "help_text": "(Find it on your prescription)",
+      "materials": "Select lens material",
+      "hints": {
+        "sphere": "Correction power. Negative values indicate myopia, positive values hyperopia.",
+        "cylinder": "Degree of astigmatism. Can be 0 if no astigmatism."
+      },
       "calculateBtn": "Calculate Thickness",
       "loading": "Loading prices...",
       "thickness": "Estimated Thickness (center)",
