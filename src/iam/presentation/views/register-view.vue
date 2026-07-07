@@ -14,7 +14,8 @@ const buyTier = (route.query.plan || '').toString().toUpperCase()
 const buyPeriod = route.query.period === 'yearly' ? 'yearly' : 'monthly'
 const isBuyMode = computed(() => !!buyTier)
 
-const form = reactive({ email: '', password: '', confirmPassword: '', userType: 'client' })
+const defaultRole = ['admin', 'client'].includes(route.query.role) ? route.query.role : 'client'
+const form = reactive({ email: '', password: '', confirmPassword: '', userType: defaultRole })
 const localError = ref(null)
 const successMsg = ref(null)
 
@@ -102,21 +103,6 @@ async function startCheckout() {
         <p v-if="localError" class="form-error-top">{{ localError }}</p>
         <p v-if="authStore.error" class="form-error-top">{{ authStore.error }}</p>
         <p v-if="successMsg" class="form-success-top">{{ successMsg }}</p>
-
-        <div class="field" v-if="!isBuyMode">
-          <label class="field-label">Tipo de Usuario</label>
-          <div class="input-wrap">
-            <i class="pi pi-user input-icon" />
-            <select
-                v-model="form.userType"
-                class="field-input select-input"
-                required
-            >
-              <option value="admin">Administrador</option>
-              <option value="client">Cliente</option>
-            </select>
-          </div>
-        </div>
 
         <div class="field">
           <label class="field-label">Email</label>
