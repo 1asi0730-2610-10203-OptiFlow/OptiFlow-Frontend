@@ -748,6 +748,7 @@
     "editModal": {
       "title": "Editar Empleado",
       "subtitle": "Modificar los datos del empleado",
+      "status": "Estado",
       "save": "Guardar Cambios"
     },
     "detailModal": {

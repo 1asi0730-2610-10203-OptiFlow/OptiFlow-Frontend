@@ -775,6 +775,7 @@
     "editModal": {
       "title": "Edit Employee",
       "subtitle": "Modify employee details",
+      "status": "Status",
       "save": "Save Changes"
     },
     "detailModal": {

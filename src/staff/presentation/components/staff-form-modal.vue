@@ -23,7 +23,8 @@ const form = reactive({
   phone: '',
   role: 'Optometrista',
   department: 'Clínica',
-  entryDate: new Date().toLocaleDateString('es-PE')
+  entryDate: new Date().toLocaleDateString('es-PE'),
+  status: 'Activo'
 })
 
 const roleOptions = [
@@ -38,6 +39,11 @@ const departmentOptions = [
   { label: 'Ventas', value: 'Ventas' },
   { label: 'Administración', value: 'Administración' }
 ]
+
+const statusOptions = computed(() => [
+  { label: t('staff.status.active'), value: 'Activo' },
+  { label: t('staff.status.inactive'), value: 'Inactivo' }
+])
 
 const permissions = computed(() => {
   if (form.role === 'Optometrista') {
@@ -82,7 +88,7 @@ function onSave() {
     department: form.department,
     entryDate: form.entryDate,
     employeeCode: isEditMode.value ? props.employee.employeeCode : 'EMP-' + Math.floor(1000 + Math.random() * 9000),
-    status: isEditMode.value ? props.employee.status : 'Activo',
+    status: isEditMode.value ? form.status : 'Activo',
     activeToday: isEditMode.value ? props.employee.activeToday : true,
     photo: isEditMode.value ? props.employee.photo : ''
   }
@@ -109,6 +115,7 @@ watch(() => props.employee, (emp) => {
     form.role = emp.role || 'Optometrista'
     form.department = emp.department || 'Clínica'
     form.entryDate = emp.entryDate || new Date().toLocaleDateString('es-PE')
+    form.status = emp.status || 'Activo'
   } else {
     form.fullName = ''
     form.email = ''
@@ -116,6 +123,7 @@ watch(() => props.employee, (emp) => {
     form.role = 'Optometrista'
     form.department = 'Clínica'
     form.entryDate = new Date().toLocaleDateString('es-PE')
+    form.status = 'Activo'
   }
   errors.value = {}
   submitted.value = false
@@ -206,9 +214,21 @@ watch(() => props.employee, (emp) => {
         </div>
       </div>
 
-      <div class="form-field">
-        <label>{{ t('staff.addModal.entryDate') }}</label>
-        <pv-input-text v-model="form.entryDate" class="w-full" />
+      <div class="form-row">
+        <div class="form-field">
+          <label>{{ t('staff.addModal.entryDate') }}</label>
+          <pv-input-text v-model="form.entryDate" class="w-full" />
+        </div>
+        <div class="form-field" v-if="isEditMode">
+          <label>{{ t('staff.editModal.status') }}</label>
+          <pv-select
+            v-model="form.status"
+            :options="statusOptions"
+            option-label="label"
+            option-value="value"
+            class="w-full"
+          />
+        </div>
       </div>
 
       <div class="permissions-section">
