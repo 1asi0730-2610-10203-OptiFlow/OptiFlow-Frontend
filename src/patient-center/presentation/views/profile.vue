@@ -15,6 +15,14 @@ const patientId = ref(null)
 
 const hasErrors = computed(() => Object.keys(errors.value).length > 0)
 
+const today = new Date()
+const maxBirthDate = computed(() => today.toISOString().split('T')[0])
+const minBirthDate = computed(() => {
+  const d = new Date(today)
+  d.setFullYear(d.getFullYear() - 100)
+  return d.toISOString().split('T')[0]
+})
+
 const profile = ref({
   firstName: '',
   lastName: '',
@@ -71,6 +79,9 @@ function validate() {
   else if (!isValidEmail(profile.value.email)) e.emailFormat = true
   if (!profile.value.phone) e.phone = true
   else if (!isValidPhone(profile.value.phone)) e.phoneFormat = true
+  if (profile.value.birthDate &&
+      (profile.value.birthDate < minBirthDate.value || profile.value.birthDate > maxBirthDate.value))
+    e.birthDate = true
   errors.value = e
   return Object.keys(e).length === 0
 }
@@ -184,8 +195,17 @@ function saveChanges() {
             <label>{{ $t('patientCenter.profile.birthDate') }}</label>
             <div class="input-icon-wrapper">
               <i class="pi pi-calendar input-icon"></i>
-              <input v-model="profile.birthDate" type="date" class="form-input with-icon" />
+              <input
+                v-model="profile.birthDate"
+                type="date"
+                class="form-input with-icon"
+                :class="{ 'form-input--error': errors.birthDate }"
+                :min="minBirthDate"
+                :max="maxBirthDate"
+                @change="errors.birthDate = false"
+              />
             </div>
+            <span v-if="errors.birthDate" class="field-error">{{ $t('patientCenter.profile.birthDateError') }}</span>
           </div>
 
           <p v-if="submitted && hasErrors" style="color: #dc2626; font-size: 0.85rem; font-family: Montserrat; margin: 10px 0 0 0; text-align: center;">
