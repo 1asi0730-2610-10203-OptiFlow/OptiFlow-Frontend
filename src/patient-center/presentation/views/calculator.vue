@@ -18,8 +18,10 @@ const hasErrors = computed(() => Object.keys(errors.value).length > 0)
 function handleCalculate() {
   submitted.value = true
   const e = {}
-  if (!esfera.value) e.esfera = true
-  if (!cilindro.value) e.cilindro = true
+  const esf = parseFloat(esfera.value)
+  const cil = parseFloat(cilindro.value)
+  if (!esfera.value || isNaN(esf) || esf < -20 || esf > 20) e.esfera = true
+  if (!cilindro.value || isNaN(cil) || cil < -10 || cil > 10) e.cilindro = true
   errors.value = e
   
   if (Object.keys(e).length === 0) {
@@ -111,7 +113,7 @@ const infoIndices = [
                   <label>{{ $t('patientCenter.calculator.sphere') }} <span class="required" style="color: #ef4444;">*</span></label>
                   <span class="label-help">{{ $t('patientCenter.calculator.help_text') }}</span>
                 </div>
-                <input v-model="esfera" type="text" class="form-input" :class="{ 'form-input--error': errors.esfera }" @input="errors.esfera = false" placeholder="-2.50">
+                <input v-model="esfera" type="number" step="0.25" min="-20" max="20" class="form-input" :class="{ 'form-input--error': errors.esfera }" @input="errors.esfera = false" placeholder="-2.50">
                 <p class="field-hint">{{ $t('patientCenter.calculator.hints.sphere') }}</p>
               </div>
 
@@ -120,7 +122,7 @@ const infoIndices = [
                   <label>{{ $t('patientCenter.calculator.cylinder') }}</label>
                   <span class="label-help">{{ $t('patientCenter.calculator.help_text') }}</span>
                 </div>
-                <input v-model="cilindro" type="text" class="form-input" :class="{ 'form-input--error': errors.cilindro }" @input="errors.cilindro = false" placeholder="-0.75">
+                <input v-model="cilindro" type="number" step="0.25" min="-10" max="10" class="form-input" :class="{ 'form-input--error': errors.cilindro }" @input="errors.cilindro = false" placeholder="-0.75">
                 <p class="field-hint">{{ $t('patientCenter.calculator.hints.cylinder') }}</p>
               </div>
           </div>

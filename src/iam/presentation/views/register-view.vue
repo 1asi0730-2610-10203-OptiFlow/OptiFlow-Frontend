@@ -3,6 +3,7 @@ import { reactive, ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../../application/auth.store.js'
 import { SubscriptionApi } from '../../../subscription/infrastructure/subscription-api.js'
+import { isValidEmail } from '../../../shared/presentation/utils/validators.js'
 
 const authStore = useAuthStore()
 const subscriptionApi = new SubscriptionApi()
@@ -22,6 +23,10 @@ const successMsg = ref(null)
 onMounted(() => authStore.clearError())
 
 function validate() {
+  if (!isValidEmail(form.email)) {
+    localError.value = 'Ingresa un correo electrónico válido.'
+    return false
+  }
   if (form.password !== form.confirmPassword) {
     localError.value = 'Las contraseñas no coinciden.'
     return false

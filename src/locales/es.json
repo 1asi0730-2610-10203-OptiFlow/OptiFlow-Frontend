@@ -451,6 +451,7 @@
       "lastNameRequired": "Ingresa nombre y apellido (ej. Sarah Johnson)",
       "dni": "DNI / Doc. Identidad",
       "dniPlaceholder": "ej. 12345678",
+      "dniInvalid": "El DNI debe tener de 8 a 12 caracteres alfanuméricos",
       "birthDate": "Fecha de Nacimiento",
       "birthDateError": "Ingresa una fecha de nacimiento válida (no puede ser futura ni de hace más de 100 años)",
       "email": "Correo Electrónico",
