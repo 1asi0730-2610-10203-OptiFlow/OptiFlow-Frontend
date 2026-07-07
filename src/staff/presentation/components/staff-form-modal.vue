@@ -41,8 +41,8 @@ const departmentOptions = [
 ]
 
 const statusOptions = computed(() => [
-  { label: t('staff.addModal.status.active'), value: 'Activo' },
-  { label: t('staff.addModal.status.inactive'), value: 'Inactivo' }
+  { label: t('staff.status.active'), value: 'Activo' },
+  { label: t('staff.status.inactive'), value: 'Inactivo' }
 ])
 
 const permissions = computed(() => {
