@@ -22,8 +22,11 @@ const hasErrors = computed(() => Object.keys(errors.value).length > 0)
 function validate() {
   const e = {}
   if (!form.value.name.trim()) e.name = true
-  if (form.value.phone.trim() && !isValidPhone(form.value.phone)) e.phoneFormat = true
-  if (form.value.email.trim() && !isValidEmail(form.value.email)) e.emailFormat = true
+  if (!form.value.contactPerson.trim()) e.contactPerson = true
+  if (!form.value.phone.trim()) e.phone = true
+  else if (!isValidPhone(form.value.phone)) e.phoneFormat = true
+  if (!form.value.email.trim()) e.email = true
+  else if (!isValidEmail(form.value.email)) e.emailFormat = true
   errors.value = e
   return Object.keys(e).length === 0
 }
@@ -97,13 +100,19 @@ async function onRegister() {
           <label class="field-label">
             <i class="pi pi-user field-icon" />
             {{ $t('inventory.supplierModal.contactPerson') }}
+            <span class="required-mark">*</span>
           </label>
           <input
             v-model="form.contactPerson"
             type="text"
             class="form-input"
+            :class="{ 'form-input--error': errors.contactPerson }"
             :placeholder="$t('inventory.supplierModal.contactPersonPlaceholder')"
+            @input="errors.contactPerson = false"
           />
+          <span v-if="errors.contactPerson" class="field-error">
+            {{ $t('inventory.supplierModal.contactPersonRequired') }}
+          </span>
         </div>
 
         <!-- Phone & Email -->
@@ -112,16 +121,20 @@ async function onRegister() {
             <label class="field-label">
               <i class="pi pi-phone field-icon" />
               {{ $t('inventory.supplierModal.phone') }}
+              <span class="required-mark">*</span>
             </label>
             <input
               v-model="form.phone"
               type="tel"
               class="form-input"
-              :class="{ 'form-input--error': errors.phoneFormat }"
+              :class="{ 'form-input--error': errors.phone || errors.phoneFormat }"
               :placeholder="$t('inventory.supplierModal.phonePlaceholder')"
-              @input="errors.phoneFormat = false"
+              @input="errors.phone = false; errors.phoneFormat = false"
             />
-            <span v-if="errors.phoneFormat" class="field-error">
+            <span v-if="errors.phone" class="field-error">
+              {{ $t('inventory.supplierModal.phoneRequired') }}
+            </span>
+            <span v-else-if="errors.phoneFormat" class="field-error">
               {{ $t('inventory.supplierModal.phoneInvalid') }}
             </span>
           </div>
@@ -130,16 +143,20 @@ async function onRegister() {
             <label class="field-label">
               <i class="pi pi-envelope field-icon" />
               {{ $t('inventory.supplierModal.email') }}
+              <span class="required-mark">*</span>
             </label>
             <input
               v-model="form.email"
               type="email"
               class="form-input"
-              :class="{ 'form-input--error': errors.emailFormat }"
+              :class="{ 'form-input--error': errors.email || errors.emailFormat }"
               :placeholder="$t('inventory.supplierModal.emailPlaceholder')"
-              @input="errors.emailFormat = false"
+              @input="errors.email = false; errors.emailFormat = false"
             />
-            <span v-if="errors.emailFormat" class="field-error">
+            <span v-if="errors.email" class="field-error">
+              {{ $t('inventory.supplierModal.emailRequired') }}
+            </span>
+            <span v-else-if="errors.emailFormat" class="field-error">
               {{ $t('inventory.supplierModal.emailInvalid') }}
             </span>
           </div>

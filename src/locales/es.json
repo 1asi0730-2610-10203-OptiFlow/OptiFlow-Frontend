@@ -290,6 +290,7 @@
       "totalAmount": "Total (S/)",
       "deposit": "Adelanto (S/)",
       "depositError": "El adelanto no puede superar el monto total",
+      "amountRange": "El monto debe estar entre 0 y 1,000,000",
       "amountPlaceholder": "0.00",
       "pendingAfterDeposit": "Saldo pendiente tras adelanto",
       "createOrder": "Crear Orden de Lab"
@@ -657,11 +658,14 @@
       "nameRequired": "El nombre es obligatorio",
       "contactPerson": "Persona de Contacto",
       "contactPersonPlaceholder": "Ej. Juan Pérez",
+      "contactPersonRequired": "La persona de contacto es obligatoria",
       "phone": "Teléfono",
       "phonePlaceholder": "Ej. +51 987 654 321",
+      "phoneRequired": "El teléfono es obligatorio",
       "phoneInvalid": "Ingresa un teléfono válido",
       "email": "Correo Electrónico",
       "emailPlaceholder": "Ej. contacto{'@'}proveedor.com",
+      "emailRequired": "El correo es obligatorio",
       "emailInvalid": "Ingresa un correo válido",
       "preview": "Vista previa",
       "register": "Registrar"
