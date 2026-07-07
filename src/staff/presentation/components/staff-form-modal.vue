@@ -3,7 +3,7 @@ import { reactive, computed, ref, watch, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { isValidEmail, isValidPhone } from '../../../shared/presentation/utils/validators.js'
 import { RolesApi } from '../../../settings/infrastructure/roles-api.js'
-import { RoleAssembler } from '../../../settings/infrastructure/role.assembler.js'
+import { RoleAssembler } from '../../../settings/infrastructure/role.assembler.js'  
 
 const { t } = useI18n()
 
@@ -29,34 +29,12 @@ const form = reactive({
   status: 'Activo'
 })
 
-const rolesApi = new RolesApi()
-const roleOptions = ref([])
-
-const defaultRoles = [
-  'Optometrista',
-  'Óptico',
-  'Administrador',
-  'Personal de Apoyo'
+const roleOptions = [
+  { label: 'Optometrista', value: 'Optometrista' },
+  { label: 'Óptico', value: 'Óptico' },
+  { label: 'Administrador', value: 'Administrador' },
+  { label: 'Personal de Apoyo', value: 'Personal de Apoyo' }
 ]
-
-async function loadRoles() {
-  try {
-    const rolesData = await rolesApi.getAll()
-    const roles = RoleAssembler.toEntities(rolesData || [])
-    const dbRoleNames = roles.map(r => r.name)
-    const allRoles = Array.from(new Set([...defaultRoles, ...dbRoleNames]))
-    roleOptions.value = allRoles.map(name => ({ label: name, value: name }))
-  } catch (error) {
-    console.error('Error loading roles:', error)
-    roleOptions.value = defaultRoles.map(name => ({ label: name, value: name }))
-  }
-}
-
-watch(() => props.visible, (newVal) => {
-  if (newVal) {
-    loadRoles()
-  }
-}, { immediate: true })
 
 const departmentOptions = [
   { label: 'Clínica', value: 'Clínica' },
