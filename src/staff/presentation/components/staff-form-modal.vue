@@ -29,12 +29,30 @@ const form = reactive({
   status: 'Activo'
 })
 
-const roleOptions = [
+const defaultRoleOptions = [
   { label: 'Optometrista', value: 'Optometrista' },
   { label: 'Óptico', value: 'Óptico' },
   { label: 'Administrador', value: 'Administrador' },
   { label: 'Personal de Apoyo', value: 'Personal de Apoyo' }
 ]
+
+const rolesApi = new RolesApi()
+const roleOptions = ref([...defaultRoleOptions])
+
+async function loadRoles() {
+  try {
+    const rolesData = await rolesApi.getAll()
+    const roles = RoleAssembler.toEntities(rolesData || [])
+    const customRoles = roles
+      .map(r => ({ label: r.name, value: r.name, color: r.color }))
+      .filter(r => !defaultRoleOptions.some(d => d.value === r.value))
+    roleOptions.value = [...defaultRoleOptions, ...customRoles]
+  } catch (error) {
+    console.error('Error loading roles:', error)
+  }
+}
+
+onMounted(loadRoles)
 
 const departmentOptions = [
   { label: 'Clínica', value: 'Clínica' },
