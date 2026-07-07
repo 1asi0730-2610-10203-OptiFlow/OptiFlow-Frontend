@@ -45,27 +45,27 @@ onMounted(confirm)
 <template>
   <div class="page">
     <div class="card">
-      <p class="brand">OptiFlow</p>
+      <p class="brand">{{ $t('app.name') }}</p>
 
       <template v-if="state === 'confirming'">
         <div class="spinner" />
-        <h1>Confirmando tu pago…</h1>
-        <p class="muted">Estamos activando tu suscripción. No cierres esta ventana.</p>
+        <h1>{{ $t('subscription.paymentSuccess.confirmingTitle') }}</h1>
+        <p class="muted">{{ $t('subscription.paymentSuccess.confirmingSubtitle') }}</p>
       </template>
 
       <template v-else-if="state === 'success'">
         <div class="check">✓</div>
-        <h1>¡Pago confirmado!</h1>
-        <p class="muted">Tu suscripción está activa. Redirigiendo a tu panel…</p>
+        <h1>{{ $t('subscription.paymentSuccess.successTitle') }}</h1>
+        <p class="muted">{{ $t('subscription.paymentSuccess.successSubtitle') }}</p>
       </template>
 
       <template v-else>
         <div class="cross">!</div>
-        <h1>No pudimos confirmar el pago</h1>
-        <p class="muted">Si ya pagaste, espera unos segundos y reintenta.</p>
+        <h1>{{ $t('subscription.paymentSuccess.errorTitle') }}</h1>
+        <p class="muted">{{ $t('subscription.paymentSuccess.errorSubtitle') }}</p>
         <div class="actions">
-          <button class="btn" @click="confirm">Reintentar</button>
-          <button class="btn ghost" @click="router.push('/select-plan')">Volver a los planes</button>
+          <button class="btn" @click="confirm">{{ $t('subscription.paymentSuccess.retry') }}</button>
+          <button class="btn ghost" @click="router.push('/select-plan')">{{ $t('subscription.paymentSuccess.backToPlans') }}</button>
         </div>
       </template>
     </div>
