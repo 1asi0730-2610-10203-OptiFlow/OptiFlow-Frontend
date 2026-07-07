@@ -107,13 +107,22 @@ const infoIndices = [
         <div class="card-body">
           <div class="form-section">
             <div class="field">
-              <label>{{ $t('patientCenter.calculator.sphere') }} <span class="required" style="color: #ef4444;">*</span></label>
-              <input v-model="esfera" type="text" class="form-input" :class="{ 'form-input--error': errors.esfera }" @input="errors.esfera = false" placeholder="-2.50">
-            </div>
-            <div class="field">
-              <label>{{ $t('patientCenter.calculator.cylinder') }} <span class="required" style="color: #ef4444;">*</span></label>
-              <input v-model="cilindro" type="text" class="form-input" :class="{ 'form-input--error': errors.cilindro }" @input="errors.cilindro = false" placeholder="-0.75">
-            </div>
+                <div class="label-row">
+                  <label>{{ $t('patientCenter.calculator.sphere') }} <span class="required" style="color: #ef4444;">*</span></label>
+                  <span class="label-help">{{ $t('patientCenter.calculator.help_text') }}</span>
+                </div>
+                <input v-model="esfera" type="text" class="form-input" :class="{ 'form-input--error': errors.esfera }" @input="errors.esfera = false" placeholder="-2.50">
+                <p class="field-hint">{{ $t('patientCenter.calculator.hints.sphere') }}</p>
+              </div>
+
+              <div class="field">
+                <div class="label-row">
+                  <label>{{ $t('patientCenter.calculator.cylinder') }}</label>
+                  <span class="label-help">{{ $t('patientCenter.calculator.help_text') }}</span>
+                </div>
+                <input v-model="cilindro" type="text" class="form-input" :class="{ 'form-input--error': errors.cilindro }" @input="errors.cilindro = false" placeholder="-0.75">
+                <p class="field-hint">{{ $t('patientCenter.calculator.hints.cylinder') }}</p>
+              </div>
           </div>
 
           <div class="material-section">
@@ -296,4 +305,29 @@ const infoIndices = [
 .guide-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .guide-item strong { display: block; font-size: 0.85rem; color: #374151; margin-bottom: 4px; }
 .guide-item p { font-size: 0.8rem; color: #6b7280; margin: 0; line-height: 1.4; }
+
+.field-hint {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin: 4px 0 0 0;
+  line-height: 1.2;
+}
+
+.label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.label-help {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  color: #767b83;
+  font-style: italic;
+  white-space: nowrap;
+  margin-left: 10px;
+}
+
 </style>

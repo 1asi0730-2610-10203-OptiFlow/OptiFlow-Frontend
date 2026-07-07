@@ -927,7 +927,12 @@
       "cardSubtitle": "Simula el grosor según tu graduación",
       "sphere": "Esfera (Dioptrías) *",
       "cylinder": "Cilindro (Dioptrías)",
-      "materials": "Material del Lente (Desde API)",
+      "help_text": "(Encuéntralo en tu receta)",
+      "materials": "Selecciona el material del lente", 
+      "hints": {
+        "sphere": "Potencia de corrección. Valores negativos indican miopía, positivos hipermetropía.",
+        "cylinder": "Grado de astigmatismo. Puede ser 0 si no tienes astigmatismo."
+      },
       "calculateBtn": "Calcular Grosor",
       "loading": "Cargando precios...",
       "thickness": "Grosor Estimado (centro)",
