@@ -91,7 +91,7 @@ function onSubmit() {
         <div class="form-row">
           <div class="field">
             <label>{{ $t('inventory.editModal.threshold') }}</label>
-            <input v-model="form.minimumStockThreshold" type="number" min="0" class="form-input" placeholder="0" />
+            <input v-model="form.minimumStockThreshold" type="number" min="0" max="1000000" class="form-input" placeholder="0" />
           </div>
           <div class="field">
             <label>{{ $t('inventory.editModal.price') }}</label>
