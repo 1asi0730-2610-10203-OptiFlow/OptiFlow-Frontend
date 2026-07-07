@@ -2,16 +2,23 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../../application/auth.store.js'
+import { isValidEmail } from '../../../shared/presentation/utils/validators.js'
 
 const authStore = useAuthStore()
 const router = useRouter()
 const email = ref('')
 const successMsg = ref(null)
+const localError = ref(null)
 
 onMounted(() => authStore.clearError())
 
 async function handleSubmit() {
   successMsg.value = null
+  localError.value = null
+  if (!isValidEmail(email.value)) {
+    localError.value = 'Ingresa un correo electrónico válido.'
+    return
+  }
   const ok = await authStore.forgotPassword(email.value)
   if (ok) {
     successMsg.value = 'Si el correo existe, recibirás un enlace en tu bandeja de entrada.'
@@ -50,7 +57,8 @@ async function handleSubmit() {
           </div>
         </div>
 
-        <p v-if="authStore.error" class="field-error">{{ authStore.error }}</p>
+        <p v-if="localError" class="field-error">{{ localError }}</p>
+        <p v-else-if="authStore.error" class="field-error">{{ authStore.error }}</p>
         <p v-if="successMsg" class="field-success">{{ successMsg }}</p>
 
         <div class="btn-wrap">

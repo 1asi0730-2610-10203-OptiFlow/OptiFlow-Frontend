@@ -116,6 +116,7 @@
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../../application/auth.store.js'
+import { isValidEmail } from '../../../shared/presentation/utils/validators.js'
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -127,6 +128,10 @@ const emailMsg = reactive({ error: null, success: null })
 async function handleUpdateEmail() {
   emailMsg.error = null
   emailMsg.success = null
+  if (!isValidEmail(emailForm.newEmail)) {
+    emailMsg.error = 'Ingresa un correo electrónico válido.'
+    return
+  }
   const ok = await authStore.updateEmail(emailForm.newEmail)
   if (ok) {
     emailMsg.success = 'Correo actualizado. Tu sesión se ha renovado.'
@@ -146,6 +151,11 @@ async function handleUpdatePassword() {
 
   if (passwordForm.newPassword !== passwordForm.confirmNewPassword) {
     passwordMsg.error = 'Las contraseñas nuevas no coinciden.'
+    return
+  }
+
+  if (passwordForm.newPassword.length < 8) {
+    passwordMsg.error = 'La contraseña debe tener al menos 8 caracteres.'
     return
   }
 
