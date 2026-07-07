@@ -64,7 +64,8 @@ function validate() {
   if (!form.fullName.trim()) e.fullName = true
   if (!form.email.trim()) e.email = true
   else if (!isValidEmail(form.email)) e.emailFormat = true
-  if (form.phone.trim() && !isValidPhone(form.phone)) e.phoneFormat = true
+  if (!form.phone.trim()) e.phone = true
+  else if (!isValidPhone(form.phone)) e.phoneFormat = true
   errors.value = e
   return Object.keys(e).length === 0
 }
@@ -177,15 +178,18 @@ watch(() => props.employee, (emp) => {
           </span>
         </div>
         <div class="form-field">
-          <label>{{ t('staff.addModal.phone') }}</label>
+          <label>{{ t('staff.addModal.phone') }} *</label>
           <pv-input-text
             v-model="form.phone"
             :placeholder="t('staff.addModal.placeholders.phone')"
             class="w-full"
-            :class="{ 'p-invalid': errors.phoneFormat }"
-            @input="errors.phoneFormat = false"
+            :class="{ 'p-invalid': errors.phone || errors.phoneFormat }"
+            @input="errors.phone = false; errors.phoneFormat = false"
           />
-          <span v-if="errors.phoneFormat" class="field-error">
+          <span v-if="errors.phone" class="field-error">
+            {{ $t('common.fieldRequired') }}
+          </span>
+          <span v-else-if="errors.phoneFormat" class="field-error">
             {{ $t('staff.addModal.phoneInvalid') }}
           </span>
         </div>
