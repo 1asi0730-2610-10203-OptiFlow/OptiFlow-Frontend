@@ -30,9 +30,10 @@ function validate() {
   const stockNum = parseInt(form.value.stock)
   if (form.value.stock === '' || isNaN(stockNum) || stockNum < 0 || stockNum > 1000000) e.stock = true
   const thresholdNum = parseInt(form.value.minimumStockThreshold)
-  if (form.value.minimumStockThreshold !== '' && (isNaN(thresholdNum) || thresholdNum < 0 || thresholdNum > 1000000)) e.threshold = true
+  if (form.value.minimumStockThreshold === '' || isNaN(thresholdNum) || thresholdNum < 0 || thresholdNum > 1000000) e.threshold = true
   const priceNum = parseFloat(form.value.price)
   if (!form.value.price || isNaN(priceNum) || priceNum <= 0 || priceNum > 1000000) e.price = true
+  if (!form.value.supplierName) e.supplierName = true
   errors.value = e
   return Object.keys(e).length === 0
 }
@@ -88,6 +89,7 @@ function onSubmit() {
               :placeholder="$t('inventory.addModal.productNamePlaceholder')"
               @input="errors.name = false"
           />
+          <span v-if="errors.name" class="field-error">{{ $t('common.fieldRequired') }}</span>
         </div>
 
         <div class="form-row">
@@ -126,9 +128,10 @@ function onSubmit() {
               placeholder="0"
               @input="errors.stock = false"
             />
+            <span v-if="errors.stock" class="field-error">{{ $t('common.fieldRequired') }}</span>
           </div>
           <div class="field">
-            <label>{{ $t('inventory.addModal.reorderLevel') }}</label>
+            <label>{{ $t('inventory.addModal.reorderLevel') }} *</label>
             <input
               v-model="form.minimumStockThreshold"
               type="number"
@@ -139,6 +142,7 @@ function onSubmit() {
               placeholder="10"
               @input="errors.threshold = false"
             />
+            <span v-if="errors.threshold" class="field-error">{{ $t('common.fieldRequired') }}</span>
           </div>
         </div>
 
@@ -165,15 +169,21 @@ function onSubmit() {
         </div>
 
         <div class="field">
-          <label>{{ $t('inventory.addModal.supplier') }}</label>
+          <label>{{ $t('inventory.addModal.supplier') }} *</label>
           <div class="select-wrapper">
-            <select v-model="form.supplierName" class="form-select">
+            <select
+              v-model="form.supplierName"
+              class="form-select"
+              :class="{ 'form-input--error': errors.supplierName }"
+              @change="errors.supplierName = false"
+            >
               <option value="">{{ $t('inventory.addModal.selectSupplier') }}</option>
               <option v-for="supplier in suppliers" :key="supplier.id" :value="supplier.name">
                 {{ supplier.name }}
               </option>            </select>
             <i class="pi pi-chevron-down select-arrow" />
           </div>
+          <span v-if="errors.supplierName" class="field-error">{{ $t('common.fieldRequired') }}</span>
         </div>
 
         <p v-if="submitted && hasErrors" style="color: #dc2626; font-size: 0.8rem; font-family: Montserrat; margin: 0;">
