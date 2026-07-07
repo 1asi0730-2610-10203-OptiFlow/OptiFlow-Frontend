@@ -663,9 +663,29 @@
     }
   },
   "subscription": {
-    "meta": {
-      "success": "Payment successful",
-      "myPlan": "My subscription"
+    "selectPlan": {
+      "brandSubtitle": "Optical ERP / CRM",
+      "title": "Choose your plan",
+      "subtitle": "Your account has been created. Select a plan to activate your subscription with Stripe.",
+      "loadError": "We couldn't load the plans. Please try again in a few seconds.",
+      "confirmingPaymentError": "We're confirming your payment. If you already paid, reload in a few seconds.",
+      "checkoutError": "We couldn't start the checkout. Please try again.",
+      "monthly": "Monthly",
+      "yearly": "Yearly · Save 17%",
+      "perMonth": "/mo",
+      "billedAnnually": "Billed annually: S/.{price}",
+      "continueWithStripe": "Continue with Stripe",
+      "footer": "© 2026 OptiFlow · Complete management for opticals"
+    },
+    "paymentSuccess": {
+      "confirmingTitle": "Confirming your payment…",
+      "confirmingSubtitle": "We're activating your subscription. Don't close this window.",
+      "successTitle": "Payment confirmed!",
+      "successSubtitle": "Your subscription is active. Redirecting to your panel…",
+      "errorTitle": "We couldn't confirm the payment",
+      "errorSubtitle": "If you already paid, wait a few seconds and try again.",
+      "retry": "Retry",
+      "backToPlans": "Back to plans"
     }
   },
   "search": {

@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { SubscriptionApi } from '../../infrastructure/subscription-api.js'
 import { useAuthStore } from '../../../iam/application/auth.store.js'
 
@@ -8,6 +9,7 @@ const subscriptionApi = new SubscriptionApi()
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
+const { t } = useI18n()
 
 const plans = ref([])
 const period = ref('monthly') // 'monthly' | 'yearly'
@@ -44,7 +46,7 @@ async function confirmPaymentReturn() {
     await new Promise((resolve) => setTimeout(resolve, 1500))
   }
   confirmingPayment.value = false
-  error.value = 'Estamos confirmando tu pago. Si ya pagaste, recarga en unos segundos.'
+  error.value = t('subscription.selectPlan.confirmingPaymentError')
 }
 
 onMounted(async () => {
@@ -54,7 +56,7 @@ onMounted(async () => {
   try {
     plans.value = await subscriptionApi.getPlans()
   } catch (err) {
-    error.value = 'No se pudieron cargar los planes. Intenta de nuevo en unos segundos.'
+    error.value = t('subscription.selectPlan.loadError')
   } finally {
     loadingPlans.value = false
   }
@@ -75,7 +77,7 @@ async function selectPlan(plan) {
     await authStore.refreshSubscription()
     router.push(checkoutUrl)
   } catch (err) {
-    error.value = err.response?.data?.detail || err.response?.data?.message || 'No se pudo iniciar el pago. Intenta de nuevo.'
+    error.value = err.response?.data?.detail || err.response?.data?.message || t('subscription.selectPlan.checkoutError')
     checkingOutPlanId.value = null
   }
 }
@@ -85,18 +87,18 @@ async function selectPlan(plan) {
   <div class="plan-page">
 
     <div class="plan-brand">
-      <span class="brand-name">OptiFlow</span>
-      <span class="brand-sub">ERP / CRM Óptico</span>
+      <span class="brand-name">{{ $t('app.name') }}</span>
+      <span class="brand-sub">{{ $t('subscription.selectPlan.brandSubtitle') }}</span>
     </div>
 
-    <h1 class="plan-title">Elige tu plan</h1>
-    <p class="plan-subtitle">Tu cuenta ya está creada. Selecciona un plan para activar tu suscripción con Stripe.</p>
+    <h1 class="plan-title">{{ $t('subscription.selectPlan.title') }}</h1>
+    <p class="plan-subtitle">{{ $t('subscription.selectPlan.subtitle') }}</p>
 
     <p v-if="error" class="form-error-top">{{ error }}</p>
 
     <div v-if="hasYearlyPlans" class="period-toggle">
-      <button type="button" class="period-btn" :class="{ active: period === 'monthly' }" @click="period = 'monthly'">Mensual</button>
-      <button type="button" class="period-btn" :class="{ active: period === 'yearly' }" @click="period = 'yearly'">Anual · Ahorra 17%</button>
+      <button type="button" class="period-btn" :class="{ active: period === 'monthly' }" @click="period = 'monthly'">{{ $t('subscription.selectPlan.monthly') }}</button>
+      <button type="button" class="period-btn" :class="{ active: period === 'yearly' }" @click="period = 'yearly'">{{ $t('subscription.selectPlan.yearly') }}</button>
     </div>
 
     <div v-if="loadingPlans" class="plan-loading">
@@ -107,8 +109,8 @@ async function selectPlan(plan) {
       <div v-for="plan in visiblePlans" :key="plan.id" class="plan-card">
         <span class="plan-tier">{{ plan.tier }}</span>
         <h2 class="plan-name">{{ plan.name }}</h2>
-        <p class="plan-price">S/.{{ monthlyPrice(plan) }}<span class="plan-price-period">/mes</span></p>
-        <p v-if="period === 'yearly'" class="plan-billed">Facturado anualmente: S/.{{ plan.price }}</p>
+        <p class="plan-price">S/.{{ monthlyPrice(plan) }}<span class="plan-price-period">{{ $t('subscription.selectPlan.perMonth') }}</span></p>
+        <p v-if="period === 'yearly'" class="plan-billed">{{ $t('subscription.selectPlan.billedAnnually', { price: plan.price }) }}</p>
         <p class="plan-description">{{ plan.description }}</p>
         <button
             class="btn-select"
@@ -116,12 +118,12 @@ async function selectPlan(plan) {
             @click="selectPlan(plan)"
         >
           <i v-if="checkingOutPlanId === plan.id" class="pi pi-spin pi-spinner" />
-          <span v-else>Continuar con Stripe</span>
+          <span v-else>{{ $t('subscription.selectPlan.continueWithStripe') }}</span>
         </button>
       </div>
     </div>
 
-    <p class="page-footer">© 2026 OptiFlow · Gestión integral para ópticas</p>
+    <p class="page-footer">{{ $t('subscription.selectPlan.footer') }}</p>
 
   </div>
 </template>

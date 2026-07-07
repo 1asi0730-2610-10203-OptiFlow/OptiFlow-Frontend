@@ -928,7 +928,7 @@
       "sphere": "Esfera (Dioptrías) *",
       "cylinder": "Cilindro (Dioptrías)",
       "help_text": "(Encuéntralo en tu receta)",
-      "materials": "Selecciona el material del lente", 
+      "materials": "Selecciona el material del lente",
       "hints": {
         "sphere": "Potencia de corrección. Valores negativos indican miopía, positivos hipermetropía.",
         "cylinder": "Grado de astigmatismo. Puede ser 0 si no tienes astigmatismo."
@@ -1172,6 +1172,32 @@
         "monthly": "Mensualmente",
         "annually": "Anualmente"
       }
+    }
+  },
+  "subscription": {
+    "selectPlan": {
+      "brandSubtitle": "ERP / CRM Óptico",
+      "title": "Elige tu plan",
+      "subtitle": "Tu cuenta ya está creada. Selecciona un plan para activar tu suscripción con Stripe.",
+      "loadError": "No se pudieron cargar los planes. Intenta de nuevo en unos segundos.",
+      "confirmingPaymentError": "Estamos confirmando tu pago. Si ya pagaste, recarga en unos segundos.",
+      "checkoutError": "No se pudo iniciar el pago. Intenta de nuevo.",
+      "monthly": "Mensual",
+      "yearly": "Anual · Ahorra 17%",
+      "perMonth": "/mes",
+      "billedAnnually": "Facturado anualmente: S/.{price}",
+      "continueWithStripe": "Continuar con Stripe",
+      "footer": "© 2026 OptiFlow · Gestión integral para ópticas"
+    },
+    "paymentSuccess": {
+      "confirmingTitle": "Confirmando tu pago…",
+      "confirmingSubtitle": "Estamos activando tu suscripción. No cierres esta ventana.",
+      "successTitle": "¡Pago confirmado!",
+      "successSubtitle": "Tu suscripción está activa. Redirigiendo a tu panel…",
+      "errorTitle": "No pudimos confirmar el pago",
+      "errorSubtitle": "Si ya pagaste, espera unos segundos y reintenta.",
+      "retry": "Reintentar",
+      "backToPlans": "Volver a los planes"
     }
   }
 }
