@@ -46,9 +46,12 @@ const form = ref({
 const errors = ref({})
 const submitted = ref(false)
 
+const todayStr = new Date().toISOString().split('T')[0]
+
 function validate() {
   const e = {}
   if (!form.value.examDate) e.examDate = true
+  else if (form.value.examDate > todayStr) e.examDateInvalid = true
   errors.value = e
   return Object.keys(e).length === 0
 }
@@ -140,13 +143,17 @@ function triggerFileInput() {
                 <div class="form-row-2">
                     <div class="field">
                         <label>{{ $t('patients.newExam.examDate') }} *</label>
-                        <input 
-                            v-model="form.examDate" 
-                            type="date" 
-                            class="form-input" 
-                            :class="{ 'form-input--error': errors.examDate }"
-                            @input="errors.examDate = false"
+                        <input
+                            v-model="form.examDate"
+                            type="date"
+                            class="form-input"
+                            :class="{ 'form-input--error': errors.examDate || errors.examDateInvalid }"
+                            :max="todayStr"
+                            @input="errors.examDate = false; errors.examDateInvalid = false"
                         />
+                        <span v-if="errors.examDateInvalid" class="field-error">
+                            {{ $t('patients.newExam.examDateError') }}
+                        </span>
                     </div>
                     <div class="field">
                         <label>{{ $t('patients.newExam.doctor') }}</label>
@@ -278,6 +285,7 @@ function triggerFileInput() {
 .form-input:focus { border-color: #00c1b0; }
 .form-input--error { border-color: #f87171 !important; background-color: #fff5f5 !important; }
 .form-input:disabled { background: #f9fafb; color: #6b7280; }
+.field-error { font-family: 'Montserrat', sans-serif; font-size: 0.75rem; color: #dc2626; margin-top: 2px; }
 .form-textarea { padding: 9px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 0.84rem; color: #111827; outline: none; resize: vertical; transition: border-color 0.15s; width: 100%; box-sizing: border-box; }
 .form-textarea:focus { border-color: #00c1b0; }
 
