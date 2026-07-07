@@ -291,6 +291,7 @@
       "totalAmount": "Total (S/)",
       "deposit": "Deposit (S/)",
       "depositError": "Deposit cannot exceed the total amount",
+      "amountRange": "Amount must be between 0 and 1,000,000",
       "amountPlaceholder": "0.00",
       "pendingAfterDeposit": "Balance after deposit",
       "createOrder": "Create Lab Order"
@@ -658,11 +659,14 @@
       "nameRequired": "Name is required",
       "contactPerson": "Contact Person",
       "contactPersonPlaceholder": "E.g. John Smith",
+      "contactPersonRequired": "Contact person is required",
       "phone": "Phone",
       "phonePlaceholder": "E.g. +1 555 123 4567",
+      "phoneRequired": "Phone is required",
       "phoneInvalid": "Enter a valid phone number",
       "email": "Email",
       "emailPlaceholder": "E.g. contact{'@'}supplier.com",
+      "emailRequired": "Email is required",
       "emailInvalid": "Enter a valid email address",
       "preview": "Preview",
       "register": "Register"
