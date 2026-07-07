@@ -287,6 +287,7 @@
       "framePlaceholder": "e.g. Black frame, size M",
       "orderDate": "Order Date",
       "deliveryDate": "Delivery Date",
+      "deliveryDateError": "Delivery date cannot be before the order date or in the past",
       "totalAmount": "Total (S/)",
       "deposit": "Deposit (S/)",
       "amountPlaceholder": "0.00",
@@ -499,6 +500,7 @@
         "upload": "Upload Record"
       },
       "examDate": "Exam Date",
+      "examDateError": "Exam date cannot be in the future",
       "doctor": "Doctor / Optometrist",
       "refraction": "Refraction",
       "addition": "Addition",
@@ -913,6 +915,7 @@
       "address": "Address",
       "city": "City",
       "birthDate": "Date of Birth",
+      "birthDateError": "Enter a valid date of birth (not in the future and within the last 100 years)",
       "medicalInfo": "Medical Information",
       "recordNumber": "Clinical Record Number",
       "lastVisit": "Last Visit",

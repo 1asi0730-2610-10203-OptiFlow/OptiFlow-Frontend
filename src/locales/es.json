@@ -286,6 +286,7 @@
       "framePlaceholder": "Ej: Armazón negro, talla M",
       "orderDate": "Fecha de Orden",
       "deliveryDate": "Fecha de Entrega",
+      "deliveryDateError": "La fecha de entrega no puede ser anterior a la fecha de orden ni estar en el pasado",
       "totalAmount": "Total (S/)",
       "deposit": "Adelanto (S/)",
       "amountPlaceholder": "0.00",
@@ -498,6 +499,7 @@
         "upload": "Cargar Expediente"
       },
       "examDate": "Fecha del Examen",
+      "examDateError": "La fecha del examen no puede estar en el futuro",
       "doctor": "Doctor / Optometrista",
       "refraction": "Refracción",
       "addition": "Adición",
@@ -886,6 +888,7 @@
       "address": "Dirección",
       "city": "Ciudad",
       "birthDate": "Fecha de Nacimiento",
+      "birthDateError": "Ingresa una fecha de nacimiento válida (no futura y dentro de los últimos 100 años)",
       "medicalInfo": "Información Médica",
       "recordNumber": "Número de Historia Clínica",
       "lastVisit": "Última Consulta",
