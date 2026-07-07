@@ -66,6 +66,13 @@ const totalNum = computed(() => parseFloat(form.value.total) || 0)
 const depositNum = computed(() => parseFloat(form.value.deposit) || 0)
 const pendingBalance = computed(() => Math.max(0, totalNum.value - depositNum.value))
 
+const todayStr = new Date().toISOString().split('T')[0]
+// Delivery cannot be before the order date, and never in the past.
+const minDeliveryDate = computed(() => {
+  const od = form.value.orderDate
+  return od && od > todayStr ? od : todayStr
+})
+
 function buildPrescription() {
   const od = form.value.odSphere
       ? `OD: Esf ${form.value.odSphere}${form.value.odCylinder ? `, Cil ${form.value.odCylinder}` : ''}${form.value.odAxis ? `, Eje ${form.value.odAxis}` : ''}`
@@ -83,6 +90,7 @@ function validate() {
   const e = {}
   if (!form.value.patientId) e.patientName = true
   if (!form.value.deliveryDate) e.deliveryDate = true
+  else if (form.value.deliveryDate < minDeliveryDate.value) e.deliveryDateInvalid = true
   errors.value = e
   return Object.keys(e).length === 0
 }
@@ -220,17 +228,21 @@ function onSubmit() {
           </div>
           <div class="field">
             <label>{{ $t('labOrders.newOrderModal.orderDate') }}</label>
-            <input v-model="form.orderDate" type="date" class="form-input" />
+            <input v-model="form.orderDate" type="date" class="form-input" :max="todayStr" />
           </div>
           <div class="field">
             <label>{{ $t('labOrders.newOrderModal.deliveryDate') }} *</label>
-            <input 
-              v-model="form.deliveryDate" 
-              type="date" 
-              class="form-input" 
-              :class="{ 'form-input--error': errors.deliveryDate }"
-              @input="errors.deliveryDate = false"
+            <input
+              v-model="form.deliveryDate"
+              type="date"
+              class="form-input"
+              :class="{ 'form-input--error': errors.deliveryDate || errors.deliveryDateInvalid }"
+              :min="minDeliveryDate"
+              @input="errors.deliveryDate = false; errors.deliveryDateInvalid = false"
             />
+            <span v-if="errors.deliveryDateInvalid" class="field-error">
+              {{ $t('labOrders.newOrderModal.deliveryDateError') }}
+            </span>
           </div>
         </div>
 
@@ -284,6 +296,7 @@ function onSubmit() {
 .form-select:focus, .form-input:focus { border-color: #00c1b0; }
 .form-input--error, .form-select--error { border-color: #f87171 !important; background-color: #fff5f5 !important; }
 .field-hint { font-family: 'Montserrat', sans-serif; font-size: 0.74rem; color: #9ca3af; margin-top: 1px; }
+.field-error { font-family: 'Montserrat', sans-serif; font-size: 0.75rem; color: #dc2626; margin-top: 2px; }
 .recipe-section { display: flex; flex-direction: column; gap: 8px; }
 .recipe-label { display: flex; align-items: center; gap: 6px; font-family: 'Montserrat', sans-serif; font-size: 0.82rem; font-weight: 700; color: #374151; }
 .recipe-grid-wrapper { background: rgba(150,246,238,0.2); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
