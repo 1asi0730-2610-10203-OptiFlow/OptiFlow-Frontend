@@ -506,6 +506,8 @@
       "examDate": "Exam Date",
       "examDateError": "Exam date cannot be in the future",
       "doctor": "Doctor / Optometrist",
+      "selectDoctor": "Select a doctor",
+      "noDoctors": "No optometrists registered. Add one in Staff.",
       "refraction": "Refraction",
       "addition": "Addition",
       "optional": "Optional",
