@@ -1,25 +1,32 @@
 import { Role } from '../domain/model/role.entity.js';
 
+// Single source of truth for the 4 roles every optic starts with. Used both as a fallback
+// for DB records that don't carry their own displayName/color/permissions, and to seed the
+// role catalog for a tenant that hasn't created any roles yet (see defaultRoles()).
 const ROLE_MAP = {
     'ADMIN': {
         displayName: 'Administrador',
         description: 'Acceso total al sistema',
-        color: '#ef4444'
+        color: '#ef4444',
+        permissions: ["settings", "reports", "users", "full_access"]
     },
     'OPTOMETRIST': {
         displayName: 'Optometrista',
         description: 'Historias clínicas, recetas, datos clínicos',
-        color: '#8b5cf6'
+        color: '#8b5cf6',
+        permissions: ["dashboard", "clinical", "prescriptions", "appointments"]
     },
     'SALES_ADVISOR': {
         displayName: 'Óptico / Asesor de Ventas',
         description: 'Ventas, inventario, registros de pacientes',
-        color: '#3b82f6'
+        color: '#3b82f6',
+        permissions: ["sales", "inventory", "lab_orders"]
     },
     'RECEPTIONIST': {
         displayName: 'Recepcionista',
         description: 'Citas, registros de pacientes (solo lectura)',
-        color: '#10b981'
+        color: '#10b981',
+        permissions: ["appointments"]
     }
 };
 
@@ -33,28 +40,13 @@ export class RoleAssembler {
             permissions: data.permissions || []
         };
 
-        let permissions = data.permissions;
-        if (!permissions) {
-            if (data.name === 'ADMIN') {
-                permissions = ["settings", "reports", "users", "full_access"];
-            } else if (data.name === 'OPTOMETRIST') {
-                permissions = ["dashboard", "clinical", "prescriptions", "appointments"];
-            } else if (data.name === 'SALES_ADVISOR') {
-                permissions = ["sales", "inventory", "lab_orders"];
-            } else if (data.name === 'RECEPTIONIST') {
-                permissions = ["appointments"];
-            } else {
-                permissions = [];
-            }
-        }
-
         return new Role(
             data.role_id || data.id,
             data.displayName || metadata.displayName,
             data.description || metadata.description,
             userCount,
             data.color || metadata.color,
-            permissions,
+            data.permissions || metadata.permissions,
             data.name
         );
     }
@@ -70,5 +62,13 @@ export class RoleAssembler {
             entity.userCount = count;
             return entity;
         });
+    }
+
+    // Baseline roles (Optometrista, Óptico, Administrador, Recepcionista) for a tenant that
+    // hasn't configured any roles in the backend yet, so role pickers are never empty.
+    static defaultRoles() {
+        return Object.entries(ROLE_MAP).map(([internalName, meta], index) =>
+            new Role(-(index + 1), meta.displayName, meta.description, 0, meta.color, meta.permissions, internalName)
+        );
     }
 }
