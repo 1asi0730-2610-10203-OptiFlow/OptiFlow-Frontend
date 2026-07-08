@@ -45,9 +45,11 @@ async function handleSubmit() {
   if (!validate()) return
 
   if (isBuyMode.value) {
-    // Register the administrator, keep the session just long enough to open Stripe, then (post-payment) login.
-    const registered = await authStore.signUpAdminForCheckout(form.email, form.password)
-    if (!registered) return
+    // New account → register. Existing account (sign-up returns 409) → sign in with the given
+    // credentials so a returning admin can still buy/upgrade instead of being stuck on "email already in use".
+    let authed = await authStore.signUpAdminForCheckout(form.email, form.password)
+    if (!authed) authed = await authStore.signIn(form.email, form.password)
+    if (!authed) return
     await startCheckout()
     return
   }
