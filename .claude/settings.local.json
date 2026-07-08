@@ -51,7 +51,14 @@
       "Bash(curl -s -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJqdWFucGFuQGdtYWlsLmNvbSIsIm5iZiI6MTc4Mjk0Nzc1OSwiZXhwIjoxNzgzNTUyNTU5LCJpYXQiOjE3ODI5NDc3NTl9.nxsH1bYzDWUID4f_wkUGjvQQJcHP0_I3MBpJJX9rWdY' http://localhost:5238/work-orders)",
       "Bash(curl *)",
       "Bash(taskkill *)",
-      "Bash(dotnet run *)"
+      "Bash(dotnet run *)",
+      "Bash(./bin/Debug/net10.0/optiflow-platform.exe)",
+      "Bash(netstat -ano)",
+      "Bash(tasklist //FI \"IMAGENAME eq mysqld.exe\")",
+      "Bash(env)",
+      "Bash(xargs grep -l \"DATABASE\\\\|EnvironmentVariables\")",
+      "PowerShell(Restart-Service *)",
+      "Bash(tasklist //FI \"IMAGENAME eq dotnet.exe\")"
     ]
   }
 }

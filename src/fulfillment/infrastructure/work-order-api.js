@@ -32,4 +32,8 @@ export class WorkOrderApi extends BaseApi {
         )
         return response.data
     }
+
+    async deleteWorkOrder(id) {
+        return await this.#endpoint.delete(id)
+    }
 }
