@@ -13,11 +13,49 @@ export const useNotificationStore = defineStore('notifications', () => {
     const loading = ref(false)
     const patientId = ref(null)
 
-    async function resolvePatientId(email) {
-        if (patientId.value) return patientId.value
-        const patient = await patientApi.getByEmail(email)
-        if (patient) patientId.value = patient.id
-        return patientId.value
+   async function fetchNotifications(email) {
+        loading.value = true
+        try {
+            const id = await resolvePatientId(email)
+            if (!id) { notifications.value = []; return }
+            
+            let serverNotifications = await notificationApi.getByPatientId(id)
+            
+            const orderStore = useOrderStore() 
+            const currentOrders = orderStore.patientOrders || []
+            
+            let createdNew = false
+
+            for (const order of currentOrders) {
+                const orderStatus = order.status ? order.status.toString() : ''
+                
+                const hasNotificationForStatus = serverNotifications.some(n => 
+                    n.message.includes(order.orderNumber) && n.message.includes(orderStatus)
+                )
+                
+                if (!hasNotificationForStatus && orderStatus) {
+                    const payload = {
+                        workOrderId: order.id || order.workOrderId,
+                        message: `Tu pedido N° ${order.orderNumber} ha cambiado al estado: ${orderStatus}`,
+                        status: 'PENDING'
+                    }
+                    await notificationApi.create(id, payload)
+                    createdNew = true
+                }
+            }
+
+            if (createdNew) {
+                serverNotifications = await notificationApi.getByPatientId(id)
+            }
+
+            notifications.value = serverNotifications
+            
+        } catch (e) {
+            console.error("Error cargando o sincronizando notificaciones:", e)
+            notifications.value = []
+        } finally {
+            loading.value = false
+        }
     }
 
     async function fetchNotifications(email) {

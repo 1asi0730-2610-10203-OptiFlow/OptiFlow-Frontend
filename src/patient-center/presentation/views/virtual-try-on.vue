@@ -2,13 +2,18 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import * as faceapi from 'face-api.js'
 
+import aviatorImg from '../../../assets/aviator_classic.jpg'
+import wayfarerImg from '../../../assets/wayfarer_bold.jpg'
+import roundImg from '../../../assets/round_vintage.jpg'
+import catEyeImg from '../../../assets/cat_eye_modern.png'
+
 const MODEL_URL = 'https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js@0.22.2/weights'
 
 const frames = ref([
-  { id: 1, name: 'Aviator Classic',  material: 'Metal · Dorado',  price: '299', color: '#B8962E', image: '/src/assets/aviator_classic.jpg' },
-  { id: 2, name: 'Wayfarer Bold',    material: 'Acetato · Negro', price: '349', color: '#1a1a1a', image: '/src/assets/wayfarer_bold.jpg' },
-  { id: 3, name: 'Round Vintage',    material: 'Metal · Miel',    price: '279', color: '#C68642', image: '/src/assets/round_vintage.jpg' },
-  { id: 4, name: 'Cat-Eye Modern',   material: 'Acetato · Rojo',  price: '329', color: '#dc2626', image: '/src/assets/cat_eye_modern.png' },
+  { id: 1, name: 'Aviator Classic',  material: 'Metal · Dorado',  price: '299', color: '#B8962E', image: aviatorImg },
+  { id: 2, name: 'Wayfarer Bold',    material: 'Acetato · Negro', price: '349', color: '#1a1a1a', image: wayfarerImg },
+  { id: 3, name: 'Round Vintage',    material: 'Metal · Miel',    price: '279', color: '#C68642', image: roundImg },
+  { id: 4, name: 'Cat-Eye Modern',   material: 'Acetato · Rojo',  price: '329', color: '#dc2626', image: catEyeImg },
 ])
 
 const selectedFrameId = ref(1)
