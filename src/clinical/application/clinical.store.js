@@ -5,6 +5,7 @@ import { PrescriptionApi } from '../infrastructure/prescription-api.js'
 import { ClinicalRecordApi } from '../infrastructure/clinical-record-api.js'
 import { PatientAssembler } from '../infrastructure/patient.assembler.js'
 import { PrescriptionAssembler } from '../infrastructure/prescription.assembler.js'
+import { apiErrorMessage } from '../../shared/infrastructure/api-error.js'
 
 const patientApi        = new PatientApi()
 const prescriptionApi   = new PrescriptionApi()
@@ -49,8 +50,12 @@ export const useClinicalStore = defineStore('clinical', () => {
             await loadClinicalRecords()
             return entity
         } catch (e) {
-            console.error('[clinical.store] createPatient error:', e.message)
-            errors.value.push(e.message)
+            // Surface the backend's real reason (e.g. which field failed validation) instead of the
+            // opaque "Request failed with status code 400" so the caller can show it to the user.
+            const message = apiErrorMessage(e)
+            console.error('[clinical.store] createPatient error:', message)
+            errors.value.push(message)
+            throw new Error(message)
         } finally {
             loading.value = false
         }

@@ -88,11 +88,18 @@ onMounted(async () => {
 onUnmounted(() => { unsubAddPatient?.() })
 
 // ── Actions ─────────────────────────────────────────────────────────────
+const addPatientError = ref('')
 async function onAddPatient(data) {
-    showAddPatient.value = false
-    await store.createPatient(data)
-    successMsg.value = t('patients.toast.patientRegistered')
-    showSuccess.value = true
+    addPatientError.value = ''
+    try {
+        await store.createPatient(data)
+        showAddPatient.value = false
+        successMsg.value = t('patients.toast.patientRegistered')
+        showSuccess.value = true
+    } catch (e) {
+        // Keep the modal open and show the real backend reason instead of a false "success".
+        addPatientError.value = e.message
+    }
 }
 
 function onSuccessNext() {
@@ -203,6 +210,7 @@ function exportPatients() {
     <!-- Add patient modal -->
     <ModalAddPatient
         v-if="showAddPatient && !showSuccess"
+        :server-error="addPatientError"
         @save="onAddPatient"
         @close="showAddPatient = false"
     />
