@@ -1,8 +1,10 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoles } from '../../../settings/application/use-roles.js'
 
 const { t } = useI18n()
+const { fetchRoles, getRoleTagStyle } = useRoles()
 
 const props = defineProps({
   visible: Boolean,
@@ -11,19 +13,12 @@ const props = defineProps({
 
 const emit = defineEmits(['update:visible', 'edit', 'delete'])
 
+onMounted(fetchRoles)
+
 const initials = computed(() => {
   if (!props.employee) return ''
   return props.employee.fullName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)
 })
-
-const getRoleTagStyle = (role) => {
-  switch (role) {
-    case 'Optometrista': return { backgroundColor: '#f5f3ff', color: '#7c3aed' };
-    case 'Óptico': return { backgroundColor: '#eff6ff', color: '#2563eb' };
-    case 'Administrador': return { backgroundColor: '#fef2f2', color: '#dc2626' };
-    default: return { backgroundColor: '#f9fafb', color: '#4b5563' };
-  }
-}
 </script>
 
 <template>

@@ -2,8 +2,7 @@
 import { reactive, computed, ref, watch, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { isValidEmail, isValidPhone } from '../../../shared/presentation/utils/validators.js'
-import { RolesApi } from '../../../settings/infrastructure/roles-api.js'
-import { RoleAssembler } from '../../../settings/infrastructure/role.assembler.js'  
+import { useRoles } from '../../../settings/application/use-roles.js'
 
 const { t } = useI18n()
 
@@ -19,40 +18,24 @@ const isEditMode = computed(() => !!props.employee)
 
 const emit = defineEmits(['update:visible', 'close', 'saved'])
 
+const { roleOptions, fetchRoles, findRoleByName } = useRoles()
+
 const form = reactive({
   fullName: '',
   email: '',
   phone: '',
-  role: 'Optometrista',
+  role: '',
   department: 'Clínica',
   entryDate: new Date().toLocaleDateString('es-PE'),
   status: 'Activo'
 })
 
-const defaultRoleOptions = [
-  { label: 'Optometrista', value: 'Optometrista' },
-  { label: 'Óptico', value: 'Óptico' },
-  { label: 'Administrador', value: 'Administrador' },
-  { label: 'Personal de Apoyo', value: 'Personal de Apoyo' }
-]
+const defaultRole = computed(() => roleOptions.value[0]?.value || '')
 
-const rolesApi = new RolesApi()
-const roleOptions = ref([...defaultRoleOptions])
-
-async function loadRoles() {
-  try {
-    const rolesData = await rolesApi.getAll()
-    const roles = RoleAssembler.toEntities(rolesData || [])
-    const customRoles = roles
-      .map(r => ({ label: r.name, value: r.name, color: r.color }))
-      .filter(r => !defaultRoleOptions.some(d => d.value === r.value))
-    roleOptions.value = [...defaultRoleOptions, ...customRoles]
-  } catch (error) {
-    console.error('Error loading roles:', error)
-  }
-}
-
-onMounted(loadRoles)
+onMounted(async () => {
+  await fetchRoles()
+  if (!form.role) form.role = props.employee?.role || defaultRole.value
+})
 
 const departmentOptions = [
   { label: 'Clínica', value: 'Clínica' },
@@ -66,14 +49,14 @@ const statusOptions = computed(() => [
 ])
 
 const permissions = computed(() => {
-  if (form.role === 'Optometrista') {
-    return [
-      { label: t('staff.addModal.permissions.fullAccess'), icon: 'pi pi-shield' },
-      { label: t('staff.addModal.permissions.clinicalRecords'), icon: 'pi pi-shield' },
-      { label: t('staff.addModal.permissions.prescriptions'), icon: 'pi pi-shield' }
-    ]
+  const role = findRoleByName(form.role)
+  if (!role?.permissions?.length) {
+    return [{ label: t('staff.addModal.permissions.fullAccess'), icon: 'pi pi-shield' }]
   }
-  return [{ label: t('staff.addModal.permissions.fullAccess'), icon: 'pi pi-shield' }]
+  return role.permissions.map(id => ({
+    label: t(`settings.roles.permissions.${id}.title`),
+    icon: 'pi pi-shield'
+  }))
 })
 
 const errors = ref({})
@@ -119,12 +102,12 @@ function onSave() {
   }
 
   emit('saved', payload)
-  
+
   // Reset form
   form.fullName = ''
   form.email = ''
   form.phone = ''
-  form.role = 'Optometrista'
+  form.role = defaultRole.value
   form.department = 'Clínica'
 }
 
@@ -133,7 +116,7 @@ watch(() => props.employee, (emp) => {
     form.fullName = emp.fullName || ''
     form.email = emp.email || ''
     form.phone = emp.phone || ''
-    form.role = emp.role || 'Optometrista'
+    form.role = emp.role || defaultRole.value
     form.department = emp.department || 'Clínica'
     form.entryDate = emp.entryDate || new Date().toLocaleDateString('es-PE')
     form.status = emp.status || 'Activo'
@@ -141,7 +124,7 @@ watch(() => props.employee, (emp) => {
     form.fullName = ''
     form.email = ''
     form.phone = ''
-    form.role = 'Optometrista'
+    form.role = defaultRole.value
     form.department = 'Clínica'
     form.entryDate = new Date().toLocaleDateString('es-PE')
     form.status = 'Activo'

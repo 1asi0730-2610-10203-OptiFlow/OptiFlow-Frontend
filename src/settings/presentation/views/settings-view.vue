@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n';
 import { RolesApi } from '../../infrastructure/roles-api.js';
 import { eventBus } from '../../../shared/infrastructure/event-bus.js';
 import { isValidEmail, isValidPhone } from '../../../shared/presentation/utils/validators.js';
-import { RoleAssembler } from '../../infrastructure/role.assembler.js';
+import { useRoles } from '../../application/use-roles.js';
 import RoleListItem from '../components/role-list-item.vue';
 import RolesSummary from '../components/roles-summary.vue';
 import SystemStatus from '../components/system-status.vue';
@@ -12,7 +12,7 @@ import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
 import RoleForm from '../components/role-form.vue';
 
-const roles = ref([]);
+const { roles, fetchRoles } = useRoles();
 const rolesApi = new RolesApi();
 const loading = ref(true);
 const toast = useToast();
@@ -238,13 +238,7 @@ const backupFrequencyOptions = computed(() => [
 const fetchData = async () => {
   try {
     loading.value = true;
-    // Real roles of the optic, with member counts from the real staff (matched by role name).
-    const [rolesData, staff] = await Promise.all([
-      rolesApi.getAll().catch(() => []),
-      rolesApi.getEmployees().catch(() => [])
-    ]);
-    roles.value = RoleAssembler.toEntities(rolesData || [], staff || []);
-    await fetchSettingsData();
+    await Promise.all([fetchRoles(true), fetchSettingsData()]);
   } catch (error) {
     console.error('Error fetching settings data:', error);
   } finally {

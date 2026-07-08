@@ -3,6 +3,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useModalAnimation } from '../../../shared/presentation/composables/use-modal-animation.js'
 import { useStaffStore } from '../../../staff/application/staff.store.js'
+import { useRoles } from '../../../settings/application/use-roles.js'
 
 const { t } = useI18n()
 
@@ -17,13 +18,14 @@ const activeTab = ref('manual') // 'manual' | 'upload'
 
 /* ── Doctors: optometrists from the staff directory ─────────── */
 const staffStore = useStaffStore()
+const { fetchRoles, findRoleByName } = useRoles()
 const doctors = ref([])
 const selectedDoctor = ref('')
 
 onMounted(async () => {
-    await staffStore.fetchStaff()
+    await Promise.all([staffStore.fetchStaff(), fetchRoles()])
     doctors.value = staffStore.staff
-        .filter(s => s.role === 'Optometrista')
+        .filter(s => findRoleByName(s.role)?.internalName === 'OPTOMETRIST')
         .map(s => `${s.firstName} ${s.lastName}`.trim())
     selectedDoctor.value = doctors.value[0] ?? ''
 })

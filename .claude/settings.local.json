@@ -58,7 +58,13 @@
       "Bash(env)",
       "Bash(xargs grep -l \"DATABASE\\\\|EnvironmentVariables\")",
       "PowerShell(Restart-Service *)",
-      "Bash(tasklist //FI \"IMAGENAME eq dotnet.exe\")"
+      "Bash(tasklist //FI \"IMAGENAME eq dotnet.exe\")",
+      "Bash(cat server/routes.json)",
+      "Bash(grep -rn \"VITE_STAFF_ENDPOINT_PATH\" . --include=\"*.env*\" --include=\".env\" -r)",
+      "Bash(find . -maxdepth 1 -name \".env*\")",
+      "Bash(grep -rn \"db2.json\\\\|db2\" package.json server/)",
+      "Bash(grep -n \"VITE_API_BASE_URL\\\\|VITE_.*URL\" .env.development .env.production)",
+      "Skill(run)"
     ]
   }
 }

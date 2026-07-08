@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useStaffStore } from '../../application/staff.store.js'
+import { useRoles } from '../../../settings/application/use-roles.js'
 import { useI18n } from 'vue-i18n'
 import ContextMenu from 'primevue/contextmenu'
 import { eventBus } from '../../../shared/infrastructure/event-bus.js'
@@ -13,6 +14,7 @@ const store = useStaffStore()
 const { t } = useI18n()
 const toast = useToast()
 const confirm = useConfirm()
+const { roleOptions: catalogRoleOptions, fetchRoles, getRoleTagStyle } = useRoles()
 
 const search = ref('')
 const departmentFilter = ref(null)
@@ -31,10 +33,7 @@ const departmentOptions = computed(() => [
 
 const roleOptions = computed(() => [
   { label: t('staff.allRoles'), value: null },
-  { label: t('staff.roles.optometrist'), value: 'Optometrista' },
-  { label: t('staff.roles.optician'), value: 'Óptico' },
-  { label: t('staff.roles.admin'), value: 'Administrador' },
-  { label: t('staff.roles.support'), value: 'Personal de Apoyo' }
+  ...catalogRoleOptions.value
 ])
 
 const filteredStaff = computed(() => {
@@ -110,6 +109,7 @@ function onRowClick(event) {
 let unsubAddStaff
 onMounted(() => {
   store.fetchStaff()
+  fetchRoles()
   unsubAddStaff = eventBus.on('ui:open:add-staff', () => { showAddModal.value = true })
 })
 onUnmounted(() => { unsubAddStaff?.() })
@@ -117,16 +117,6 @@ onUnmounted(() => { unsubAddStaff?.() })
 const getInitials = (name) => {
   if (!name) return ''
   return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)
-}
-
-const getRoleTagStyle = (role) => {
-  switch (role) {
-    case 'Optometrista': return { backgroundColor: '#f5f3ff', color: '#8b5cf6' };
-    case 'Óptico': return { backgroundColor: '#e0f2fe', color: '#0369a1' };
-    case 'Administrador': return { backgroundColor: '#fee2e2', color: '#dc2626' };
-    case 'Recepcionista': return { backgroundColor: '#f0fdf4', color: '#16a34a' };
-    default: return { backgroundColor: '#f3f4f6', color: '#4b5563' };
-  }
 }
 
 const getStatusTagStyle = (status) => {

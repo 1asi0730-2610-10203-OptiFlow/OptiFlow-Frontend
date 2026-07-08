@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { StaffApi } from '../infrastructure/staff-api.js'
 import { StaffAssembler } from '../infrastructure/staff.assembler.js'
+import { useRoles } from '../../settings/application/use-roles.js'
 
 const staffApi = new StaffApi()
 
@@ -13,8 +14,14 @@ export const useStaffStore = defineStore('staff', {
 
   getters: {
     totalEmployees: (state) => state.staff.length,
-    optometrists: (state) => state.staff.filter(s => s.role === 'Optometrista').length,
-    supportStaff: (state) => state.staff.filter(s => s.role === 'Personal de Apoyo').length,
+    optometrists: (state) => {
+      const { findRoleByName } = useRoles()
+      return state.staff.filter(s => findRoleByName(s.role)?.internalName === 'OPTOMETRIST').length
+    },
+    supportStaff: (state) => {
+      const { findRoleByName } = useRoles()
+      return state.staff.filter(s => findRoleByName(s.role)?.internalName !== 'OPTOMETRIST').length
+    },
     activeTodayCount: (state) => state.staff.filter(s => s.activeToday).length
   },
 
