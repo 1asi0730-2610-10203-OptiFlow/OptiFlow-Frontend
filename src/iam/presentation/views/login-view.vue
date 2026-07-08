@@ -52,10 +52,20 @@ function renderGoogleButton() {
   return true
 }
 
-onMounted(() => {
+onMounted(async () => {
   authStore.clearError()
   if (route.query.registered === 'true') {
     showSuccessMsg.value = true
+  }
+  // Google sign-in handed off from the landing page: it captures the Google credential and
+  // redirects here as ?gcred=..., which we exchange for a session using the normal flow.
+  const gcred = route.query.gcred
+  if (gcred) {
+    const ok = await authStore.googleSignIn(gcred)
+    if (ok) {
+      router.push(await resolveRedirectPath())
+      return
+    }
   }
   // The GSI script is loaded async in index.html, so it may not be ready yet — retry briefly.
   if (!renderGoogleButton()) {
