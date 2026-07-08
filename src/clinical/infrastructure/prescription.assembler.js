@@ -16,7 +16,7 @@ export class PrescriptionAssembler {
             addition:         resource.addition         ?? null,
             notes:            resource.notes            ?? '',
             createdAt:        resource.createdAt        ?? resource.created_at         ?? '',
-            doctorName:       resource.doctorName       ?? resource.doctor_name        ?? 'Dra. Emily Smith'
+            doctorName:       resource.doctorName       ?? resource.doctor_name        ?? ''
         })
     }
 
