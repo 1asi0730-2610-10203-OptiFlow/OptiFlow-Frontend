@@ -3,6 +3,8 @@ import { ref } from 'vue'
 import { NotificationApi } from '../infrastructure/notification-api.js'
 import { PatientApi } from '../infrastructure/patient-api.js'
 
+import { useOrderStore } from './order.store.js'
+
 const notificationApi = new NotificationApi()
 const patientApi = new PatientApi()
 
