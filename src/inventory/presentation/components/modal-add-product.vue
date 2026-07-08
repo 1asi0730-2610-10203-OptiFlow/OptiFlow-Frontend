@@ -15,10 +15,11 @@ const props = defineProps({
 const emit = defineEmits(['save', 'close'])
 const { isClosing, requestClose, onOverlayAnimEnd } = useModalAnimation(emit)
 
+const todayStr = new Date().toLocaleDateString('en-CA') // local YYYY-MM-DD
 const form = ref({
   name: '', category: 'Lenses', sku: '',
   stock: '', minimumStockThreshold: '', price: '',
-  supplierName: '', lastRestockDate: new Date().toISOString().split('T')[0]
+  supplierName: '', lastRestockDate: todayStr
 })
 const skuError = ref('')
 const errors = ref({})
@@ -34,6 +35,7 @@ function validate() {
   const priceNum = parseFloat(form.value.price)
   if (!form.value.price || isNaN(priceNum) || priceNum <= 0 || priceNum > 1000000) e.price = true
   if (!form.value.supplierName) e.supplierName = true
+  if (!form.value.lastRestockDate || form.value.lastRestockDate > todayStr) e.lastRestockDate = true
   errors.value = e
   return Object.keys(e).length === 0
 }
@@ -163,8 +165,16 @@ function onSubmit() {
             <p v-if="errors.price" class="field-error">{{ $t('inventory.addModal.priceError') }}</p>
           </div>
           <div class="field">
-            <label>{{ $t('inventory.addModal.receptionDate') }}</label>
-            <input v-model="form.lastRestockDate" type="date" class="form-input" />
+            <label>{{ $t('inventory.addModal.receptionDate') }} *</label>
+            <input
+              v-model="form.lastRestockDate"
+              type="date"
+              class="form-input"
+              :max="todayStr"
+              :class="{ 'form-input--error': errors.lastRestockDate }"
+              @input="errors.lastRestockDate = false"
+            />
+            <span v-if="errors.lastRestockDate" class="field-error">{{ $t('inventory.addModal.receptionDateError') }}</span>
           </div>
         </div>
 

@@ -145,7 +145,7 @@ const existingSkus = computed(() =>
     store.products.map(product => (product.sku || '').toUpperCase())
 )
 
-let unsubCreated, unsubUpdated, unsubRestocked, unsubLowAlert, unsubAddProduct, unsubBulkRestock, unsubAuditLog
+let unsubCreated, unsubCreateFailed, unsubUpdated, unsubRestocked, unsubLowAlert, unsubAddProduct, unsubBulkRestock, unsubAuditLog
 
 onMounted(async () => {
   store.loadProducts()
@@ -159,6 +159,15 @@ onMounted(async () => {
       summary: t('inventory.toast.itemAdded'),
       detail: `${product.name} ${t('inventory.toast.itemAddedDetail')}`,
       life: 2500
+    })
+  })
+
+  unsubCreateFailed = eventBus.on(InventoryEvents.PRODUCT_CREATE_FAILED, ({ message }) => {
+    toast.add({
+      severity: 'error',
+      summary: t('inventory.toast.itemAddError'),
+      detail: message,
+      life: 4000
     })
   })
 
@@ -197,6 +206,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   unsubCreated?.()
+  unsubCreateFailed?.()
   unsubUpdated?.()
   unsubRestocked?.()
   unsubLowAlert?.()
