@@ -4,6 +4,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../../application/auth.store.js'
 import { SubscriptionApi } from '../../../subscription/infrastructure/subscription-api.js'
 import { isValidEmail } from '../../../shared/presentation/utils/validators.js'
+import GoogleSignInButton from '../components/GoogleSignInButton.vue'
 
 const authStore = useAuthStore()
 const subscriptionApi = new SubscriptionApi()
@@ -85,6 +86,23 @@ async function startCheckout() {
     localError.value = err.response?.data?.detail || err.response?.data?.message || 'No se pudo iniciar el pago. Intenta de nuevo.'
   }
 }
+
+async function redirectAfterAuth() {
+  // Google resolves the role server-side: clients land in the patient portal, admins go to the
+  // dashboard when subscribed or to plan selection otherwise.
+  if (authStore.isClient) { router.push('/patient/my-lenses'); return }
+  await authStore.refreshSubscription()
+  router.push(authStore.subscriptionActive ? '/panel' : '/select-plan')
+}
+
+async function onGoogleCredential(credential) {
+  localError.value = null
+  const ok = await authStore.googleSignIn(credential)
+  if (!ok) return
+  // Buying a plan: go straight to Stripe. Otherwise route the new account to its home.
+  if (isBuyMode.value) { await startCheckout(); return }
+  await redirectAfterAuth()
+}
 </script>
 
 <template>
@@ -157,6 +175,9 @@ async function startCheckout() {
             <i v-if="authStore.loading" class="pi pi-spin pi-spinner" />
             <span v-else>{{ isBuyMode ? 'Continuar al pago' : 'Registrarse' }}</span>
           </button>
+
+          <div class="divider"><span>o</span></div>
+          <GoogleSignInButton @credential="onGoogleCredential" />
         </div>
 
       </form>
@@ -337,6 +358,24 @@ async function startCheckout() {
 
 .btn-continue:hover:not(:disabled) { opacity: 0.88; }
 .btn-continue:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: rgba(147, 193, 206, 0.4);
+  margin: 14px 0;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+}
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1.27px solid rgba(0, 193, 176, 0.1);
+}
+.divider:not(:empty)::before { margin-right: .5em; }
+.divider:not(:empty)::after { margin-left: .5em; }
 
 .card-footer {
   border-top: 1.27px solid rgba(0, 193, 176, 0.1);
