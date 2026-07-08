@@ -471,7 +471,7 @@
       "emailPlaceholder": "e.g. patient{'@'}email.com",
       "emailInvalid": "Enter a valid email address",
       "phone": "Phone Number",
-      "phonePlaceholder": "e.g. 903 897 123",
+      "phonePlaceholder": "e.g. 903897123",
       "phoneInvalid": "Enter a valid phone number",
       "requiredError": "Please fill in the required fields",
       "register": "Register"

@@ -76,7 +76,7 @@ const getStatusStep = (status) => {
               <span class="meta-label">{{ $t('patientCenter.myLenses.orderNumber') }}</span>
               <h2 class="order-number">{{ order.orderNumber }}</h2>
             </div>
-            <div style="text-align: right">
+            <div class="tracker-header__right">
               <span class="meta-label">{{ $t('patientCenter.myLenses.creationDate') }}</span>
               <div class="meta-value">{{ order.createdAt }}</div>
             </div>
@@ -210,7 +210,8 @@ const getStatusStep = (status) => {
 
 /* Tracker */
 .tracker-card { background: #1e2530; color: white; border-radius: 16px; padding: 28px; }
-.tracker-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; }
+.tracker-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; gap: 12px; flex-wrap: wrap; }
+.tracker-header__right { text-align: right; }
 .meta-label { font-family: 'Montserrat', sans-serif; font-size: 0.72rem; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; }
 .order-number { font-family: 'Josefin Sans', sans-serif; font-size: 1.8rem; font-weight: 700; margin: 4px 0 0; }
 .meta-value { font-family: 'Montserrat', sans-serif; font-size: 0.88rem; margin-top: 4px; }
@@ -225,12 +226,12 @@ const getStatusStep = (status) => {
 .step-line { flex: 1; height: 2px; background: rgba(255,255,255,0.1); margin: 0 10px; transition: background 0.3s; }
 .line-active { background: #00c1b0; }
 
-.tracker-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 20px; }
+.tracker-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 20px; gap: 12px; flex-wrap: wrap; }
 .delivery-badge { display: flex; align-items: center; gap: 6px; color: #00c1b0; font-family: 'Montserrat', sans-serif; font-size: 0.82rem; }
 
 /* Receipt */
 .receipt-card { background: white; border-radius: 16px; padding: 24px; border: 1px solid #f3f4f6; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
-.receipt-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.receipt-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 12px; flex-wrap: wrap; }
 .receipt-title-group { display: flex; align-items: center; gap: 14px; }
 .receipt-icon { width: 44px; height: 44px; border-radius: 12px; background: rgba(0,193,176,0.1); color: #00c1b0; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
 .receipt-title { font-family: 'Josefin Sans', sans-serif; font-size: 1.05rem; font-weight: 700; color: #03070a; margin: 0; }
@@ -243,8 +244,9 @@ const getStatusStep = (status) => {
 .divider { border: none; border-top: 1px solid #f3f4f6; margin: 16px 0; }
 
 .receipt-items { display: flex; flex-direction: column; gap: 12px; }
-.receipt-row { display: flex; justify-content: space-between; align-items: center; }
-.item-detail { display: flex; flex-direction: column; gap: 2px; }
+.receipt-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.item-detail { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.item-amount { flex-shrink: 0; text-align: right; }
 .item-name { font-family: 'Montserrat', sans-serif; font-size: 0.88rem; font-weight: 600; color: #111827; }
 .item-type { font-family: 'Montserrat', sans-serif; font-size: 0.73rem; color: #9ca3af; }
 .item-amount { font-family: 'Montserrat', sans-serif; font-size: 0.92rem; font-weight: 600; color: #111827; }
@@ -263,4 +265,32 @@ const getStatusStep = (status) => {
 .progress-pct { font-family: 'Montserrat', sans-serif; font-size: 0.75rem; font-weight: 600; color: #00c1b0; }
 .progress-track { height: 8px; background: #f3f4f6; border-radius: 4px; overflow: hidden; }
 .progress-fill { height: 100%; background: #00c1b0; border-radius: 4px; transition: width 0.4s ease; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .page { padding: 20px 16px; }
+  .tracker-card { padding: 20px; }
+  .receipt-card { padding: 18px; }
+  .order-number { font-size: 1.5rem; }
+}
+
+@media (max-width: 560px) {
+  .page { padding: 16px 12px; gap: 16px; }
+  .orders-list { gap: 24px; }
+
+  .tracker-header__right { text-align: left; }
+
+  .tracker-steps { flex-direction: column; align-items: stretch; gap: 0; margin-bottom: 20px; }
+  .tracker-step { width: 100%; }
+  .step-line { flex: none; width: 2px; height: 18px; margin: 0 0 0 20px; }
+
+  .tracker-footer { flex-direction: column; align-items: flex-start; }
+  .delivery-badge { align-self: stretch; justify-content: center; padding: 8px; background: rgba(0,193,176,0.1); border-radius: 8px; }
+
+  .receipt-top { align-items: flex-start; }
+  .receipt-title-group { gap: 10px; }
+
+  .receipt-row { flex-wrap: wrap; }
+  .item-amount { width: 100%; text-align: left; }
+}
 </style>
