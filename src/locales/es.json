@@ -261,7 +261,8 @@
       "pendingBalance": "Saldo pendiente",
       "moveTo": "Mover a",
       "goBack": "Retroceder",
-      "completed": "✓ Orden completada"
+      "completed": "✓ Orden completada",
+      "deleteOrder": "Eliminar orden"
     },
     "newOrderModal": {
       "title": "Nueva Orden de Lab",
@@ -306,7 +307,9 @@
       "qaApproved": "QA Aprobado",
       "qaRejected": "Retrabajo registrado",
       "labRegistered": "Laboratorio registrado",
-      "labRegisteredDetail": "fue añadido exitosamente."
+      "labRegisteredDetail": "fue añadido exitosamente.",
+      "orderDeleted": "Orden eliminada",
+      "orderDeletedDetail": "fue eliminada permanentemente."
     },
     "qaModal": {
       "title": "Control de Calidad – QA",
@@ -349,10 +352,16 @@
     },
     "showing": "Mostrando",
     "orders": "órdenes",
+    "confirm": {
+      "deleteMessage": "¿Deseas eliminar la orden de laboratorio #{id}? Esta acción no se puede deshacer.",
+      "deleteHeader": "Confirmar eliminación",
+      "deleteAccept": "Sí, eliminar"
+    },
     "contextMenu": {
       "viewDetails": "Ver detalles",
       "advanceStatus": "Avanzar estado",
-      "copyOrderId": "Copiar N° Orden"
+      "copyOrderId": "Copiar N° Orden",
+      "deleteOrder": "Eliminar orden"
     }
   },
   "dashboard": {

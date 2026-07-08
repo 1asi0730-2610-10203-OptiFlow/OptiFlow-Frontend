@@ -72,6 +72,20 @@ export const useFulfillmentStore = defineStore('fulfillment', () => {
         }
     }
 
+    async function deleteWorkOrder(id) {
+        loading.value = true
+        try {
+            await workOrderApi.deleteWorkOrder(id)
+            workOrdersRef.value = workOrdersRef.value.filter(wo => wo.id !== id)
+            return true
+        } catch (e) {
+            errors.value.push(e.message)
+            return false
+        } finally {
+            loading.value = false
+        }
+    }
+
     async function createLaboratory(lab) {
         loading.value = true
         try {
@@ -88,6 +102,6 @@ export const useFulfillmentStore = defineStore('fulfillment', () => {
     return {
         workOrders, laboratories, pendingOrders,
         loadWorkOrders, loadLaboratories,
-        createWorkOrder, updateOrderStatus, createLaboratory
+        createWorkOrder, updateOrderStatus, deleteWorkOrder, createLaboratory
     }
 })

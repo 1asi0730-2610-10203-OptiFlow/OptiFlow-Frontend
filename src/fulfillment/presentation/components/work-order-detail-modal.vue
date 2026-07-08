@@ -7,7 +7,7 @@ const { t } = useI18n()
 const props = defineProps({
   workOrder: { type: Object, required: true }
 })
-const emit = defineEmits(['close', 'statusChanged'])
+const emit = defineEmits(['close', 'statusChanged', 'delete'])
 const { isClosing, requestClose, onOverlayAnimEnd } = useModalAnimation(emit)
 
 const ORDER_FLOW = ['PENDING', 'IN_PRODUCTION', 'QUALITY_CONTROL', 'READY', 'DELIVERED']
@@ -47,6 +47,10 @@ function onAdvance() {
 function onGoBack() {
   const previous = previousStatus[props.workOrder.status]
   if (previous) { emit('statusChanged', previous); requestClose() }
+}
+
+function onDelete() {
+  emit('delete', props.workOrder)
 }
 
 function priorityChipClass() {
@@ -162,7 +166,13 @@ function priorityChipClass() {
             {{ $t('labOrders.detail.moveTo') }} "{{ $t(`labOrders.status.${nextStatus[workOrder.status]}`) }}"
             <i class="pi pi-chevron-right" />
           </button>
-          <span v-else class="completed-label">{{ $t('labOrders.detail.completed') }}</span>
+          <template v-else>
+            <span class="completed-label">{{ $t('labOrders.detail.completed') }}</span>
+            <button class="delete-btn" @click="onDelete">
+              <i class="pi pi-trash" />
+              {{ $t('labOrders.detail.deleteOrder') }}
+            </button>
+          </template>
         </div>
       </div>
 
@@ -213,4 +223,6 @@ function priorityChipClass() {
 .advance-btn-modal { display: flex; align-items: center; gap: 6px; padding: 8px 16px; background: #00c1b0; color: #fff; border: none; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 0.84rem; font-weight: 600; cursor: pointer; }
 .advance-btn-modal:hover { opacity: 0.9; }
 .completed-label { font-family: 'Montserrat', sans-serif; font-size: 0.84rem; color: #16a34a; font-weight: 600; }
+.delete-btn { display: flex; align-items: center; gap: 6px; padding: 8px 14px; background: #fff; color: #dc2626; border: 1px solid #fecaca; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+.delete-btn:hover { background: #fef2f2; }
 </style>

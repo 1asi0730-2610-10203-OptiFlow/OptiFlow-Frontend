@@ -262,7 +262,8 @@
       "pendingBalance": "Pending balance",
       "moveTo": "Move to",
       "goBack": "Go back",
-      "completed": "✓ Order completed"
+      "completed": "✓ Order completed",
+      "deleteOrder": "Delete order"
     },
     "newOrderModal": {
       "title": "New Lab Order",
@@ -307,7 +308,9 @@
       "qaApproved": "QA Approved",
       "qaRejected": "Rework registered",
       "labRegistered": "Laboratory registered",
-      "labRegisteredDetail": "was added successfully."
+      "labRegisteredDetail": "was added successfully.",
+      "orderDeleted": "Order deleted",
+      "orderDeletedDetail": "was permanently deleted."
     },
     "registerLab": "Register Laboratory",
     "registerLabModal": {
@@ -350,10 +353,16 @@
     },
     "showing": "Showing",
     "orders": "orders",
+    "confirm": {
+      "deleteMessage": "Do you want to delete lab order #{id}? This action cannot be undone.",
+      "deleteHeader": "Confirm deletion",
+      "deleteAccept": "Yes, delete"
+    },
     "contextMenu": {
       "viewDetails": "View details",
       "advanceStatus": "Advance status",
-      "copyOrderId": "Copy Order #"
+      "copyOrderId": "Copy Order #",
+      "deleteOrder": "Delete order"
     }
   },
   "dashboard": {

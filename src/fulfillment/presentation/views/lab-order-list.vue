@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
+import { useConfirm } from 'primevue/useconfirm'
 import ContextMenu from 'primevue/contextmenu'
 import { useFulfillmentStore } from '../../application/fulfillment.store.js'
 import { useClinicalStore } from '../../../clinical/application/clinical.store.js'
@@ -20,6 +21,7 @@ const clinicalStore = useClinicalStore()
 const salesStore = useSalesStore()
 const inventoryStore = useInventoryStore()
 const toast = useToast()
+const confirm = useConfirm()
 
 const currentView = ref('kanban')
 const searchQuery = ref('')
@@ -155,6 +157,28 @@ async function onNewOrder(workOrder) {
   })
 }
 
+function onDeleteOrder(order) {
+  confirm.require({
+    message: t('labOrders.confirm.deleteMessage', { id: order.id }),
+    header: t('labOrders.confirm.deleteHeader'),
+    icon: 'pi pi-exclamation-triangle',
+    acceptLabel: t('labOrders.confirm.deleteAccept'),
+    rejectLabel: t('common.cancel'),
+    acceptClass: 'p-button-danger',
+    accept: async () => {
+      const ok = await store.deleteWorkOrder(order.id)
+      if (!ok) return
+      if (selectedOrder.value?.id === order.id) selectedOrder.value = null
+      toast.add({
+        severity: 'success',
+        summary: t('labOrders.toast.orderDeleted'),
+        detail: `${t('common.order')} #${order.id} ${t('labOrders.toast.orderDeletedDetail')}`,
+        life: 2500
+      })
+    }
+  })
+}
+
 async function onNewLaboratory(laboratory) {
   await store.createLaboratory(laboratory)
   toast.add({
@@ -194,6 +218,14 @@ const contextMenuItems = computed(() => {
     icon: 'pi pi-copy',
     command: () => { navigator.clipboard.writeText(String(order.id)) }
   })
+  if (order.status === 'DELIVERED') {
+    items.push({ separator: true })
+    items.push({
+      label: t('labOrders.contextMenu.deleteOrder'),
+      icon: 'pi pi-trash',
+      command: () => { onDeleteOrder(order) }
+    })
+  }
   return items
 })
 
@@ -346,6 +378,7 @@ function onTableRowContextMenu(event, order) {
         :work-order="selectedOrder"
         @close="selectedOrder = null"
         @status-changed="(status) => onStatusChanged({ workOrder: selectedOrder, status })"
+        @delete="onDeleteOrder"
     />
     <NewWorkOrderModal
         v-if="showNewOrderModal"
