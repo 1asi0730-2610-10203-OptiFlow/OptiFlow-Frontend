@@ -470,7 +470,7 @@
       "emailPlaceholder": "ej. paciente{'@'}correo.com",
       "emailInvalid": "Ingresa un correo válido",
       "phone": "Teléfono",
-      "phonePlaceholder": "ej. 903 897 123",
+      "phonePlaceholder": "ej. 903897123",
       "phoneInvalid": "Ingresa un teléfono válido",
       "requiredError": "Por favor rellene los campos obligatorios",
       "register": "Registrar"
