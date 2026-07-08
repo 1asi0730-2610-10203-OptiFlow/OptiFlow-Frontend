@@ -505,6 +505,8 @@
       "examDate": "Fecha del Examen",
       "examDateError": "La fecha del examen no puede estar en el futuro",
       "doctor": "Doctor / Optometrista",
+      "selectDoctor": "Selecciona un doctor",
+      "noDoctors": "No hay optometristas registrados. Agrega uno en Personal.",
       "refraction": "Refracción",
       "addition": "Adición",
       "optional": "Opcional",

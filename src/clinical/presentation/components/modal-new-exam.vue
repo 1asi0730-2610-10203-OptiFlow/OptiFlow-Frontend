@@ -1,8 +1,8 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import axios from 'axios'
 import { useModalAnimation } from '../../../shared/presentation/composables/use-modal-animation.js'
+import { useStaffStore } from '../../../staff/application/staff.store.js'
 
 const { t } = useI18n()
 
@@ -15,19 +15,17 @@ const { isClosing, requestClose, onOverlayAnimEnd } = useModalAnimation(emit)
 
 const activeTab = ref('manual') // 'manual' | 'upload'
 
-/* ── Doctors from API ───────────────────────────────────────── */
+/* ── Doctors: optometrists from the staff directory ─────────── */
+const staffStore = useStaffStore()
 const doctors = ref([])
 const selectedDoctor = ref('')
 
 onMounted(async () => {
-    try {
-        const res = await axios.get(`${import.meta.env.VITE_OPTIFLOW_API_URL}/employees?role_id=3`)
-        doctors.value = res.data.map(e => e.name)
-        selectedDoctor.value = doctors.value[0] ?? 'Dra. Emily Smith'
-    } catch {
-        doctors.value = ['Dra. Emily Smith']
-        selectedDoctor.value = 'Dra. Emily Smith'
-    }
+    await staffStore.fetchStaff()
+    doctors.value = staffStore.staff
+        .filter(s => s.role === 'Optometrista')
+        .map(s => `${s.firstName} ${s.lastName}`.trim())
+    selectedDoctor.value = doctors.value[0] ?? ''
 })
 
 /* ── Manual exam form ───────────────────────────────────────── */
@@ -52,6 +50,7 @@ function validate() {
   const e = {}
   if (!form.value.examDate) e.examDate = true
   else if (form.value.examDate > todayStr) e.examDateInvalid = true
+  if (!selectedDoctor.value) e.doctor = true
   errors.value = e
   return Object.keys(e).length === 0
 }
@@ -156,10 +155,22 @@ function triggerFileInput() {
                         </span>
                     </div>
                     <div class="field">
-                        <label>{{ $t('patients.newExam.doctor') }}</label>
-                        <select v-model="selectedDoctor" class="form-input">
+                        <label>{{ $t('patients.newExam.doctor') }} *</label>
+                        <select
+                            v-model="selectedDoctor"
+                            class="form-input"
+                            :class="{ 'form-input--error': errors.doctor }"
+                            @change="errors.doctor = false"
+                        >
+                            <option value="" disabled>{{ $t('patients.newExam.selectDoctor') }}</option>
                             <option v-for="doc in doctors" :key="doc" :value="doc">{{ doc }}</option>
                         </select>
+                        <span v-if="doctors.length === 0" class="field-error">
+                            {{ $t('patients.newExam.noDoctors') }}
+                        </span>
+                        <span v-else-if="errors.doctor" class="field-error">
+                            {{ $t('common.fieldRequired') }}
+                        </span>
                     </div>
                 </div>
 
