@@ -50,7 +50,7 @@ async function handleSubmit() {
     let authed = await authStore.signUpAdminForCheckout(form.email, form.password)
     if (!authed) authed = await authStore.signIn(form.email, form.password)
     if (!authed) return
-    await startCheckout()
+    await startCheckoutOrDashboard()
     return
   }
 
@@ -89,6 +89,17 @@ async function startCheckout() {
   }
 }
 
+async function startCheckoutOrDashboard() {
+  // An account that already has an active plan must not be charged again: send it to the dashboard
+  // instead of Stripe. New/unsubscribed accounts continue to checkout as before.
+  await authStore.refreshSubscription()
+  if (authStore.subscriptionActive) {
+    router.push('/panel')
+    return
+  }
+  await startCheckout()
+}
+
 async function redirectAfterAuth() {
   // Google resolves the role server-side: clients land in the patient portal, admins go to the
   // dashboard when subscribed or to plan selection otherwise.
@@ -101,8 +112,8 @@ async function onGoogleCredential(credential) {
   localError.value = null
   const ok = await authStore.googleSignIn(credential)
   if (!ok) return
-  // Buying a plan: go straight to Stripe. Otherwise route the new account to its home.
-  if (isBuyMode.value) { await startCheckout(); return }
+  // Buying a plan: checkout unless already subscribed. Otherwise route the new account to its home.
+  if (isBuyMode.value) { await startCheckoutOrDashboard(); return }
   await redirectAfterAuth()
 }
 </script>
