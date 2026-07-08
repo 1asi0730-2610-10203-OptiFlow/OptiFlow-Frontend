@@ -73,6 +73,8 @@
     "recoverQuote": "Recover Quote",
     "searchPlaceholder": "Search by invoice # or patient...",
     "allStatuses": "All statuses",
+    "dateFrom": "From",
+    "dateTo": "To",
     "loading": "Loading sales...",
     "form": {
       "title": "New Sale",
@@ -290,11 +292,10 @@
       "deliveryDate": "Delivery Date",
       "deliveryDateError": "Delivery date cannot be before the order date or in the past",
       "totalAmount": "Total (S/)",
-      "deposit": "Deposit (S/)",
-      "depositError": "Deposit cannot exceed the total amount",
       "amountRange": "Amount must be between 0 and 1,000,000",
       "amountPlaceholder": "0.00",
-      "pendingAfterDeposit": "Balance after deposit",
+      "autoGenerate": "Auto-generate",
+      "autoGenerateHint": "Calculates the total by adding the price of the selected lens and frame",
       "createOrder": "Create Lab Order"
     },
     "toast": {

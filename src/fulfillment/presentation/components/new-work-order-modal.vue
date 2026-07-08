@@ -28,7 +28,7 @@ const form = ref({
   osSphere: '', osCylinder: '', osAxis: '',
   frame: '', frameProductId: '', orderDate: new Date().toISOString().split('T')[0],
   deliveryDate: '', priority: 'normal',
-  deposit: '', total: ''
+  total: ''
 })
 
 function onLensChange() {
@@ -63,8 +63,23 @@ function onLabChange() {
 }
 
 const totalNum = computed(() => parseFloat(form.value.total) || 0)
-const depositNum = computed(() => parseFloat(form.value.deposit) || 0)
-const pendingBalance = computed(() => Math.max(0, totalNum.value - depositNum.value))
+
+const lensPrice = computed(() => {
+  const product = lensProducts.value.find(p => p.id === form.value.lensProductId)
+  return product ? Number(product.price) || 0 : 0
+})
+const framePrice = computed(() => {
+  const product = frameProducts.value.find(p => p.id === form.value.frameProductId)
+  return product ? Number(product.price) || 0 : 0
+})
+const suggestedTotal = computed(() => lensPrice.value + framePrice.value)
+const canAutoGenerateTotal = computed(() => suggestedTotal.value > 0)
+
+function autoGenerateTotal() {
+  form.value.total = suggestedTotal.value.toFixed(2)
+  errors.value.total = false
+  errors.value.totalRange = false
+}
 
 const todayStr = new Date().toISOString().split('T')[0]
 // Delivery cannot be before the order date, and never in the past.
@@ -94,8 +109,6 @@ function validate() {
   if (!form.value.labId) e.labId = true
   if (!form.value.total || totalNum.value <= 0) e.total = true
   else if (totalNum.value > 1000000) e.totalRange = true
-  if (depositNum.value < 0 || depositNum.value > 1000000) e.depositRange = true
-  else if (depositNum.value > totalNum.value) e.deposit = true
   errors.value = e
   return Object.keys(e).length === 0
 }
@@ -120,7 +133,7 @@ function onSubmit() {
     frameProductId: form.value.frameProductId || null,
     prescription:   buildPrescription(),
     priority:       form.value.priority,
-    deposit:        depositNum.value,
+    deposit:        0,
     total:          totalNum.value,
     isRework:       false
   })
@@ -258,21 +271,33 @@ function onSubmit() {
           </div>
         </div>
 
-        <!-- Totals -->
-        <div class="form-row">
+        <!-- Total -->
+        <div class="form-row form-row--1">
           <div class="field">
             <label>{{ $t('labOrders.newOrderModal.totalAmount') }} *</label>
-            <input
-              v-model="form.total"
-              type="number"
-              min="0"
-              max="1000000"
-              step="0.01"
-              class="form-input"
-              :class="{ 'form-input--error': errors.total || errors.totalRange }"
-              :placeholder="$t('labOrders.newOrderModal.amountPlaceholder')"
-              @input="errors.total = false; errors.totalRange = false"
-            />
+            <div class="total-input-group">
+              <input
+                v-model="form.total"
+                type="number"
+                min="0"
+                max="1000000"
+                step="0.01"
+                class="form-input"
+                :class="{ 'form-input--error': errors.total || errors.totalRange }"
+                :placeholder="$t('labOrders.newOrderModal.amountPlaceholder')"
+                @input="errors.total = false; errors.totalRange = false"
+              />
+              <button
+                type="button"
+                class="btn-autogenerate"
+                :disabled="!canAutoGenerateTotal"
+                :title="$t('labOrders.newOrderModal.autoGenerateHint')"
+                @click="autoGenerateTotal"
+              >
+                <i class="pi pi-calculator" />
+                {{ $t('labOrders.newOrderModal.autoGenerate') }}
+              </button>
+            </div>
             <span v-if="errors.total" class="field-error">
               {{ $t('common.fieldRequired') }}
             </span>
@@ -280,34 +305,6 @@ function onSubmit() {
               {{ $t('labOrders.newOrderModal.amountRange') }}
             </span>
           </div>
-          <div class="field">
-            <label>{{ $t('labOrders.newOrderModal.deposit') }}</label>
-            <input
-              v-model="form.deposit"
-              type="number"
-              min="0"
-              max="1000000"
-              step="0.01"
-              class="form-input"
-              :class="{ 'form-input--error': errors.deposit || errors.depositRange }"
-              :placeholder="$t('labOrders.newOrderModal.amountPlaceholder')"
-              @input="errors.deposit = false; errors.depositRange = false"
-            />
-            <span v-if="errors.depositRange" class="field-error">
-              {{ $t('labOrders.newOrderModal.amountRange') }}
-            </span>
-            <span v-else-if="errors.deposit" class="field-error">
-              {{ $t('labOrders.newOrderModal.depositError') }}
-            </span>
-          </div>
-        </div>
-
-        <!-- Pending balance preview -->
-        <div v-if="totalNum > 0" class="saldo-preview">
-          <span class="saldo-preview-label">{{ $t('labOrders.newOrderModal.pendingAfterDeposit') }}</span>
-          <span class="saldo-preview-value" :class="pendingBalance > 0 ? 'saldo--orange' : 'saldo--green'">
-            S/ {{ pendingBalance.toFixed(2) }}
-          </span>
         </div>
 
         <p v-if="submitted && hasErrors" style="color: #dc2626; font-size: 0.8rem; font-family: Montserrat; margin: 0;">
@@ -334,6 +331,7 @@ function onSubmit() {
 .modal-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; flex: 1; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .form-row--3 { grid-template-columns: 1fr 1fr 1fr; }
+.form-row--1 { grid-template-columns: 1fr; }
 .field { display: flex; flex-direction: column; gap: 6px; }
 .field label { font-family: 'Montserrat', sans-serif; font-size: 0.82rem; font-weight: 600; color: #374151; }
 .form-select, .form-input { padding: 9px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 0.84rem; color: #111827; outline: none; background: #fff; transition: border-color 0.15s; }
@@ -341,6 +339,11 @@ function onSubmit() {
 .form-input--error, .form-select--error { border-color: #f87171 !important; background-color: #fff5f5 !important; }
 .field-hint { font-family: 'Montserrat', sans-serif; font-size: 0.74rem; color: #9ca3af; margin-top: 1px; }
 .field-error { font-family: 'Montserrat', sans-serif; font-size: 0.75rem; color: #dc2626; margin-top: 2px; }
+.total-input-group { display: flex; gap: 8px; }
+.total-input-group .form-input { flex: 1; }
+.btn-autogenerate { display: flex; align-items: center; gap: 6px; padding: 0 14px; border: 1px solid #00c1b0; border-radius: 8px; background: #fff; color: #00c1b0; font-family: 'Montserrat', sans-serif; font-size: 0.8rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: background 0.15s; }
+.btn-autogenerate:hover:not(:disabled) { background: rgba(0,193,176,0.08); }
+.btn-autogenerate:disabled { border-color: #e5e7eb; color: #9ca3af; cursor: not-allowed; }
 .recipe-section { display: flex; flex-direction: column; gap: 8px; }
 .recipe-label { display: flex; align-items: center; gap: 6px; font-family: 'Montserrat', sans-serif; font-size: 0.82rem; font-weight: 700; color: #374151; }
 .recipe-grid-wrapper { background: rgba(150,246,238,0.2); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
@@ -350,11 +353,6 @@ function onSubmit() {
 .eye-label { font-family: 'Montserrat', sans-serif; font-size: 0.82rem; font-weight: 600; color: #374151; }
 .recipe-input { padding: 6px 8px; border: 1px solid #fff; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.82rem; text-align: center; background: #fff; outline: none; transition: border-color 0.15s; }
 .recipe-input:focus { border-color: #00c1b0; }
-.saldo-preview { background: #f9fafb; border-radius: 10px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
-.saldo-preview-label { font-family: 'Montserrat', sans-serif; font-size: 0.82rem; color: #6b7280; }
-.saldo-preview-value { font-family: 'Montserrat', sans-serif; font-size: 0.88rem; font-weight: 700; }
-.saldo--orange { color: #ea580c; }
-.saldo--green  { color: #16a34a; }
 .modal-footer { display: flex; gap: 10px; padding: 16px 24px; border-top: 1px solid #f3f4f6; flex-shrink: 0; }
 .btn-cancel { flex: 1; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff; font-family: 'Montserrat', sans-serif; font-size: 0.84rem; font-weight: 600; color: #374151; cursor: pointer; }
 .btn-cancel:hover { background: #f9fafb; }

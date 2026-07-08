@@ -38,6 +38,10 @@ const app = createApp(App)
 app.use(i18n)
 app.use(pinia)
 app.use(router)
+
+// Dev-only: lets you inspect/seed Pinia store state from the browser console
+// (e.g. window.__pinia.state.value.staff.staff.push({...})). Stripped from prod builds.
+if (import.meta.env.DEV) window.__pinia = pinia
 app.use(PrimeVue, {
   theme: {
     preset: Aura,
