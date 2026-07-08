@@ -159,17 +159,30 @@ function onSuccessNext() {
 
                 <!-- History -->
                 <div v-if="prescriptions.length > 1">
-                    <p class="section-title" style="margin-bottom: 8px">{{ $t('patients.hce.prescriptionHistory') }}</p>
+                    <div class="section-header">
+                        <span class="section-title">{{ $t('patients.hce.prescriptionHistory') }}</span>
+                        <span class="section-meta">{{ prescriptions.length - 1 }} {{ $t('common.records') }}</span>
+                    </div>
                     <div class="history-list">
                         <div v-for="presc in prescriptions.slice(1)" :key="presc.id" class="history-item">
                             <div class="history-top">
                                 <span class="history-date">{{ presc.formattedDate }}</span>
                                 <span class="history-doctor">{{ presc.doctorName }}</span>
                             </div>
-                            <p class="history-summary">
-                                OD: {{ $t('patients.hce.rx.sphShort') }} {{ formatVal(presc.odSphere) }} {{ $t('patients.hce.rx.cylShort') }} {{ formatVal(presc.odCylinder) }} {{ $t('patients.hce.rx.axisShort') }} {{ presc.odAxis }}°
-                                &nbsp;OS: {{ $t('patients.hce.rx.sphShort') }} {{ formatVal(presc.oiSphere) }} {{ $t('patients.hce.rx.cylShort') }} {{ formatVal(presc.oiCylinder) }} {{ $t('patients.hce.rx.axisShort') }} {{ presc.oiAxis }}°
-                            </p>
+                            <div class="history-rx">
+                                <div class="history-rx-row">
+                                    <span class="history-eye">{{ $t('patients.hce.rx.od') }}</span>
+                                    <span>{{ $t('patients.hce.rx.sphShort') }} {{ formatVal(presc.odSphere) }}</span>
+                                    <span>{{ $t('patients.hce.rx.cylShort') }} {{ formatVal(presc.odCylinder) }}</span>
+                                    <span>{{ $t('patients.hce.rx.axisShort') }} {{ presc.odAxis }}°</span>
+                                </div>
+                                <div class="history-rx-row">
+                                    <span class="history-eye">{{ $t('patients.hce.rx.os') }}</span>
+                                    <span>{{ $t('patients.hce.rx.sphShort') }} {{ formatVal(presc.oiSphere) }}</span>
+                                    <span>{{ $t('patients.hce.rx.cylShort') }} {{ formatVal(presc.oiCylinder) }}</span>
+                                    <span>{{ $t('patients.hce.rx.axisShort') }} {{ presc.oiAxis }}°</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -229,12 +242,18 @@ function onSuccessNext() {
 .empty-icon { font-size: 1.5rem; }
 .empty-hce p { font-family: 'Montserrat', sans-serif; font-size: 0.82rem; margin: 0; }
 
-.history-list { display: flex; flex-direction: column; gap: 6px; }
-.history-item { padding: 10px 12px; border: 1px solid #f3f4f6; border-radius: 8px; }
-.history-top { display: flex; justify-content: space-between; margin-bottom: 4px; }
+.history-list { display: flex; flex-direction: column; gap: 8px; max-height: 230px; overflow-y: auto; padding-right: 4px; scrollbar-width: thin; }
+.history-list::-webkit-scrollbar { width: 6px; }
+.history-list::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 3px; }
+.history-list::-webkit-scrollbar-thumb:hover { background: #d1d5db; }
+.history-item { padding: 10px 12px; border: 1px solid #f3f4f6; border-radius: 8px; flex-shrink: 0; }
+.history-top { display: flex; justify-content: space-between; margin-bottom: 6px; }
 .history-date { font-family: 'Montserrat', sans-serif; font-size: 0.78rem; font-weight: 600; color: #374151; }
 .history-doctor { font-family: 'Montserrat', sans-serif; font-size: 0.72rem; color: #00c1b0; }
-.history-summary { font-family: 'Montserrat', sans-serif; font-size: 0.74rem; color: #6b7280; margin: 0; }
+.history-rx { display: flex; flex-direction: column; gap: 4px; }
+.history-rx-row { display: grid; grid-template-columns: 66px repeat(3, 1fr); gap: 6px; align-items: center; }
+.history-eye { font-family: 'Montserrat', sans-serif; font-size: 0.68rem; font-weight: 700; color: #00c1b0; white-space: nowrap; }
+.history-rx-row span:not(.history-eye) { font-family: 'Montserrat', sans-serif; font-size: 0.74rem; color: #6b7280; }
 
 .last-visit { padding-top: 4px; border-top: 1px solid #f3f4f6; }
 .last-visit-label { font-family: 'Montserrat', sans-serif; font-size: 0.68rem; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 4px; }

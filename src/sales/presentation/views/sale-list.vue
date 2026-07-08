@@ -19,6 +19,8 @@ const workOrderApi = new WorkOrderApi()
 
 const search = ref('')
 const statusFilter = ref(null)
+const dateFrom = ref('')
+const dateTo = ref('')
 const showNewSaleModal = ref(false)
 const showPaymentDialog = ref(false)
 const showFeedbackDialog = ref(false)
@@ -45,8 +47,25 @@ const filteredSales = computed(() => {
   if (statusFilter.value) {
     list = list.filter(s => s.status === statusFilter.value)
   }
+  if (dateFrom.value) {
+    list = list.filter(s => s.createdAt >= dateFrom.value)
+  }
+  if (dateTo.value) {
+    list = list.filter(s => s.createdAt <= dateTo.value)
+  }
   return list
 })
+
+const hasActiveFilters = computed(() =>
+  !!search.value || !!statusFilter.value || !!dateFrom.value || !!dateTo.value
+)
+
+function clearFilters() {
+  search.value = ''
+  statusFilter.value = null
+  dateFrom.value = ''
+  dateTo.value = ''
+}
 
 let unsubNewSale
 onMounted(() => {
@@ -207,6 +226,19 @@ function formatCurrency(value) {
           class="status-select"
         />
 
+        <div class="date-filter-group">
+          <i class="pi pi-calendar filter-icon" />
+          <label>{{ $t('sales.dateFrom') }}</label>
+          <input v-model="dateFrom" type="date" class="date-input" :max="dateTo || undefined" />
+        </div>
+        <div class="date-filter-group">
+          <label>{{ $t('sales.dateTo') }}</label>
+          <input v-model="dateTo" type="date" class="date-input" :min="dateFrom || undefined" />
+        </div>
+
+        <button v-if="hasActiveFilters" class="btn-clear" @click="clearFilters">
+          {{ $t('common.clearFilters') }}
+        </button>
       </div>
     </div>
 
@@ -465,6 +497,51 @@ function formatCurrency(value) {
   width: 200px;
 }
 
+.date-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.date-filter-group label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.date-input {
+  padding: 8px 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.82rem;
+  color: #101828;
+  outline: none;
+}
+
+.date-input:focus {
+  border-color: #00c1b0;
+}
+
+.btn-clear {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 8px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  color: #6a7282;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-clear:hover {
+  background: #f9fafb;
+}
+
 .btn-export {
   display: flex;
   align-items: center;
@@ -539,6 +616,19 @@ function formatCurrency(value) {
 
   .status-select {
     width: 100%;
+  }
+
+  .date-filter-group {
+    width: 100%;
+  }
+
+  .date-input {
+    flex: 1;
+  }
+
+  .btn-clear {
+    width: 100%;
+    justify-content: center;
   }
 }
 
