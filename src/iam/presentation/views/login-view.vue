@@ -1,7 +1,8 @@
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../../application/auth.store.js'
+import GoogleSignInButton from '../components/GoogleSignInButton.vue'
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -11,68 +12,21 @@ const email    = ref('')
 const password = ref('')
 const mode     = ref('admin') // 'admin' | 'client'
 const showSuccessMsg = ref(false)
-const googleButtonContainer = ref(null)
-let gsiInitialized = false
 
 function setMode(next) {
   mode.value = next
   authStore.clearError()
-  // The button's container only exists in admin mode, so re-render into it after the DOM updates —
-  // otherwise switching client → admin leaves an empty container until a full page reload.
-  if (next === 'admin') nextTick(renderGoogleButton)
 }
 
-// Initializes Google Identity Services once, then renders the official button into the current
-// container. Returns true once rendered so the initial poll can stop; safe to call again whenever the
-// admin tab (and its container) is re-created.
-function renderGoogleButton() {
-  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
-  if (!clientId || !window.google?.accounts?.id || !googleButtonContainer.value) return false
-
-  if (!gsiInitialized) {
-    window.google.accounts.id.initialize({
-      client_id: clientId,
-      callback: async ({ credential }) => {
-        const ok = await authStore.googleSignIn(credential)
-        if (ok) router.push(await resolveRedirectPath())
-      },
-    })
-    gsiInitialized = true
-  }
-  window.google.accounts.id.renderButton(googleButtonContainer.value, {
-    type: 'standard',
-    theme: 'outline',
-    size: 'large',
-    text: 'continue_with',
-    shape: 'pill',
-    logo_alignment: 'center',
-    locale: 'es',
-    width: 331,
-  })
-  return true
+async function onGoogleCredential(credential) {
+  const ok = await authStore.googleSignIn(credential)
+  if (ok) router.push(await resolveRedirectPath())
 }
 
-onMounted(async () => {
+onMounted(() => {
   authStore.clearError()
   if (route.query.registered === 'true') {
     showSuccessMsg.value = true
-  }
-  // Google sign-in handed off from the landing page: it captures the Google credential and
-  // redirects here as ?gcred=..., which we exchange for a session using the normal flow.
-  const gcred = route.query.gcred
-  if (gcred) {
-    const ok = await authStore.googleSignIn(gcred)
-    if (ok) {
-      router.push(await resolveRedirectPath())
-      return
-    }
-  }
-  // The GSI script is loaded async in index.html, so it may not be ready yet — retry briefly.
-  if (!renderGoogleButton()) {
-    let tries = 0
-    const timer = setInterval(() => {
-      if (renderGoogleButton() || ++tries >= 25) clearInterval(timer)
-    }, 200)
   }
 })
 
@@ -160,11 +114,9 @@ async function resolveRedirectPath() {
             <span v-else>Continuar</span>
           </button>
 
-          <template v-if="mode === 'admin'">
-            <div class="divider"><span>o</span></div>
+          <div class="divider"><span>o</span></div>
 
-            <div ref="googleButtonContainer" class="google-btn-container"></div>
-          </template>
+          <GoogleSignInButton class="google-btn-container" @credential="onGoogleCredential" />
         </div>
 
       </div>
