@@ -102,7 +102,13 @@ export const useInventoryStore = defineStore('inventory', () => {
             productsRef.value.unshift(entity)
             eventBus.emit(InventoryEvents.PRODUCT_CREATED, { product: entity })
         } catch (e) {
-            errors.value.push(e.message)
+            const data = e.response?.data
+            let message = e.message
+            if (data?.errors) message = Object.values(data.errors).flat().join(' ')
+            else if (data?.detail) message = data.detail
+            else if (typeof data === 'string' && data) message = data
+            errors.value.push(message)
+            eventBus.emit(InventoryEvents.PRODUCT_CREATE_FAILED, { message })
         } finally {
             loading.value = false
         }
