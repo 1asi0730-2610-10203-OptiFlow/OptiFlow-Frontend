@@ -932,13 +932,15 @@
     "status": {
       "lab": "En Laboratorio",
       "labDesc": "Recibido en taller",
-      "prod": "En Producción",
-      "prodDesc": "Lentes en fabricación",
+      "prod": "Biselado",
+      "prodDesc": "Corte y montaje de lunas",
       "qc": "Control de Calidad",
       "qcDesc": "Verificación final",
       "ready": "Listo para Retirar",
       "readyDesc": "Disponible en tienda"
     },
+    "none": "Ninguna",
+    "notIncluded": "No incluido",
     "lensType": "Tipo de Lente",
     "estimatedDelivery": "Entrega estimada",
     "paymentSummary": "Resumen de Pago",

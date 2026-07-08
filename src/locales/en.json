@@ -959,13 +959,15 @@
     "status": {
       "lab": "In Laboratory",
       "labDesc": "Received at workshop",
-      "prod": "In Production",
-      "prodDesc": "Lenses in manufacturing",
+      "prod": "Beveling",
+      "prodDesc": "Lens cutting and mounting",
       "qc": "Quality Control",
       "qcDesc": "Final verification",
       "ready": "Ready for Pickup",
       "readyDesc": "Available in store"
     },
+    "none": "None",
+    "notIncluded": "Not included",
     "lensType": "Lens Type",
     "estimatedDelivery": "Estimated Delivery",
     "paymentSummary": "Payment Summary",

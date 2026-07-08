@@ -17,18 +17,23 @@ onMounted(async () => {
     if (email) await store.fetchAllPatientOrders(email)
 })
 
-const orders = computed(() => store.patientOrders.map(o => ({
-    id:             o.workOrderId,
-    orderNumber:    o.orderNumber,
-    productName:    o.lensType,
-    frame:          o.frame,
-    status:         o.status,
-    estimatedDate:  o.deliveryDate,
-    createdAt:      o.createdAt,
-    totalAmount:    o.total,
-    paidAmount:     o.deposit,
-    pendingBalance: o.pendingBalance
-})))
+const orders = computed(() => store.patientOrders.map(o => {
+    const hasNoFrame = !o.frame || o.frame.includes('noFrame') || o.frame.includes('newOrderModal');
+    
+    return {
+        id:             o.workOrderId,
+        orderNumber:    o.orderNumber,
+        productName:    o.lensType,
+        hasNoFrame:     hasNoFrame, 
+        frame:          hasNoFrame ? 'labOrders.newOrderModal.noFrame' : o.frame,
+        status:         o.status,
+        estimatedDate:  o.deliveryDate,
+        createdAt:      o.createdAt,
+        totalAmount:    o.total,
+        paidAmount:     o.deposit,
+        pendingBalance: o.pendingBalance
+    }
+}))
 
 const getPaymentPercentage = (order) => {
     if (!order?.totalAmount) return 0
@@ -139,12 +144,17 @@ const getStatusStep = (status) => {
               </div>
               <span class="item-amount">S/ {{ order.totalAmount.toFixed(2) }}</span>
             </div>
-            <div v-if="order.frame" class="receipt-row">
+
+            <div class="receipt-row">
               <div class="item-detail">
-                <span class="item-name">{{ order.frame }}</span>
+                <span class="item-name">
+                  {{ order.hasNoFrame ? $t('patientCenter.myLenses.none') : order.frame }}
+                </span>
                 <span class="item-type">{{ $t('patientCenter.myLenses.frame') }}</span>
               </div>
-              <span class="item-amount">{{ $t('patientCenter.myLenses.included') }}</span>
+              <span class="item-amount">
+                {{ order.hasNoFrame ? $t('patientCenter.myLenses.notIncluded') : $t('patientCenter.myLenses.included') }}
+              </span>
             </div>
           </div>
 
