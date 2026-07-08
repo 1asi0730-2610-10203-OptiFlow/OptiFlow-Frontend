@@ -6,6 +6,9 @@ import { isValidEmail, isValidPhone, isValidDni } from '../../../shared/presenta
 
 const { t } = useI18n()
 const emit = defineEmits(['save', 'close'])
+// Error returned by the backend on save (e.g. "A patient with DNI ... already exists"), shown so the
+// user sees the real reason instead of a silent failure.
+defineProps({ serverError: { type: String, default: '' } })
 const { isClosing, requestClose, onOverlayAnimEnd } = useModalAnimation(emit)
 
 const form = ref({
@@ -174,6 +177,7 @@ function onSubmit() {
                 <p v-if="submitted && hasErrors" class="global-error">
                     {{ $t('patients.addModal.requiredError') }}
                 </p>
+                <p v-if="serverError" class="global-error">{{ serverError }}</p>
             </div>
 
             <div class="modal-footer">
