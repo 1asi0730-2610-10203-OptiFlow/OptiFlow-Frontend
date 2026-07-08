@@ -590,6 +590,7 @@
       "supplier": "Supplier",
       "selectSupplier": "Select supplier...",
       "receptionDate": "Reception Date",
+      "receptionDateError": "Reception date cannot be in the future",
       "addItem": "Add Item"
     },
     "restockModal": {
@@ -635,6 +636,7 @@
     },
     "toast": {
       "itemAdded": "Item added",
+      "itemAddError": "Could not add item",
       "itemAddedDetail": "registered in inventory.",
       "itemUpdated": "Product updated",
       "itemUpdatedDetail": "{name} was updated successfully.",

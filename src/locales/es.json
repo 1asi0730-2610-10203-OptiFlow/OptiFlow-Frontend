@@ -589,6 +589,7 @@
       "supplier": "Proveedor",
       "selectSupplier": "Seleccionar proveedor...",
       "receptionDate": "Fecha de Recepción",
+      "receptionDateError": "La fecha de recepción no puede estar en el futuro",
       "addItem": "Agregar Artículo"
     },
     "restockModal": {
@@ -634,6 +635,7 @@
     },
     "toast": {
       "itemAdded": "Artículo agregado",
+      "itemAddError": "No se pudo agregar el artículo",
       "itemAddedDetail": "registrado en el inventario.",
       "itemUpdated": "Producto actualizado",
       "itemUpdatedDetail": "{name} fue actualizado correctamente.",
